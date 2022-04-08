@@ -1,0 +1,25 @@
+{
+	"name": "violent-sequence",
+	"version": "0.0.1",
+	"scripts": {
+		"start": "static public",
+		"build": "run-p build-client",
+		"build-client": "node ./esbuild.js",
+		"dev": "run-p dev-client start",
+		"dev-client": "DEV=1 node ./esbuild.js"
+	},
+	"devDependencies": {
+		"@types/three": "^0.136.1",
+		"esbuild": "^0.14.13",
+		"esbuild-plugin-glsl": "^1.0.5",
+		"esbuild-svelte": "^0.6.2",
+		"node-static": "^0.7.11",
+		"npm-run-all": "^4.1.5",
+		"prettier": "^2.5.1",
+		"svelte-preprocess": "^4.10.2",
+		"three": "^0.137.4",
+		"typescript": "^4.5.5"
+	},
+	"type": "module",
+	"dependencies": {}
+}
