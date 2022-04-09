@@ -1,20 +1,18 @@
 import { AmbientLight, DirectionalLight, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
-import { VisBoard } from './render/visboard'
-import { Board } from './buffer/board'
+
 import { Value } from './value'
 
 export const renderer = new WebGLRenderer()
 export const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 export const scene = new Scene()
 export const tick = new Value(0)
-export const board = new Board()
-export const visboard = new VisBoard(board)
+
 export const ambient = new AmbientLight(0xffffff, 0.5)
 export const sun = new DirectionalLight(0xffffff, 0.5)
 
 sun.position.set(1, 1, 1)
 
-scene.add(sun, ambient, visboard.mesh)
+scene.add(sun, ambient)
 
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
@@ -41,3 +39,4 @@ function Ticker(ts: DOMHighResTimeStamp) {
 }
 
 Ticker(0)
+
