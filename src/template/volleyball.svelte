@@ -32,7 +32,7 @@ const scatter = [-groundSize/2, 0, -groundSize/2, groundSize/2, 0, groundSize/2]
         <a-mixin id="cloud" {scatter} animation="property:position; dur: {3000 * 60}; to:0 0 -{groundSize}; easing: linear; loop: true;" material="color: #ffffff; opacity: 0.5; transparent: true; shading: flat;" geometry="type: box" scale="15 5 5"/>
     </a-assets>
 
-    <a-camera id="#camera"  control-pursuit="target: #focus;"  />
+    <a-camera id="#camera"  control-pursuit="target: #focus;"   position="0 1.65 5" />
  
     <a-sky color="#225599"></a-sky>
     <a-entity 

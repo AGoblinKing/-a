@@ -85142,6 +85142,7 @@
         set_custom_element_data(a_mixin8, "scale", "15 5 5");
         set_custom_element_data(a_camera, "id", "#camera");
         set_custom_element_data(a_camera, "control-pursuit", "target: #focus;");
+        set_custom_element_data(a_camera, "position", "0 1.65 5");
         set_custom_element_data(a_sky, "color", "#225599");
         set_custom_element_data(a_entity0, "position", a_entity0_position_value = ctx[0] / 4 + " " + ctx[0] / 2 + " " + ctx[0] / 4);
         set_custom_element_data(a_entity0, "light", a_entity0_light_value = ctx[1]({
