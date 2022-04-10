@@ -1,3 +1,7 @@
+
 AFRAME.registerComponent('physx', {
-    
+    schema: {
+        
+    }
+
 })

@@ -2,10 +2,12 @@ import { VRM } from "@pixiv/three-vrm"
 import { Value } from 'src/value';
 
 export const currentVRM = new Value<VRM>()
+export const mirrorVRM = new Value<VRM>()
 
 function Load(url: string): any {
     return new Promise((resolve, reject) => {
 
+      // @ts-ignore def does exist
       const loader = new AFRAME.THREE.GLTFLoader();
       loader.crossOrigin = "anonymous";
       
@@ -44,23 +46,17 @@ AFRAME.registerComponent('vrm', {
             if(this.data.current) {
               currentVRM.set(vrm)
             }
+            if(this.data.mirror) {
+              mirrorVRM.set(vrm)
+            }
         });
       } else {
         this.el.removeObject3D('mesh');
       }
       
-
+      
     },
     remove() {
       this.el.removeObject3D('mesh');
-    },
-    tick() {
-      if(currentVRM.$ && this.data.mirror && this.data.vrm) {
-        const bones = this.data.vrm.humanoid.humanBones
-        for(let i = 0; i < bones.length; i++) {
-          bones[i].copy(currentVRM.$.humanoid.humanBones[i])
-        }
-        this.data.vrm.update(0.01)
-      }
     }
-})
+  })

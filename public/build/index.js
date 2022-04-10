@@ -31329,6 +31329,7 @@
 
   // src/component/vrm.ts
   var currentVRM = new Value();
+  var mirrorVRM = new Value();
   function Load(url) {
     return new Promise((resolve, reject) => {
       const loader = new AFRAME.THREE.GLTFLoader();
@@ -31356,6 +31357,9 @@
           if (this.data.current) {
             currentVRM.set(vrm);
           }
+          if (this.data.mirror) {
+            mirrorVRM.set(vrm);
+          }
         });
       } else {
         this.el.removeObject3D("mesh");
@@ -31363,20 +31367,13 @@
     },
     remove() {
       this.el.removeObject3D("mesh");
-    },
-    tick() {
-      if (currentVRM.$ && this.data.mirror && this.data.vrm) {
-        const bones = this.data.vrm.humanoid.humanBones;
-        for (let i2 = 0; i2 < bones.length; i2++) {
-          bones[i2].copy(currentVRM.$.humanoid.humanBones[i2]);
-        }
-        this.data.vrm.update(0.01);
-      }
     }
   });
 
   // src/component/physx.ts
-  AFRAME.registerComponent("physx", {});
+  AFRAME.registerComponent("physx", {
+    schema: {}
+  });
 
   // src/component/scatter.ts
   var bb = new AFRAME.THREE.Box3();
@@ -32638,11 +32635,8 @@
   var remap2 = helpers_exports.remap;
   var clamp3 = helpers_exports.clamp;
   var lerp2 = Vector.lerp;
-  var rigRotation = (name, rotation = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
-    if (!currentVRM.$) {
-      return;
-    }
-    const Part = currentVRM.$.humanoid.getBoneNode(u.HumanoidBoneName[name]);
+  var rigRotation = (vrm, name, rotation = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
+    const Part = vrm.humanoid.getBoneNode(u.HumanoidBoneName[name]);
     if (!Part) {
       return;
     }
@@ -32650,11 +32644,8 @@
     let quaternion = new AFRAME.THREE.Quaternion().setFromEuler(euler);
     Part.quaternion.slerp(quaternion, lerpAmount);
   };
-  var rigPosition = (name, position = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
-    if (!currentVRM.$) {
-      return;
-    }
-    const Part = currentVRM.$.humanoid.getBoneNode(u.HumanoidBoneName[name]);
+  var rigPosition = (vrm, name, position = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
+    const Part = vrm.humanoid.getBoneNode(u.HumanoidBoneName[name]);
     if (!Part) {
       return;
     }
@@ -32662,12 +32653,9 @@
     Part.position.lerp(vector, lerpAmount);
   };
   var oldLookTarget = new AFRAME.THREE.Euler();
-  var rigFace = (riggedFace) => {
-    if (!currentVRM.$) {
-      return;
-    }
-    rigRotation("Neck", riggedFace.head, 0.7);
-    const Blendshape = currentVRM.$.blendShapeProxy;
+  var rigFace = (vrm, riggedFace) => {
+    rigRotation(vrm, "Neck", riggedFace.head, 0.7);
+    const Blendshape = vrm.blendShapeProxy;
     const PresetName = u.BlendShapePresetName;
     riggedFace.eye.l = lerp2(clamp3(1 - riggedFace.eye.l, 0, 1), Blendshape.getValue(PresetName.Blink), 0.5);
     riggedFace.eye.r = lerp2(clamp3(1 - riggedFace.eye.r, 0, 1), Blendshape.getValue(PresetName.Blink), 0.5);
@@ -32680,7 +32668,7 @@
     Blendshape.setValue(PresetName.U, lerp2(riggedFace.mouth.shape.U, Blendshape.getValue(PresetName.U), 0.5));
     let lookTarget = new AFRAME.THREE.Euler(lerp2(oldLookTarget.x, riggedFace.pupil.y, 0.4), lerp2(oldLookTarget.y, riggedFace.pupil.x, 0.4), 0, "XYZ");
     oldLookTarget.copy(lookTarget);
-    currentVRM.$.lookAt.applyer.lookAt(lookTarget);
+    vrm.lookAt.applyer.lookAt(lookTarget);
   };
   var animateVRM = (vrm, results) => {
     if (!vrm || !videoElement.$) {
@@ -32697,80 +32685,81 @@
         runtime: "mediapipe",
         video: videoElement.$
       });
-      rigFace(riggedFace);
+      rigFace(vrm, riggedFace);
     }
     if (pose2DLandmarks && pose3DLandmarks) {
       riggedPose = PoseSolver.solve(pose3DLandmarks, pose2DLandmarks, {
         runtime: "mediapipe",
         video: videoElement.$
       });
-      rigRotation("Hips", riggedPose.Hips.rotation, 0.7);
-      rigPosition("Hips", {
+      rigRotation(vrm, "Hips", riggedPose.Hips.rotation, 0.7);
+      rigPosition(vrm, "Hips", {
         x: -riggedPose.Hips.position.x,
         y: riggedPose.Hips.position.y + 1,
         z: -riggedPose.Hips.position.z
       }, 1, 0.07);
-      rigRotation("Chest", riggedPose.Spine, 0.25, 0.3);
-      rigRotation("Spine", riggedPose.Spine, 0.45, 0.3);
-      rigRotation("RightUpperArm", riggedPose.RightUpperArm, 1, 0.3);
-      rigRotation("RightLowerArm", riggedPose.RightLowerArm, 1, 0.3);
-      rigRotation("LeftUpperArm", riggedPose.LeftUpperArm, 1, 0.3);
-      rigRotation("LeftLowerArm", riggedPose.LeftLowerArm, 1, 0.3);
-      rigRotation("LeftUpperLeg", riggedPose.LeftUpperLeg, 1, 0.3);
-      rigRotation("LeftLowerLeg", riggedPose.LeftLowerLeg, 1, 0.3);
-      rigRotation("RightUpperLeg", riggedPose.RightUpperLeg, 1, 0.3);
-      rigRotation("RightLowerLeg", riggedPose.RightLowerLeg, 1, 0.3);
+      rigRotation(vrm, "Chest", riggedPose.Spine, 0.25, 0.3);
+      rigRotation(vrm, "Spine", riggedPose.Spine, 0.45, 0.3);
+      rigRotation(vrm, "RightUpperArm", riggedPose.RightUpperArm, 1, 0.3);
+      rigRotation(vrm, "RightLowerArm", riggedPose.RightLowerArm, 1, 0.3);
+      rigRotation(vrm, "LeftUpperArm", riggedPose.LeftUpperArm, 1, 0.3);
+      rigRotation(vrm, "LeftLowerArm", riggedPose.LeftLowerArm, 1, 0.3);
+      rigRotation(vrm, "LeftUpperLeg", riggedPose.LeftUpperLeg, 1, 0.3);
+      rigRotation(vrm, "LeftLowerLeg", riggedPose.LeftLowerLeg, 1, 0.3);
+      rigRotation(vrm, "RightUpperLeg", riggedPose.RightUpperLeg, 1, 0.3);
+      rigRotation(vrm, "RightLowerLeg", riggedPose.RightLowerLeg, 1, 0.3);
     }
     if (leftHandLandmarks) {
       riggedLeftHand = HandSolver.solve(leftHandLandmarks, "Left");
-      rigRotation("LeftHand", {
+      rigRotation(vrm, "LeftHand", {
         z: riggedPose.LeftHand.z,
         y: riggedLeftHand.LeftWrist.y,
         x: riggedLeftHand.LeftWrist.x
       });
-      rigRotation("LeftRingProximal", riggedLeftHand.LeftRingProximal);
-      rigRotation("LeftRingIntermediate", riggedLeftHand.LeftRingIntermediate);
-      rigRotation("LeftRingDistal", riggedLeftHand.LeftRingDistal);
-      rigRotation("LeftIndexProximal", riggedLeftHand.LeftIndexProximal);
-      rigRotation("LeftIndexIntermediate", riggedLeftHand.LeftIndexIntermediate);
-      rigRotation("LeftIndexDistal", riggedLeftHand.LeftIndexDistal);
-      rigRotation("LeftMiddleProximal", riggedLeftHand.LeftMiddleProximal);
-      rigRotation("LeftMiddleIntermediate", riggedLeftHand.LeftMiddleIntermediate);
-      rigRotation("LeftMiddleDistal", riggedLeftHand.LeftMiddleDistal);
-      rigRotation("LeftThumbProximal", riggedLeftHand.LeftThumbProximal);
-      rigRotation("LeftThumbIntermediate", riggedLeftHand.LeftThumbIntermediate);
-      rigRotation("LeftThumbDistal", riggedLeftHand.LeftThumbDistal);
-      rigRotation("LeftLittleProximal", riggedLeftHand.LeftLittleProximal);
-      rigRotation("LeftLittleIntermediate", riggedLeftHand.LeftLittleIntermediate);
-      rigRotation("LeftLittleDistal", riggedLeftHand.LeftLittleDistal);
+      rigRotation(vrm, "LeftRingProximal", riggedLeftHand.LeftRingProximal);
+      rigRotation(vrm, "LeftRingIntermediate", riggedLeftHand.LeftRingIntermediate);
+      rigRotation(vrm, "LeftRingDistal", riggedLeftHand.LeftRingDistal);
+      rigRotation(vrm, "LeftIndexProximal", riggedLeftHand.LeftIndexProximal);
+      rigRotation(vrm, "LeftIndexIntermediate", riggedLeftHand.LeftIndexIntermediate);
+      rigRotation(vrm, "LeftIndexDistal", riggedLeftHand.LeftIndexDistal);
+      rigRotation(vrm, "LeftMiddleProximal", riggedLeftHand.LeftMiddleProximal);
+      rigRotation(vrm, "LeftMiddleIntermediate", riggedLeftHand.LeftMiddleIntermediate);
+      rigRotation(vrm, "LeftMiddleDistal", riggedLeftHand.LeftMiddleDistal);
+      rigRotation(vrm, "LeftThumbProximal", riggedLeftHand.LeftThumbProximal);
+      rigRotation(vrm, "LeftThumbIntermediate", riggedLeftHand.LeftThumbIntermediate);
+      rigRotation(vrm, "LeftThumbDistal", riggedLeftHand.LeftThumbDistal);
+      rigRotation(vrm, "LeftLittleProximal", riggedLeftHand.LeftLittleProximal);
+      rigRotation(vrm, "LeftLittleIntermediate", riggedLeftHand.LeftLittleIntermediate);
+      rigRotation(vrm, "LeftLittleDistal", riggedLeftHand.LeftLittleDistal);
     }
     if (rightHandLandmarks) {
       riggedRightHand = HandSolver.solve(rightHandLandmarks, "Right");
-      rigRotation("RightHand", {
+      rigRotation(vrm, "RightHand", {
         z: riggedPose.RightHand.z,
         y: riggedRightHand.RightWrist.y,
         x: riggedRightHand.RightWrist.x
       });
-      rigRotation("RightRingProximal", riggedRightHand.RightRingProximal);
-      rigRotation("RightRingIntermediate", riggedRightHand.RightRingIntermediate);
-      rigRotation("RightRingDistal", riggedRightHand.RightRingDistal);
-      rigRotation("RightIndexProximal", riggedRightHand.RightIndexProximal);
-      rigRotation("RightIndexIntermediate", riggedRightHand.RightIndexIntermediate);
-      rigRotation("RightIndexDistal", riggedRightHand.RightIndexDistal);
-      rigRotation("RightMiddleProximal", riggedRightHand.RightMiddleProximal);
-      rigRotation("RightMiddleIntermediate", riggedRightHand.RightMiddleIntermediate);
-      rigRotation("RightMiddleDistal", riggedRightHand.RightMiddleDistal);
-      rigRotation("RightThumbProximal", riggedRightHand.RightThumbProximal);
-      rigRotation("RightThumbIntermediate", riggedRightHand.RightThumbIntermediate);
-      rigRotation("RightThumbDistal", riggedRightHand.RightThumbDistal);
-      rigRotation("RightLittleProximal", riggedRightHand.RightLittleProximal);
-      rigRotation("RightLittleIntermediate", riggedRightHand.RightLittleIntermediate);
-      rigRotation("RightLittleDistal", riggedRightHand.RightLittleDistal);
+      rigRotation(vrm, "RightRingProximal", riggedRightHand.RightRingProximal);
+      rigRotation(vrm, "RightRingIntermediate", riggedRightHand.RightRingIntermediate);
+      rigRotation(vrm, "RightRingDistal", riggedRightHand.RightRingDistal);
+      rigRotation(vrm, "RightIndexProximal", riggedRightHand.RightIndexProximal);
+      rigRotation(vrm, "RightIndexIntermediate", riggedRightHand.RightIndexIntermediate);
+      rigRotation(vrm, "RightIndexDistal", riggedRightHand.RightIndexDistal);
+      rigRotation(vrm, "RightMiddleProximal", riggedRightHand.RightMiddleProximal);
+      rigRotation(vrm, "RightMiddleIntermediate", riggedRightHand.RightMiddleIntermediate);
+      rigRotation(vrm, "RightMiddleDistal", riggedRightHand.RightMiddleDistal);
+      rigRotation(vrm, "RightThumbProximal", riggedRightHand.RightThumbProximal);
+      rigRotation(vrm, "RightThumbIntermediate", riggedRightHand.RightThumbIntermediate);
+      rigRotation(vrm, "RightThumbDistal", riggedRightHand.RightThumbDistal);
+      rigRotation(vrm, "RightLittleProximal", riggedRightHand.RightLittleProximal);
+      rigRotation(vrm, "RightLittleIntermediate", riggedRightHand.RightLittleIntermediate);
+      rigRotation(vrm, "RightLittleDistal", riggedRightHand.RightLittleDistal);
     }
   };
   var videoElement = new Value(document.querySelector(".input_video"));
   var onResults = (results) => {
     animateVRM(currentVRM.$, results);
+    animateVRM(mirrorVRM.$, results);
   };
   var holistic = new import_holistic.Holistic({
     locateFile: (file) => {
@@ -32800,6 +32789,9 @@
   tick.on(() => {
     if (currentVRM.$) {
       currentVRM.$.update(0.01);
+    }
+    if (mirrorVRM.$) {
+      mirrorVRM.$.update(0.01);
     }
   });
 
