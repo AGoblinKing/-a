@@ -1,6 +1,6 @@
 {
 	"name": "a",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"scripts": {
 		"start": "static public",
 		"build": "run-p build-client",
