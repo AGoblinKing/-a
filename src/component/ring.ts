@@ -1,4 +1,3 @@
-import AFRAME from "aframe"
 
 AFRAME.registerComponent("ring", {
     schema: {

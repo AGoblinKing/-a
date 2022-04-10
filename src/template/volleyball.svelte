@@ -1,5 +1,4 @@
 <script>
-import AFRAME from "aframe"
 
 import "../component/vrm"
 import "../component/physx"
@@ -17,8 +16,8 @@ export let groundSize = 100
 
 const light =  "#EEF"
 const light_dark = "#aaF"
-const sky = "#22C"
-const sky_dark = "#225"
+const sky = "#449"
+const sky_dark = "#003"
 const scatter = [-groundSize/2, 0, -groundSize/2, groundSize/2, 0, groundSize/2].join(" ") 
 
 
@@ -79,7 +78,13 @@ const scatter = [-groundSize/2, 0, -groundSize/2, groundSize/2, 0, groundSize/2]
     <a-sphere mixin="phys shadow toon" position="0 1.25 -15" radius="1.25" color="#EF2D5E"></a-sphere>
     <a-cylinder mixin="phys shadow toon" position="1 0.75 -13" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
 
-    <a-plane mixin="phys toon" shadow position="0 0 -4" rotation="-90 0 0" width={groundSize} height={groundSize} color="#115511" ></a-plane>
+    <a-plane mixin="phys toon" 
+        shadow 
+        position="0 0 -4" 
+        rotation="-90 0 0" 
+        width={groundSize} 
+        height={groundSize} 
+        color="#334411" ></a-plane>
 
     <a-entity pool__cloud="mixin: shadow cloud; size: 15" activate__cloud position="0 20 {groundSize/4}" />
 

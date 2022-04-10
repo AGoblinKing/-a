@@ -1,3 +1,6 @@
+
+import type AFRAMES from "aframe"
+
 declare module '*.svelte' {
 	export { SvelteComponentDev as default } from 'svelte/internal'
 }
@@ -20,4 +23,8 @@ declare module '*.vert' {
 declare module '*.toml' {
 	const value: any
 	export default value
+}
+
+declare global {
+	const AFRAME: AFRAMES;
 }

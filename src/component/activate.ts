@@ -1,5 +1,3 @@
-import AFRAME from 'aframe';
-
 
 AFRAME.registerComponent('activate', {
     multiple: true,

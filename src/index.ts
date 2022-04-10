@@ -6,4 +6,3 @@ const app = new Main({
 	target: document.getElementById('svelte'),
 	props: {}
 })
-

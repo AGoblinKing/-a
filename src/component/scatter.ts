@@ -1,7 +1,4 @@
-import AFRAME from "aframe"
-import { Box3 } from "three"
-
-const bb = new Box3()
+const bb = new AFRAME.THREE.Box3()
 
 AFRAME.registerComponent("scatter", {
     schema: {

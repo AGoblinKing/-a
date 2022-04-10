@@ -1,4 +1,3 @@
-import AFRAME from 'aframe';
 import { VRM } from "@pixiv/three-vrm"
 import { Value } from 'src/value';
 

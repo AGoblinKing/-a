@@ -4,10 +4,8 @@ import { Camera } from '@mediapipe/camera_utils/camera_utils';
 import { tick } from 'src/timing';
 
 import { VRMSchema } from "@pixiv/three-vrm"
-import AFRAME from "aframe"
 import { Value } from 'src/value';
 import { currentVRM } from './vrm';
-
 
 const remap = Kalidokit.Utils.remap;
 const clamp = Kalidokit.Utils.clamp;
