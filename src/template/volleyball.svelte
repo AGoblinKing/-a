@@ -6,6 +6,10 @@ import "../component/physx"
 import "../component/scatter"
 import "../component/activate"
 import "../component/ring"
+import "../component/webcam-vrm"
+import "../component/lookat"
+
+import Webcam from "./webcam.svelte"
 
 const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser)
 
@@ -13,13 +17,14 @@ export let groundSize = 100
 
 const light =  "#EEF"
 const light_dark = "#aaF"
-const sky = "#117"
-const sky_dark = "#113"
+const sky = "#22C"
+const sky_dark = "#225"
 const scatter = [-groundSize/2, 0, -groundSize/2, groundSize/2, 0, groundSize/2].join(" ") 
 
 
 </script>
 
+<Webcam />
 <a-scene shadow="type:pcfsoft;"  >
     <a-assets>
         <audio id="sound-bg" src="/sound/bg-ocean.mp3"></audio>
@@ -35,10 +40,10 @@ const scatter = [-groundSize/2, 0, -groundSize/2, groundSize/2, 0, groundSize/2]
         <a-mixin id="grass2" shadow gltf-model="/glb/grassLarge.glb" {scatter}/>
         <a-mixin id="mountains" shadow gltf-model="/glb/rockC.glb" ring="radius: {groundSize * 0.7}; count: 100" scale="15 7.5 15"/>
         <a-mixin id="rock" shadow gltf-model="/glb/rockB.glb" scale="0.5 0.25 0.5" {scatter} />
-        <a-mixin id="cloud" {scatter} animation="property:position; dur: {3000 * 60}; to:0 0 -{groundSize}; easing: linear; loop: true;" material="color: #ffffff; opacity: 0.5; transparent: true; shading: flat;" geometry="type: box" scale="15 5 5"/>
+        <a-mixin id="cloud" {scatter} animation="property:position; dur: {3000 * 60}; to:0 0 -{groundSize}; easing: linear; loop: true;" material="color: #ffffff; opacity: 0.5; transparent: true; " geometry scale="15 5 5"/>
     </a-assets>
 
-    <a-camera id="#camera" pursuit="target: #focus;"   position="0 1.65 5" />
+    <a-camera active fov="75"  id="#camera" pursuit="target: #focus;" position="0 1.65 -3.5" lookat="0 1.65 0"/>
  
     <a-sky color="{sky}" animate="property: color; to: {sky_dark}; easing: easeInOut; dur: 6000 "></a-sky>
 
@@ -67,12 +72,13 @@ const scatter = [-groundSize/2, 0, -groundSize/2, groundSize/2, 0, groundSize/2]
     ></a-entity>
     <a-entity light="type:ambient; color:{light}; intensity:1;" animate="property: light.color; to: {light_dark}; easing: easeInOutBounce; dur: 6000" position="-1 1 1"></a-entity>
 
-    <a-entity mixin="shadow" vrm="src: /vrm/goblin.vrm;fps: true" id="focus" />
-    <a-entity mixin="shadow" vrm="src: /vrm/femgoblin.vrm;" scatter="-5 0 -5 5 0 5"  />
+    <a-entity mixin="shadow" position="0 0 -5" rotation="0 180 0" vrm="src: /vrm/goblin.vrm;current: true" id="focus" />
+    <a-entity mixin="shadow" position="0 0 -5"  rotation="0 180 0" vrm="src: /vrm/femgoblin.vrm; mirror: true" scatter="-5 0 -5 5 0 5"  />
     
-    <a-box mixin="phys shadow toon" position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9" ></a-box>
-    <a-sphere mixin="phys shadow toon" position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
-    <a-cylinder mixin="phys shadow toon" position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
+    <a-box mixin="phys shadow toon" position="-1 0.5 -13" rotation="0 45 0" color="#4CC3D9" ></a-box>
+    <a-sphere mixin="phys shadow toon" position="0 1.25 -15" radius="1.25" color="#EF2D5E"></a-sphere>
+    <a-cylinder mixin="phys shadow toon" position="1 0.75 -13" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
+
     <a-plane mixin="phys toon" shadow position="0 0 -4" rotation="-90 0 0" width={groundSize} height={groundSize} color="#115511" ></a-plane>
 
     <a-entity pool__cloud="mixin: shadow cloud; size: 15" activate__cloud position="0 20 {groundSize/4}" />
