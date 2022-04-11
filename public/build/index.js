@@ -33718,7 +33718,7 @@ The web is a scary place.
     let if_block1_anchor;
     let current;
     let if_block0 = ctx[0] && create_if_block_1(ctx);
-    let if_block1 = (ctx[1] || true) && create_if_block(ctx);
+    let if_block1 = ctx[1] && create_if_block(ctx);
     return {
       c() {
         if (if_block0)
@@ -33756,7 +33756,7 @@ The web is a scary place.
           });
           check_outros();
         }
-        if (ctx2[1] || true) {
+        if (ctx2[1]) {
           if (if_block1) {
             if_block1.p(ctx2, dirty);
             if (dirty & 2) {

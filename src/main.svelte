@@ -12,7 +12,7 @@
     <Home />
 {/if}
 
-{#if $open_game || true}
+{#if $open_game }
     <Volleyball {groundSize} />
     <Webcam />
 {/if}
