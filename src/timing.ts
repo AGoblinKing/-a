@@ -14,7 +14,6 @@ export const motd = new Value(`🎊v0.0.5🎊
 ❌ Editing 
 ❌ VRM Import
 ❌ WebRTC Multiplayer 
-❌ WebRTC MediaSoup Server 
 
 The web is a scary place. 
 🖥️ Use a VPN.🖥️
