@@ -14,7 +14,9 @@
 </script>
 
 <div class="hidden">
-    <video bind:this={videoElementSource} />
+    <video bind:this={videoElementSource}>
+
+    </video>
 
 </div>
 

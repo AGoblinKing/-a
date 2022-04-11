@@ -16,6 +16,7 @@ window.addEventListener('keydown', (e) => {
 
 	e.preventDefault()
 	const k = e.key.toLowerCase()
+
 	key_down.set(k)
 	key_map.$[k] = true
 	key_map.poke()

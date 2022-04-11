@@ -12,6 +12,7 @@ esbuild
 		outdir: './public/build',
 		plugins: [
 			esbuildSvelte({
+				filterWarnings: () => false,
 				preprocess: sveltePreprocess()
 			}),
 			glsl({
@@ -36,6 +37,7 @@ esbuild
 		outdir: './debug',
 		plugins: [
 			esbuildSvelte({
+				filterWarnings: () => false,
 				preprocess: sveltePreprocess()
 			}),
 			glsl({

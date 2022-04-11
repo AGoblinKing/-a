@@ -5369,6 +5369,16 @@
   function is_empty(obj) {
     return Object.keys(obj).length === 0;
   }
+  function subscribe(store, ...callbacks) {
+    if (store == null) {
+      return noop;
+    }
+    const unsub = store.subscribe(...callbacks);
+    return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
+  }
+  function component_subscribe(component, store, callback) {
+    component.$$.on_destroy.push(subscribe(store, callback));
+  }
   var is_hydrating = false;
   function start_hydrating() {
     is_hydrating = true;
@@ -5394,6 +5404,13 @@
   function space() {
     return text(" ");
   }
+  function empty() {
+    return text("");
+  }
+  function listen(node, event, handler, options) {
+    node.addEventListener(event, handler, options);
+    return () => node.removeEventListener(event, handler, options);
+  }
   function attr(node, attribute, value) {
     if (value == null)
       node.removeAttribute(attribute);
@@ -5410,9 +5427,34 @@
   function children(element2) {
     return Array.from(element2.childNodes);
   }
+  function toggle_class(element2, name, toggle) {
+    element2.classList[toggle ? "add" : "remove"](name);
+  }
+  function custom_event(type, detail, bubbles = false) {
+    const e = document.createEvent("CustomEvent");
+    e.initCustomEvent(type, bubbles, false, detail);
+    return e;
+  }
   var current_component;
   function set_current_component(component) {
     current_component = component;
+  }
+  function get_current_component() {
+    if (!current_component)
+      throw new Error("Function called outside component initialization");
+    return current_component;
+  }
+  function createEventDispatcher() {
+    const component = get_current_component();
+    return (type, detail) => {
+      const callbacks = component.$$.callbacks[type];
+      if (callbacks) {
+        const event = custom_event(type, detail);
+        callbacks.slice().forEach((fn) => {
+          fn.call(component, event);
+        });
+      }
+    };
   }
   var dirty_components = [];
   var binding_callbacks = [];
@@ -5473,6 +5515,19 @@
   }
   var outroing = /* @__PURE__ */ new Set();
   var outros;
+  function group_outros() {
+    outros = {
+      r: 0,
+      c: [],
+      p: outros
+    };
+  }
+  function check_outros() {
+    if (!outros.r) {
+      run_all(outros.c);
+    }
+    outros = outros.p;
+  }
   function transition_in(block, local) {
     if (block && block.i) {
       outroing.delete(block);
@@ -5532,7 +5587,7 @@
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance3, create_fragment4, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance6, create_fragment7, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5555,7 +5610,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance3 ? instance3(component, options.props || {}, (i2, ret, ...rest) => {
+    $$.ctx = instance6 ? instance6(component, options.props || {}, (i2, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
         if (!$$.skip_bound && $$.bound[i2])
@@ -5568,7 +5623,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment4 ? create_fragment4($$.ctx) : false;
+    $$.fragment = create_fragment7 ? create_fragment7($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -20639,7 +20694,7 @@
       return _currentRenderTarget === null ? _pixelRatio : 1;
     }
     let _gl = _context2;
-    function getContext(contextNames, contextAttributes) {
+    function getContext2(contextNames, contextAttributes) {
       for (let i2 = 0; i2 < contextNames.length; i2++) {
         const contextName = contextNames[i2];
         const context = _canvas2.getContext(contextName, contextAttributes);
@@ -20668,9 +20723,9 @@
         if (_this.isWebGL1Renderer === true) {
           contextNames.shift();
         }
-        _gl = getContext(contextNames, contextAttributes);
+        _gl = getContext2(contextNames, contextAttributes);
         if (_gl === null) {
-          if (getContext(contextNames)) {
+          if (getContext2(contextNames)) {
             throw new Error("Error creating WebGL context with your selected attributes.");
           } else {
             throw new Error("Error creating WebGL context.");
@@ -31257,16 +31312,16 @@
       this.poke();
       return this;
     }
-    on(subscribe) {
+    on(subscribe2) {
       if (this.reactions === void 0) {
         this.reactions = /* @__PURE__ */ new Set();
       }
-      this.reactions.add(subscribe);
-      subscribe(this.$);
-      return () => this.reactions.delete(subscribe);
+      this.reactions.add(subscribe2);
+      subscribe2(this.$);
+      return () => this.reactions.delete(subscribe2);
     }
-    subscribe(subscribe) {
-      return this.on(subscribe);
+    subscribe(subscribe2) {
+      return this.on(subscribe2);
     }
     log(msg) {
       this.on(() => console.log(msg, this.$));
@@ -32625,6 +32680,19 @@
 
   // src/timing.ts
   var tick = new Value(0);
+  var open_home = new Value(true);
+  var open_game = new Value(false);
+  var motd = new Value(`\u{1F38A}v0.0.4\u{1F38A}
+
+\u2705VRM\u2705Scene\u2705WebCam
+\u274C FPS Camera
+\u274C PhysX
+\u274C AI / Gameplay
+
+The web is a scary place. 
+\u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
+
+`);
   var ticker = () => {
     requestAnimationFrame(ticker);
     tick.set(tick.$ + 1);
@@ -32806,194 +32874,197 @@
     }
   });
 
-  // src/template/webcam.svelte
-  function create_fragment(ctx) {
-    let div;
-    let video;
-    return {
-      c() {
-        div = element("div");
-        video = element("video");
-        attr(div, "class", "hidden svelte-1elb9t4");
-      },
-      m(target, anchor) {
-        insert(target, div, anchor);
-        append(div, video);
-        ctx[1](video);
-      },
-      p: noop,
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(div);
-        ctx[1](null);
-      }
-    };
+  // src/keyboard.ts
+  var key_down = new Value("");
+  var key_up = new Value("");
+  var key_map = new Value({});
+  function bounce(e) {
+    return e.target.tagName === "INPUT";
   }
-  function instance($$self, $$props, $$invalidate) {
-    let videoElementSource;
-    function video_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        videoElementSource = $$value;
-        $$invalidate(0, videoElementSource);
+  window.addEventListener("keydown", (e) => {
+    if (bounce(e))
+      return;
+    e.preventDefault();
+    const k2 = e.key.toLowerCase();
+    key_down.set(k2);
+    key_map.$[k2] = true;
+    key_map.poke();
+  });
+  window.addEventListener("keyup", (e) => {
+    if (bounce(e))
+      return;
+    const k2 = e.key.toLowerCase();
+    key_up.set(k2);
+    key_map.$[k2] = false;
+    key_map.poke();
+  });
+
+  // src/component/character_camera.ts
+  AFRAME.registerComponent("character-camera", {
+    schema: {
+      zoom: { type: "number", default: 0 },
+      max_zoom: { type: "number", default: 5 }
+    },
+    init() {
+      this.cancel = currentVRM.on(() => {
+        console.log(currentVRM.$);
+        currentVRM.$.firstPerson.firstPersonBone.add(this.el.object3D);
       });
-    }
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & 1) {
-        $: {
-          if (videoElementSource && !videoElement.$) {
-            videoElement.set(videoElementSource);
-          }
-        }
+    },
+    remove() {
+      currentVRM.$?.firstPerson.firstPersonBone.remove(this.el.object3D);
+      this.cancel();
+    },
+    update() {
+      this.el.object3D.position.z = this.data.zoom;
+      if (this.data.zoom >= 1 && currentVRM.$) {
       }
-    };
-    return [videoElementSource, video_binding];
-  }
-  var Webcam = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance, create_fragment, safe_not_equal, {});
+    },
+    tick() {
+      if (key_map.$["pageup"]) {
+        this.data.zoom = Math.min(this.data.max_zoom, this.data.zoom + 0.01);
+        this.update();
+      } else if (key_map.$["pagedown"]) {
+        this.data.zoom = Math.max(this.data.zoom - 0.01, 0);
+        this.update();
+      }
+      if (currentVRM.$) {
+        console.log(currentVRM.$.firstPerson.getFirstPersonWorldDirection(this.el.object3D.rotation));
+        currentVRM.$.firstPerson.getFirstPersonWorldPosition(this.el.object3D.position);
+      }
     }
-  };
-  var webcam_default = Webcam;
+  });
 
   // src/template/volleyball.svelte
-  function create_fragment2(ctx) {
-    let webcam;
-    let t0;
+  function create_fragment(ctx) {
     let a_scene;
     let a_assets;
     let audio;
     let audio_src_value;
-    let t1;
+    let t0;
     let a_asset_item;
     let a_asset_item_src_value;
-    let t2;
+    let t1;
     let a_mixin0;
-    let t3;
+    let t2;
     let a_mixin1;
-    let t4;
+    let t3;
     let a_mixin2;
-    let t5;
+    let t4;
     let a_mixin3;
-    let t6;
+    let t5;
     let a_mixin4;
-    let t7;
+    let t6;
     let a_mixin5;
-    let t8;
+    let t7;
     let a_mixin6;
     let a_mixin6_ring_value;
-    let t9;
+    let t8;
     let a_mixin7;
-    let t10;
+    let t9;
     let a_mixin8;
     let a_mixin8_animation_value;
-    let t11;
+    let t10;
     let a_camera;
-    let t12;
+    let t11;
     let a_sky;
     let a_sky_animate_value;
-    let t13;
+    let t12;
     let a_entity0;
-    let t14;
+    let t13;
     let a_entity1;
-    let t15;
+    let t14;
     let a_entity2;
-    let t16;
+    let t15;
     let a_entity3;
-    let t17;
+    let t16;
     let a_entity4;
-    let t18;
+    let t17;
     let a_entity5;
     let a_entity5_position_value;
     let a_entity5_animate_value;
     let a_entity5_light_value;
-    let t19;
+    let t18;
     let a_entity6;
     let a_entity6_light_value;
     let a_entity6_animate_value;
-    let t20;
+    let t19;
     let a_entity7;
-    let t21;
+    let t20;
     let a_entity8;
-    let t22;
+    let t21;
     let a_box;
-    let t23;
+    let t22;
     let a_sphere;
-    let t24;
+    let t23;
     let a_cylinder;
-    let t25;
+    let t24;
     let a_plane;
-    let t26;
+    let t25;
     let a_entity9;
     let a_entity9_position_value;
-    let t27;
+    let t26;
     let a_sound;
     let a_sound_volume_value;
     let a_sound_src_value;
-    let current;
-    webcam = new webcam_default({});
     return {
       c() {
-        create_component(webcam.$$.fragment);
-        t0 = space();
         a_scene = element("a-scene");
         a_assets = element("a-assets");
         audio = element("audio");
-        t1 = space();
+        t0 = space();
         a_asset_item = element("a-asset-item");
-        t2 = space();
+        t1 = space();
         a_mixin0 = element("a-mixin");
-        t3 = space();
+        t2 = space();
         a_mixin1 = element("a-mixin");
-        t4 = space();
+        t3 = space();
         a_mixin2 = element("a-mixin");
-        t5 = space();
+        t4 = space();
         a_mixin3 = element("a-mixin");
-        t6 = space();
+        t5 = space();
         a_mixin4 = element("a-mixin");
-        t7 = space();
+        t6 = space();
         a_mixin5 = element("a-mixin");
-        t8 = space();
+        t7 = space();
         a_mixin6 = element("a-mixin");
-        t9 = space();
+        t8 = space();
         a_mixin7 = element("a-mixin");
-        t10 = space();
+        t9 = space();
         a_mixin8 = element("a-mixin");
-        t11 = space();
+        t10 = space();
         a_camera = element("a-camera");
-        t12 = space();
+        t11 = space();
         a_sky = element("a-sky");
-        t13 = space();
+        t12 = space();
         a_entity0 = element("a-entity");
-        t14 = space();
+        t13 = space();
         a_entity1 = element("a-entity");
-        t15 = space();
+        t14 = space();
         a_entity2 = element("a-entity");
-        t16 = space();
+        t15 = space();
         a_entity3 = element("a-entity");
-        t17 = space();
+        t16 = space();
         a_entity4 = element("a-entity");
-        t18 = space();
+        t17 = space();
         a_entity5 = element("a-entity");
-        t19 = space();
+        t18 = space();
         a_entity6 = element("a-entity");
-        t20 = space();
+        t19 = space();
         a_entity7 = element("a-entity");
-        t21 = space();
+        t20 = space();
         a_entity8 = element("a-entity");
-        t22 = space();
+        t21 = space();
         a_box = element("a-box");
-        t23 = space();
+        t22 = space();
         a_sphere = element("a-sphere");
-        t24 = space();
+        t23 = space();
         a_cylinder = element("a-cylinder");
-        t25 = space();
+        t24 = space();
         a_plane = element("a-plane");
-        t26 = space();
+        t25 = space();
         a_entity9 = element("a-entity");
-        t27 = space();
+        t26 = space();
         a_sound = element("a-sound");
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "/sound/bg-ocean.mp3"))
@@ -33111,78 +33182,75 @@
         set_custom_element_data(a_scene, "shadow", "type:pcfsoft;");
       },
       m(target, anchor) {
-        mount_component(webcam, target, anchor);
-        insert(target, t0, anchor);
         insert(target, a_scene, anchor);
         append(a_scene, a_assets);
         append(a_assets, audio);
-        append(a_assets, t1);
+        append(a_assets, t0);
         append(a_assets, a_asset_item);
-        append(a_assets, t2);
+        append(a_assets, t1);
         append(a_assets, a_mixin0);
-        append(a_assets, t3);
+        append(a_assets, t2);
         append(a_assets, a_mixin1);
-        append(a_assets, t4);
+        append(a_assets, t3);
         append(a_assets, a_mixin2);
-        append(a_assets, t5);
+        append(a_assets, t4);
         append(a_assets, a_mixin3);
-        append(a_assets, t6);
+        append(a_assets, t5);
         append(a_assets, a_mixin4);
-        append(a_assets, t7);
+        append(a_assets, t6);
         append(a_assets, a_mixin5);
-        append(a_assets, t8);
+        append(a_assets, t7);
         append(a_assets, a_mixin6);
-        append(a_assets, t9);
+        append(a_assets, t8);
         append(a_assets, a_mixin7);
-        append(a_assets, t10);
+        append(a_assets, t9);
         append(a_assets, a_mixin8);
-        append(a_scene, t11);
+        append(a_scene, t10);
         append(a_scene, a_camera);
-        append(a_scene, t12);
+        append(a_scene, t11);
         append(a_scene, a_sky);
-        append(a_scene, t13);
+        append(a_scene, t12);
         append(a_scene, a_entity0);
-        append(a_scene, t14);
+        append(a_scene, t13);
         append(a_scene, a_entity1);
-        append(a_scene, t15);
+        append(a_scene, t14);
         append(a_scene, a_entity2);
-        append(a_scene, t16);
+        append(a_scene, t15);
         append(a_scene, a_entity3);
-        append(a_scene, t17);
+        append(a_scene, t16);
         append(a_scene, a_entity4);
-        append(a_scene, t18);
+        append(a_scene, t17);
         append(a_scene, a_entity5);
-        append(a_scene, t19);
+        append(a_scene, t18);
         append(a_scene, a_entity6);
-        append(a_scene, t20);
+        append(a_scene, t19);
         append(a_scene, a_entity7);
-        append(a_scene, t21);
+        append(a_scene, t20);
         append(a_scene, a_entity8);
-        append(a_scene, t22);
+        append(a_scene, t21);
         append(a_scene, a_box);
-        append(a_scene, t23);
+        append(a_scene, t22);
         append(a_scene, a_sphere);
-        append(a_scene, t24);
+        append(a_scene, t23);
         append(a_scene, a_cylinder);
-        append(a_scene, t25);
+        append(a_scene, t24);
         append(a_scene, a_plane);
-        append(a_scene, t26);
+        append(a_scene, t25);
         append(a_scene, a_entity9);
-        append(a_scene, t27);
+        append(a_scene, t26);
         append(a_scene, a_sound);
-        current = true;
       },
       p(ctx2, [dirty]) {
-        if (!current || dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 100")) {
+        if (dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 100")) {
           set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value);
         }
-        if (!current || dirty & 1 && a_mixin8_animation_value !== (a_mixin8_animation_value = "property:position; dur: " + 3e3 * 60 + "; to:0 0 -" + ctx2[0] + "; easing: linear; loop: true;")) {
+        if (dirty & 1 && a_mixin8_animation_value !== (a_mixin8_animation_value = "property:position; dur: " + 3e3 * 60 + "; to:0 0 -" + ctx2[0] + "; easing: linear; loop: true;")) {
           set_custom_element_data(a_mixin8, "animation", a_mixin8_animation_value);
         }
-        if (!current || dirty & 1 && a_entity5_position_value !== (a_entity5_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
+        if (dirty & 1 && a_entity5_position_value !== (a_entity5_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
           set_custom_element_data(a_entity5, "position", a_entity5_position_value);
         }
-        if (!current || dirty & 1 && a_entity5_light_value !== (a_entity5_light_value = ctx2[1]({
+        if (dirty & 1 && a_entity5_light_value !== (a_entity5_light_value = ctx2[1]({
           type: "directional",
           castShadow: true,
           color: light,
@@ -33196,30 +33264,19 @@
         }))) {
           set_custom_element_data(a_entity5, "light", a_entity5_light_value);
         }
-        if (!current || dirty & 1) {
+        if (dirty & 1) {
           set_custom_element_data(a_plane, "width", ctx2[0]);
         }
-        if (!current || dirty & 1) {
+        if (dirty & 1) {
           set_custom_element_data(a_plane, "height", ctx2[0]);
         }
-        if (!current || dirty & 1 && a_entity9_position_value !== (a_entity9_position_value = "0 20 " + ctx2[0] / 4)) {
+        if (dirty & 1 && a_entity9_position_value !== (a_entity9_position_value = "0 20 " + ctx2[0] / 4)) {
           set_custom_element_data(a_entity9, "position", a_entity9_position_value);
         }
       },
-      i(local) {
-        if (current)
-          return;
-        transition_in(webcam.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(webcam.$$.fragment, local);
-        current = false;
-      },
+      i: noop,
+      o: noop,
       d(detaching) {
-        destroy_component(webcam, detaching);
-        if (detaching)
-          detach(t0);
         if (detaching)
           detach(a_scene);
       }
@@ -33229,7 +33286,7 @@
   var light_dark = "#aaF";
   var sky = "#449";
   var sky_dark = "#003";
-  function instance2($$self, $$props, $$invalidate) {
+  function instance($$self, $$props, $$invalidate) {
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize: groundSize2 = 100 } = $$props;
     const scatter = [-groundSize2 / 2, 0, -groundSize2 / 2, groundSize2 / 2, 0, groundSize2 / 2].join(" ");
@@ -33242,22 +33299,397 @@
   var Volleyball = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance2, create_fragment2, safe_not_equal, { groundSize: 0 });
+      init(this, options, instance, create_fragment, safe_not_equal, { groundSize: 0 });
     }
   };
   var volleyball_default = Volleyball;
 
-  // src/Main.svelte
+  // src/ui/sprite.svelte
+  function create_fragment2(ctx) {
+    let sprite;
+    let sprite_style_value;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        sprite = element("sprite");
+        attr(sprite, "class", "sprite svelte-1c07in");
+        attr(sprite, "style", sprite_style_value = "background-position: -" + ctx[5] + "% -" + ctx[4] + "%; " + ctx[3]);
+        toggle_class(sprite, "hoverable", ctx[0]);
+        toggle_class(sprite, "active", ctx[2]);
+        toggle_class(sprite, "shadow", ctx[1]);
+      },
+      m(target, anchor) {
+        insert(target, sprite, anchor);
+        if (!mounted) {
+          dispose = listen(sprite, "click", ctx[6]);
+          mounted = true;
+        }
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 56 && sprite_style_value !== (sprite_style_value = "background-position: -" + ctx2[5] + "% -" + ctx2[4] + "%; " + ctx2[3])) {
+          attr(sprite, "style", sprite_style_value);
+        }
+        if (dirty & 1) {
+          toggle_class(sprite, "hoverable", ctx2[0]);
+        }
+        if (dirty & 4) {
+          toggle_class(sprite, "active", ctx2[2]);
+        }
+        if (dirty & 2) {
+          toggle_class(sprite, "shadow", ctx2[1]);
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(sprite);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function instance2($$self, $$props, $$invalidate) {
+    let x2;
+    let y2;
+    let { idx = 0 } = $$props;
+    let { hoverable = true } = $$props;
+    let { shadow = false } = $$props;
+    let { active = false } = $$props;
+    let { style = "" } = $$props;
+    const dispatch = createEventDispatcher();
+    function forward(event) {
+      dispatch(event.type, event.detail);
+    }
+    $$self.$$set = ($$props2) => {
+      if ("idx" in $$props2)
+        $$invalidate(7, idx = $$props2.idx);
+      if ("hoverable" in $$props2)
+        $$invalidate(0, hoverable = $$props2.hoverable);
+      if ("shadow" in $$props2)
+        $$invalidate(1, shadow = $$props2.shadow);
+      if ("active" in $$props2)
+        $$invalidate(2, active = $$props2.active);
+      if ("style" in $$props2)
+        $$invalidate(3, style = $$props2.style);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 128) {
+        $:
+          $$invalidate(5, x2 = idx % 32 * 100);
+      }
+      if ($$self.$$.dirty & 128) {
+        $:
+          $$invalidate(4, y2 = Math.floor(idx / 32) * 100);
+      }
+    };
+    return [hoverable, shadow, active, style, y2, x2, forward, idx];
+  }
+  var Sprite2 = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance2, create_fragment2, safe_not_equal, {
+        idx: 7,
+        hoverable: 0,
+        shadow: 1,
+        active: 2,
+        style: 3
+      });
+    }
+  };
+  var sprite_default = Sprite2;
+
+  // src/ui/title.svelte
   function create_fragment3(ctx) {
+    let div3;
+    return {
+      c() {
+        div3 = element("div");
+        div3.innerHTML = `<div class="favicon svelte-12pdbth"></div> 
+	<div class="full svelte-12pdbth"><div class="title svelte-12pdbth"><offset class="svelte-12pdbth"><b class="svelte-12pdbth">a</b>      <br/></offset> 
+			<b class="svelte-12pdbth">G</b>oblin
+			<offset class="svelte-12pdbth"><b class="svelte-12pdbth">L</b>ife</offset></div></div>`;
+        attr(div3, "class", "intro svelte-12pdbth");
+      },
+      m(target, anchor) {
+        insert(target, div3, anchor);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div3);
+      }
+    };
+  }
+  var Title = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, create_fragment3, safe_not_equal, {});
+    }
+  };
+  var title_default = Title;
+
+  // src/ui/home.svelte
+  function create_fragment4(ctx) {
+    let div9;
+    let div0;
+    let t0;
+    let gap;
+    let t1;
+    let title;
+    let t2;
+    let div8;
+    let div3;
+    let div1;
+    let t3;
+    let textarea;
+    let t4;
+    let div2;
+    let t5;
+    let div7;
+    let div4;
+    let t6;
+    let div5;
+    let sprite;
+    let t7;
+    let div6;
+    let current;
+    let mounted;
+    let dispose;
+    title = new title_default({});
+    sprite = new sprite_default({
+      props: { idx: 927, hoverable: false, shadow: true }
+    });
+    return {
+      c() {
+        div9 = element("div");
+        div0 = element("div");
+        t0 = space();
+        gap = element("gap");
+        t1 = space();
+        create_component(title.$$.fragment);
+        t2 = space();
+        div8 = element("div");
+        div3 = element("div");
+        div1 = element("div");
+        t3 = space();
+        textarea = element("textarea");
+        t4 = space();
+        div2 = element("div");
+        t5 = space();
+        div7 = element("div");
+        div4 = element("div");
+        t6 = space();
+        div5 = element("div");
+        create_component(sprite.$$.fragment);
+        t7 = space();
+        div6 = element("div");
+        attr(div0, "class", "sprites sprite svelte-192n34x");
+        attr(gap, "class", "svelte-192n34x");
+        attr(div1, "class", "flex svelte-192n34x");
+        attr(textarea, "type", "text");
+        attr(textarea, "class", "text button svelte-192n34x");
+        attr(textarea, "maxlength", "200");
+        textarea.value = ctx[0];
+        textarea.readOnly = true;
+        attr(div2, "class", "flex svelte-192n34x");
+        attr(div3, "class", "span2 full svelte-192n34x");
+        attr(div4, "class", "flex svelte-192n34x");
+        attr(div5, "type", "button");
+        attr(div5, "class", "button icon svelte-192n34x");
+        attr(div5, "value", "GO");
+        attr(div6, "class", "flex svelte-192n34x");
+        attr(div7, "class", "span2 full svelte-192n34x");
+        attr(div8, "class", "vbox svelte-192n34x");
+        attr(div9, "class", "menu svelte-192n34x");
+      },
+      m(target, anchor) {
+        insert(target, div9, anchor);
+        append(div9, div0);
+        append(div9, t0);
+        append(div9, gap);
+        append(div9, t1);
+        mount_component(title, div9, null);
+        append(div9, t2);
+        append(div9, div8);
+        append(div8, div3);
+        append(div3, div1);
+        append(div3, t3);
+        append(div3, textarea);
+        append(div3, t4);
+        append(div3, div2);
+        append(div8, t5);
+        append(div8, div7);
+        append(div7, div4);
+        append(div7, t6);
+        append(div7, div5);
+        mount_component(sprite, div5, null);
+        append(div7, t7);
+        append(div7, div6);
+        current = true;
+        if (!mounted) {
+          dispose = [
+            listen(textarea, "copy", copy_handler),
+            listen(textarea, "paste", ctx[1]),
+            listen(textarea, "keydown", keydown_handler),
+            listen(div5, "click", ctx[2])
+          ];
+          mounted = true;
+        }
+      },
+      p(ctx2, [dirty]) {
+        if (!current || dirty & 1) {
+          textarea.value = ctx2[0];
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(title.$$.fragment, local);
+        transition_in(sprite.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(title.$$.fragment, local);
+        transition_out(sprite.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div9);
+        destroy_component(title);
+        destroy_component(sprite);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  var copy_handler = (e) => {
+    e.preventDefault();
+  };
+  var keydown_handler = (e) => {
+  };
+  function instance3($$self, $$props, $$invalidate) {
+    let $motd;
+    component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
+    const paste_handler = (e) => {
+      const v2 = decodeURI(e.clipboardData.getData("text"));
+      e.preventDefault();
+    };
+    const click_handler = () => {
+      open_home.set(false);
+      open_game.set(true);
+    };
+    return [$motd, paste_handler, click_handler];
+  }
+  var Home = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance3, create_fragment4, safe_not_equal, {});
+    }
+  };
+  var home_default = Home;
+
+  // src/template/webcam.svelte
+  function create_fragment5(ctx) {
+    let div;
+    let video;
+    return {
+      c() {
+        div = element("div");
+        video = element("video");
+        attr(div, "class", "hidden svelte-1elb9t4");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, video);
+        ctx[1](video);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        ctx[1](null);
+      }
+    };
+  }
+  function instance4($$self, $$props, $$invalidate) {
+    let videoElementSource;
+    function video_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        videoElementSource = $$value;
+        $$invalidate(0, videoElementSource);
+      });
+    }
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 1) {
+        $: {
+          if (videoElementSource && !videoElement.$) {
+            videoElement.set(videoElementSource);
+          }
+        }
+      }
+    };
+    return [videoElementSource, video_binding];
+  }
+  var Webcam = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance4, create_fragment5, safe_not_equal, {});
+    }
+  };
+  var webcam_default = Webcam;
+
+  // src/main.svelte
+  function create_if_block_1(ctx) {
+    let home;
+    let current;
+    home = new home_default({});
+    return {
+      c() {
+        create_component(home.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(home, target, anchor);
+        current = true;
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(home.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(home.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(home, detaching);
+      }
+    };
+  }
+  function create_if_block(ctx) {
     let volleyball;
+    let t;
+    let webcam;
     let current;
     volleyball = new volleyball_default({ props: { groundSize } });
+    webcam = new webcam_default({});
     return {
       c() {
         create_component(volleyball.$$.fragment);
+        t = space();
+        create_component(webcam.$$.fragment);
       },
       m(target, anchor) {
         mount_component(volleyball, target, anchor);
+        insert(target, t, anchor);
+        mount_component(webcam, target, anchor);
         current = true;
       },
       p: noop,
@@ -33265,28 +33697,127 @@
         if (current)
           return;
         transition_in(volleyball.$$.fragment, local);
+        transition_in(webcam.$$.fragment, local);
         current = true;
       },
       o(local) {
         transition_out(volleyball.$$.fragment, local);
+        transition_out(webcam.$$.fragment, local);
         current = false;
       },
       d(detaching) {
         destroy_component(volleyball, detaching);
+        if (detaching)
+          detach(t);
+        destroy_component(webcam, detaching);
+      }
+    };
+  }
+  function create_fragment6(ctx) {
+    let t;
+    let if_block1_anchor;
+    let current;
+    let if_block0 = ctx[0] && create_if_block_1(ctx);
+    let if_block1 = (ctx[1] || true) && create_if_block(ctx);
+    return {
+      c() {
+        if (if_block0)
+          if_block0.c();
+        t = space();
+        if (if_block1)
+          if_block1.c();
+        if_block1_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block0)
+          if_block0.m(target, anchor);
+        insert(target, t, anchor);
+        if (if_block1)
+          if_block1.m(target, anchor);
+        insert(target, if_block1_anchor, anchor);
+        current = true;
+      },
+      p(ctx2, [dirty]) {
+        if (ctx2[0]) {
+          if (if_block0) {
+            if (dirty & 1) {
+              transition_in(if_block0, 1);
+            }
+          } else {
+            if_block0 = create_if_block_1(ctx2);
+            if_block0.c();
+            transition_in(if_block0, 1);
+            if_block0.m(t.parentNode, t);
+          }
+        } else if (if_block0) {
+          group_outros();
+          transition_out(if_block0, 1, 1, () => {
+            if_block0 = null;
+          });
+          check_outros();
+        }
+        if (ctx2[1] || true) {
+          if (if_block1) {
+            if_block1.p(ctx2, dirty);
+            if (dirty & 2) {
+              transition_in(if_block1, 1);
+            }
+          } else {
+            if_block1 = create_if_block(ctx2);
+            if_block1.c();
+            transition_in(if_block1, 1);
+            if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
+          }
+        } else if (if_block1) {
+          group_outros();
+          transition_out(if_block1, 1, 1, () => {
+            if_block1 = null;
+          });
+          check_outros();
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(if_block0);
+        transition_in(if_block1);
+        current = true;
+      },
+      o(local) {
+        transition_out(if_block0);
+        transition_out(if_block1);
+        current = false;
+      },
+      d(detaching) {
+        if (if_block0)
+          if_block0.d(detaching);
+        if (detaching)
+          detach(t);
+        if (if_block1)
+          if_block1.d(detaching);
+        if (detaching)
+          detach(if_block1_anchor);
       }
     };
   }
   var groundSize = 100;
+  function instance5($$self, $$props, $$invalidate) {
+    let $open_home;
+    let $open_game;
+    component_subscribe($$self, open_home, ($$value) => $$invalidate(0, $open_home = $$value));
+    component_subscribe($$self, open_game, ($$value) => $$invalidate(1, $open_game = $$value));
+    return [$open_home, $open_game];
+  }
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment3, safe_not_equal, {});
+      init(this, options, instance5, create_fragment6, safe_not_equal, {});
     }
   };
-  var Main_default = Main;
+  var main_default = Main;
 
   // src/index.ts
-  var app = new Main_default({
+  var app = new main_default({
     target: document.getElementById("svelte"),
     props: {}
   });

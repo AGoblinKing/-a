@@ -1,4 +1,4 @@
-import Main from './Main.svelte'
+import Main from "./main.svelte"
 
 import "./component/vrm"
 

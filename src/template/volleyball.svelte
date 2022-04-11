@@ -7,8 +7,7 @@ import "../component/activate"
 import "../component/ring"
 import "../component/webcam-vrm"
 import "../component/lookat"
-
-import Webcam from "./webcam.svelte"
+import "../component/character_camera"
 
 const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser)
 
@@ -20,10 +19,11 @@ const sky = "#449"
 const sky_dark = "#003"
 const scatter = [-groundSize/2, 0, -groundSize/2, groundSize/2, 0, groundSize/2].join(" ") 
 
+// look-controls="enabled: false;" wasd-controls="enabled;false;"
 
 </script>
 
-<Webcam />
+
 <a-scene shadow="type:pcfsoft;"  >
     <a-assets>
         <audio id="sound-bg" src="/sound/bg-ocean.mp3"></audio>
