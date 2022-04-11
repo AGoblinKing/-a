@@ -8,9 +8,12 @@
 			<b>G</b>oblin
 			<offset><b>L</b>ife </offset>
 		</div>
+        
 	</div>
+   
 </div>
 
+<center> <a href='https://ko-fi.com/Z8Z1C37O3' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi1.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a></center> 
 <style>
 	.title {
 		text-shadow: -0.5vh -0.5vh 0 #000, 0.5vh -0.5vh 0 #000, -0.5vh 0.5vh 0 #000,

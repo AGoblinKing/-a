@@ -32682,15 +32682,22 @@
   var tick = new Value(0);
   var open_home = new Value(true);
   var open_game = new Value(false);
-  var motd = new Value(`\u{1F38A}v0.0.4\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.0.5\u{1F38A}
 
 \u2705VRM\u2705Scene\u2705WebCam
 \u274C FPS Camera
 \u274C PhysX
 \u274C AI / Gameplay
+\u274C Voice
+\u274C Editing 
+\u274C VRM Import
+\u274C WebRTC Multiplayer 
+\u274C WebRTC MediaSoup Server 
 
 The web is a scary place. 
 \u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
+
+No cookies intended. Accountless. Age 18+ only.
 
 `);
   var ticker = () => {
@@ -33403,6 +33410,8 @@ The web is a scary place.
   // src/ui/title.svelte
   function create_fragment3(ctx) {
     let div3;
+    let t8;
+    let center;
     return {
       c() {
         div3 = element("div");
@@ -33410,10 +33419,15 @@ The web is a scary place.
 	<div class="full svelte-12pdbth"><div class="title svelte-12pdbth"><offset class="svelte-12pdbth"><b class="svelte-12pdbth">a</b>      <br/></offset> 
 			<b class="svelte-12pdbth">G</b>oblin
 			<offset class="svelte-12pdbth"><b class="svelte-12pdbth">L</b>ife</offset></div></div>`;
+        t8 = space();
+        center = element("center");
+        center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank"><img height="36" style="border:0px;height:36px;" src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" border="0" alt="Buy Me a Coffee at ko-fi.com"/></a>`;
         attr(div3, "class", "intro svelte-12pdbth");
       },
       m(target, anchor) {
         insert(target, div3, anchor);
+        insert(target, t8, anchor);
+        insert(target, center, anchor);
       },
       p: noop,
       i: noop,
@@ -33421,6 +33435,10 @@ The web is a scary place.
       d(detaching) {
         if (detaching)
           detach(div3);
+        if (detaching)
+          detach(t8);
+        if (detaching)
+          detach(center);
       }
     };
   }
