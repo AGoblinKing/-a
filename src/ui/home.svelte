@@ -1,69 +1,66 @@
 <script lang="ts">
-import { motd, open_game, open_home } from 'src/timing';
+	import { motd, open_game, open_home } from 'src/timing'
 
-	import Sprite from './sprite.svelte'
 	import Title from './title.svelte'
+
+	if (location.search === '?go') {
+		open_game.set(true)
+		open_home.set(false)
+	}
 </script>
 
+<div class="menu">
+	<div class="sprites sprite" />
 
-	<div class="menu">
-		<div  class="sprites sprite" />
-		<gap />
-		<Title />
+	<Title />
 
-		<!--  -->
-		<div class="vbox">
-			<div class="span2 full">
-				<div class="flex" />
-				<textarea
-			
-					type="text"
-					class="text button"
-					maxlength="200"
-					value={$motd}
-                    readonly
-					on:copy={(e) => {
-						
-						e.preventDefault()
-					}}
-					on:paste={(e) => {
-						const v = decodeURI(e.clipboardData.getData('text'))
-			
-						e.preventDefault()
-					}}
-					on:keydown={(e) => {
-				
-						// if (e.key === 'Escape') {
-						// 	open_home.set(false)
-						// 	return
-						// }
-						// if (e.key === 'Enter') {
-                        //     open_home.set(false)
-						// }
-					}}
-				/>	<div class="flex" />
-				</div>
-				<div class="span2 full">
-					<div class="flex" />
-				<div
-					type="button"
-					class="button icon"
-					value="GO"
-					on:click={() => {
-						open_home.set(false)
-						open_game.set(true)
-					}}
-				>
-					<Sprite
-						idx={927}
-						hoverable={false}
-						shadow
-					/>
-				</div>
-				<div class="flex" />
+	<!--  -->
+	<div class="vbox">
+		<div class="span2 full">
+			<div class="flex" />
+			<textarea
+				type="text"
+				class="text button"
+				maxlength="200"
+				value={$motd}
+				readonly
+				on:copy={(e) => {
+					e.preventDefault()
+				}}
+				on:paste={(e) => {
+					const v = decodeURI(e.clipboardData.getData('text'))
+
+					e.preventDefault()
+				}}
+				on:keydown={(e) => {
+					// if (e.key === 'Escape') {
+					// 	open_home.set(false)
+					// 	return
+					// }
+					// if (e.key === 'Enter') {
+					//     open_home.set(false)
+					// }
+				}}
+			/>
+			<div class="flex" />
+		</div>
+		<div class="span2 full">
+			<div class="flex" />
+			<div
+				type="button"
+				class="button icon"
+				value="GO"
+				on:click={() => {
+					open_home.set(false)
+					open_game.set(true)
+				}}
+			>
+				🍀
 			</div>
+			<div class="flex" />
 		</div>
 	</div>
+</div>
 
 <style>
 	gap {
@@ -96,10 +93,8 @@ import { motd, open_game, open_home } from 'src/timing';
 		bottom: 0;
 		z-index: 1;
 		background-color: black;
-		box-shadow: inset 0 5vh 5rem rgba(0, 140, 255, 0.2),
-			inset 0 -5vh 5rem rgba(0, 140, 255, 0.2),
-			inset 40vw 0 5rem rgba(0, 140, 255, 0.2),
-			inset -40vw 0 5rem rgba(0, 140, 255, 0.2) !important;
+		box-shadow: inset 0 5vh 5rem rgba(0, 140, 255, 0.2), inset 0 -5vh 5rem rgba(0, 140, 255, 0.2),
+			inset 40vw 0 5rem rgba(0, 140, 255, 0.2), inset -40vw 0 5rem rgba(0, 140, 255, 0.2) !important;
 	}
 	.button.text {
 		background-color: rgb(0, 58, 130);
@@ -122,9 +117,9 @@ import { motd, open_game, open_home } from 'src/timing';
 		align-self: center;
 		margin: 1vh;
 		box-shadow: 0 0 5vh rgb(0, 65, 150);
-		
-		text-shadow: -0.15rem -0.15rem 0 #000, 0.15rem -0.15rem 0 #000,
-			-0.15rem 0.15rem 0 #000, 0.15rem 0.15rem 0 #000;
+
+		text-shadow: -0.15rem -0.15rem 0 #000, 0.15rem -0.15rem 0 #000, -0.15rem 0.15rem 0 #000,
+			0.15rem 0.15rem 0 #000;
 		transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 	}
 	.button:active {
@@ -166,7 +161,7 @@ import { motd, open_game, open_home } from 'src/timing';
 	}
 	.sprites {
 		position: absolute;
-	
+
 		background-size: 100% auto;
 		image-rendering: pixelated;
 		mix-blend-mode: hard-light;

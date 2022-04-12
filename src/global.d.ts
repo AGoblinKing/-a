@@ -1,5 +1,6 @@
 
 import type AFRAMES from "aframe"
+import type { AnimationBlendMode } from "three"
 
 declare module '*.svelte' {
 	export { SvelteComponentDev as default } from 'svelte/internal'
@@ -27,4 +28,5 @@ declare module '*.toml' {
 
 declare global {
 	const AFRAME: AFRAMES;
+	const Ammo: Ammo;
 }

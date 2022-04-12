@@ -1,28 +1,30 @@
 <script lang="ts">
-    import { videoElement } from "src/component/webcam-vrm";
+	import { videoElement, canvasElement } from 'src/component/webcam-vrm'
 
-    let videoElementSource
+	let videoElementSource
+	let canvasElementSource
 
-    
-    $: {
-        if(videoElementSource && !videoElement.$) {
-            videoElement.set(videoElementSource)
-        }
-
-
-    }
+	$: {
+		if (canvasElementSource && !canvasElement.$) {
+			canvasElement.set(canvasElementSource)
+		}
+		if (videoElementSource && !videoElement.$) {
+			videoElement.set(videoElementSource)
+		}
+	}
 </script>
 
 <div class="hidden">
-    <video bind:this={videoElementSource}>
-
-    </video>
-
+	<video bind:this={videoElementSource} />
+	<canvas bind:this={canvasElementSource} />
 </div>
 
 <style>
-
-.hidden {
-    display: none;
-}
+	.broadcast {
+		position: absolute;
+		z-index: 5;
+	}
+	.hidden {
+		display: none;
+	}
 </style>

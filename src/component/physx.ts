@@ -1,7 +1,0 @@
-
-AFRAME.registerComponent('physx', {
-    schema: {
-        
-    }
-
-})

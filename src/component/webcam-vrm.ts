@@ -1,5 +1,5 @@
 import * as Kalidokit from 'kalidokit'
-import { Holistic} from '@mediapipe/holistic/holistic';
+import { Holistic } from '@mediapipe/holistic/holistic';
 import { Camera } from '@mediapipe/camera_utils/camera_utils';
 import { tick } from 'src/timing';
 
@@ -11,6 +11,9 @@ const remap = Kalidokit.Utils.remap;
 const clamp = Kalidokit.Utils.clamp;
 const lerp = Kalidokit.Vector.lerp;
 
+
+const euler = new AFRAME.THREE.Euler()
+const quat = new AFRAME.THREE.Quaternion()
 // Animate Rotation Helper function
 const rigRotation = (
   vrm,
@@ -23,17 +26,18 @@ const rigRotation = (
   const Part = vrm.humanoid.getBoneNode(
     VRMSchema.HumanoidBoneName[name]
   );
-  if (!Part) {return}
-  
-  let euler = new AFRAME.THREE.Euler(
+  if (!Part) { return }
+
+  euler.set(
     rotation.x * dampener,
     rotation.y * dampener,
     rotation.z * dampener
   );
-  let quaternion = new AFRAME.THREE.Quaternion().setFromEuler(euler);
+  let quaternion = quat.setFromEuler(euler);
   Part.quaternion.slerp(quaternion, lerpAmount); // interpolate
 };
 
+const v3 = new AFRAME.THREE.Vector3();
 // Animate Position Helper Function
 const rigPosition = (
   vrm,
@@ -46,8 +50,8 @@ const rigPosition = (
   const Part = vrm.humanoid.getBoneNode(
     VRMSchema.HumanoidBoneName[name]
   );
-  if (!Part) {return}
-  let vector = new AFRAME.THREE.Vector3(
+  if (!Part) { return }
+  let vector = v3.set(
     position.x * dampener,
     position.y * dampener,
     position.z * dampener
@@ -58,44 +62,45 @@ const rigPosition = (
 let oldLookTarget = new AFRAME.THREE.Euler()
 const rigFace = (vrm, riggedFace) => {
 
-    rigRotation(vrm, "Neck", riggedFace.head, 0.7);
+  rigRotation(vrm, "Neck", riggedFace.head, 0.7);
 
-    // Blendshapes and Preset Name Schema
-    const Blendshape = vrm.blendShapeProxy;
-    const PresetName = VRMSchema.BlendShapePresetName;
-  
-    // Simple example without winking. Interpolate based on old blendshape, then stabilize blink with `Kalidokit` helper function.
-    // for VRM, 1 is closed, 0 is open.
-    riggedFace.eye.l = lerp(clamp(1 - riggedFace.eye.l, 0, 1),Blendshape.getValue(PresetName.Blink), .5)
-    riggedFace.eye.r = lerp(clamp(1 - riggedFace.eye.r, 0, 1),Blendshape.getValue(PresetName.Blink), .5)
-    riggedFace.eye = Kalidokit.Face.stabilizeBlink(riggedFace.eye,riggedFace.head.y)
-    Blendshape.setValue(PresetName.Blink, riggedFace.eye.l);
-    
-    // Interpolate and set mouth blendshapes
-    Blendshape.setValue(PresetName.I, lerp(riggedFace.mouth.shape.I,Blendshape.getValue(PresetName.I), .5));
-    Blendshape.setValue(PresetName.A, lerp(riggedFace.mouth.shape.A,Blendshape.getValue(PresetName.A), .5));
-    Blendshape.setValue(PresetName.E, lerp(riggedFace.mouth.shape.E,Blendshape.getValue(PresetName.E), .5));
-    Blendshape.setValue(PresetName.O, lerp(riggedFace.mouth.shape.O,Blendshape.getValue(PresetName.O), .5));
-    Blendshape.setValue(PresetName.U, lerp(riggedFace.mouth.shape.U,Blendshape.getValue(PresetName.U), .5));
+  // Blendshapes and Preset Name Schema
+  const Blendshape = vrm.blendShapeProxy;
+  const PresetName = VRMSchema.BlendShapePresetName;
 
-    //PUPILS
-    //interpolate pupil and keep a copy of the value
-    let lookTarget =
-      new AFRAME.THREE.Euler(
-        lerp(oldLookTarget.x , riggedFace.pupil.y, .4),
-        lerp(oldLookTarget.y, riggedFace.pupil.x, .4),
-        0,
-        "XYZ"
-      )
-    oldLookTarget.copy(lookTarget)
-    vrm.lookAt.applyer.lookAt(lookTarget);
+  // Simple example without winking. Interpolate based on old blendshape, then stabilize blink with `Kalidokit` helper function.
+  // for VRM, 1 is closed, 0 is open.
+  riggedFace.eye.l = lerp(clamp(1 - riggedFace.eye.l, 0, 1), Blendshape.getValue(PresetName.Blink), .5)
+  riggedFace.eye.r = lerp(clamp(1 - riggedFace.eye.r, 0, 1), Blendshape.getValue(PresetName.Blink), .5)
+  riggedFace.eye = Kalidokit.Face.stabilizeBlink(riggedFace.eye, riggedFace.head.y)
+  Blendshape.setValue(PresetName.Blink, riggedFace.eye.l);
+
+
+  // Interpolate and set mouth blendshapes
+  Blendshape.setValue(PresetName.I, lerp(riggedFace.mouth.shape.I, Blendshape.getValue(PresetName.I), .5));
+  Blendshape.setValue(PresetName.A, lerp(riggedFace.mouth.shape.A, Blendshape.getValue(PresetName.A), .5));
+  Blendshape.setValue(PresetName.E, lerp(riggedFace.mouth.shape.E, Blendshape.getValue(PresetName.E), .5));
+  Blendshape.setValue(PresetName.O, lerp(riggedFace.mouth.shape.O, Blendshape.getValue(PresetName.O), .5));
+  Blendshape.setValue(PresetName.U, lerp(riggedFace.mouth.shape.U, Blendshape.getValue(PresetName.U), .5));
+
+  //PUPILS
+  //interpolate pupil and keep a copy of the value
+  let lookTarget =
+    euler.set(
+      lerp(oldLookTarget.x, riggedFace.pupil.y, .4),
+      lerp(oldLookTarget.y, riggedFace.pupil.x, .4),
+      0,
+      "XYZ"
+    )
+  oldLookTarget.copy(lookTarget)
+  vrm.lookAt.applyer.lookAt(lookTarget);
 }
 
 /* VRM Character Animator */
 const animateVRM = (vrm, results) => {
   if (!vrm || !videoElement.$) {
     return;
-  }   
+  }
   // Take the results from `Holistic` and animate character based on its Face, Pose, and Hand Keypoints.
   let riggedPose, riggedLeftHand, riggedRightHand, riggedFace;
 
@@ -110,21 +115,21 @@ const animateVRM = (vrm, results) => {
 
   // Animate Face
   if (faceLandmarks) {
-   riggedFace = Kalidokit.Face.solve(faceLandmarks,{
-      runtime:"mediapipe",
-      video:videoElement.$
-   });
-   rigFace(vrm, riggedFace)
+    riggedFace = Kalidokit.Face.solve(faceLandmarks, {
+      runtime: "mediapipe",
+      video: videoElement.$
+    });
+    rigFace(vrm, riggedFace)
   }
 
   // Animate Pose
   if (pose2DLandmarks && pose3DLandmarks) {
     riggedPose = Kalidokit.Pose.solve(pose3DLandmarks, pose2DLandmarks, {
       runtime: "mediapipe",
-      video:videoElement.$,
+      video: videoElement.$,
     });
     rigRotation(vrm, "Hips", riggedPose.Hips.rotation, 0.7);
-    rigPosition(vrm, 
+    rigPosition(vrm,
       "Hips",
       {
         x: -riggedPose.Hips.position.x, // Reverse direction
@@ -186,7 +191,7 @@ const animateVRM = (vrm, results) => {
     rigRotation(vrm, "RightRingIntermediate", riggedRightHand.RightRingIntermediate);
     rigRotation(vrm, "RightRingDistal", riggedRightHand.RightRingDistal);
     rigRotation(vrm, "RightIndexProximal", riggedRightHand.RightIndexProximal);
-    rigRotation(vrm, "RightIndexIntermediate",riggedRightHand.RightIndexIntermediate);
+    rigRotation(vrm, "RightIndexIntermediate", riggedRightHand.RightIndexIntermediate);
     rigRotation(vrm, "RightIndexDistal", riggedRightHand.RightIndexDistal);
     rigRotation(vrm, "RightMiddleProximal", riggedRightHand.RightMiddleProximal);
     rigRotation(vrm, "RightMiddleIntermediate", riggedRightHand.RightMiddleIntermediate);
@@ -201,8 +206,8 @@ const animateVRM = (vrm, results) => {
 };
 
 /* SETUP MEDIAPIPE HOLISTIC INSTANCE */
-export const videoElement = new Value(document.querySelector(".input_video"))
-
+export const videoElement = new Value<HTMLVideoElement>()
+export const canvasElement = new Value<HTMLCanvasElement>()
 const onResults = (results) => {
   // Animate model
   animateVRM(currentVRM.$, results)
@@ -210,43 +215,55 @@ const onResults = (results) => {
 }
 
 const holistic = new Holistic({
-    locateFile: file => {
-      return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1635989137/${file}`;
-    }
-  });
+  locateFile: file => {
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1635989137/${file}`;
+  }
+});
 
-  holistic.setOptions({
-    modelComplexity: 1,
-    smoothLandmarks: true,
-    minDetectionConfidence: 0.7,
-    minTrackingConfidence: 0.7,
-    refineFaceLandmarks: true,
-  });
-  // Pass holistic a callback function
-  holistic.onResults(onResults);
+holistic.setOptions({
+  modelComplexity: 1,
+  smoothLandmarks: true,
+  minDetectionConfidence: 0.7,
+  minTrackingConfidence: 0.7,
+  refineFaceLandmarks: true,
+});
+// Pass holistic a callback function
+holistic.onResults(onResults);
 
 
 videoElement.on(($ve) => {
-  if(!$ve) return
+  if (!$ve) return
 
+  canvasElement.$.width = 320
+  canvasElement.$.height = 240
+
+  const ctx = canvasElement.$.getContext("2d")
+  ctx.translate(320, 0)
+  ctx.scale(-1, 1)
   // Use `Mediapipe` utils to get camera - lower resolution = higher fps
   const camera = new Camera($ve, {
     onFrame: async () => {
-      await holistic.send({image: $ve});
+
+      ctx.drawImage($ve, 0, 0, 320, 240)
+
+      await holistic.send({ image: canvasElement.$ });
     },
-    width: 640,
-    height: 480
+
+    width: 320,
+    height: 240
   });
   camera.start();
+
 })
 
 
+// TODO: maybe use AFRAME timing instead
 tick.on(() => {
   // Update VRM
   if (currentVRM.$) {
     currentVRM.$.update(0.01);
   }
-  if(mirrorVRM.$) {
+  if (mirrorVRM.$) {
     mirrorVRM.$.update(0.01);
   }
 })

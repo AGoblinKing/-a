@@ -5427,34 +5427,9 @@
   function children(element2) {
     return Array.from(element2.childNodes);
   }
-  function toggle_class(element2, name, toggle) {
-    element2.classList[toggle ? "add" : "remove"](name);
-  }
-  function custom_event(type, detail, bubbles = false) {
-    const e = document.createEvent("CustomEvent");
-    e.initCustomEvent(type, bubbles, false, detail);
-    return e;
-  }
   var current_component;
   function set_current_component(component) {
     current_component = component;
-  }
-  function get_current_component() {
-    if (!current_component)
-      throw new Error("Function called outside component initialization");
-    return current_component;
-  }
-  function createEventDispatcher() {
-    const component = get_current_component();
-    return (type, detail) => {
-      const callbacks = component.$$.callbacks[type];
-      if (callbacks) {
-        const event = custom_event(type, detail);
-        callbacks.slice().forEach((fn) => {
-          fn.call(component, event);
-        });
-      }
-    };
   }
   var dirty_components = [];
   var binding_callbacks = [];
@@ -5587,7 +5562,7 @@
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance6, create_fragment7, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance5, create_fragment9, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5610,7 +5585,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance6 ? instance6(component, options.props || {}, (i2, ret, ...rest) => {
+    $$.ctx = instance5 ? instance5(component, options.props || {}, (i2, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
         if (!$$.skip_bound && $$.bound[i2])
@@ -5623,7 +5598,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment7 ? create_fragment7($$.ctx) : false;
+    $$.fragment = create_fragment9 ? create_fragment9($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -5705,6 +5680,1373 @@
       }
     }
   };
+
+  // src/component/scatter.ts
+  var bb = new AFRAME.THREE.Box3();
+  AFRAME.registerComponent("scatter", {
+    schema: {
+      type: "string",
+      default: "-0.5 -0.5 -0.5 0.5 0.5 0.5"
+    },
+    update() {
+      bb.setFromArray(this.data.split(" ").map(parseFloat));
+      this.el.object3D.position.x += bb.min.x + Math.random() * (bb.max.x - bb.min.x);
+      this.el.object3D.position.y += bb.min.y + Math.random() * (bb.max.y - bb.min.y);
+      this.el.object3D.position.z += bb.min.z + Math.random() * (bb.max.z - bb.min.z);
+    }
+  });
+
+  // src/component/activate.ts
+  AFRAME.registerComponent("activate", {
+    multiple: true,
+    update() {
+      const pool = this.el.components[`pool__${this.id}`];
+      if (!pool)
+        return;
+      let ent;
+      while (ent = pool.requestEntity()) {
+        ent.play();
+      }
+    }
+  });
+
+  // src/component/ring.ts
+  AFRAME.registerComponent("ring", {
+    schema: {
+      count: { type: "number", default: 10 },
+      radius: { type: "number", default: 5 }
+    },
+    update() {
+      const d2 = this.el.object3D.parent.userData;
+      const i2 = (d2.ringDex === void 0 ? d2.ringDex = 1 : d2.ringDex++) % this.data.count / this.data.count * Math.PI * 2;
+      this.el.object3D.position.set(Math.sin(i2), 0, Math.cos(i2)).multiplyScalar(this.data.radius);
+    }
+  });
+
+  // src/component/lookat.ts
+  AFRAME.registerComponent("lookat", {
+    schema: {
+      type: "vec3",
+      default: new AFRAME.THREE.Vector3()
+    },
+    update() {
+      this.el.object3D.lookAt(this.data);
+    }
+  });
+
+  // node_modules/kalidokit/dist/utils/helpers.js
+  var helpers_exports = {};
+  __export(helpers_exports, {
+    RestingDefault: () => RestingDefault,
+    clamp: () => clamp,
+    remap: () => remap
+  });
+  var clamp = (val, min, max) => {
+    return Math.max(Math.min(val, max), min);
+  };
+  var remap = (val, min, max) => {
+    return (clamp(val, min, max) - min) / (max - min);
+  };
+  var RestingDefault = {
+    Face: {
+      eye: {
+        l: 1,
+        r: 1
+      },
+      mouth: {
+        x: 0,
+        y: 0,
+        shape: {
+          A: 0,
+          E: 0,
+          I: 0,
+          O: 0,
+          U: 0
+        }
+      },
+      head: {
+        x: 0,
+        y: 0,
+        z: 0,
+        width: 0.3,
+        height: 0.6,
+        position: {
+          x: 0.5,
+          y: 0.5,
+          z: 0
+        }
+      },
+      brow: 0,
+      pupil: {
+        x: 0,
+        y: 0
+      }
+    },
+    Pose: {
+      RightUpperArm: {
+        x: 0,
+        y: 0,
+        z: -1.25
+      },
+      LeftUpperArm: {
+        x: 0,
+        y: 0,
+        z: 1.25
+      },
+      RightLowerArm: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      LeftLowerArm: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      LeftUpperLeg: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      RightUpperLeg: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      RightLowerLeg: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      LeftLowerLeg: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      LeftHand: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      RightHand: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      Spine: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      Hips: {
+        position: {
+          x: 0,
+          y: 0,
+          z: 0
+        },
+        rotation: {
+          x: 0,
+          y: 0,
+          z: 0
+        }
+      }
+    },
+    RightHand: {
+      RightWrist: {
+        x: -0.13,
+        y: -0.07,
+        z: -1.04
+      },
+      RightRingProximal: {
+        x: 0,
+        y: 0,
+        z: -0.13
+      },
+      RightRingIntermediate: {
+        x: 0,
+        y: 0,
+        z: -0.4
+      },
+      RightRingDistal: {
+        x: 0,
+        y: 0,
+        z: -0.04
+      },
+      RightIndexProximal: {
+        x: 0,
+        y: 0,
+        z: -0.24
+      },
+      RightIndexIntermediate: {
+        x: 0,
+        y: 0,
+        z: -0.25
+      },
+      RightIndexDistal: {
+        x: 0,
+        y: 0,
+        z: -0.06
+      },
+      RightMiddleProximal: {
+        x: 0,
+        y: 0,
+        z: -0.09
+      },
+      RightMiddleIntermediate: {
+        x: 0,
+        y: 0,
+        z: -0.44
+      },
+      RightMiddleDistal: {
+        x: 0,
+        y: 0,
+        z: -0.06
+      },
+      RightThumbProximal: {
+        x: -0.23,
+        y: -0.33,
+        z: -0.12
+      },
+      RightThumbIntermediate: {
+        x: -0.2,
+        y: -0.199,
+        z: -0.0139
+      },
+      RightThumbDistal: {
+        x: -0.2,
+        y: 2e-3,
+        z: 0.15
+      },
+      RightLittleProximal: {
+        x: 0,
+        y: 0,
+        z: -0.09
+      },
+      RightLittleIntermediate: {
+        x: 0,
+        y: 0,
+        z: -0.225
+      },
+      RightLittleDistal: {
+        x: 0,
+        y: 0,
+        z: -0.1
+      }
+    },
+    LeftHand: {
+      LeftWrist: {
+        x: -0.13,
+        y: -0.07,
+        z: -1.04
+      },
+      LeftRingProximal: {
+        x: 0,
+        y: 0,
+        z: 0.13
+      },
+      LeftRingIntermediate: {
+        x: 0,
+        y: 0,
+        z: 0.4
+      },
+      LeftRingDistal: {
+        x: 0,
+        y: 0,
+        z: 0.049
+      },
+      LeftIndexProximal: {
+        x: 0,
+        y: 0,
+        z: 0.24
+      },
+      LeftIndexIntermediate: {
+        x: 0,
+        y: 0,
+        z: 0.25
+      },
+      LeftIndexDistal: {
+        x: 0,
+        y: 0,
+        z: 0.06
+      },
+      LeftMiddleProximal: {
+        x: 0,
+        y: 0,
+        z: 0.09
+      },
+      LeftMiddleIntermediate: {
+        x: 0,
+        y: 0,
+        z: 0.44
+      },
+      LeftMiddleDistal: {
+        x: 0,
+        y: 0,
+        z: 0.066
+      },
+      LeftThumbProximal: {
+        x: -0.23,
+        y: 0.33,
+        z: 0.12
+      },
+      LeftThumbIntermediate: {
+        x: -0.2,
+        y: 0.25,
+        z: 0.05
+      },
+      LeftThumbDistal: {
+        x: -0.2,
+        y: 0.17,
+        z: -0.06
+      },
+      LeftLittleProximal: {
+        x: 0,
+        y: 0,
+        z: 0.17
+      },
+      LeftLittleIntermediate: {
+        x: 0,
+        y: 0,
+        z: 0.4
+      },
+      LeftLittleDistal: {
+        x: 0,
+        y: 0,
+        z: 0.1
+      }
+    }
+  };
+
+  // node_modules/kalidokit/dist/constants.js
+  var RIGHT = "Right";
+  var LEFT = "Left";
+  var PI = Math.PI;
+  var TWO_PI = Math.PI * 2;
+
+  // node_modules/kalidokit/dist/utils/vector.js
+  var Vector = class {
+    constructor(a2, b2, c2) {
+      var _a, _b, _c, _d, _e2, _f;
+      if (Array.isArray(a2)) {
+        this.x = (_a = a2[0]) !== null && _a !== void 0 ? _a : 0;
+        this.y = (_b = a2[1]) !== null && _b !== void 0 ? _b : 0;
+        this.z = (_c = a2[2]) !== null && _c !== void 0 ? _c : 0;
+        return;
+      }
+      if (!!a2 && typeof a2 === "object") {
+        this.x = (_d = a2.x) !== null && _d !== void 0 ? _d : 0;
+        this.y = (_e2 = a2.y) !== null && _e2 !== void 0 ? _e2 : 0;
+        this.z = (_f = a2.z) !== null && _f !== void 0 ? _f : 0;
+        return;
+      }
+      this.x = a2 !== null && a2 !== void 0 ? a2 : 0;
+      this.y = b2 !== null && b2 !== void 0 ? b2 : 0;
+      this.z = c2 !== null && c2 !== void 0 ? c2 : 0;
+    }
+    negative() {
+      return new Vector(-this.x, -this.y, -this.z);
+    }
+    add(v2) {
+      if (v2 instanceof Vector)
+        return new Vector(this.x + v2.x, this.y + v2.y, this.z + v2.z);
+      else
+        return new Vector(this.x + v2, this.y + v2, this.z + v2);
+    }
+    subtract(v2) {
+      if (v2 instanceof Vector)
+        return new Vector(this.x - v2.x, this.y - v2.y, this.z - v2.z);
+      else
+        return new Vector(this.x - v2, this.y - v2, this.z - v2);
+    }
+    multiply(v2) {
+      if (v2 instanceof Vector)
+        return new Vector(this.x * v2.x, this.y * v2.y, this.z * v2.z);
+      else
+        return new Vector(this.x * v2, this.y * v2, this.z * v2);
+    }
+    divide(v2) {
+      if (v2 instanceof Vector)
+        return new Vector(this.x / v2.x, this.y / v2.y, this.z / v2.z);
+      else
+        return new Vector(this.x / v2, this.y / v2, this.z / v2);
+    }
+    equals(v2) {
+      return this.x == v2.x && this.y == v2.y && this.z == v2.z;
+    }
+    dot(v2) {
+      return this.x * v2.x + this.y * v2.y + this.z * v2.z;
+    }
+    cross(v2) {
+      return new Vector(this.y * v2.z - this.z * v2.y, this.z * v2.x - this.x * v2.z, this.x * v2.y - this.y * v2.x);
+    }
+    length() {
+      return Math.sqrt(this.dot(this));
+    }
+    distance(v2, d2 = 3) {
+      if (d2 === 2)
+        return Math.sqrt(Math.pow(this.x - v2.x, 2) + Math.pow(this.y - v2.y, 2));
+      else
+        return Math.sqrt(Math.pow(this.x - v2.x, 2) + Math.pow(this.y - v2.y, 2) + Math.pow(this.z - v2.z, 2));
+    }
+    lerp(v2, fraction) {
+      return v2.subtract(this).multiply(fraction).add(this);
+    }
+    unit() {
+      return this.divide(this.length());
+    }
+    min() {
+      return Math.min(Math.min(this.x, this.y), this.z);
+    }
+    max() {
+      return Math.max(Math.max(this.x, this.y), this.z);
+    }
+    toSphericalCoords(axisMap = { x: "x", y: "y", z: "z" }) {
+      return {
+        theta: Math.atan2(this[axisMap.y], this[axisMap.x]),
+        phi: Math.acos(this[axisMap.z] / this.length())
+      };
+    }
+    angleTo(a2) {
+      return Math.acos(this.dot(a2) / (this.length() * a2.length()));
+    }
+    toArray(n2) {
+      return [this.x, this.y, this.z].slice(0, n2 || 3);
+    }
+    clone() {
+      return new Vector(this.x, this.y, this.z);
+    }
+    init(x2, y2, z2) {
+      this.x = x2;
+      this.y = y2;
+      this.z = z2;
+      return this;
+    }
+    static negative(a2, b2 = new Vector()) {
+      b2.x = -a2.x;
+      b2.y = -a2.y;
+      b2.z = -a2.z;
+      return b2;
+    }
+    static add(a2, b2, c2 = new Vector()) {
+      if (b2 instanceof Vector) {
+        c2.x = a2.x + b2.x;
+        c2.y = a2.y + b2.y;
+        c2.z = a2.z + b2.z;
+      } else {
+        c2.x = a2.x + b2;
+        c2.y = a2.y + b2;
+        c2.z = a2.z + b2;
+      }
+      return c2;
+    }
+    static subtract(a2, b2, c2 = new Vector()) {
+      if (b2 instanceof Vector) {
+        c2.x = a2.x - b2.x;
+        c2.y = a2.y - b2.y;
+        c2.z = a2.z - b2.z;
+      } else {
+        c2.x = a2.x - b2;
+        c2.y = a2.y - b2;
+        c2.z = a2.z - b2;
+      }
+      return c2;
+    }
+    static multiply(a2, b2, c2 = new Vector()) {
+      if (b2 instanceof Vector) {
+        c2.x = a2.x * b2.x;
+        c2.y = a2.y * b2.y;
+        c2.z = a2.z * b2.z;
+      } else {
+        c2.x = a2.x * b2;
+        c2.y = a2.y * b2;
+        c2.z = a2.z * b2;
+      }
+      return c2;
+    }
+    static divide(a2, b2, c2 = new Vector()) {
+      if (b2 instanceof Vector) {
+        c2.x = a2.x / b2.x;
+        c2.y = a2.y / b2.y;
+        c2.z = a2.z / b2.z;
+      } else {
+        c2.x = a2.x / b2;
+        c2.y = a2.y / b2;
+        c2.z = a2.z / b2;
+      }
+      return c2;
+    }
+    static cross(a2, b2, c2 = new Vector()) {
+      c2.x = a2.y * b2.z - a2.z * b2.y;
+      c2.y = a2.z * b2.x - a2.x * b2.z;
+      c2.z = a2.x * b2.y - a2.y * b2.x;
+      return c2;
+    }
+    static unit(a2, b2) {
+      const length = a2.length();
+      b2.x = a2.x / length;
+      b2.y = a2.y / length;
+      b2.z = a2.z / length;
+      return b2;
+    }
+    static fromAngles(theta, phi) {
+      return new Vector(Math.cos(theta) * Math.cos(phi), Math.sin(phi), Math.sin(theta) * Math.cos(phi));
+    }
+    static randomDirection() {
+      return Vector.fromAngles(Math.random() * TWO_PI, Math.asin(Math.random() * 2 - 1));
+    }
+    static min(a2, b2) {
+      return new Vector(Math.min(a2.x, b2.x), Math.min(a2.y, b2.y), Math.min(a2.z, b2.z));
+    }
+    static max(a2, b2) {
+      return new Vector(Math.max(a2.x, b2.x), Math.max(a2.y, b2.y), Math.max(a2.z, b2.z));
+    }
+    static lerp(a2, b2, fraction) {
+      if (b2 instanceof Vector) {
+        return b2.subtract(a2).multiply(fraction).add(a2);
+      } else {
+        return (b2 - a2) * fraction + a2;
+      }
+    }
+    static fromArray(a2) {
+      if (Array.isArray(a2)) {
+        return new Vector(a2[0], a2[1], a2[2]);
+      }
+      return new Vector(a2.x, a2.y, a2.z);
+    }
+    static angleBetween(a2, b2) {
+      return a2.angleTo(b2);
+    }
+    static distance(a2, b2, d2) {
+      if (d2 === 2)
+        return Math.sqrt(Math.pow(a2.x - b2.x, 2) + Math.pow(a2.y - b2.y, 2));
+      else
+        return Math.sqrt(Math.pow(a2.x - b2.x, 2) + Math.pow(a2.y - b2.y, 2) + Math.pow(a2.z - b2.z, 2));
+    }
+    static toDegrees(a2) {
+      return a2 * (180 / PI);
+    }
+    static normalizeAngle(radians) {
+      let angle = radians % TWO_PI;
+      angle = angle > PI ? angle - TWO_PI : angle < -PI ? TWO_PI + angle : angle;
+      return angle / PI;
+    }
+    static normalizeRadians(radians) {
+      if (radians >= PI / 2) {
+        radians -= TWO_PI;
+      }
+      if (radians <= -PI / 2) {
+        radians += TWO_PI;
+        radians = PI - radians;
+      }
+      return radians / PI;
+    }
+    static find2DAngle(cx, cy, ex, ey) {
+      const dy = ey - cy;
+      const dx = ex - cx;
+      const theta = Math.atan2(dy, dx);
+      return theta;
+    }
+    static findRotation(a2, b2, normalize = true) {
+      if (normalize) {
+        return new Vector(Vector.normalizeRadians(Vector.find2DAngle(a2.z, a2.x, b2.z, b2.x)), Vector.normalizeRadians(Vector.find2DAngle(a2.z, a2.y, b2.z, b2.y)), Vector.normalizeRadians(Vector.find2DAngle(a2.x, a2.y, b2.x, b2.y)));
+      } else {
+        return new Vector(Vector.find2DAngle(a2.z, a2.x, b2.z, b2.x), Vector.find2DAngle(a2.z, a2.y, b2.z, b2.y), Vector.find2DAngle(a2.x, a2.y, b2.x, b2.y));
+      }
+    }
+    static rollPitchYaw(a2, b2, c2) {
+      if (!c2) {
+        return new Vector(Vector.normalizeAngle(Vector.find2DAngle(a2.z, a2.y, b2.z, b2.y)), Vector.normalizeAngle(Vector.find2DAngle(a2.z, a2.x, b2.z, b2.x)), Vector.normalizeAngle(Vector.find2DAngle(a2.x, a2.y, b2.x, b2.y)));
+      }
+      const qb = b2.subtract(a2);
+      const qc = c2.subtract(a2);
+      const n2 = qb.cross(qc);
+      const unitZ = n2.unit();
+      const unitX = qb.unit();
+      const unitY = unitZ.cross(unitX);
+      const beta = Math.asin(unitZ.x) || 0;
+      const alpha = Math.atan2(-unitZ.y, unitZ.z) || 0;
+      const gamma = Math.atan2(-unitY.x, unitX.x) || 0;
+      return new Vector(Vector.normalizeAngle(alpha), Vector.normalizeAngle(beta), Vector.normalizeAngle(gamma));
+    }
+    static angleBetween3DCoords(a2, b2, c2) {
+      if (!(a2 instanceof Vector)) {
+        a2 = new Vector(a2);
+        b2 = new Vector(b2);
+        c2 = new Vector(c2);
+      }
+      const v1 = a2.subtract(b2);
+      const v2 = c2.subtract(b2);
+      const v1norm = v1.unit();
+      const v2norm = v2.unit();
+      const dotProducts = v1norm.dot(v2norm);
+      const angle = Math.acos(dotProducts);
+      return Vector.normalizeRadians(angle);
+    }
+    static getRelativeSphericalCoords(a2, b2, c2, axisMap) {
+      if (!(a2 instanceof Vector)) {
+        a2 = new Vector(a2);
+        b2 = new Vector(b2);
+        c2 = new Vector(c2);
+      }
+      const v1 = b2.subtract(a2);
+      const v2 = c2.subtract(b2);
+      const v1norm = v1.unit();
+      const v2norm = v2.unit();
+      const { theta: theta1, phi: phi1 } = v1norm.toSphericalCoords(axisMap);
+      const { theta: theta2, phi: phi2 } = v2norm.toSphericalCoords(axisMap);
+      const theta = theta1 - theta2;
+      const phi = phi1 - phi2;
+      return {
+        theta: Vector.normalizeAngle(theta),
+        phi: Vector.normalizeAngle(phi)
+      };
+    }
+    static getSphericalCoords(a2, b2, axisMap = { x: "x", y: "y", z: "z" }) {
+      if (!(a2 instanceof Vector)) {
+        a2 = new Vector(a2);
+        b2 = new Vector(b2);
+      }
+      const v1 = b2.subtract(a2);
+      const v1norm = v1.unit();
+      const { theta, phi } = v1norm.toSphericalCoords(axisMap);
+      return {
+        theta: Vector.normalizeAngle(-theta),
+        phi: Vector.normalizeAngle(PI / 2 - phi)
+      };
+    }
+  };
+
+  // node_modules/kalidokit/dist/PoseSolver/calcArms.js
+  var calcArms = (lm) => {
+    const UpperArm = {
+      r: Vector.findRotation(lm[11], lm[13]),
+      l: Vector.findRotation(lm[12], lm[14])
+    };
+    UpperArm.r.y = Vector.angleBetween3DCoords(lm[12], lm[11], lm[13]);
+    UpperArm.l.y = Vector.angleBetween3DCoords(lm[11], lm[12], lm[14]);
+    const LowerArm = {
+      r: Vector.findRotation(lm[13], lm[15]),
+      l: Vector.findRotation(lm[14], lm[16])
+    };
+    LowerArm.r.y = Vector.angleBetween3DCoords(lm[11], lm[13], lm[15]);
+    LowerArm.l.y = Vector.angleBetween3DCoords(lm[12], lm[14], lm[16]);
+    LowerArm.r.z = clamp(LowerArm.r.z, -2.14, 0);
+    LowerArm.l.z = clamp(LowerArm.l.z, -2.14, 0);
+    const Hand = {
+      r: Vector.findRotation(Vector.fromArray(lm[15]), Vector.lerp(Vector.fromArray(lm[17]), Vector.fromArray(lm[19]), 0.5)),
+      l: Vector.findRotation(Vector.fromArray(lm[16]), Vector.lerp(Vector.fromArray(lm[18]), Vector.fromArray(lm[20]), 0.5))
+    };
+    const rightArmRig = rigArm(UpperArm.r, LowerArm.r, Hand.r, RIGHT);
+    const leftArmRig = rigArm(UpperArm.l, LowerArm.l, Hand.l, LEFT);
+    return {
+      UpperArm: {
+        r: rightArmRig.UpperArm,
+        l: leftArmRig.UpperArm
+      },
+      LowerArm: {
+        r: rightArmRig.LowerArm,
+        l: leftArmRig.LowerArm
+      },
+      Hand: {
+        r: rightArmRig.Hand,
+        l: leftArmRig.Hand
+      },
+      Unscaled: {
+        UpperArm,
+        LowerArm,
+        Hand
+      }
+    };
+  };
+  var rigArm = (UpperArm, LowerArm, Hand, side = RIGHT) => {
+    const invert = side === RIGHT ? 1 : -1;
+    UpperArm.z *= -2.3 * invert;
+    UpperArm.y *= PI * invert;
+    UpperArm.y -= Math.max(LowerArm.x);
+    UpperArm.y -= -invert * Math.max(LowerArm.z, 0);
+    UpperArm.x -= 0.3 * invert;
+    LowerArm.z *= -2.14 * invert;
+    LowerArm.y *= 2.14 * invert;
+    LowerArm.x *= 2.14 * invert;
+    UpperArm.x = clamp(UpperArm.x, -0.5, PI);
+    LowerArm.x = clamp(LowerArm.x, -0.3, 0.3);
+    Hand.y = clamp(Hand.z * 2, -0.6, 0.6);
+    Hand.z = Hand.z * -2.3 * invert;
+    return {
+      UpperArm,
+      LowerArm,
+      Hand
+    };
+  };
+
+  // node_modules/kalidokit/dist/PoseSolver/calcHips.js
+  var calcHips = (lm3d, lm2d) => {
+    const hipLeft2d = Vector.fromArray(lm2d[23]);
+    const hipRight2d = Vector.fromArray(lm2d[24]);
+    const shoulderLeft2d = Vector.fromArray(lm2d[11]);
+    const shoulderRight2d = Vector.fromArray(lm2d[12]);
+    const hipCenter2d = hipLeft2d.lerp(hipRight2d, 1);
+    const shoulderCenter2d = shoulderLeft2d.lerp(shoulderRight2d, 1);
+    const spineLength = hipCenter2d.distance(shoulderCenter2d);
+    const hips = {
+      position: {
+        x: clamp(hipCenter2d.x - 0.4, -1, 1),
+        y: 0,
+        z: clamp(spineLength - 1, -2, 0)
+      }
+    };
+    hips.worldPosition = {
+      x: hips.position.x,
+      y: 0,
+      z: hips.position.z * Math.pow(hips.position.z * -2, 2)
+    };
+    hips.worldPosition.x *= hips.worldPosition.z;
+    hips.rotation = Vector.rollPitchYaw(lm3d[23], lm3d[24]);
+    if (hips.rotation.y > 0.5) {
+      hips.rotation.y -= 2;
+    }
+    hips.rotation.y += 0.5;
+    if (hips.rotation.z > 0) {
+      hips.rotation.z = 1 - hips.rotation.z;
+    }
+    if (hips.rotation.z < 0) {
+      hips.rotation.z = -1 - hips.rotation.z;
+    }
+    const turnAroundAmountHips = remap(Math.abs(hips.rotation.y), 0.2, 0.4);
+    hips.rotation.z *= 1 - turnAroundAmountHips;
+    hips.rotation.x = 0;
+    const spine = Vector.rollPitchYaw(lm3d[11], lm3d[12]);
+    if (spine.y > 0.5) {
+      spine.y -= 2;
+    }
+    spine.y += 0.5;
+    if (spine.z > 0) {
+      spine.z = 1 - spine.z;
+    }
+    if (spine.z < 0) {
+      spine.z = -1 - spine.z;
+    }
+    const turnAroundAmount = remap(Math.abs(spine.y), 0.2, 0.4);
+    spine.z *= 1 - turnAroundAmount;
+    spine.x = 0;
+    return rigHips(hips, spine);
+  };
+  var rigHips = (hips, spine) => {
+    if (hips.rotation) {
+      hips.rotation.x *= Math.PI;
+      hips.rotation.y *= Math.PI;
+      hips.rotation.z *= Math.PI;
+    }
+    spine.x *= PI;
+    spine.y *= PI;
+    spine.z *= PI;
+    return {
+      Hips: hips,
+      Spine: spine
+    };
+  };
+
+  // node_modules/kalidokit/dist/utils/euler.js
+  var Euler = class {
+    constructor(a2, b2, c2, rotationOrder) {
+      var _a, _b, _c, _d;
+      if (!!a2 && typeof a2 === "object") {
+        this.x = (_a = a2.x) !== null && _a !== void 0 ? _a : 0;
+        this.y = (_b = a2.y) !== null && _b !== void 0 ? _b : 0;
+        this.z = (_c = a2.z) !== null && _c !== void 0 ? _c : 0;
+        this.rotationOrder = (_d = a2.rotationOrder) !== null && _d !== void 0 ? _d : "XYZ";
+        return;
+      }
+      this.x = a2 !== null && a2 !== void 0 ? a2 : 0;
+      this.y = b2 !== null && b2 !== void 0 ? b2 : 0;
+      this.z = c2 !== null && c2 !== void 0 ? c2 : 0;
+      this.rotationOrder = rotationOrder !== null && rotationOrder !== void 0 ? rotationOrder : "XYZ";
+    }
+    multiply(v2) {
+      return new Euler(this.x * v2, this.y * v2, this.z * v2, this.rotationOrder);
+    }
+  };
+
+  // node_modules/kalidokit/dist/PoseSolver/calcLegs.js
+  var offsets = {
+    upperLeg: {
+      z: 0.1
+    }
+  };
+  var calcLegs = (lm) => {
+    const rightUpperLegSphericalCoords = Vector.getSphericalCoords(lm[23], lm[25], { x: "y", y: "z", z: "x" });
+    const leftUpperLegSphericalCoords = Vector.getSphericalCoords(lm[24], lm[26], { x: "y", y: "z", z: "x" });
+    const rightLowerLegSphericalCoords = Vector.getRelativeSphericalCoords(lm[23], lm[25], lm[27], {
+      x: "y",
+      y: "z",
+      z: "x"
+    });
+    const leftLowerLegSphericalCoords = Vector.getRelativeSphericalCoords(lm[24], lm[26], lm[28], {
+      x: "y",
+      y: "z",
+      z: "x"
+    });
+    const hipRotation = Vector.findRotation(lm[23], lm[24]);
+    const UpperLeg = {
+      r: new Vector({
+        x: rightUpperLegSphericalCoords.theta,
+        y: rightLowerLegSphericalCoords.phi,
+        z: rightUpperLegSphericalCoords.phi - hipRotation.z
+      }),
+      l: new Vector({
+        x: leftUpperLegSphericalCoords.theta,
+        y: leftLowerLegSphericalCoords.phi,
+        z: leftUpperLegSphericalCoords.phi - hipRotation.z
+      })
+    };
+    const LowerLeg = {
+      r: new Vector({
+        x: -Math.abs(rightLowerLegSphericalCoords.theta),
+        y: 0,
+        z: 0
+      }),
+      l: new Vector({
+        x: -Math.abs(leftLowerLegSphericalCoords.theta),
+        y: 0,
+        z: 0
+      })
+    };
+    const rightLegRig = rigLeg(UpperLeg.r, LowerLeg.r, RIGHT);
+    const leftLegRig = rigLeg(UpperLeg.l, LowerLeg.l, LEFT);
+    return {
+      UpperLeg: {
+        r: rightLegRig.UpperLeg,
+        l: leftLegRig.UpperLeg
+      },
+      LowerLeg: {
+        r: rightLegRig.LowerLeg,
+        l: leftLegRig.LowerLeg
+      },
+      Unscaled: {
+        UpperLeg,
+        LowerLeg
+      }
+    };
+  };
+  var rigLeg = (UpperLeg, LowerLeg, side = RIGHT) => {
+    const invert = side === RIGHT ? 1 : -1;
+    const rigedUpperLeg = new Euler({
+      x: clamp(UpperLeg.x, 0, 0.5) * PI,
+      y: clamp(UpperLeg.y, -0.25, 0.25) * PI,
+      z: clamp(UpperLeg.z, -0.5, 0.5) * PI + invert * offsets.upperLeg.z,
+      rotationOrder: "XYZ"
+    });
+    const rigedLowerLeg = new Euler({
+      x: LowerLeg.x * PI,
+      y: LowerLeg.y * PI,
+      z: LowerLeg.z * PI
+    });
+    return {
+      UpperLeg: rigedUpperLeg,
+      LowerLeg: rigedLowerLeg
+    };
+  };
+
+  // node_modules/kalidokit/dist/PoseSolver/index.js
+  var PoseSolver = class {
+    static solve(lm3d, lm2d, { runtime = "mediapipe", video = null, imageSize = null, enableLegs = true } = {}) {
+      var _a, _b, _c, _d;
+      if (!lm3d && !lm2d) {
+        console.error("Need both World Pose and Pose Landmarks");
+        return;
+      }
+      if (video) {
+        const videoEl = typeof video === "string" ? document.querySelector(video) : video;
+        imageSize = {
+          width: videoEl.videoWidth,
+          height: videoEl.videoHeight
+        };
+      }
+      if (runtime === "tfjs" && imageSize) {
+        for (const e of lm3d) {
+          e.visibility = e.score;
+        }
+        for (const e of lm2d) {
+          e.x /= imageSize.width;
+          e.y /= imageSize.height;
+          e.z = 0;
+          e.visibility = e.score;
+        }
+      }
+      const Arms = calcArms(lm3d);
+      const Hips = calcHips(lm3d, lm2d);
+      const Legs = enableLegs ? calcLegs(lm3d) : null;
+      const rightHandOffscreen = lm3d[15].y > 0.1 || ((_a = lm3d[15].visibility) !== null && _a !== void 0 ? _a : 0) < 0.23 || 0.995 < lm2d[15].y;
+      const leftHandOffscreen = lm3d[16].y > 0.1 || ((_b = lm3d[16].visibility) !== null && _b !== void 0 ? _b : 0) < 0.23 || 0.995 < lm2d[16].y;
+      const leftFootOffscreen = lm3d[23].y > 0.1 || ((_c = lm3d[23].visibility) !== null && _c !== void 0 ? _c : 0) < 0.63 || Hips.Hips.position.z > -0.4;
+      const rightFootOffscreen = lm3d[24].y > 0.1 || ((_d = lm3d[24].visibility) !== null && _d !== void 0 ? _d : 0) < 0.63 || Hips.Hips.position.z > -0.4;
+      Arms.UpperArm.l = Arms.UpperArm.l.multiply(leftHandOffscreen ? 0 : 1);
+      Arms.UpperArm.l.z = leftHandOffscreen ? RestingDefault.Pose.LeftUpperArm.z : Arms.UpperArm.l.z;
+      Arms.UpperArm.r = Arms.UpperArm.r.multiply(rightHandOffscreen ? 0 : 1);
+      Arms.UpperArm.r.z = rightHandOffscreen ? RestingDefault.Pose.RightUpperArm.z : Arms.UpperArm.r.z;
+      Arms.LowerArm.l = Arms.LowerArm.l.multiply(leftHandOffscreen ? 0 : 1);
+      Arms.LowerArm.r = Arms.LowerArm.r.multiply(rightHandOffscreen ? 0 : 1);
+      Arms.Hand.l = Arms.Hand.l.multiply(leftHandOffscreen ? 0 : 1);
+      Arms.Hand.r = Arms.Hand.r.multiply(rightHandOffscreen ? 0 : 1);
+      if (Legs) {
+        Legs.UpperLeg.l = Legs.UpperLeg.l.multiply(rightFootOffscreen ? 0 : 1);
+        Legs.UpperLeg.r = Legs.UpperLeg.r.multiply(leftFootOffscreen ? 0 : 1);
+        Legs.LowerLeg.l = Legs.LowerLeg.l.multiply(rightFootOffscreen ? 0 : 1);
+        Legs.LowerLeg.r = Legs.LowerLeg.r.multiply(leftFootOffscreen ? 0 : 1);
+      }
+      return {
+        RightUpperArm: Arms.UpperArm.r,
+        RightLowerArm: Arms.LowerArm.r,
+        LeftUpperArm: Arms.UpperArm.l,
+        LeftLowerArm: Arms.LowerArm.l,
+        RightHand: Arms.Hand.r,
+        LeftHand: Arms.Hand.l,
+        RightUpperLeg: Legs ? Legs.UpperLeg.r : RestingDefault.Pose.RightUpperLeg,
+        RightLowerLeg: Legs ? Legs.LowerLeg.r : RestingDefault.Pose.RightLowerLeg,
+        LeftUpperLeg: Legs ? Legs.UpperLeg.l : RestingDefault.Pose.LeftUpperLeg,
+        LeftLowerLeg: Legs ? Legs.LowerLeg.l : RestingDefault.Pose.LeftLowerLeg,
+        Hips: Hips.Hips,
+        Spine: Hips.Spine
+      };
+    }
+  };
+  PoseSolver.calcArms = calcArms;
+  PoseSolver.calcHips = calcHips;
+  PoseSolver.calcLegs = calcLegs;
+
+  // node_modules/kalidokit/dist/HandSolver/index.js
+  var HandSolver = class {
+    static solve(lm, side = RIGHT) {
+      if (!lm) {
+        console.error("Need Hand Landmarks");
+        return;
+      }
+      const palm = [
+        new Vector(lm[0]),
+        new Vector(lm[side === RIGHT ? 17 : 5]),
+        new Vector(lm[side === RIGHT ? 5 : 17])
+      ];
+      const handRotation = Vector.rollPitchYaw(palm[0], palm[1], palm[2]);
+      handRotation.y = handRotation.z;
+      handRotation.y -= side === LEFT ? 0.4 : 0.4;
+      let hand = {};
+      hand[side + "Wrist"] = { x: handRotation.x, y: handRotation.y, z: handRotation.z };
+      hand[side + "RingProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[13], lm[14]) };
+      hand[side + "RingIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[13], lm[14], lm[15]) };
+      hand[side + "RingDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[14], lm[15], lm[16]) };
+      hand[side + "IndexProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[5], lm[6]) };
+      hand[side + "IndexIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[5], lm[6], lm[7]) };
+      hand[side + "IndexDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[6], lm[7], lm[8]) };
+      hand[side + "MiddleProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[9], lm[10]) };
+      hand[side + "MiddleIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[9], lm[10], lm[11]) };
+      hand[side + "MiddleDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[10], lm[11], lm[12]) };
+      hand[side + "ThumbProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[1], lm[2]) };
+      hand[side + "ThumbIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[1], lm[2], lm[3]) };
+      hand[side + "ThumbDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[2], lm[3], lm[4]) };
+      hand[side + "LittleProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[17], lm[18]) };
+      hand[side + "LittleIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[17], lm[18], lm[19]) };
+      hand[side + "LittleDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[18], lm[19], lm[20]) };
+      hand = rigFingers(hand, side);
+      return hand;
+    }
+  };
+  var rigFingers = (hand, side = RIGHT) => {
+    const invert = side === RIGHT ? 1 : -1;
+    const digits = ["Ring", "Index", "Little", "Thumb", "Middle"];
+    const segments = ["Proximal", "Intermediate", "Distal"];
+    hand[side + "Wrist"].x = clamp(hand[side + "Wrist"].x * 2 * invert, -0.3, 0.3);
+    hand[side + "Wrist"].y = clamp(hand[side + "Wrist"].y * 2.3, side === RIGHT ? -1.2 : -0.6, side === RIGHT ? 0.6 : 1.6);
+    hand[side + "Wrist"].z = hand[side + "Wrist"].z * -2.3 * invert;
+    digits.forEach((e) => {
+      segments.forEach((j2) => {
+        const trackedFinger = hand[side + e + j2];
+        if (e === "Thumb") {
+          const dampener = {
+            x: j2 === "Proximal" ? 2.2 : j2 === "Intermediate" ? 0 : 0,
+            y: j2 === "Proximal" ? 2.2 : j2 === "Intermediate" ? 0.7 : 1,
+            z: j2 === "Proximal" ? 0.5 : j2 === "Intermediate" ? 0.5 : 0.5
+          };
+          const startPos = {
+            x: j2 === "Proximal" ? 1.2 : j2 === "Distal" ? -0.2 : -0.2,
+            y: j2 === "Proximal" ? 1.1 * invert : j2 === "Distal" ? 0.1 * invert : 0.1 * invert,
+            z: j2 === "Proximal" ? 0.2 * invert : j2 === "Distal" ? 0.2 * invert : 0.2 * invert
+          };
+          const newThumb = { x: 0, y: 0, z: 0 };
+          if (j2 === "Proximal") {
+            newThumb.z = clamp(startPos.z + trackedFinger.z * -PI * dampener.z * invert, side === RIGHT ? -0.6 : -0.3, side === RIGHT ? 0.3 : 0.6);
+            newThumb.x = clamp(startPos.x + trackedFinger.z * -PI * dampener.x, -0.6, 0.3);
+            newThumb.y = clamp(startPos.y + trackedFinger.z * -PI * dampener.y * invert, side === RIGHT ? -1 : -0.3, side === RIGHT ? 0.3 : 1);
+          } else {
+            newThumb.z = clamp(startPos.z + trackedFinger.z * -PI * dampener.z * invert, -2, 2);
+            newThumb.x = clamp(startPos.x + trackedFinger.z * -PI * dampener.x, -2, 2);
+            newThumb.y = clamp(startPos.y + trackedFinger.z * -PI * dampener.y * invert, -2, 2);
+          }
+          trackedFinger.x = newThumb.x;
+          trackedFinger.y = newThumb.y;
+          trackedFinger.z = newThumb.z;
+        } else {
+          trackedFinger.z = clamp(trackedFinger.z * -PI * invert, side === RIGHT ? -PI : 0, side === RIGHT ? 0 : PI);
+        }
+      });
+    });
+    return hand;
+  };
+
+  // node_modules/kalidokit/dist/FaceSolver/calcHead.js
+  var createEulerPlane = (lm) => {
+    const p1 = new Vector(lm[21]);
+    const p2 = new Vector(lm[251]);
+    const p3 = new Vector(lm[397]);
+    const p4 = new Vector(lm[172]);
+    const p3mid = p3.lerp(p4, 0.5);
+    return {
+      vector: [p1, p2, p3mid],
+      points: [p1, p2, p3, p4]
+    };
+  };
+  var calcHead = (lm) => {
+    const plane = createEulerPlane(lm).vector;
+    const rotate = Vector.rollPitchYaw(plane[0], plane[1], plane[2]);
+    const midPoint = plane[0].lerp(plane[1], 0.5);
+    const width = plane[0].distance(plane[1]);
+    const height = midPoint.distance(plane[2]);
+    rotate.x *= -1;
+    rotate.z *= -1;
+    return {
+      y: rotate.y * PI,
+      x: rotate.x * PI,
+      z: rotate.z * PI,
+      width,
+      height,
+      position: midPoint.lerp(plane[2], 0.5),
+      normalized: {
+        y: rotate.y,
+        x: rotate.x,
+        z: rotate.z
+      },
+      degrees: {
+        y: rotate.y * 180,
+        x: rotate.x * 180,
+        z: rotate.z * 180
+      }
+    };
+  };
+
+  // node_modules/kalidokit/dist/FaceSolver/calcEyes.js
+  var points = {
+    eye: {
+      [LEFT]: [130, 133, 160, 159, 158, 144, 145, 153],
+      [RIGHT]: [263, 362, 387, 386, 385, 373, 374, 380]
+    },
+    brow: {
+      [LEFT]: [35, 244, 63, 105, 66, 229, 230, 231],
+      [RIGHT]: [265, 464, 293, 334, 296, 449, 450, 451]
+    },
+    pupil: {
+      [LEFT]: [468, 469, 470, 471, 472],
+      [RIGHT]: [473, 474, 475, 476, 477]
+    }
+  };
+  var getEyeOpen = (lm, side = LEFT, { high = 0.85, low = 0.55 } = {}) => {
+    const eyePoints = points.eye[side];
+    const eyeDistance = eyeLidRatio(lm[eyePoints[0]], lm[eyePoints[1]], lm[eyePoints[2]], lm[eyePoints[3]], lm[eyePoints[4]], lm[eyePoints[5]], lm[eyePoints[6]], lm[eyePoints[7]]);
+    const maxRatio = 0.285;
+    const ratio = clamp(eyeDistance / maxRatio, 0, 2);
+    const eyeOpenRatio = remap(ratio, low, high);
+    return {
+      norm: eyeOpenRatio,
+      raw: ratio
+    };
+  };
+  var eyeLidRatio = (eyeOuterCorner, eyeInnerCorner, eyeOuterUpperLid, eyeMidUpperLid, eyeInnerUpperLid, eyeOuterLowerLid, eyeMidLowerLid, eyeInnerLowerLid) => {
+    eyeOuterCorner = new Vector(eyeOuterCorner);
+    eyeInnerCorner = new Vector(eyeInnerCorner);
+    eyeOuterUpperLid = new Vector(eyeOuterUpperLid);
+    eyeMidUpperLid = new Vector(eyeMidUpperLid);
+    eyeInnerUpperLid = new Vector(eyeInnerUpperLid);
+    eyeOuterLowerLid = new Vector(eyeOuterLowerLid);
+    eyeMidLowerLid = new Vector(eyeMidLowerLid);
+    eyeInnerLowerLid = new Vector(eyeInnerLowerLid);
+    const eyeWidth = eyeOuterCorner.distance(eyeInnerCorner, 2);
+    const eyeOuterLidDistance = eyeOuterUpperLid.distance(eyeOuterLowerLid, 2);
+    const eyeMidLidDistance = eyeMidUpperLid.distance(eyeMidLowerLid, 2);
+    const eyeInnerLidDistance = eyeInnerUpperLid.distance(eyeInnerLowerLid, 2);
+    const eyeLidAvg = (eyeOuterLidDistance + eyeMidLidDistance + eyeInnerLidDistance) / 3;
+    const ratio = eyeLidAvg / eyeWidth;
+    return ratio;
+  };
+  var pupilPos = (lm, side = LEFT) => {
+    const eyeOuterCorner = new Vector(lm[points.eye[side][0]]);
+    const eyeInnerCorner = new Vector(lm[points.eye[side][1]]);
+    const eyeWidth = eyeOuterCorner.distance(eyeInnerCorner, 2);
+    const midPoint = eyeOuterCorner.lerp(eyeInnerCorner, 0.5);
+    const pupil = new Vector(lm[points.pupil[side][0]]);
+    const dx = midPoint.x - pupil.x;
+    const dy = midPoint.y - eyeWidth * 0.075 - pupil.y;
+    let ratioX = dx / (eyeWidth / 2);
+    let ratioY = dy / (eyeWidth / 4);
+    ratioX *= 4;
+    ratioY *= 4;
+    return { x: ratioX, y: ratioY };
+  };
+  var stabilizeBlink = (eye, headY, { enableWink = true, maxRot = 0.5 } = {}) => {
+    eye.r = clamp(eye.r, 0, 1);
+    eye.l = clamp(eye.l, 0, 1);
+    const blinkDiff = Math.abs(eye.l - eye.r);
+    const blinkThresh = enableWink ? 0.8 : 1.2;
+    const isClosing = eye.l < 0.3 && eye.r < 0.3;
+    const isOpen = eye.l > 0.6 && eye.r > 0.6;
+    if (headY > maxRot) {
+      return { l: eye.r, r: eye.r };
+    }
+    if (headY < -maxRot) {
+      return { l: eye.l, r: eye.l };
+    }
+    return {
+      l: blinkDiff >= blinkThresh && !isClosing && !isOpen ? eye.l : eye.r > eye.l ? Vector.lerp(eye.r, eye.l, 0.95) : Vector.lerp(eye.r, eye.l, 0.05),
+      r: blinkDiff >= blinkThresh && !isClosing && !isOpen ? eye.r : eye.r > eye.l ? Vector.lerp(eye.r, eye.l, 0.95) : Vector.lerp(eye.r, eye.l, 0.05)
+    };
+  };
+  var calcEyes = (lm, { high = 0.85, low = 0.55 } = {}) => {
+    if (lm.length !== 478) {
+      return {
+        l: 1,
+        r: 1
+      };
+    }
+    const leftEyeLid = getEyeOpen(lm, LEFT, { high, low });
+    const rightEyeLid = getEyeOpen(lm, RIGHT, { high, low });
+    return {
+      l: leftEyeLid.norm || 0,
+      r: rightEyeLid.norm || 0
+    };
+  };
+  var calcPupils = (lm) => {
+    if (lm.length !== 478) {
+      return { x: 0, y: 0 };
+    } else {
+      const pupilL = pupilPos(lm, LEFT);
+      const pupilR = pupilPos(lm, RIGHT);
+      return {
+        x: (pupilL.x + pupilR.x) * 0.5 || 0,
+        y: (pupilL.y + pupilR.y) * 0.5 || 0
+      };
+    }
+  };
+  var getBrowRaise = (lm, side = LEFT) => {
+    const browPoints = points.brow[side];
+    const browDistance = eyeLidRatio(lm[browPoints[0]], lm[browPoints[1]], lm[browPoints[2]], lm[browPoints[3]], lm[browPoints[4]], lm[browPoints[5]], lm[browPoints[6]], lm[browPoints[7]]);
+    const maxBrowRatio = 1.15;
+    const browHigh = 0.125;
+    const browLow = 0.07;
+    const browRatio = browDistance / maxBrowRatio - 1;
+    const browRaiseRatio = (clamp(browRatio, browLow, browHigh) - browLow) / (browHigh - browLow);
+    return browRaiseRatio;
+  };
+  var calcBrow = (lm) => {
+    if (lm.length !== 478) {
+      return 0;
+    } else {
+      const leftBrow = getBrowRaise(lm, LEFT);
+      const rightBrow = getBrowRaise(lm, RIGHT);
+      return (leftBrow + rightBrow) / 2 || 0;
+    }
+  };
+
+  // node_modules/kalidokit/dist/FaceSolver/calcMouth.js
+  var calcMouth = (lm) => {
+    const eyeInnerCornerL = new Vector(lm[133]);
+    const eyeInnerCornerR = new Vector(lm[362]);
+    const eyeOuterCornerL = new Vector(lm[130]);
+    const eyeOuterCornerR = new Vector(lm[263]);
+    const eyeInnerDistance = eyeInnerCornerL.distance(eyeInnerCornerR);
+    const eyeOuterDistance = eyeOuterCornerL.distance(eyeOuterCornerR);
+    const upperInnerLip = new Vector(lm[13]);
+    const lowerInnerLip = new Vector(lm[14]);
+    const mouthCornerLeft = new Vector(lm[61]);
+    const mouthCornerRight = new Vector(lm[291]);
+    const mouthOpen = upperInnerLip.distance(lowerInnerLip);
+    const mouthWidth = mouthCornerLeft.distance(mouthCornerRight);
+    let ratioY = mouthOpen / eyeInnerDistance;
+    let ratioX = mouthWidth / eyeOuterDistance;
+    ratioY = remap(ratioY, 0.15, 0.7);
+    ratioX = remap(ratioX, 0.45, 0.9);
+    ratioX = (ratioX - 0.3) * 2;
+    const mouthX = ratioX;
+    const mouthY = remap(mouthOpen / eyeInnerDistance, 0.17, 0.5);
+    const ratioI = clamp(remap(mouthX, 0, 1) * 2 * remap(mouthY, 0.2, 0.7), 0, 1);
+    const ratioA = mouthY * 0.4 + mouthY * (1 - ratioI) * 0.6;
+    const ratioU = mouthY * remap(1 - ratioI, 0, 0.3) * 0.1;
+    const ratioE = remap(ratioU, 0.2, 1) * (1 - ratioI) * 0.3;
+    const ratioO = (1 - ratioI) * remap(mouthY, 0.3, 1) * 0.4;
+    return {
+      x: ratioX || 0,
+      y: ratioY || 0,
+      shape: {
+        A: ratioA || 0,
+        E: ratioE || 0,
+        I: ratioI || 0,
+        O: ratioO || 0,
+        U: ratioU || 0
+      }
+    };
+  };
+
+  // node_modules/kalidokit/dist/FaceSolver/index.js
+  var FaceSolver = class {
+    static solve(lm, { runtime = "tfjs", video = null, imageSize = null, smoothBlink = false, blinkSettings = [] } = {}) {
+      if (!lm) {
+        console.error("Need Face Landmarks");
+        return;
+      }
+      if (video) {
+        const videoEl = typeof video === "string" ? document.querySelector(video) : video;
+        imageSize = {
+          width: videoEl.videoWidth,
+          height: videoEl.videoHeight
+        };
+      }
+      if (runtime === "mediapipe" && imageSize) {
+        for (const e of lm) {
+          e.x *= imageSize.width;
+          e.y *= imageSize.height;
+          e.z *= imageSize.width;
+        }
+      }
+      const getHead = calcHead(lm);
+      const getMouth = calcMouth(lm);
+      blinkSettings = blinkSettings.length > 0 ? blinkSettings : runtime === "tfjs" ? [0.55, 0.85] : [0.35, 0.5];
+      let getEye = calcEyes(lm, {
+        high: blinkSettings[1],
+        low: blinkSettings[0]
+      });
+      if (smoothBlink) {
+        getEye = stabilizeBlink(getEye, getHead.y);
+      }
+      const getPupils = calcPupils(lm);
+      const getBrow = calcBrow(lm);
+      return {
+        head: getHead,
+        eye: getEye,
+        brow: getBrow,
+        pupil: getPupils,
+        mouth: getMouth
+      };
+    }
+  };
+  FaceSolver.stabilizeBlink = stabilizeBlink;
+
+  // src/component/webcam-vrm.ts
+  var import_holistic = __toESM(require_holistic(), 1);
+  var import_camera_utils = __toESM(require_camera_utils(), 1);
+
+  // src/value.ts
+  var Value = class {
+    constructor(value = void 0) {
+      this.$ = value;
+    }
+    set(value) {
+      this.$ = value;
+      this.poke();
+      return this;
+    }
+    on(subscribe2) {
+      if (this.reactions === void 0) {
+        this.reactions = /* @__PURE__ */ new Set();
+      }
+      this.reactions.add(subscribe2);
+      subscribe2(this.$);
+      return () => this.reactions.delete(subscribe2);
+    }
+    subscribe(subscribe2) {
+      return this.on(subscribe2);
+    }
+    log(msg) {
+      this.on(() => console.log(msg, this.$));
+      return this;
+    }
+    poke() {
+      if (this.reactions === void 0)
+        return;
+      for (let callback of this.reactions) {
+        callback(this.$);
+      }
+      return this;
+    }
+    do(fn) {
+      fn();
+      return this;
+    }
+    re(fn) {
+      this.on(fn);
+      return this;
+    }
+    me() {
+      return new Value(this.$);
+    }
+    fa(v2, transform, filter) {
+      v2.on((state) => {
+        if (filter) {
+          if (!filter(state))
+            return;
+        }
+        if (transform) {
+          this.set(transform(state));
+        } else {
+          this.set(state);
+        }
+      });
+      return this;
+    }
+    la(timing, fn) {
+      let i2 = 0;
+      setInterval(() => {
+        fn(i2++);
+      }, timing);
+      return this;
+    }
+    save(where) {
+      try {
+        const v2 = JSON.parse(localStorage.getItem(where));
+        if (v2 !== void 0 && v2 !== null) {
+          this.set(v2);
+        }
+      } catch (ex) {
+      }
+      this.on((v2) => {
+        localStorage.setItem(where, JSON.stringify(v2));
+      });
+      return this;
+    }
+  };
+
+  // src/timing.ts
+  var tick = new Value(0);
+  var open_home = new Value(true);
+  var open_game = new Value(false);
+  var motd = new Value(`\u{1F38A}v0.0.7\u{1F38A}
+
+\u2705VRM\u2705Scene\u2705WebCam
+\u2705 FPS Camera\u2705Physics
+\u274C AI 
+\u274C Gameplay
+\u274C Voice
+\u274C Editing 
+\u274C VRM Import
+\u274C WebRTC Multiplayer 
+\u274C Media
+
+The web is a scary place. 
+\u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
+
+No cookies intended. Accountless. Age 18+ only.
+
+`);
+  var ticker = () => {
+    requestAnimationFrame(ticker);
+    tick.set(tick.$ + 1);
+  };
+  ticker();
 
   // node_modules/three/build/three.module.js
   var REVISION = "137";
@@ -5905,7 +7247,7 @@
     const uuid = _lut[d0 & 255] + _lut[d0 >> 8 & 255] + _lut[d0 >> 16 & 255] + _lut[d0 >> 24 & 255] + "-" + _lut[d1 & 255] + _lut[d1 >> 8 & 255] + "-" + _lut[d1 >> 16 & 15 | 64] + _lut[d1 >> 24 & 255] + "-" + _lut[d2 & 63 | 128] + _lut[d2 >> 8 & 255] + "-" + _lut[d2 >> 16 & 255] + _lut[d2 >> 24 & 255] + _lut[d3 & 255] + _lut[d3 >> 8 & 255] + _lut[d3 >> 16 & 255] + _lut[d3 >> 24 & 255];
     return uuid.toUpperCase();
   }
-  function clamp(value, min, max) {
+  function clamp2(value, min, max) {
     return Math.max(min, Math.min(max, value));
   }
   function euclideanModulo(n2, m2) {
@@ -6633,8 +7975,8 @@
     }
     setHSL(h2, s2, l2) {
       h2 = euclideanModulo(h2, 1);
-      s2 = clamp(s2, 0, 1);
-      l2 = clamp(l2, 0, 1);
+      s2 = clamp2(s2, 0, 1);
+      l2 = clamp2(l2, 0, 1);
       if (s2 === 0) {
         this.r = this.g = this.b = l2;
       } else {
@@ -7776,11 +9118,11 @@
       this._onChangeCallback();
       return this;
     }
-    setFromEuler(euler, update2) {
-      if (!(euler && euler.isEuler)) {
+    setFromEuler(euler2, update2) {
+      if (!(euler2 && euler2.isEuler)) {
         throw new Error("THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.");
       }
-      const x2 = euler._x, y2 = euler._y, z2 = euler._z, order = euler._order;
+      const x2 = euler2._x, y2 = euler2._y, z2 = euler2._z, order = euler2._order;
       const cos = Math.cos;
       const sin = Math.sin;
       const c1 = cos(x2 / 2);
@@ -7896,7 +9238,7 @@
       return this.normalize();
     }
     angleTo(q2) {
-      return 2 * Math.acos(Math.abs(clamp(this.dot(q2), -1, 1)));
+      return 2 * Math.acos(Math.abs(clamp2(this.dot(q2), -1, 1)));
     }
     rotateTowards(q2, step) {
       const angle = this.angleTo(q2);
@@ -8194,11 +9536,11 @@
       this.z = a2.z * b2.z;
       return this;
     }
-    applyEuler(euler) {
-      if (!(euler && euler.isEuler)) {
+    applyEuler(euler2) {
+      if (!(euler2 && euler2.isEuler)) {
         console.error("THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.");
       }
-      return this.applyQuaternion(_quaternion$4.setFromEuler(euler));
+      return this.applyQuaternion(_quaternion$4.setFromEuler(euler2));
     }
     applyAxisAngle(axis, angle) {
       return this.applyQuaternion(_quaternion$4.setFromAxisAngle(axis, angle));
@@ -8380,7 +9722,7 @@
       if (denominator === 0)
         return Math.PI / 2;
       const theta = this.dot(v2) / denominator;
-      return Math.acos(clamp(theta, -1, 1));
+      return Math.acos(clamp2(theta, -1, 1));
     }
     distanceTo(v2) {
       return Math.sqrt(this.distanceToSquared(v2));
@@ -9282,16 +10624,16 @@
       te2[15] = 1;
       return this;
     }
-    makeRotationFromEuler(euler) {
-      if (!(euler && euler.isEuler)) {
+    makeRotationFromEuler(euler2) {
+      if (!(euler2 && euler2.isEuler)) {
         console.error("THREE.Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.");
       }
       const te2 = this.elements;
-      const x2 = euler.x, y2 = euler.y, z2 = euler.z;
+      const x2 = euler2.x, y2 = euler2.y, z2 = euler2.z;
       const a2 = Math.cos(x2), b2 = Math.sin(x2);
       const c2 = Math.cos(y2), d2 = Math.sin(y2);
       const e = Math.cos(z2), f2 = Math.sin(z2);
-      if (euler.order === "XYZ") {
+      if (euler2.order === "XYZ") {
         const ae2 = a2 * e, af = a2 * f2, be = b2 * e, bf = b2 * f2;
         te2[0] = c2 * e;
         te2[4] = -c2 * f2;
@@ -9302,7 +10644,7 @@
         te2[2] = bf - ae2 * d2;
         te2[6] = be + af * d2;
         te2[10] = a2 * c2;
-      } else if (euler.order === "YXZ") {
+      } else if (euler2.order === "YXZ") {
         const ce2 = c2 * e, cf = c2 * f2, de2 = d2 * e, df = d2 * f2;
         te2[0] = ce2 + df * b2;
         te2[4] = de2 * b2 - cf;
@@ -9313,7 +10655,7 @@
         te2[2] = cf * b2 - de2;
         te2[6] = df + ce2 * b2;
         te2[10] = a2 * c2;
-      } else if (euler.order === "ZXY") {
+      } else if (euler2.order === "ZXY") {
         const ce2 = c2 * e, cf = c2 * f2, de2 = d2 * e, df = d2 * f2;
         te2[0] = ce2 - df * b2;
         te2[4] = -a2 * f2;
@@ -9324,7 +10666,7 @@
         te2[2] = -a2 * d2;
         te2[6] = b2;
         te2[10] = a2 * c2;
-      } else if (euler.order === "ZYX") {
+      } else if (euler2.order === "ZYX") {
         const ae2 = a2 * e, af = a2 * f2, be = b2 * e, bf = b2 * f2;
         te2[0] = c2 * e;
         te2[4] = be * d2 - af;
@@ -9335,7 +10677,7 @@
         te2[2] = -d2;
         te2[6] = b2 * c2;
         te2[10] = a2 * c2;
-      } else if (euler.order === "YZX") {
+      } else if (euler2.order === "YZX") {
         const ac = a2 * c2, ad = a2 * d2, bc = b2 * c2, bd = b2 * d2;
         te2[0] = c2 * e;
         te2[4] = bd - ac * f2;
@@ -9346,7 +10688,7 @@
         te2[2] = -d2 * e;
         te2[6] = ad * f2 + bc;
         te2[10] = ac - bd * f2;
-      } else if (euler.order === "XZY") {
+      } else if (euler2.order === "XZY") {
         const ac = a2 * c2, ad = a2 * d2, bc = b2 * c2, bd = b2 * d2;
         te2[0] = c2 * e;
         te2[4] = -f2;
@@ -9745,8 +11087,8 @@
   var _z = /* @__PURE__ */ new Vector3();
   var _matrix$1 = /* @__PURE__ */ new Matrix4();
   var _quaternion$3 = /* @__PURE__ */ new Quaternion();
-  var Euler = class {
-    constructor(x2 = 0, y2 = 0, z2 = 0, order = Euler.DefaultOrder) {
+  var Euler2 = class {
+    constructor(x2 = 0, y2 = 0, z2 = 0, order = Euler2.DefaultOrder) {
       this._x = x2;
       this._y = y2;
       this._z = z2;
@@ -9791,11 +11133,11 @@
     clone() {
       return new this.constructor(this._x, this._y, this._z, this._order);
     }
-    copy(euler) {
-      this._x = euler._x;
-      this._y = euler._y;
-      this._z = euler._z;
-      this._order = euler._order;
+    copy(euler2) {
+      this._x = euler2._x;
+      this._y = euler2._y;
+      this._z = euler2._z;
+      this._order = euler2._order;
       this._onChangeCallback();
       return this;
     }
@@ -9806,7 +11148,7 @@
       const m31 = te2[2], m32 = te2[6], m33 = te2[10];
       switch (order) {
         case "XYZ":
-          this._y = Math.asin(clamp(m13, -1, 1));
+          this._y = Math.asin(clamp2(m13, -1, 1));
           if (Math.abs(m13) < 0.9999999) {
             this._x = Math.atan2(-m23, m33);
             this._z = Math.atan2(-m12, m11);
@@ -9816,7 +11158,7 @@
           }
           break;
         case "YXZ":
-          this._x = Math.asin(-clamp(m23, -1, 1));
+          this._x = Math.asin(-clamp2(m23, -1, 1));
           if (Math.abs(m23) < 0.9999999) {
             this._y = Math.atan2(m13, m33);
             this._z = Math.atan2(m21, m22);
@@ -9826,7 +11168,7 @@
           }
           break;
         case "ZXY":
-          this._x = Math.asin(clamp(m32, -1, 1));
+          this._x = Math.asin(clamp2(m32, -1, 1));
           if (Math.abs(m32) < 0.9999999) {
             this._y = Math.atan2(-m31, m33);
             this._z = Math.atan2(-m12, m22);
@@ -9836,7 +11178,7 @@
           }
           break;
         case "ZYX":
-          this._y = Math.asin(-clamp(m31, -1, 1));
+          this._y = Math.asin(-clamp2(m31, -1, 1));
           if (Math.abs(m31) < 0.9999999) {
             this._x = Math.atan2(m32, m33);
             this._z = Math.atan2(m21, m11);
@@ -9846,7 +11188,7 @@
           }
           break;
         case "YZX":
-          this._z = Math.asin(clamp(m21, -1, 1));
+          this._z = Math.asin(clamp2(m21, -1, 1));
           if (Math.abs(m21) < 0.9999999) {
             this._x = Math.atan2(-m23, m22);
             this._y = Math.atan2(-m31, m11);
@@ -9856,7 +11198,7 @@
           }
           break;
         case "XZY":
-          this._z = Math.asin(-clamp(m12, -1, 1));
+          this._z = Math.asin(-clamp2(m12, -1, 1));
           if (Math.abs(m12) < 0.9999999) {
             this._x = Math.atan2(m32, m22);
             this._y = Math.atan2(m13, m11);
@@ -9884,8 +11226,8 @@
       _quaternion$3.setFromEuler(this);
       return this.setFromQuaternion(_quaternion$3, newOrder);
     }
-    equals(euler) {
-      return euler._x === this._x && euler._y === this._y && euler._z === this._z && euler._order === this._order;
+    equals(euler2) {
+      return euler2._x === this._x && euler2._y === this._y && euler2._z === this._z && euler2._order === this._order;
     }
     fromArray(array) {
       this._x = array[0];
@@ -9917,9 +11259,9 @@
     _onChangeCallback() {
     }
   };
-  Euler.prototype.isEuler = true;
-  Euler.DefaultOrder = "XYZ";
-  Euler.RotationOrders = ["XYZ", "YZX", "ZXY", "XZY", "YXZ", "ZYX"];
+  Euler2.prototype.isEuler = true;
+  Euler2.DefaultOrder = "XYZ";
+  Euler2.RotationOrders = ["XYZ", "YZX", "ZXY", "XZY", "YXZ", "ZYX"];
   var Layers = class {
     constructor() {
       this.mask = 1 | 0;
@@ -9973,7 +11315,7 @@
       this.children = [];
       this.up = Object3D.DefaultUp.clone();
       const position = new Vector3();
-      const rotation = new Euler();
+      const rotation = new Euler2();
       const quaternion = new Quaternion();
       const scale = new Vector3(1, 1, 1);
       function onRotationChange() {
@@ -10042,8 +11384,8 @@
     setRotationFromAxisAngle(axis, angle) {
       this.quaternion.setFromAxisAngle(axis, angle);
     }
-    setRotationFromEuler(euler) {
-      this.quaternion.setFromEuler(euler, true);
+    setRotationFromEuler(euler2) {
+      this.quaternion.setFromEuler(euler2, true);
     }
     setRotationFromMatrix(m2) {
       this.quaternion.setFromRotationMatrix(m2);
@@ -20694,7 +22036,7 @@
       return _currentRenderTarget === null ? _pixelRatio : 1;
     }
     let _gl = _context2;
-    function getContext2(contextNames, contextAttributes) {
+    function getContext(contextNames, contextAttributes) {
       for (let i2 = 0; i2 < contextNames.length; i2++) {
         const contextName = contextNames[i2];
         const context = _canvas2.getContext(contextName, contextAttributes);
@@ -20723,9 +22065,9 @@
         if (_this.isWebGL1Renderer === true) {
           contextNames.shift();
         }
-        _gl = getContext2(contextNames, contextAttributes);
+        _gl = getContext(contextNames, contextAttributes);
         if (_gl === null) {
-          if (getContext2(contextNames)) {
+          if (getContext(contextNames)) {
             throw new Error("Error creating WebGL context with your selected attributes.");
           } else {
             throw new Error("Error creating WebGL context.");
@@ -23057,13 +24399,13 @@
         vec.crossVectors(tangents[i2 - 1], tangents[i2]);
         if (vec.length() > Number.EPSILON) {
           vec.normalize();
-          const theta = Math.acos(clamp(tangents[i2 - 1].dot(tangents[i2]), -1, 1));
+          const theta = Math.acos(clamp2(tangents[i2 - 1].dot(tangents[i2]), -1, 1));
           normals[i2].applyMatrix4(mat.makeRotationAxis(vec, theta));
         }
         binormals[i2].crossVectors(tangents[i2], normals[i2]);
       }
       if (closed === true) {
-        let theta = Math.acos(clamp(normals[0].dot(normals[segments]), -1, 1));
+        let theta = Math.acos(clamp2(normals[0].dot(normals[segments]), -1, 1));
         theta /= segments;
         if (tangents[0].dot(vec.crossVectors(normals[0], normals[segments])) > 0) {
           theta = -theta;
@@ -23362,18 +24704,18 @@
     return CubicBezierP0(t, p0) + CubicBezierP1(t, p1) + CubicBezierP2(t, p2) + CubicBezierP3(t, p3);
   }
   var CubicBezierCurve = class extends Curve {
-    constructor(v0 = new Vector2(), v1 = new Vector2(), v2 = new Vector2(), v3 = new Vector2()) {
+    constructor(v0 = new Vector2(), v1 = new Vector2(), v2 = new Vector2(), v32 = new Vector2()) {
       super();
       this.type = "CubicBezierCurve";
       this.v0 = v0;
       this.v1 = v1;
       this.v2 = v2;
-      this.v3 = v3;
+      this.v3 = v32;
     }
     getPoint(t, optionalTarget = new Vector2()) {
       const point = optionalTarget;
-      const v0 = this.v0, v1 = this.v1, v2 = this.v2, v3 = this.v3;
-      point.set(CubicBezier(t, v0.x, v1.x, v2.x, v3.x), CubicBezier(t, v0.y, v1.y, v2.y, v3.y));
+      const v0 = this.v0, v1 = this.v1, v2 = this.v2, v32 = this.v3;
+      point.set(CubicBezier(t, v0.x, v1.x, v2.x, v32.x), CubicBezier(t, v0.y, v1.y, v2.y, v32.y));
       return point;
     }
     copy(source) {
@@ -23403,18 +24745,18 @@
   };
   CubicBezierCurve.prototype.isCubicBezierCurve = true;
   var CubicBezierCurve3 = class extends Curve {
-    constructor(v0 = new Vector3(), v1 = new Vector3(), v2 = new Vector3(), v3 = new Vector3()) {
+    constructor(v0 = new Vector3(), v1 = new Vector3(), v2 = new Vector3(), v32 = new Vector3()) {
       super();
       this.type = "CubicBezierCurve3";
       this.v0 = v0;
       this.v1 = v1;
       this.v2 = v2;
-      this.v3 = v3;
+      this.v3 = v32;
     }
     getPoint(t, optionalTarget = new Vector3()) {
       const point = optionalTarget;
-      const v0 = this.v0, v1 = this.v1, v2 = this.v2, v3 = this.v3;
-      point.set(CubicBezier(t, v0.x, v1.x, v2.x, v3.x), CubicBezier(t, v0.y, v1.y, v2.y, v3.y), CubicBezier(t, v0.z, v1.z, v2.z, v3.z));
+      const v0 = this.v0, v1 = this.v1, v2 = this.v2, v32 = this.v3;
+      point.set(CubicBezier(t, v0.x, v1.x, v2.x, v32.x), CubicBezier(t, v0.y, v1.y, v2.y, v32.y), CubicBezier(t, v0.z, v1.z, v2.z, v32.z));
       return point;
     }
     copy(source) {
@@ -25044,7 +26386,7 @@
       this.ior = 1.5;
       Object.defineProperty(this, "reflectivity", {
         get: function() {
-          return clamp(2.5 * (this.ior - 1) / (this.ior + 1), 0, 1);
+          return clamp2(2.5 * (this.ior - 1) / (this.ior + 1), 0, 1);
         },
         set: function(reflectivity) {
           this.ior = (1 + 0.4 * reflectivity) / (1 - 0.4 * reflectivity);
@@ -29040,7 +30382,7 @@
       const startEnd_startP = _startEnd.dot(_startP);
       let t = startEnd_startP / startEnd2;
       if (clampToLine) {
-        t = clamp(t, 0, 1);
+        t = clamp2(t, 0, 1);
       }
       return t;
     }
@@ -30640,7 +31982,7 @@
   var G = new Quaternion();
   var H = class {
     constructor(t, n2) {
-      this.autoUpdate = true, this._euler = new Euler(0, 0, 0, H.EULER_ORDER), this.firstPerson = t, this.applyer = n2;
+      this.autoUpdate = true, this._euler = new Euler2(0, 0, 0, H.EULER_ORDER), this.firstPerson = t, this.applyer = n2;
     }
     getLookAtWorldDirection(e) {
       const t = _(this.firstPerson.firstPersonBone, G);
@@ -30658,7 +32000,7 @@
     }
   };
   H.EULER_ORDER = "YXZ";
-  var F = new Euler(0, 0, 0, H.EULER_ORDER);
+  var F = new Euler2(0, 0, 0, H.EULER_ORDER);
   var k = class extends C {
     constructor(e, t, n2, i2, r2) {
       super(), this.type = u.FirstPersonLookAtTypeName.Bone, this._curveHorizontalInner = t, this._curveHorizontalOuter = n2, this._curveVerticalDown = i2, this._curveVerticalUp = r2, this._leftEye = e.getBoneNode(u.HumanoidBoneName.LeftEye), this._rightEye = e.getBoneNode(u.HumanoidBoneName.RightEye);
@@ -31302,86 +32644,6 @@
   var Ie = new MeshBasicMaterial({ color: 16711935, wireframe: true, transparent: true, depthTest: false });
   var Ce = new Vector3();
 
-  // src/value.ts
-  var Value = class {
-    constructor(value = void 0) {
-      this.$ = value;
-    }
-    set(value) {
-      this.$ = value;
-      this.poke();
-      return this;
-    }
-    on(subscribe2) {
-      if (this.reactions === void 0) {
-        this.reactions = /* @__PURE__ */ new Set();
-      }
-      this.reactions.add(subscribe2);
-      subscribe2(this.$);
-      return () => this.reactions.delete(subscribe2);
-    }
-    subscribe(subscribe2) {
-      return this.on(subscribe2);
-    }
-    log(msg) {
-      this.on(() => console.log(msg, this.$));
-      return this;
-    }
-    poke() {
-      if (this.reactions === void 0)
-        return;
-      for (let callback of this.reactions) {
-        callback(this.$);
-      }
-      return this;
-    }
-    do(fn) {
-      fn();
-      return this;
-    }
-    re(fn) {
-      this.on(fn);
-      return this;
-    }
-    me() {
-      return new Value(this.$);
-    }
-    fa(v2, transform, filter) {
-      v2.on((state) => {
-        if (filter) {
-          if (!filter(state))
-            return;
-        }
-        if (transform) {
-          this.set(transform(state));
-        } else {
-          this.set(state);
-        }
-      });
-      return this;
-    }
-    la(timing, fn) {
-      let i2 = 0;
-      setInterval(() => {
-        fn(i2++);
-      }, timing);
-      return this;
-    }
-    save(where) {
-      try {
-        const v2 = JSON.parse(localStorage.getItem(where));
-        if (v2 !== void 0 && v2 !== null) {
-          this.set(v2);
-        }
-      } catch (ex) {
-      }
-      this.on((v2) => {
-        localStorage.setItem(where, JSON.stringify(v2));
-      });
-      return this;
-    }
-  };
-
   // src/component/vrm.ts
   var currentVRM = new Value();
   var mirrorVRM = new Value();
@@ -31410,6 +32672,7 @@
           this.el.setObject3D("mesh", vrm.scene);
           this.data.vrm = vrm;
           if (this.data.current) {
+            vrm.firstPerson.setup();
             currentVRM.set(vrm);
           }
           if (this.data.mirror) {
@@ -31425,1305 +32688,28 @@
     }
   });
 
-  // src/component/physx.ts
-  AFRAME.registerComponent("physx", {
-    schema: {}
-  });
-
-  // src/component/scatter.ts
-  var bb = new AFRAME.THREE.Box3();
-  AFRAME.registerComponent("scatter", {
-    schema: {
-      type: "string",
-      default: "-0.5 -0.5 -0.5 0.5 0.5 0.5"
-    },
-    update() {
-      bb.setFromArray(this.data.split(" ").map(parseFloat));
-      this.el.object3D.position.x += bb.min.x + Math.random() * (bb.max.x - bb.min.x);
-      this.el.object3D.position.y += bb.min.y + Math.random() * (bb.max.y - bb.min.y);
-      this.el.object3D.position.z += bb.min.z + Math.random() * (bb.max.z - bb.min.z);
-    }
-  });
-
-  // src/component/activate.ts
-  AFRAME.registerComponent("activate", {
-    multiple: true,
-    update() {
-      const pool = this.el.components[`pool__${this.id}`];
-      if (!pool)
-        return;
-      let ent;
-      while (ent = pool.requestEntity()) {
-        ent.play();
-      }
-    }
-  });
-
-  // src/component/ring.ts
-  AFRAME.registerComponent("ring", {
-    schema: {
-      count: { type: "number", default: 10 },
-      radius: { type: "number", default: 5 }
-    },
-    update() {
-      const d2 = this.el.object3D.parent.userData;
-      const i2 = (d2.ringDex === void 0 ? d2.ringDex = 1 : d2.ringDex++) % this.data.count / this.data.count * Math.PI * 2;
-      this.el.object3D.position.set(Math.sin(i2), 0, Math.cos(i2)).multiplyScalar(this.data.radius);
-    }
-  });
-
-  // node_modules/kalidokit/dist/utils/helpers.js
-  var helpers_exports = {};
-  __export(helpers_exports, {
-    RestingDefault: () => RestingDefault,
-    clamp: () => clamp2,
-    remap: () => remap
-  });
-  var clamp2 = (val, min, max) => {
-    return Math.max(Math.min(val, max), min);
-  };
-  var remap = (val, min, max) => {
-    return (clamp2(val, min, max) - min) / (max - min);
-  };
-  var RestingDefault = {
-    Face: {
-      eye: {
-        l: 1,
-        r: 1
-      },
-      mouth: {
-        x: 0,
-        y: 0,
-        shape: {
-          A: 0,
-          E: 0,
-          I: 0,
-          O: 0,
-          U: 0
-        }
-      },
-      head: {
-        x: 0,
-        y: 0,
-        z: 0,
-        width: 0.3,
-        height: 0.6,
-        position: {
-          x: 0.5,
-          y: 0.5,
-          z: 0
-        }
-      },
-      brow: 0,
-      pupil: {
-        x: 0,
-        y: 0
-      }
-    },
-    Pose: {
-      RightUpperArm: {
-        x: 0,
-        y: 0,
-        z: -1.25
-      },
-      LeftUpperArm: {
-        x: 0,
-        y: 0,
-        z: 1.25
-      },
-      RightLowerArm: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      LeftLowerArm: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      LeftUpperLeg: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      RightUpperLeg: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      RightLowerLeg: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      LeftLowerLeg: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      LeftHand: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      RightHand: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      Spine: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      Hips: {
-        position: {
-          x: 0,
-          y: 0,
-          z: 0
-        },
-        rotation: {
-          x: 0,
-          y: 0,
-          z: 0
-        }
-      }
-    },
-    RightHand: {
-      RightWrist: {
-        x: -0.13,
-        y: -0.07,
-        z: -1.04
-      },
-      RightRingProximal: {
-        x: 0,
-        y: 0,
-        z: -0.13
-      },
-      RightRingIntermediate: {
-        x: 0,
-        y: 0,
-        z: -0.4
-      },
-      RightRingDistal: {
-        x: 0,
-        y: 0,
-        z: -0.04
-      },
-      RightIndexProximal: {
-        x: 0,
-        y: 0,
-        z: -0.24
-      },
-      RightIndexIntermediate: {
-        x: 0,
-        y: 0,
-        z: -0.25
-      },
-      RightIndexDistal: {
-        x: 0,
-        y: 0,
-        z: -0.06
-      },
-      RightMiddleProximal: {
-        x: 0,
-        y: 0,
-        z: -0.09
-      },
-      RightMiddleIntermediate: {
-        x: 0,
-        y: 0,
-        z: -0.44
-      },
-      RightMiddleDistal: {
-        x: 0,
-        y: 0,
-        z: -0.06
-      },
-      RightThumbProximal: {
-        x: -0.23,
-        y: -0.33,
-        z: -0.12
-      },
-      RightThumbIntermediate: {
-        x: -0.2,
-        y: -0.199,
-        z: -0.0139
-      },
-      RightThumbDistal: {
-        x: -0.2,
-        y: 2e-3,
-        z: 0.15
-      },
-      RightLittleProximal: {
-        x: 0,
-        y: 0,
-        z: -0.09
-      },
-      RightLittleIntermediate: {
-        x: 0,
-        y: 0,
-        z: -0.225
-      },
-      RightLittleDistal: {
-        x: 0,
-        y: 0,
-        z: -0.1
-      }
-    },
-    LeftHand: {
-      LeftWrist: {
-        x: -0.13,
-        y: -0.07,
-        z: -1.04
-      },
-      LeftRingProximal: {
-        x: 0,
-        y: 0,
-        z: 0.13
-      },
-      LeftRingIntermediate: {
-        x: 0,
-        y: 0,
-        z: 0.4
-      },
-      LeftRingDistal: {
-        x: 0,
-        y: 0,
-        z: 0.049
-      },
-      LeftIndexProximal: {
-        x: 0,
-        y: 0,
-        z: 0.24
-      },
-      LeftIndexIntermediate: {
-        x: 0,
-        y: 0,
-        z: 0.25
-      },
-      LeftIndexDistal: {
-        x: 0,
-        y: 0,
-        z: 0.06
-      },
-      LeftMiddleProximal: {
-        x: 0,
-        y: 0,
-        z: 0.09
-      },
-      LeftMiddleIntermediate: {
-        x: 0,
-        y: 0,
-        z: 0.44
-      },
-      LeftMiddleDistal: {
-        x: 0,
-        y: 0,
-        z: 0.066
-      },
-      LeftThumbProximal: {
-        x: -0.23,
-        y: 0.33,
-        z: 0.12
-      },
-      LeftThumbIntermediate: {
-        x: -0.2,
-        y: 0.25,
-        z: 0.05
-      },
-      LeftThumbDistal: {
-        x: -0.2,
-        y: 0.17,
-        z: -0.06
-      },
-      LeftLittleProximal: {
-        x: 0,
-        y: 0,
-        z: 0.17
-      },
-      LeftLittleIntermediate: {
-        x: 0,
-        y: 0,
-        z: 0.4
-      },
-      LeftLittleDistal: {
-        x: 0,
-        y: 0,
-        z: 0.1
-      }
-    }
-  };
-
-  // node_modules/kalidokit/dist/constants.js
-  var RIGHT = "Right";
-  var LEFT = "Left";
-  var PI = Math.PI;
-  var TWO_PI = Math.PI * 2;
-
-  // node_modules/kalidokit/dist/utils/vector.js
-  var Vector = class {
-    constructor(a2, b2, c2) {
-      var _a, _b, _c, _d, _e2, _f;
-      if (Array.isArray(a2)) {
-        this.x = (_a = a2[0]) !== null && _a !== void 0 ? _a : 0;
-        this.y = (_b = a2[1]) !== null && _b !== void 0 ? _b : 0;
-        this.z = (_c = a2[2]) !== null && _c !== void 0 ? _c : 0;
-        return;
-      }
-      if (!!a2 && typeof a2 === "object") {
-        this.x = (_d = a2.x) !== null && _d !== void 0 ? _d : 0;
-        this.y = (_e2 = a2.y) !== null && _e2 !== void 0 ? _e2 : 0;
-        this.z = (_f = a2.z) !== null && _f !== void 0 ? _f : 0;
-        return;
-      }
-      this.x = a2 !== null && a2 !== void 0 ? a2 : 0;
-      this.y = b2 !== null && b2 !== void 0 ? b2 : 0;
-      this.z = c2 !== null && c2 !== void 0 ? c2 : 0;
-    }
-    negative() {
-      return new Vector(-this.x, -this.y, -this.z);
-    }
-    add(v2) {
-      if (v2 instanceof Vector)
-        return new Vector(this.x + v2.x, this.y + v2.y, this.z + v2.z);
-      else
-        return new Vector(this.x + v2, this.y + v2, this.z + v2);
-    }
-    subtract(v2) {
-      if (v2 instanceof Vector)
-        return new Vector(this.x - v2.x, this.y - v2.y, this.z - v2.z);
-      else
-        return new Vector(this.x - v2, this.y - v2, this.z - v2);
-    }
-    multiply(v2) {
-      if (v2 instanceof Vector)
-        return new Vector(this.x * v2.x, this.y * v2.y, this.z * v2.z);
-      else
-        return new Vector(this.x * v2, this.y * v2, this.z * v2);
-    }
-    divide(v2) {
-      if (v2 instanceof Vector)
-        return new Vector(this.x / v2.x, this.y / v2.y, this.z / v2.z);
-      else
-        return new Vector(this.x / v2, this.y / v2, this.z / v2);
-    }
-    equals(v2) {
-      return this.x == v2.x && this.y == v2.y && this.z == v2.z;
-    }
-    dot(v2) {
-      return this.x * v2.x + this.y * v2.y + this.z * v2.z;
-    }
-    cross(v2) {
-      return new Vector(this.y * v2.z - this.z * v2.y, this.z * v2.x - this.x * v2.z, this.x * v2.y - this.y * v2.x);
-    }
-    length() {
-      return Math.sqrt(this.dot(this));
-    }
-    distance(v2, d2 = 3) {
-      if (d2 === 2)
-        return Math.sqrt(Math.pow(this.x - v2.x, 2) + Math.pow(this.y - v2.y, 2));
-      else
-        return Math.sqrt(Math.pow(this.x - v2.x, 2) + Math.pow(this.y - v2.y, 2) + Math.pow(this.z - v2.z, 2));
-    }
-    lerp(v2, fraction) {
-      return v2.subtract(this).multiply(fraction).add(this);
-    }
-    unit() {
-      return this.divide(this.length());
-    }
-    min() {
-      return Math.min(Math.min(this.x, this.y), this.z);
-    }
-    max() {
-      return Math.max(Math.max(this.x, this.y), this.z);
-    }
-    toSphericalCoords(axisMap = { x: "x", y: "y", z: "z" }) {
-      return {
-        theta: Math.atan2(this[axisMap.y], this[axisMap.x]),
-        phi: Math.acos(this[axisMap.z] / this.length())
-      };
-    }
-    angleTo(a2) {
-      return Math.acos(this.dot(a2) / (this.length() * a2.length()));
-    }
-    toArray(n2) {
-      return [this.x, this.y, this.z].slice(0, n2 || 3);
-    }
-    clone() {
-      return new Vector(this.x, this.y, this.z);
-    }
-    init(x2, y2, z2) {
-      this.x = x2;
-      this.y = y2;
-      this.z = z2;
-      return this;
-    }
-    static negative(a2, b2 = new Vector()) {
-      b2.x = -a2.x;
-      b2.y = -a2.y;
-      b2.z = -a2.z;
-      return b2;
-    }
-    static add(a2, b2, c2 = new Vector()) {
-      if (b2 instanceof Vector) {
-        c2.x = a2.x + b2.x;
-        c2.y = a2.y + b2.y;
-        c2.z = a2.z + b2.z;
-      } else {
-        c2.x = a2.x + b2;
-        c2.y = a2.y + b2;
-        c2.z = a2.z + b2;
-      }
-      return c2;
-    }
-    static subtract(a2, b2, c2 = new Vector()) {
-      if (b2 instanceof Vector) {
-        c2.x = a2.x - b2.x;
-        c2.y = a2.y - b2.y;
-        c2.z = a2.z - b2.z;
-      } else {
-        c2.x = a2.x - b2;
-        c2.y = a2.y - b2;
-        c2.z = a2.z - b2;
-      }
-      return c2;
-    }
-    static multiply(a2, b2, c2 = new Vector()) {
-      if (b2 instanceof Vector) {
-        c2.x = a2.x * b2.x;
-        c2.y = a2.y * b2.y;
-        c2.z = a2.z * b2.z;
-      } else {
-        c2.x = a2.x * b2;
-        c2.y = a2.y * b2;
-        c2.z = a2.z * b2;
-      }
-      return c2;
-    }
-    static divide(a2, b2, c2 = new Vector()) {
-      if (b2 instanceof Vector) {
-        c2.x = a2.x / b2.x;
-        c2.y = a2.y / b2.y;
-        c2.z = a2.z / b2.z;
-      } else {
-        c2.x = a2.x / b2;
-        c2.y = a2.y / b2;
-        c2.z = a2.z / b2;
-      }
-      return c2;
-    }
-    static cross(a2, b2, c2 = new Vector()) {
-      c2.x = a2.y * b2.z - a2.z * b2.y;
-      c2.y = a2.z * b2.x - a2.x * b2.z;
-      c2.z = a2.x * b2.y - a2.y * b2.x;
-      return c2;
-    }
-    static unit(a2, b2) {
-      const length = a2.length();
-      b2.x = a2.x / length;
-      b2.y = a2.y / length;
-      b2.z = a2.z / length;
-      return b2;
-    }
-    static fromAngles(theta, phi) {
-      return new Vector(Math.cos(theta) * Math.cos(phi), Math.sin(phi), Math.sin(theta) * Math.cos(phi));
-    }
-    static randomDirection() {
-      return Vector.fromAngles(Math.random() * TWO_PI, Math.asin(Math.random() * 2 - 1));
-    }
-    static min(a2, b2) {
-      return new Vector(Math.min(a2.x, b2.x), Math.min(a2.y, b2.y), Math.min(a2.z, b2.z));
-    }
-    static max(a2, b2) {
-      return new Vector(Math.max(a2.x, b2.x), Math.max(a2.y, b2.y), Math.max(a2.z, b2.z));
-    }
-    static lerp(a2, b2, fraction) {
-      if (b2 instanceof Vector) {
-        return b2.subtract(a2).multiply(fraction).add(a2);
-      } else {
-        return (b2 - a2) * fraction + a2;
-      }
-    }
-    static fromArray(a2) {
-      if (Array.isArray(a2)) {
-        return new Vector(a2[0], a2[1], a2[2]);
-      }
-      return new Vector(a2.x, a2.y, a2.z);
-    }
-    static angleBetween(a2, b2) {
-      return a2.angleTo(b2);
-    }
-    static distance(a2, b2, d2) {
-      if (d2 === 2)
-        return Math.sqrt(Math.pow(a2.x - b2.x, 2) + Math.pow(a2.y - b2.y, 2));
-      else
-        return Math.sqrt(Math.pow(a2.x - b2.x, 2) + Math.pow(a2.y - b2.y, 2) + Math.pow(a2.z - b2.z, 2));
-    }
-    static toDegrees(a2) {
-      return a2 * (180 / PI);
-    }
-    static normalizeAngle(radians) {
-      let angle = radians % TWO_PI;
-      angle = angle > PI ? angle - TWO_PI : angle < -PI ? TWO_PI + angle : angle;
-      return angle / PI;
-    }
-    static normalizeRadians(radians) {
-      if (radians >= PI / 2) {
-        radians -= TWO_PI;
-      }
-      if (radians <= -PI / 2) {
-        radians += TWO_PI;
-        radians = PI - radians;
-      }
-      return radians / PI;
-    }
-    static find2DAngle(cx, cy, ex, ey) {
-      const dy = ey - cy;
-      const dx = ex - cx;
-      const theta = Math.atan2(dy, dx);
-      return theta;
-    }
-    static findRotation(a2, b2, normalize = true) {
-      if (normalize) {
-        return new Vector(Vector.normalizeRadians(Vector.find2DAngle(a2.z, a2.x, b2.z, b2.x)), Vector.normalizeRadians(Vector.find2DAngle(a2.z, a2.y, b2.z, b2.y)), Vector.normalizeRadians(Vector.find2DAngle(a2.x, a2.y, b2.x, b2.y)));
-      } else {
-        return new Vector(Vector.find2DAngle(a2.z, a2.x, b2.z, b2.x), Vector.find2DAngle(a2.z, a2.y, b2.z, b2.y), Vector.find2DAngle(a2.x, a2.y, b2.x, b2.y));
-      }
-    }
-    static rollPitchYaw(a2, b2, c2) {
-      if (!c2) {
-        return new Vector(Vector.normalizeAngle(Vector.find2DAngle(a2.z, a2.y, b2.z, b2.y)), Vector.normalizeAngle(Vector.find2DAngle(a2.z, a2.x, b2.z, b2.x)), Vector.normalizeAngle(Vector.find2DAngle(a2.x, a2.y, b2.x, b2.y)));
-      }
-      const qb = b2.subtract(a2);
-      const qc = c2.subtract(a2);
-      const n2 = qb.cross(qc);
-      const unitZ = n2.unit();
-      const unitX = qb.unit();
-      const unitY = unitZ.cross(unitX);
-      const beta = Math.asin(unitZ.x) || 0;
-      const alpha = Math.atan2(-unitZ.y, unitZ.z) || 0;
-      const gamma = Math.atan2(-unitY.x, unitX.x) || 0;
-      return new Vector(Vector.normalizeAngle(alpha), Vector.normalizeAngle(beta), Vector.normalizeAngle(gamma));
-    }
-    static angleBetween3DCoords(a2, b2, c2) {
-      if (!(a2 instanceof Vector)) {
-        a2 = new Vector(a2);
-        b2 = new Vector(b2);
-        c2 = new Vector(c2);
-      }
-      const v1 = a2.subtract(b2);
-      const v2 = c2.subtract(b2);
-      const v1norm = v1.unit();
-      const v2norm = v2.unit();
-      const dotProducts = v1norm.dot(v2norm);
-      const angle = Math.acos(dotProducts);
-      return Vector.normalizeRadians(angle);
-    }
-    static getRelativeSphericalCoords(a2, b2, c2, axisMap) {
-      if (!(a2 instanceof Vector)) {
-        a2 = new Vector(a2);
-        b2 = new Vector(b2);
-        c2 = new Vector(c2);
-      }
-      const v1 = b2.subtract(a2);
-      const v2 = c2.subtract(b2);
-      const v1norm = v1.unit();
-      const v2norm = v2.unit();
-      const { theta: theta1, phi: phi1 } = v1norm.toSphericalCoords(axisMap);
-      const { theta: theta2, phi: phi2 } = v2norm.toSphericalCoords(axisMap);
-      const theta = theta1 - theta2;
-      const phi = phi1 - phi2;
-      return {
-        theta: Vector.normalizeAngle(theta),
-        phi: Vector.normalizeAngle(phi)
-      };
-    }
-    static getSphericalCoords(a2, b2, axisMap = { x: "x", y: "y", z: "z" }) {
-      if (!(a2 instanceof Vector)) {
-        a2 = new Vector(a2);
-        b2 = new Vector(b2);
-      }
-      const v1 = b2.subtract(a2);
-      const v1norm = v1.unit();
-      const { theta, phi } = v1norm.toSphericalCoords(axisMap);
-      return {
-        theta: Vector.normalizeAngle(-theta),
-        phi: Vector.normalizeAngle(PI / 2 - phi)
-      };
-    }
-  };
-
-  // node_modules/kalidokit/dist/PoseSolver/calcArms.js
-  var calcArms = (lm) => {
-    const UpperArm = {
-      r: Vector.findRotation(lm[11], lm[13]),
-      l: Vector.findRotation(lm[12], lm[14])
-    };
-    UpperArm.r.y = Vector.angleBetween3DCoords(lm[12], lm[11], lm[13]);
-    UpperArm.l.y = Vector.angleBetween3DCoords(lm[11], lm[12], lm[14]);
-    const LowerArm = {
-      r: Vector.findRotation(lm[13], lm[15]),
-      l: Vector.findRotation(lm[14], lm[16])
-    };
-    LowerArm.r.y = Vector.angleBetween3DCoords(lm[11], lm[13], lm[15]);
-    LowerArm.l.y = Vector.angleBetween3DCoords(lm[12], lm[14], lm[16]);
-    LowerArm.r.z = clamp2(LowerArm.r.z, -2.14, 0);
-    LowerArm.l.z = clamp2(LowerArm.l.z, -2.14, 0);
-    const Hand = {
-      r: Vector.findRotation(Vector.fromArray(lm[15]), Vector.lerp(Vector.fromArray(lm[17]), Vector.fromArray(lm[19]), 0.5)),
-      l: Vector.findRotation(Vector.fromArray(lm[16]), Vector.lerp(Vector.fromArray(lm[18]), Vector.fromArray(lm[20]), 0.5))
-    };
-    const rightArmRig = rigArm(UpperArm.r, LowerArm.r, Hand.r, RIGHT);
-    const leftArmRig = rigArm(UpperArm.l, LowerArm.l, Hand.l, LEFT);
-    return {
-      UpperArm: {
-        r: rightArmRig.UpperArm,
-        l: leftArmRig.UpperArm
-      },
-      LowerArm: {
-        r: rightArmRig.LowerArm,
-        l: leftArmRig.LowerArm
-      },
-      Hand: {
-        r: rightArmRig.Hand,
-        l: leftArmRig.Hand
-      },
-      Unscaled: {
-        UpperArm,
-        LowerArm,
-        Hand
-      }
-    };
-  };
-  var rigArm = (UpperArm, LowerArm, Hand, side = RIGHT) => {
-    const invert = side === RIGHT ? 1 : -1;
-    UpperArm.z *= -2.3 * invert;
-    UpperArm.y *= PI * invert;
-    UpperArm.y -= Math.max(LowerArm.x);
-    UpperArm.y -= -invert * Math.max(LowerArm.z, 0);
-    UpperArm.x -= 0.3 * invert;
-    LowerArm.z *= -2.14 * invert;
-    LowerArm.y *= 2.14 * invert;
-    LowerArm.x *= 2.14 * invert;
-    UpperArm.x = clamp2(UpperArm.x, -0.5, PI);
-    LowerArm.x = clamp2(LowerArm.x, -0.3, 0.3);
-    Hand.y = clamp2(Hand.z * 2, -0.6, 0.6);
-    Hand.z = Hand.z * -2.3 * invert;
-    return {
-      UpperArm,
-      LowerArm,
-      Hand
-    };
-  };
-
-  // node_modules/kalidokit/dist/PoseSolver/calcHips.js
-  var calcHips = (lm3d, lm2d) => {
-    const hipLeft2d = Vector.fromArray(lm2d[23]);
-    const hipRight2d = Vector.fromArray(lm2d[24]);
-    const shoulderLeft2d = Vector.fromArray(lm2d[11]);
-    const shoulderRight2d = Vector.fromArray(lm2d[12]);
-    const hipCenter2d = hipLeft2d.lerp(hipRight2d, 1);
-    const shoulderCenter2d = shoulderLeft2d.lerp(shoulderRight2d, 1);
-    const spineLength = hipCenter2d.distance(shoulderCenter2d);
-    const hips = {
-      position: {
-        x: clamp2(hipCenter2d.x - 0.4, -1, 1),
-        y: 0,
-        z: clamp2(spineLength - 1, -2, 0)
-      }
-    };
-    hips.worldPosition = {
-      x: hips.position.x,
-      y: 0,
-      z: hips.position.z * Math.pow(hips.position.z * -2, 2)
-    };
-    hips.worldPosition.x *= hips.worldPosition.z;
-    hips.rotation = Vector.rollPitchYaw(lm3d[23], lm3d[24]);
-    if (hips.rotation.y > 0.5) {
-      hips.rotation.y -= 2;
-    }
-    hips.rotation.y += 0.5;
-    if (hips.rotation.z > 0) {
-      hips.rotation.z = 1 - hips.rotation.z;
-    }
-    if (hips.rotation.z < 0) {
-      hips.rotation.z = -1 - hips.rotation.z;
-    }
-    const turnAroundAmountHips = remap(Math.abs(hips.rotation.y), 0.2, 0.4);
-    hips.rotation.z *= 1 - turnAroundAmountHips;
-    hips.rotation.x = 0;
-    const spine = Vector.rollPitchYaw(lm3d[11], lm3d[12]);
-    if (spine.y > 0.5) {
-      spine.y -= 2;
-    }
-    spine.y += 0.5;
-    if (spine.z > 0) {
-      spine.z = 1 - spine.z;
-    }
-    if (spine.z < 0) {
-      spine.z = -1 - spine.z;
-    }
-    const turnAroundAmount = remap(Math.abs(spine.y), 0.2, 0.4);
-    spine.z *= 1 - turnAroundAmount;
-    spine.x = 0;
-    return rigHips(hips, spine);
-  };
-  var rigHips = (hips, spine) => {
-    if (hips.rotation) {
-      hips.rotation.x *= Math.PI;
-      hips.rotation.y *= Math.PI;
-      hips.rotation.z *= Math.PI;
-    }
-    spine.x *= PI;
-    spine.y *= PI;
-    spine.z *= PI;
-    return {
-      Hips: hips,
-      Spine: spine
-    };
-  };
-
-  // node_modules/kalidokit/dist/utils/euler.js
-  var Euler2 = class {
-    constructor(a2, b2, c2, rotationOrder) {
-      var _a, _b, _c, _d;
-      if (!!a2 && typeof a2 === "object") {
-        this.x = (_a = a2.x) !== null && _a !== void 0 ? _a : 0;
-        this.y = (_b = a2.y) !== null && _b !== void 0 ? _b : 0;
-        this.z = (_c = a2.z) !== null && _c !== void 0 ? _c : 0;
-        this.rotationOrder = (_d = a2.rotationOrder) !== null && _d !== void 0 ? _d : "XYZ";
-        return;
-      }
-      this.x = a2 !== null && a2 !== void 0 ? a2 : 0;
-      this.y = b2 !== null && b2 !== void 0 ? b2 : 0;
-      this.z = c2 !== null && c2 !== void 0 ? c2 : 0;
-      this.rotationOrder = rotationOrder !== null && rotationOrder !== void 0 ? rotationOrder : "XYZ";
-    }
-    multiply(v2) {
-      return new Euler2(this.x * v2, this.y * v2, this.z * v2, this.rotationOrder);
-    }
-  };
-
-  // node_modules/kalidokit/dist/PoseSolver/calcLegs.js
-  var offsets = {
-    upperLeg: {
-      z: 0.1
-    }
-  };
-  var calcLegs = (lm) => {
-    const rightUpperLegSphericalCoords = Vector.getSphericalCoords(lm[23], lm[25], { x: "y", y: "z", z: "x" });
-    const leftUpperLegSphericalCoords = Vector.getSphericalCoords(lm[24], lm[26], { x: "y", y: "z", z: "x" });
-    const rightLowerLegSphericalCoords = Vector.getRelativeSphericalCoords(lm[23], lm[25], lm[27], {
-      x: "y",
-      y: "z",
-      z: "x"
-    });
-    const leftLowerLegSphericalCoords = Vector.getRelativeSphericalCoords(lm[24], lm[26], lm[28], {
-      x: "y",
-      y: "z",
-      z: "x"
-    });
-    const hipRotation = Vector.findRotation(lm[23], lm[24]);
-    const UpperLeg = {
-      r: new Vector({
-        x: rightUpperLegSphericalCoords.theta,
-        y: rightLowerLegSphericalCoords.phi,
-        z: rightUpperLegSphericalCoords.phi - hipRotation.z
-      }),
-      l: new Vector({
-        x: leftUpperLegSphericalCoords.theta,
-        y: leftLowerLegSphericalCoords.phi,
-        z: leftUpperLegSphericalCoords.phi - hipRotation.z
-      })
-    };
-    const LowerLeg = {
-      r: new Vector({
-        x: -Math.abs(rightLowerLegSphericalCoords.theta),
-        y: 0,
-        z: 0
-      }),
-      l: new Vector({
-        x: -Math.abs(leftLowerLegSphericalCoords.theta),
-        y: 0,
-        z: 0
-      })
-    };
-    const rightLegRig = rigLeg(UpperLeg.r, LowerLeg.r, RIGHT);
-    const leftLegRig = rigLeg(UpperLeg.l, LowerLeg.l, LEFT);
-    return {
-      UpperLeg: {
-        r: rightLegRig.UpperLeg,
-        l: leftLegRig.UpperLeg
-      },
-      LowerLeg: {
-        r: rightLegRig.LowerLeg,
-        l: leftLegRig.LowerLeg
-      },
-      Unscaled: {
-        UpperLeg,
-        LowerLeg
-      }
-    };
-  };
-  var rigLeg = (UpperLeg, LowerLeg, side = RIGHT) => {
-    const invert = side === RIGHT ? 1 : -1;
-    const rigedUpperLeg = new Euler2({
-      x: clamp2(UpperLeg.x, 0, 0.5) * PI,
-      y: clamp2(UpperLeg.y, -0.25, 0.25) * PI,
-      z: clamp2(UpperLeg.z, -0.5, 0.5) * PI + invert * offsets.upperLeg.z,
-      rotationOrder: "XYZ"
-    });
-    const rigedLowerLeg = new Euler2({
-      x: LowerLeg.x * PI,
-      y: LowerLeg.y * PI,
-      z: LowerLeg.z * PI
-    });
-    return {
-      UpperLeg: rigedUpperLeg,
-      LowerLeg: rigedLowerLeg
-    };
-  };
-
-  // node_modules/kalidokit/dist/PoseSolver/index.js
-  var PoseSolver = class {
-    static solve(lm3d, lm2d, { runtime = "mediapipe", video = null, imageSize = null, enableLegs = true } = {}) {
-      var _a, _b, _c, _d;
-      if (!lm3d && !lm2d) {
-        console.error("Need both World Pose and Pose Landmarks");
-        return;
-      }
-      if (video) {
-        const videoEl = typeof video === "string" ? document.querySelector(video) : video;
-        imageSize = {
-          width: videoEl.videoWidth,
-          height: videoEl.videoHeight
-        };
-      }
-      if (runtime === "tfjs" && imageSize) {
-        for (const e of lm3d) {
-          e.visibility = e.score;
-        }
-        for (const e of lm2d) {
-          e.x /= imageSize.width;
-          e.y /= imageSize.height;
-          e.z = 0;
-          e.visibility = e.score;
-        }
-      }
-      const Arms = calcArms(lm3d);
-      const Hips = calcHips(lm3d, lm2d);
-      const Legs = enableLegs ? calcLegs(lm3d) : null;
-      const rightHandOffscreen = lm3d[15].y > 0.1 || ((_a = lm3d[15].visibility) !== null && _a !== void 0 ? _a : 0) < 0.23 || 0.995 < lm2d[15].y;
-      const leftHandOffscreen = lm3d[16].y > 0.1 || ((_b = lm3d[16].visibility) !== null && _b !== void 0 ? _b : 0) < 0.23 || 0.995 < lm2d[16].y;
-      const leftFootOffscreen = lm3d[23].y > 0.1 || ((_c = lm3d[23].visibility) !== null && _c !== void 0 ? _c : 0) < 0.63 || Hips.Hips.position.z > -0.4;
-      const rightFootOffscreen = lm3d[24].y > 0.1 || ((_d = lm3d[24].visibility) !== null && _d !== void 0 ? _d : 0) < 0.63 || Hips.Hips.position.z > -0.4;
-      Arms.UpperArm.l = Arms.UpperArm.l.multiply(leftHandOffscreen ? 0 : 1);
-      Arms.UpperArm.l.z = leftHandOffscreen ? RestingDefault.Pose.LeftUpperArm.z : Arms.UpperArm.l.z;
-      Arms.UpperArm.r = Arms.UpperArm.r.multiply(rightHandOffscreen ? 0 : 1);
-      Arms.UpperArm.r.z = rightHandOffscreen ? RestingDefault.Pose.RightUpperArm.z : Arms.UpperArm.r.z;
-      Arms.LowerArm.l = Arms.LowerArm.l.multiply(leftHandOffscreen ? 0 : 1);
-      Arms.LowerArm.r = Arms.LowerArm.r.multiply(rightHandOffscreen ? 0 : 1);
-      Arms.Hand.l = Arms.Hand.l.multiply(leftHandOffscreen ? 0 : 1);
-      Arms.Hand.r = Arms.Hand.r.multiply(rightHandOffscreen ? 0 : 1);
-      if (Legs) {
-        Legs.UpperLeg.l = Legs.UpperLeg.l.multiply(rightFootOffscreen ? 0 : 1);
-        Legs.UpperLeg.r = Legs.UpperLeg.r.multiply(leftFootOffscreen ? 0 : 1);
-        Legs.LowerLeg.l = Legs.LowerLeg.l.multiply(rightFootOffscreen ? 0 : 1);
-        Legs.LowerLeg.r = Legs.LowerLeg.r.multiply(leftFootOffscreen ? 0 : 1);
-      }
-      return {
-        RightUpperArm: Arms.UpperArm.r,
-        RightLowerArm: Arms.LowerArm.r,
-        LeftUpperArm: Arms.UpperArm.l,
-        LeftLowerArm: Arms.LowerArm.l,
-        RightHand: Arms.Hand.r,
-        LeftHand: Arms.Hand.l,
-        RightUpperLeg: Legs ? Legs.UpperLeg.r : RestingDefault.Pose.RightUpperLeg,
-        RightLowerLeg: Legs ? Legs.LowerLeg.r : RestingDefault.Pose.RightLowerLeg,
-        LeftUpperLeg: Legs ? Legs.UpperLeg.l : RestingDefault.Pose.LeftUpperLeg,
-        LeftLowerLeg: Legs ? Legs.LowerLeg.l : RestingDefault.Pose.LeftLowerLeg,
-        Hips: Hips.Hips,
-        Spine: Hips.Spine
-      };
-    }
-  };
-  PoseSolver.calcArms = calcArms;
-  PoseSolver.calcHips = calcHips;
-  PoseSolver.calcLegs = calcLegs;
-
-  // node_modules/kalidokit/dist/HandSolver/index.js
-  var HandSolver = class {
-    static solve(lm, side = RIGHT) {
-      if (!lm) {
-        console.error("Need Hand Landmarks");
-        return;
-      }
-      const palm = [
-        new Vector(lm[0]),
-        new Vector(lm[side === RIGHT ? 17 : 5]),
-        new Vector(lm[side === RIGHT ? 5 : 17])
-      ];
-      const handRotation = Vector.rollPitchYaw(palm[0], palm[1], palm[2]);
-      handRotation.y = handRotation.z;
-      handRotation.y -= side === LEFT ? 0.4 : 0.4;
-      let hand = {};
-      hand[side + "Wrist"] = { x: handRotation.x, y: handRotation.y, z: handRotation.z };
-      hand[side + "RingProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[13], lm[14]) };
-      hand[side + "RingIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[13], lm[14], lm[15]) };
-      hand[side + "RingDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[14], lm[15], lm[16]) };
-      hand[side + "IndexProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[5], lm[6]) };
-      hand[side + "IndexIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[5], lm[6], lm[7]) };
-      hand[side + "IndexDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[6], lm[7], lm[8]) };
-      hand[side + "MiddleProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[9], lm[10]) };
-      hand[side + "MiddleIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[9], lm[10], lm[11]) };
-      hand[side + "MiddleDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[10], lm[11], lm[12]) };
-      hand[side + "ThumbProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[1], lm[2]) };
-      hand[side + "ThumbIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[1], lm[2], lm[3]) };
-      hand[side + "ThumbDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[2], lm[3], lm[4]) };
-      hand[side + "LittleProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[17], lm[18]) };
-      hand[side + "LittleIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[17], lm[18], lm[19]) };
-      hand[side + "LittleDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[18], lm[19], lm[20]) };
-      hand = rigFingers(hand, side);
-      return hand;
-    }
-  };
-  var rigFingers = (hand, side = RIGHT) => {
-    const invert = side === RIGHT ? 1 : -1;
-    const digits = ["Ring", "Index", "Little", "Thumb", "Middle"];
-    const segments = ["Proximal", "Intermediate", "Distal"];
-    hand[side + "Wrist"].x = clamp2(hand[side + "Wrist"].x * 2 * invert, -0.3, 0.3);
-    hand[side + "Wrist"].y = clamp2(hand[side + "Wrist"].y * 2.3, side === RIGHT ? -1.2 : -0.6, side === RIGHT ? 0.6 : 1.6);
-    hand[side + "Wrist"].z = hand[side + "Wrist"].z * -2.3 * invert;
-    digits.forEach((e) => {
-      segments.forEach((j2) => {
-        const trackedFinger = hand[side + e + j2];
-        if (e === "Thumb") {
-          const dampener = {
-            x: j2 === "Proximal" ? 2.2 : j2 === "Intermediate" ? 0 : 0,
-            y: j2 === "Proximal" ? 2.2 : j2 === "Intermediate" ? 0.7 : 1,
-            z: j2 === "Proximal" ? 0.5 : j2 === "Intermediate" ? 0.5 : 0.5
-          };
-          const startPos = {
-            x: j2 === "Proximal" ? 1.2 : j2 === "Distal" ? -0.2 : -0.2,
-            y: j2 === "Proximal" ? 1.1 * invert : j2 === "Distal" ? 0.1 * invert : 0.1 * invert,
-            z: j2 === "Proximal" ? 0.2 * invert : j2 === "Distal" ? 0.2 * invert : 0.2 * invert
-          };
-          const newThumb = { x: 0, y: 0, z: 0 };
-          if (j2 === "Proximal") {
-            newThumb.z = clamp2(startPos.z + trackedFinger.z * -PI * dampener.z * invert, side === RIGHT ? -0.6 : -0.3, side === RIGHT ? 0.3 : 0.6);
-            newThumb.x = clamp2(startPos.x + trackedFinger.z * -PI * dampener.x, -0.6, 0.3);
-            newThumb.y = clamp2(startPos.y + trackedFinger.z * -PI * dampener.y * invert, side === RIGHT ? -1 : -0.3, side === RIGHT ? 0.3 : 1);
-          } else {
-            newThumb.z = clamp2(startPos.z + trackedFinger.z * -PI * dampener.z * invert, -2, 2);
-            newThumb.x = clamp2(startPos.x + trackedFinger.z * -PI * dampener.x, -2, 2);
-            newThumb.y = clamp2(startPos.y + trackedFinger.z * -PI * dampener.y * invert, -2, 2);
-          }
-          trackedFinger.x = newThumb.x;
-          trackedFinger.y = newThumb.y;
-          trackedFinger.z = newThumb.z;
-        } else {
-          trackedFinger.z = clamp2(trackedFinger.z * -PI * invert, side === RIGHT ? -PI : 0, side === RIGHT ? 0 : PI);
-        }
-      });
-    });
-    return hand;
-  };
-
-  // node_modules/kalidokit/dist/FaceSolver/calcHead.js
-  var createEulerPlane = (lm) => {
-    const p1 = new Vector(lm[21]);
-    const p2 = new Vector(lm[251]);
-    const p3 = new Vector(lm[397]);
-    const p4 = new Vector(lm[172]);
-    const p3mid = p3.lerp(p4, 0.5);
-    return {
-      vector: [p1, p2, p3mid],
-      points: [p1, p2, p3, p4]
-    };
-  };
-  var calcHead = (lm) => {
-    const plane = createEulerPlane(lm).vector;
-    const rotate = Vector.rollPitchYaw(plane[0], plane[1], plane[2]);
-    const midPoint = plane[0].lerp(plane[1], 0.5);
-    const width = plane[0].distance(plane[1]);
-    const height = midPoint.distance(plane[2]);
-    rotate.x *= -1;
-    rotate.z *= -1;
-    return {
-      y: rotate.y * PI,
-      x: rotate.x * PI,
-      z: rotate.z * PI,
-      width,
-      height,
-      position: midPoint.lerp(plane[2], 0.5),
-      normalized: {
-        y: rotate.y,
-        x: rotate.x,
-        z: rotate.z
-      },
-      degrees: {
-        y: rotate.y * 180,
-        x: rotate.x * 180,
-        z: rotate.z * 180
-      }
-    };
-  };
-
-  // node_modules/kalidokit/dist/FaceSolver/calcEyes.js
-  var points = {
-    eye: {
-      [LEFT]: [130, 133, 160, 159, 158, 144, 145, 153],
-      [RIGHT]: [263, 362, 387, 386, 385, 373, 374, 380]
-    },
-    brow: {
-      [LEFT]: [35, 244, 63, 105, 66, 229, 230, 231],
-      [RIGHT]: [265, 464, 293, 334, 296, 449, 450, 451]
-    },
-    pupil: {
-      [LEFT]: [468, 469, 470, 471, 472],
-      [RIGHT]: [473, 474, 475, 476, 477]
-    }
-  };
-  var getEyeOpen = (lm, side = LEFT, { high = 0.85, low = 0.55 } = {}) => {
-    const eyePoints = points.eye[side];
-    const eyeDistance = eyeLidRatio(lm[eyePoints[0]], lm[eyePoints[1]], lm[eyePoints[2]], lm[eyePoints[3]], lm[eyePoints[4]], lm[eyePoints[5]], lm[eyePoints[6]], lm[eyePoints[7]]);
-    const maxRatio = 0.285;
-    const ratio = clamp2(eyeDistance / maxRatio, 0, 2);
-    const eyeOpenRatio = remap(ratio, low, high);
-    return {
-      norm: eyeOpenRatio,
-      raw: ratio
-    };
-  };
-  var eyeLidRatio = (eyeOuterCorner, eyeInnerCorner, eyeOuterUpperLid, eyeMidUpperLid, eyeInnerUpperLid, eyeOuterLowerLid, eyeMidLowerLid, eyeInnerLowerLid) => {
-    eyeOuterCorner = new Vector(eyeOuterCorner);
-    eyeInnerCorner = new Vector(eyeInnerCorner);
-    eyeOuterUpperLid = new Vector(eyeOuterUpperLid);
-    eyeMidUpperLid = new Vector(eyeMidUpperLid);
-    eyeInnerUpperLid = new Vector(eyeInnerUpperLid);
-    eyeOuterLowerLid = new Vector(eyeOuterLowerLid);
-    eyeMidLowerLid = new Vector(eyeMidLowerLid);
-    eyeInnerLowerLid = new Vector(eyeInnerLowerLid);
-    const eyeWidth = eyeOuterCorner.distance(eyeInnerCorner, 2);
-    const eyeOuterLidDistance = eyeOuterUpperLid.distance(eyeOuterLowerLid, 2);
-    const eyeMidLidDistance = eyeMidUpperLid.distance(eyeMidLowerLid, 2);
-    const eyeInnerLidDistance = eyeInnerUpperLid.distance(eyeInnerLowerLid, 2);
-    const eyeLidAvg = (eyeOuterLidDistance + eyeMidLidDistance + eyeInnerLidDistance) / 3;
-    const ratio = eyeLidAvg / eyeWidth;
-    return ratio;
-  };
-  var pupilPos = (lm, side = LEFT) => {
-    const eyeOuterCorner = new Vector(lm[points.eye[side][0]]);
-    const eyeInnerCorner = new Vector(lm[points.eye[side][1]]);
-    const eyeWidth = eyeOuterCorner.distance(eyeInnerCorner, 2);
-    const midPoint = eyeOuterCorner.lerp(eyeInnerCorner, 0.5);
-    const pupil = new Vector(lm[points.pupil[side][0]]);
-    const dx = midPoint.x - pupil.x;
-    const dy = midPoint.y - eyeWidth * 0.075 - pupil.y;
-    let ratioX = dx / (eyeWidth / 2);
-    let ratioY = dy / (eyeWidth / 4);
-    ratioX *= 4;
-    ratioY *= 4;
-    return { x: ratioX, y: ratioY };
-  };
-  var stabilizeBlink = (eye, headY, { enableWink = true, maxRot = 0.5 } = {}) => {
-    eye.r = clamp2(eye.r, 0, 1);
-    eye.l = clamp2(eye.l, 0, 1);
-    const blinkDiff = Math.abs(eye.l - eye.r);
-    const blinkThresh = enableWink ? 0.8 : 1.2;
-    const isClosing = eye.l < 0.3 && eye.r < 0.3;
-    const isOpen = eye.l > 0.6 && eye.r > 0.6;
-    if (headY > maxRot) {
-      return { l: eye.r, r: eye.r };
-    }
-    if (headY < -maxRot) {
-      return { l: eye.l, r: eye.l };
-    }
-    return {
-      l: blinkDiff >= blinkThresh && !isClosing && !isOpen ? eye.l : eye.r > eye.l ? Vector.lerp(eye.r, eye.l, 0.95) : Vector.lerp(eye.r, eye.l, 0.05),
-      r: blinkDiff >= blinkThresh && !isClosing && !isOpen ? eye.r : eye.r > eye.l ? Vector.lerp(eye.r, eye.l, 0.95) : Vector.lerp(eye.r, eye.l, 0.05)
-    };
-  };
-  var calcEyes = (lm, { high = 0.85, low = 0.55 } = {}) => {
-    if (lm.length !== 478) {
-      return {
-        l: 1,
-        r: 1
-      };
-    }
-    const leftEyeLid = getEyeOpen(lm, LEFT, { high, low });
-    const rightEyeLid = getEyeOpen(lm, RIGHT, { high, low });
-    return {
-      l: leftEyeLid.norm || 0,
-      r: rightEyeLid.norm || 0
-    };
-  };
-  var calcPupils = (lm) => {
-    if (lm.length !== 478) {
-      return { x: 0, y: 0 };
-    } else {
-      const pupilL = pupilPos(lm, LEFT);
-      const pupilR = pupilPos(lm, RIGHT);
-      return {
-        x: (pupilL.x + pupilR.x) * 0.5 || 0,
-        y: (pupilL.y + pupilR.y) * 0.5 || 0
-      };
-    }
-  };
-  var getBrowRaise = (lm, side = LEFT) => {
-    const browPoints = points.brow[side];
-    const browDistance = eyeLidRatio(lm[browPoints[0]], lm[browPoints[1]], lm[browPoints[2]], lm[browPoints[3]], lm[browPoints[4]], lm[browPoints[5]], lm[browPoints[6]], lm[browPoints[7]]);
-    const maxBrowRatio = 1.15;
-    const browHigh = 0.125;
-    const browLow = 0.07;
-    const browRatio = browDistance / maxBrowRatio - 1;
-    const browRaiseRatio = (clamp2(browRatio, browLow, browHigh) - browLow) / (browHigh - browLow);
-    return browRaiseRatio;
-  };
-  var calcBrow = (lm) => {
-    if (lm.length !== 478) {
-      return 0;
-    } else {
-      const leftBrow = getBrowRaise(lm, LEFT);
-      const rightBrow = getBrowRaise(lm, RIGHT);
-      return (leftBrow + rightBrow) / 2 || 0;
-    }
-  };
-
-  // node_modules/kalidokit/dist/FaceSolver/calcMouth.js
-  var calcMouth = (lm) => {
-    const eyeInnerCornerL = new Vector(lm[133]);
-    const eyeInnerCornerR = new Vector(lm[362]);
-    const eyeOuterCornerL = new Vector(lm[130]);
-    const eyeOuterCornerR = new Vector(lm[263]);
-    const eyeInnerDistance = eyeInnerCornerL.distance(eyeInnerCornerR);
-    const eyeOuterDistance = eyeOuterCornerL.distance(eyeOuterCornerR);
-    const upperInnerLip = new Vector(lm[13]);
-    const lowerInnerLip = new Vector(lm[14]);
-    const mouthCornerLeft = new Vector(lm[61]);
-    const mouthCornerRight = new Vector(lm[291]);
-    const mouthOpen = upperInnerLip.distance(lowerInnerLip);
-    const mouthWidth = mouthCornerLeft.distance(mouthCornerRight);
-    let ratioY = mouthOpen / eyeInnerDistance;
-    let ratioX = mouthWidth / eyeOuterDistance;
-    ratioY = remap(ratioY, 0.15, 0.7);
-    ratioX = remap(ratioX, 0.45, 0.9);
-    ratioX = (ratioX - 0.3) * 2;
-    const mouthX = ratioX;
-    const mouthY = remap(mouthOpen / eyeInnerDistance, 0.17, 0.5);
-    const ratioI = clamp2(remap(mouthX, 0, 1) * 2 * remap(mouthY, 0.2, 0.7), 0, 1);
-    const ratioA = mouthY * 0.4 + mouthY * (1 - ratioI) * 0.6;
-    const ratioU = mouthY * remap(1 - ratioI, 0, 0.3) * 0.1;
-    const ratioE = remap(ratioU, 0.2, 1) * (1 - ratioI) * 0.3;
-    const ratioO = (1 - ratioI) * remap(mouthY, 0.3, 1) * 0.4;
-    return {
-      x: ratioX || 0,
-      y: ratioY || 0,
-      shape: {
-        A: ratioA || 0,
-        E: ratioE || 0,
-        I: ratioI || 0,
-        O: ratioO || 0,
-        U: ratioU || 0
-      }
-    };
-  };
-
-  // node_modules/kalidokit/dist/FaceSolver/index.js
-  var FaceSolver = class {
-    static solve(lm, { runtime = "tfjs", video = null, imageSize = null, smoothBlink = false, blinkSettings = [] } = {}) {
-      if (!lm) {
-        console.error("Need Face Landmarks");
-        return;
-      }
-      if (video) {
-        const videoEl = typeof video === "string" ? document.querySelector(video) : video;
-        imageSize = {
-          width: videoEl.videoWidth,
-          height: videoEl.videoHeight
-        };
-      }
-      if (runtime === "mediapipe" && imageSize) {
-        for (const e of lm) {
-          e.x *= imageSize.width;
-          e.y *= imageSize.height;
-          e.z *= imageSize.width;
-        }
-      }
-      const getHead = calcHead(lm);
-      const getMouth = calcMouth(lm);
-      blinkSettings = blinkSettings.length > 0 ? blinkSettings : runtime === "tfjs" ? [0.55, 0.85] : [0.35, 0.5];
-      let getEye = calcEyes(lm, {
-        high: blinkSettings[1],
-        low: blinkSettings[0]
-      });
-      if (smoothBlink) {
-        getEye = stabilizeBlink(getEye, getHead.y);
-      }
-      const getPupils = calcPupils(lm);
-      const getBrow = calcBrow(lm);
-      return {
-        head: getHead,
-        eye: getEye,
-        brow: getBrow,
-        pupil: getPupils,
-        mouth: getMouth
-      };
-    }
-  };
-  FaceSolver.stabilizeBlink = stabilizeBlink;
-
-  // src/component/webcam-vrm.ts
-  var import_holistic = __toESM(require_holistic(), 1);
-  var import_camera_utils = __toESM(require_camera_utils(), 1);
-
-  // src/timing.ts
-  var tick = new Value(0);
-  var open_home = new Value(true);
-  var open_game = new Value(false);
-  var motd = new Value(`\u{1F38A}v0.0.5\u{1F38A}
-
-\u2705VRM\u2705Scene\u2705WebCam
-\u274C FPS Camera
-\u274C PhysX
-\u274C AI / Gameplay
-\u274C Voice
-\u274C Editing 
-\u274C VRM Import
-\u274C WebRTC Multiplayer 
-
-The web is a scary place. 
-\u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
-
-No cookies intended. Accountless. Age 18+ only.
-
-`);
-  var ticker = () => {
-    requestAnimationFrame(ticker);
-    tick.set(tick.$ + 1);
-  };
-  ticker();
-
   // src/component/webcam-vrm.ts
   var remap2 = helpers_exports.remap;
   var clamp3 = helpers_exports.clamp;
   var lerp2 = Vector.lerp;
+  var euler = new AFRAME.THREE.Euler();
+  var quat = new AFRAME.THREE.Quaternion();
   var rigRotation = (vrm, name, rotation = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
     const Part = vrm.humanoid.getBoneNode(u.HumanoidBoneName[name]);
     if (!Part) {
       return;
     }
-    let euler = new AFRAME.THREE.Euler(rotation.x * dampener, rotation.y * dampener, rotation.z * dampener);
-    let quaternion = new AFRAME.THREE.Quaternion().setFromEuler(euler);
+    euler.set(rotation.x * dampener, rotation.y * dampener, rotation.z * dampener);
+    let quaternion = quat.setFromEuler(euler);
     Part.quaternion.slerp(quaternion, lerpAmount);
   };
+  var v3 = new AFRAME.THREE.Vector3();
   var rigPosition = (vrm, name, position = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
     const Part = vrm.humanoid.getBoneNode(u.HumanoidBoneName[name]);
     if (!Part) {
       return;
     }
-    let vector = new AFRAME.THREE.Vector3(position.x * dampener, position.y * dampener, position.z * dampener);
+    let vector = v3.set(position.x * dampener, position.y * dampener, position.z * dampener);
     Part.position.lerp(vector, lerpAmount);
   };
   var oldLookTarget = new AFRAME.THREE.Euler();
@@ -32740,7 +32726,7 @@ No cookies intended. Accountless. Age 18+ only.
     Blendshape.setValue(PresetName.E, lerp2(riggedFace.mouth.shape.E, Blendshape.getValue(PresetName.E), 0.5));
     Blendshape.setValue(PresetName.O, lerp2(riggedFace.mouth.shape.O, Blendshape.getValue(PresetName.O), 0.5));
     Blendshape.setValue(PresetName.U, lerp2(riggedFace.mouth.shape.U, Blendshape.getValue(PresetName.U), 0.5));
-    let lookTarget = new AFRAME.THREE.Euler(lerp2(oldLookTarget.x, riggedFace.pupil.y, 0.4), lerp2(oldLookTarget.y, riggedFace.pupil.x, 0.4), 0, "XYZ");
+    let lookTarget = euler.set(lerp2(oldLookTarget.x, riggedFace.pupil.y, 0.4), lerp2(oldLookTarget.y, riggedFace.pupil.x, 0.4), 0, "XYZ");
     oldLookTarget.copy(lookTarget);
     vrm.lookAt.applyer.lookAt(lookTarget);
   };
@@ -32830,7 +32816,8 @@ No cookies intended. Accountless. Age 18+ only.
       rigRotation(vrm, "RightLittleDistal", riggedRightHand.RightLittleDistal);
     }
   };
-  var videoElement = new Value(document.querySelector(".input_video"));
+  var videoElement = new Value();
+  var canvasElement = new Value();
   var onResults = (results) => {
     animateVRM(currentVRM.$, results);
     animateVRM(mirrorVRM.$, results);
@@ -32851,12 +32838,18 @@ No cookies intended. Accountless. Age 18+ only.
   videoElement.on(($ve) => {
     if (!$ve)
       return;
+    canvasElement.$.width = 320;
+    canvasElement.$.height = 240;
+    const ctx = canvasElement.$.getContext("2d");
+    ctx.translate(320, 0);
+    ctx.scale(-1, 1);
     const camera = new import_camera_utils.Camera($ve, {
       onFrame: async () => {
-        await holistic.send({ image: $ve });
+        ctx.drawImage($ve, 0, 0, 320, 240);
+        await holistic.send({ image: canvasElement.$ });
       },
-      width: 640,
-      height: 480
+      width: 320,
+      height: 240
     });
     camera.start();
   });
@@ -32869,16 +32862,105 @@ No cookies intended. Accountless. Age 18+ only.
     }
   });
 
-  // src/component/lookat.ts
-  AFRAME.registerComponent("lookat", {
-    schema: {
-      type: "vec3",
-      default: new AFRAME.THREE.Vector3()
-    },
-    update() {
-      this.el.object3D.lookAt(this.data);
+  // src/template/webcam.svelte
+  function create_fragment(ctx) {
+    let div;
+    let video;
+    let t;
+    let canvas;
+    return {
+      c() {
+        div = element("div");
+        video = element("video");
+        t = space();
+        canvas = element("canvas");
+        attr(div, "class", "hidden svelte-oofj5h");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, video);
+        ctx[2](video);
+        append(div, t);
+        append(div, canvas);
+        ctx[3](canvas);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        ctx[2](null);
+        ctx[3](null);
+      }
+    };
+  }
+  function instance($$self, $$props, $$invalidate) {
+    let videoElementSource;
+    let canvasElementSource;
+    function video_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        videoElementSource = $$value;
+        $$invalidate(0, videoElementSource);
+      });
     }
-  });
+    function canvas_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        canvasElementSource = $$value;
+        $$invalidate(1, canvasElementSource);
+      });
+    }
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 3) {
+        $: {
+          if (canvasElementSource && !canvasElement.$) {
+            canvasElement.set(canvasElementSource);
+          }
+          if (videoElementSource && !videoElement.$) {
+            videoElement.set(videoElementSource);
+          }
+        }
+      }
+    };
+    return [videoElementSource, canvasElementSource, video_binding, canvas_binding];
+  }
+  var Webcam = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance, create_fragment, safe_not_equal, {});
+    }
+  };
+  var webcam_default = Webcam;
+
+  // src/template/characters-assets.svelte
+  function create_fragment2(ctx) {
+    let a_mixin;
+    return {
+      c() {
+        a_mixin = element("a-mixin");
+        set_custom_element_data(a_mixin, "id", "character");
+        set_custom_element_data(a_mixin, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 1;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.2 0.6 0.2; offset: 0 1 0");
+      },
+      m(target, anchor) {
+        insert(target, a_mixin, anchor);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_mixin);
+      }
+    };
+  }
+  var Characters_assets = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, create_fragment2, safe_not_equal, {});
+    }
+  };
+  var characters_assets_default = Characters_assets;
 
   // src/keyboard.ts
   var key_down = new Value("");
@@ -32905,172 +32987,328 @@ No cookies intended. Accountless. Age 18+ only.
     key_map.poke();
   });
 
-  // src/component/character_camera.ts
+  // src/component/wasd-controller.ts
+  var vec3 = new AFRAME.THREE.Vector3();
+  AFRAME.registerComponent("wasd-controller", {
+    schema: {
+      speed: { type: "number", default: 0.15 },
+      rot: { type: "number", default: 0.15 }
+    },
+    tick(_2, delta) {
+      if (!this.el.body)
+        return;
+      const o3d = this.el.object3D;
+      let force;
+      let torq;
+      vec3.set(0, 0, 0);
+      if (key_map.$["w"]) {
+        vec3.y = 1;
+        vec3.z += -this.data.speed * delta;
+      }
+      if (key_map.$["s"]) {
+        vec3.y = 1;
+        vec3.z += this.data.speed * delta;
+      }
+      if (key_map.$["a"]) {
+        vec3.y = 1;
+        vec3.x += -this.data.speed * delta;
+      }
+      if (key_map.$["d"]) {
+        vec3.y = 1;
+        vec3.x += this.data.speed * delta;
+      }
+      if (key_map.$["q"]) {
+        torq = new Ammo.btVector3(0, delta * this.data.rot, 0);
+        this.el.body.applyTorque(torq);
+        this.el.body.activate();
+      }
+      if (key_map.$["e"]) {
+        torq = new Ammo.btVector3(0, -delta * this.data.rot, 0);
+        this.el.body.applyTorque(torq);
+        this.el.body.activate();
+      }
+      if (vec3.length() > 0) {
+        vec3.applyQuaternion(o3d.quaternion);
+        force = new Ammo.btVector3(vec3.x, vec3.y, vec3.z);
+        this.el.body.applyForce(force);
+        this.el.body.activate();
+        Ammo.destroy(force);
+      }
+      if (torq)
+        Ammo.destroy(torq);
+    }
+  });
+
+  // src/template/characters.svelte
+  function create_fragment3(ctx) {
+    let a_entity0;
+    let t;
+    let a_entity1;
+    return {
+      c() {
+        a_entity0 = element("a-entity");
+        t = space();
+        a_entity1 = element("a-entity");
+        set_custom_element_data(a_entity0, "mixin", "shadow character");
+        set_custom_element_data(a_entity0, "position", "0 0 -5");
+        set_custom_element_data(a_entity0, "vrm", "src: /vrm/goblin.vrm; current: true");
+        set_custom_element_data(a_entity0, "id", "focus");
+        set_custom_element_data(a_entity0, "wasd-controller", "");
+        set_custom_element_data(a_entity1, "mixin", "shadow character");
+        set_custom_element_data(a_entity1, "position", "0 0.15 -6");
+        set_custom_element_data(a_entity1, "rotation", "0 180 0");
+        set_custom_element_data(a_entity1, "vrm", "src: /vrm/doer.vrm; mirror: true");
+      },
+      m(target, anchor) {
+        insert(target, a_entity0, anchor);
+        insert(target, t, anchor);
+        insert(target, a_entity1, anchor);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_entity0);
+        if (detaching)
+          detach(t);
+        if (detaching)
+          detach(a_entity1);
+      }
+    };
+  }
+  var Characters = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, create_fragment3, safe_not_equal, {});
+    }
+  };
+  var characters_default = Characters;
+
+  // src/component/character-camera.ts
   AFRAME.registerComponent("character-camera", {
     schema: {
       zoom: { type: "number", default: 0 },
-      max_zoom: { type: "number", default: 5 }
+      max_zoom: { type: "number", default: 5 },
+      head: { type: "boolean", default: false }
     },
     init() {
       this.cancel = currentVRM.on(() => {
-        console.log(currentVRM.$);
-        currentVRM.$.firstPerson.firstPersonBone.add(this.el.object3D);
+        const o3d = this.el.object3D;
+        if (currentVRM.$) {
+          o3d.position.set(0, 0, 0);
+          currentVRM.$.firstPerson.firstPersonBone.add(o3d);
+          this.hideHead();
+        }
       });
     },
+    showHead() {
+      const { layers } = this.el.object3D.children[0];
+      this.data.head = true;
+      layers.disable(currentVRM.$.firstPerson.firstPersonOnlyLayer);
+      layers.enable(currentVRM.$.firstPerson.thirdPersonOnlyLayer);
+    },
+    hideHead() {
+      const { layers } = this.el.object3D.children[0];
+      this.data.head = false;
+      layers.enable(currentVRM.$.firstPerson.firstPersonOnlyLayer);
+      layers.disable(currentVRM.$.firstPerson.thirdPersonOnlyLayer);
+    },
     remove() {
-      currentVRM.$?.firstPerson.firstPersonBone.remove(this.el.object3D);
+      if (currentVRM.$) {
+        currentVRM.$?.firstPerson.firstPersonBone.remove(this.el.object3D);
+      }
       this.cancel();
     },
     update() {
+      if (!currentVRM.$)
+        return;
       this.el.object3D.position.z = this.data.zoom;
-      if (this.data.zoom >= 1 && currentVRM.$) {
+      this.el.object3D.position.y = this.data.zoom / 2;
+      if (this.data.zoom >= 0.2) {
+        this.showHead();
+      } else if (this.data.head) {
+        this.hideHead();
       }
     },
-    tick() {
+    tick(_2, dt) {
+      if (!currentVRM.$)
+        return;
       if (key_map.$["pageup"]) {
-        this.data.zoom = Math.min(this.data.max_zoom, this.data.zoom + 0.01);
+        this.data.zoom = Math.min(this.data.max_zoom, this.data.zoom + 1e-3 * dt);
         this.update();
       } else if (key_map.$["pagedown"]) {
-        this.data.zoom = Math.max(this.data.zoom - 0.01, 0);
+        this.data.zoom = Math.max(this.data.zoom - 1e-3 * dt, 0);
         this.update();
-      }
-      if (currentVRM.$) {
-        console.log(currentVRM.$.firstPerson.getFirstPersonWorldDirection(this.el.object3D.rotation));
-        currentVRM.$.firstPerson.getFirstPersonWorldPosition(this.el.object3D.position);
       }
     }
   });
 
+  // src/template/camera-fps.svelte
+  function create_fragment4(ctx) {
+    let a_camera;
+    return {
+      c() {
+        a_camera = element("a-camera");
+        set_custom_element_data(a_camera, "active", "");
+        set_custom_element_data(a_camera, "fov", "75");
+        set_custom_element_data(a_camera, "id", "#camera");
+        set_custom_element_data(a_camera, "character-camera", "");
+        set_custom_element_data(a_camera, "position", "0 4 0");
+        set_custom_element_data(a_camera, "wasd-controls", "enabled: false;");
+        set_custom_element_data(a_camera, "look-controls", "enabled: false;");
+      },
+      m(target, anchor) {
+        insert(target, a_camera, anchor);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_camera);
+      }
+    };
+  }
+  var Camera_fps = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, create_fragment4, safe_not_equal, {});
+    }
+  };
+  var camera_fps_default = Camera_fps;
+
   // src/template/volleyball.svelte
-  function create_fragment(ctx) {
+  function create_fragment5(ctx) {
+    let webcam;
+    let t0;
     let a_scene;
     let a_assets;
     let audio;
     let audio_src_value;
-    let t0;
+    let t1;
     let a_asset_item;
     let a_asset_item_src_value;
-    let t1;
-    let a_mixin0;
     let t2;
-    let a_mixin1;
+    let a_mixin0;
     let t3;
-    let a_mixin2;
+    let a_mixin1;
     let t4;
-    let a_mixin3;
+    let a_mixin2;
     let t5;
-    let a_mixin4;
+    let a_mixin3;
     let t6;
-    let a_mixin5;
+    let a_mixin4;
     let t7;
+    let a_mixin5;
+    let t8;
     let a_mixin6;
     let a_mixin6_ring_value;
-    let t8;
-    let a_mixin7;
     let t9;
+    let a_mixin7;
+    let t10;
     let a_mixin8;
     let a_mixin8_animation_value;
-    let t10;
-    let a_camera;
     let t11;
+    let charactersmixins;
+    let t12;
+    let camerafps;
+    let t13;
     let a_sky;
     let a_sky_animate_value;
-    let t12;
-    let a_entity0;
-    let t13;
-    let a_entity1;
     let t14;
-    let a_entity2;
+    let a_entity0;
     let t15;
-    let a_entity3;
+    let a_entity1;
     let t16;
-    let a_entity4;
+    let a_entity2;
     let t17;
-    let a_entity5;
-    let a_entity5_position_value;
-    let a_entity5_animate_value;
-    let a_entity5_light_value;
+    let a_entity3;
     let t18;
-    let a_entity6;
-    let a_entity6_light_value;
-    let a_entity6_animate_value;
+    let a_entity4;
     let t19;
-    let a_entity7;
+    let a_entity5;
     let t20;
-    let a_entity8;
+    let a_entity6;
+    let a_entity6_position_value;
+    let a_entity6_animate_value;
+    let a_entity6_light_value;
     let t21;
-    let a_box;
+    let a_entity7;
+    let a_entity7_light_value;
+    let a_entity7_animate_value;
     let t22;
-    let a_sphere;
+    let characters;
     let t23;
-    let a_cylinder;
-    let t24;
     let a_plane;
+    let t24;
+    let a_entity8;
+    let a_entity8_position_value;
     let t25;
-    let a_entity9;
-    let a_entity9_position_value;
-    let t26;
     let a_sound;
     let a_sound_volume_value;
     let a_sound_src_value;
+    let current;
+    webcam = new webcam_default({});
+    charactersmixins = new characters_assets_default({});
+    camerafps = new camera_fps_default({});
+    characters = new characters_default({});
     return {
       c() {
+        create_component(webcam.$$.fragment);
+        t0 = space();
         a_scene = element("a-scene");
         a_assets = element("a-assets");
         audio = element("audio");
-        t0 = space();
-        a_asset_item = element("a-asset-item");
         t1 = space();
-        a_mixin0 = element("a-mixin");
+        a_asset_item = element("a-asset-item");
         t2 = space();
-        a_mixin1 = element("a-mixin");
+        a_mixin0 = element("a-mixin");
         t3 = space();
-        a_mixin2 = element("a-mixin");
+        a_mixin1 = element("a-mixin");
         t4 = space();
-        a_mixin3 = element("a-mixin");
+        a_mixin2 = element("a-mixin");
         t5 = space();
-        a_mixin4 = element("a-mixin");
+        a_mixin3 = element("a-mixin");
         t6 = space();
-        a_mixin5 = element("a-mixin");
+        a_mixin4 = element("a-mixin");
         t7 = space();
-        a_mixin6 = element("a-mixin");
+        a_mixin5 = element("a-mixin");
         t8 = space();
-        a_mixin7 = element("a-mixin");
+        a_mixin6 = element("a-mixin");
         t9 = space();
-        a_mixin8 = element("a-mixin");
+        a_mixin7 = element("a-mixin");
         t10 = space();
-        a_camera = element("a-camera");
+        a_mixin8 = element("a-mixin");
         t11 = space();
-        a_sky = element("a-sky");
+        create_component(charactersmixins.$$.fragment);
         t12 = space();
-        a_entity0 = element("a-entity");
+        create_component(camerafps.$$.fragment);
         t13 = space();
-        a_entity1 = element("a-entity");
+        a_sky = element("a-sky");
         t14 = space();
-        a_entity2 = element("a-entity");
+        a_entity0 = element("a-entity");
         t15 = space();
-        a_entity3 = element("a-entity");
+        a_entity1 = element("a-entity");
         t16 = space();
-        a_entity4 = element("a-entity");
+        a_entity2 = element("a-entity");
         t17 = space();
-        a_entity5 = element("a-entity");
+        a_entity3 = element("a-entity");
         t18 = space();
-        a_entity6 = element("a-entity");
+        a_entity4 = element("a-entity");
         t19 = space();
-        a_entity7 = element("a-entity");
+        a_entity5 = element("a-entity");
         t20 = space();
-        a_entity8 = element("a-entity");
+        a_entity6 = element("a-entity");
         t21 = space();
-        a_box = element("a-box");
+        a_entity7 = element("a-entity");
         t22 = space();
-        a_sphere = element("a-sphere");
+        create_component(characters.$$.fragment);
         t23 = space();
-        a_cylinder = element("a-cylinder");
-        t24 = space();
         a_plane = element("a-plane");
+        t24 = space();
+        a_entity8 = element("a-entity");
         t25 = space();
-        a_entity9 = element("a-entity");
-        t26 = space();
         a_sound = element("a-sound");
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "/sound/bg-ocean.mp3"))
@@ -33078,46 +33316,51 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_asset_item, "id", "glb-tree");
         if (!src_url_equal(a_asset_item.src, a_asset_item_src_value = "/glb/tree.glb"))
           set_custom_element_data(a_asset_item, "src", a_asset_item_src_value);
-        set_custom_element_data(a_mixin0, "id", "phys");
-        set_custom_element_data(a_mixin0, "physx", "");
-        set_custom_element_data(a_mixin1, "id", "shadow");
-        set_custom_element_data(a_mixin1, "shadow", "cast: true");
-        set_custom_element_data(a_mixin2, "id", "toon");
-        set_custom_element_data(a_mixin2, "material", "roughness: 1;dithering: false;");
-        set_custom_element_data(a_mixin3, "id", "tree");
+        set_custom_element_data(a_mixin0, "id", "shadow");
+        set_custom_element_data(a_mixin0, "shadow", "cast: true");
+        set_custom_element_data(a_mixin1, "id", "toon");
+        set_custom_element_data(a_mixin1, "material", "roughness: 1;dithering: false;");
+        set_custom_element_data(a_mixin2, "id", "tree");
+        set_custom_element_data(a_mixin2, "shadow", "");
+        set_custom_element_data(a_mixin2, "gltf-model", "#glb-tree");
+        set_custom_element_data(a_mixin2, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin2, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin2, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
+        set_custom_element_data(a_mixin3, "id", "grass");
         set_custom_element_data(a_mixin3, "shadow", "");
-        set_custom_element_data(a_mixin3, "gltf-model", "/glb/tree.glb");
+        set_custom_element_data(a_mixin3, "gltf-model", "/glb/grass.glb");
         set_custom_element_data(a_mixin3, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin4, "id", "grass");
+        set_custom_element_data(a_mixin4, "id", "grass2");
         set_custom_element_data(a_mixin4, "shadow", "");
-        set_custom_element_data(a_mixin4, "gltf-model", "/glb/grass.glb");
+        set_custom_element_data(a_mixin4, "gltf-model", "/glb/grassLarge.glb");
         set_custom_element_data(a_mixin4, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin5, "id", "grass2");
+        set_custom_element_data(a_mixin5, "id", "coinGold");
         set_custom_element_data(a_mixin5, "shadow", "");
-        set_custom_element_data(a_mixin5, "gltf-model", "/glb/grassLarge.glb");
+        set_custom_element_data(a_mixin5, "gltf-model", "/glb/coinGold.glb");
+        set_custom_element_data(a_mixin5, "ammo-body", "");
+        set_custom_element_data(a_mixin5, "material", "flatShading: true;shader:flat; emissive: #FFF");
+        set_custom_element_data(a_mixin5, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 0.35; offset: -1 0.25 0.5");
         set_custom_element_data(a_mixin5, "scatter", ctx[2]);
         set_custom_element_data(a_mixin6, "id", "mountains");
         set_custom_element_data(a_mixin6, "shadow", "");
         set_custom_element_data(a_mixin6, "gltf-model", "/glb/rockC.glb");
         set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 100");
-        set_custom_element_data(a_mixin6, "scale", "15 7.5 15");
+        set_custom_element_data(a_mixin6, "scale", "12 7.5 12");
+        set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
         set_custom_element_data(a_mixin7, "id", "rock");
         set_custom_element_data(a_mixin7, "shadow", "");
         set_custom_element_data(a_mixin7, "gltf-model", "/glb/rockB.glb");
         set_custom_element_data(a_mixin7, "scale", "0.5 0.25 0.5");
         set_custom_element_data(a_mixin7, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin7, "ammo-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin7, "ammo-shape", "type: box; fit: manual; halfExtents: 0.25 0.5 0.25;");
         set_custom_element_data(a_mixin8, "id", "cloud");
         set_custom_element_data(a_mixin8, "scatter", ctx[2]);
         set_custom_element_data(a_mixin8, "animation", a_mixin8_animation_value = "property:position; dur: " + 3e3 * 60 + "; to:0 0 -" + ctx[0] + "; easing: linear; loop: true;");
         set_custom_element_data(a_mixin8, "material", "color: #ffffff; opacity: 0.5; transparent: true; ");
         set_custom_element_data(a_mixin8, "geometry", "");
         set_custom_element_data(a_mixin8, "scale", "15 5 5");
-        set_custom_element_data(a_camera, "active", "");
-        set_custom_element_data(a_camera, "fov", "75");
-        set_custom_element_data(a_camera, "id", "#camera");
-        set_custom_element_data(a_camera, "pursuit", "target: #focus;");
-        set_custom_element_data(a_camera, "position", "0 1.65 -3.5");
-        set_custom_element_data(a_camera, "lookat", "0 1.65 0");
         set_custom_element_data(a_sky, "color", sky);
         set_custom_element_data(a_sky, "animate", a_sky_animate_value = "property: color; to: " + sky_dark + "; easing: easeInOut; dur: 6000 ");
         set_custom_element_data(a_entity0, "pool__tree", "mixin: tree; size: 100");
@@ -33130,9 +33373,13 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_entity3, "activate__rock", "");
         set_custom_element_data(a_entity4, "pool__mountains", "mixin: mountains; size: 100");
         set_custom_element_data(a_entity4, "activate__mountains", "");
-        set_custom_element_data(a_entity5, "position", a_entity5_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
-        set_custom_element_data(a_entity5, "animate", a_entity5_animate_value = "property: color; to: " + light_dark + "; easing: easeInOut");
-        set_custom_element_data(a_entity5, "light", a_entity5_light_value = ctx[1]({
+        set_custom_element_data(a_entity5, "pool__coins", "mixin: coinGold; size: 100");
+        set_custom_element_data(a_entity5, "material", "shader: flat;");
+        set_custom_element_data(a_entity5, "position", "0 20 0");
+        set_custom_element_data(a_entity5, "activate__coins", "");
+        set_custom_element_data(a_entity6, "position", a_entity6_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
+        set_custom_element_data(a_entity6, "animate", a_entity6_animate_value = "property: color; to: " + light_dark + "; easing: easeInOut");
+        set_custom_element_data(a_entity6, "light", a_entity6_light_value = ctx[1]({
           type: "directional",
           castShadow: true,
           color: light,
@@ -33144,119 +33391,98 @@ No cookies intended. Accountless. Age 18+ only.
           shadowMapWidth: 1024 * 4,
           intensity: 0.9
         }));
-        set_custom_element_data(a_entity6, "light", a_entity6_light_value = "type:ambient; color:" + light + "; intensity:1;");
-        set_custom_element_data(a_entity6, "animate", a_entity6_animate_value = "property: light.color; to: " + light_dark + "; easing: easeInOutBounce; dur: 6000");
-        set_custom_element_data(a_entity6, "position", "-1 1 1");
-        set_custom_element_data(a_entity7, "mixin", "shadow");
-        set_custom_element_data(a_entity7, "position", "0 0 -5");
-        set_custom_element_data(a_entity7, "rotation", "0 180 0");
-        set_custom_element_data(a_entity7, "vrm", "src: /vrm/goblin.vrm;current: true");
-        set_custom_element_data(a_entity7, "id", "focus");
-        set_custom_element_data(a_entity8, "mixin", "shadow");
-        set_custom_element_data(a_entity8, "position", "0 0 -5");
-        set_custom_element_data(a_entity8, "rotation", "0 180 0");
-        set_custom_element_data(a_entity8, "vrm", "src: /vrm/femgoblin.vrm; mirror: true");
-        set_custom_element_data(a_entity8, "scatter", "-5 0 -5 5 0 5");
-        set_custom_element_data(a_box, "mixin", "phys shadow toon");
-        set_custom_element_data(a_box, "position", "-1 0.5 -13");
-        set_custom_element_data(a_box, "rotation", "0 45 0");
-        set_custom_element_data(a_box, "color", "#4CC3D9");
-        set_custom_element_data(a_sphere, "mixin", "phys shadow toon");
-        set_custom_element_data(a_sphere, "position", "0 1.25 -15");
-        set_custom_element_data(a_sphere, "radius", "1.25");
-        set_custom_element_data(a_sphere, "color", "#EF2D5E");
-        set_custom_element_data(a_cylinder, "mixin", "phys shadow toon");
-        set_custom_element_data(a_cylinder, "position", "1 0.75 -13");
-        set_custom_element_data(a_cylinder, "radius", "0.5");
-        set_custom_element_data(a_cylinder, "height", "1.5");
-        set_custom_element_data(a_cylinder, "color", "#FFC65D");
-        set_custom_element_data(a_plane, "mixin", "phys toon");
+        set_custom_element_data(a_entity7, "light", a_entity7_light_value = "type:ambient; color:" + light + "; intensity:1;");
+        set_custom_element_data(a_entity7, "animate", a_entity7_animate_value = "property: light.color; to: " + light_dark + "; easing: easeInOutBounce; dur: 6000");
+        set_custom_element_data(a_entity7, "position", "-1 1 1");
         set_custom_element_data(a_plane, "shadow", "");
-        set_custom_element_data(a_plane, "position", "0 0 -4");
+        set_custom_element_data(a_plane, "position", "0 0 0");
         set_custom_element_data(a_plane, "rotation", "-90 0 0");
         set_custom_element_data(a_plane, "width", ctx[0]);
         set_custom_element_data(a_plane, "height", ctx[0]);
+        set_custom_element_data(a_plane, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_plane, "ammo-shape", "type:box");
         set_custom_element_data(a_plane, "color", "#334411");
-        set_custom_element_data(a_entity9, "pool__cloud", "mixin: shadow cloud; size: 15");
-        set_custom_element_data(a_entity9, "activate__cloud", "");
-        set_custom_element_data(a_entity9, "position", a_entity9_position_value = "0 20 " + ctx[0] / 4);
+        set_custom_element_data(a_entity8, "pool__cloud", "mixin: shadow cloud; size: 15");
+        set_custom_element_data(a_entity8, "activate__cloud", "");
+        set_custom_element_data(a_entity8, "position", a_entity8_position_value = "0 20 " + ctx[0] / 4);
         set_custom_element_data(a_sound, "autoplay", "");
         set_custom_element_data(a_sound, "loop", "");
         set_custom_element_data(a_sound, "volume", a_sound_volume_value = 0.5);
         if (!src_url_equal(a_sound.src, a_sound_src_value = "#sound-bg"))
           set_custom_element_data(a_sound, "src", a_sound_src_value);
         set_custom_element_data(a_scene, "shadow", "type:pcfsoft;");
+        set_custom_element_data(a_scene, "fog", "type: linear; color: #AAA");
+        set_custom_element_data(a_scene, "physics", "driver: ammo; ");
       },
       m(target, anchor) {
+        mount_component(webcam, target, anchor);
+        insert(target, t0, anchor);
         insert(target, a_scene, anchor);
         append(a_scene, a_assets);
         append(a_assets, audio);
-        append(a_assets, t0);
-        append(a_assets, a_asset_item);
         append(a_assets, t1);
-        append(a_assets, a_mixin0);
+        append(a_assets, a_asset_item);
         append(a_assets, t2);
-        append(a_assets, a_mixin1);
+        append(a_assets, a_mixin0);
         append(a_assets, t3);
-        append(a_assets, a_mixin2);
+        append(a_assets, a_mixin1);
         append(a_assets, t4);
-        append(a_assets, a_mixin3);
+        append(a_assets, a_mixin2);
         append(a_assets, t5);
-        append(a_assets, a_mixin4);
+        append(a_assets, a_mixin3);
         append(a_assets, t6);
-        append(a_assets, a_mixin5);
+        append(a_assets, a_mixin4);
         append(a_assets, t7);
-        append(a_assets, a_mixin6);
+        append(a_assets, a_mixin5);
         append(a_assets, t8);
-        append(a_assets, a_mixin7);
+        append(a_assets, a_mixin6);
         append(a_assets, t9);
+        append(a_assets, a_mixin7);
+        append(a_assets, t10);
         append(a_assets, a_mixin8);
-        append(a_scene, t10);
-        append(a_scene, a_camera);
-        append(a_scene, t11);
-        append(a_scene, a_sky);
+        append(a_assets, t11);
+        mount_component(charactersmixins, a_assets, null);
         append(a_scene, t12);
-        append(a_scene, a_entity0);
+        mount_component(camerafps, a_scene, null);
         append(a_scene, t13);
-        append(a_scene, a_entity1);
+        append(a_scene, a_sky);
         append(a_scene, t14);
-        append(a_scene, a_entity2);
+        append(a_scene, a_entity0);
         append(a_scene, t15);
-        append(a_scene, a_entity3);
+        append(a_scene, a_entity1);
         append(a_scene, t16);
-        append(a_scene, a_entity4);
+        append(a_scene, a_entity2);
         append(a_scene, t17);
-        append(a_scene, a_entity5);
+        append(a_scene, a_entity3);
         append(a_scene, t18);
-        append(a_scene, a_entity6);
+        append(a_scene, a_entity4);
         append(a_scene, t19);
-        append(a_scene, a_entity7);
+        append(a_scene, a_entity5);
         append(a_scene, t20);
-        append(a_scene, a_entity8);
+        append(a_scene, a_entity6);
         append(a_scene, t21);
-        append(a_scene, a_box);
+        append(a_scene, a_entity7);
         append(a_scene, t22);
-        append(a_scene, a_sphere);
+        mount_component(characters, a_scene, null);
         append(a_scene, t23);
-        append(a_scene, a_cylinder);
-        append(a_scene, t24);
         append(a_scene, a_plane);
+        append(a_scene, t24);
+        append(a_scene, a_entity8);
         append(a_scene, t25);
-        append(a_scene, a_entity9);
-        append(a_scene, t26);
         append(a_scene, a_sound);
+        current = true;
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 100")) {
+        if (!current || dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 100")) {
           set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value);
         }
-        if (dirty & 1 && a_mixin8_animation_value !== (a_mixin8_animation_value = "property:position; dur: " + 3e3 * 60 + "; to:0 0 -" + ctx2[0] + "; easing: linear; loop: true;")) {
+        if (!current || dirty & 1 && a_mixin8_animation_value !== (a_mixin8_animation_value = "property:position; dur: " + 3e3 * 60 + "; to:0 0 -" + ctx2[0] + "; easing: linear; loop: true;")) {
           set_custom_element_data(a_mixin8, "animation", a_mixin8_animation_value);
         }
-        if (dirty & 1 && a_entity5_position_value !== (a_entity5_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity5, "position", a_entity5_position_value);
+        if (!current || dirty & 1 && a_entity6_position_value !== (a_entity6_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity6, "position", a_entity6_position_value);
         }
-        if (dirty & 1 && a_entity5_light_value !== (a_entity5_light_value = ctx2[1]({
+        if (!current || dirty & 1 && a_entity6_light_value !== (a_entity6_light_value = ctx2[1]({
           type: "directional",
           castShadow: true,
           color: light,
@@ -33268,31 +33494,51 @@ No cookies intended. Accountless. Age 18+ only.
           shadowMapWidth: 1024 * 4,
           intensity: 0.9
         }))) {
-          set_custom_element_data(a_entity5, "light", a_entity5_light_value);
+          set_custom_element_data(a_entity6, "light", a_entity6_light_value);
         }
-        if (dirty & 1) {
+        if (!current || dirty & 1) {
           set_custom_element_data(a_plane, "width", ctx2[0]);
         }
-        if (dirty & 1) {
+        if (!current || dirty & 1) {
           set_custom_element_data(a_plane, "height", ctx2[0]);
         }
-        if (dirty & 1 && a_entity9_position_value !== (a_entity9_position_value = "0 20 " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity9, "position", a_entity9_position_value);
+        if (!current || dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = "0 20 " + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity8, "position", a_entity8_position_value);
         }
       },
-      i: noop,
-      o: noop,
+      i(local) {
+        if (current)
+          return;
+        transition_in(webcam.$$.fragment, local);
+        transition_in(charactersmixins.$$.fragment, local);
+        transition_in(camerafps.$$.fragment, local);
+        transition_in(characters.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(webcam.$$.fragment, local);
+        transition_out(charactersmixins.$$.fragment, local);
+        transition_out(camerafps.$$.fragment, local);
+        transition_out(characters.$$.fragment, local);
+        current = false;
+      },
       d(detaching) {
+        destroy_component(webcam, detaching);
+        if (detaching)
+          detach(t0);
         if (detaching)
           detach(a_scene);
+        destroy_component(charactersmixins);
+        destroy_component(camerafps);
+        destroy_component(characters);
       }
     };
   }
   var light = "#EEF";
   var light_dark = "#aaF";
-  var sky = "#449";
+  var sky = "#336";
   var sky_dark = "#003";
-  function instance($$self, $$props, $$invalidate) {
+  function instance2($$self, $$props, $$invalidate) {
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize: groundSize2 = 100 } = $$props;
     const scatter = [-groundSize2 / 2, 0, -groundSize2 / 2, groundSize2 / 2, 0, groundSize2 / 2].join(" ");
@@ -33305,123 +33551,27 @@ No cookies intended. Accountless. Age 18+ only.
   var Volleyball = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance, create_fragment, safe_not_equal, { groundSize: 0 });
+      init(this, options, instance2, create_fragment5, safe_not_equal, { groundSize: 0 });
     }
   };
   var volleyball_default = Volleyball;
 
-  // src/ui/sprite.svelte
-  function create_fragment2(ctx) {
-    let sprite;
-    let sprite_style_value;
-    let mounted;
-    let dispose;
-    return {
-      c() {
-        sprite = element("sprite");
-        attr(sprite, "class", "sprite svelte-1c07in");
-        attr(sprite, "style", sprite_style_value = "background-position: -" + ctx[5] + "% -" + ctx[4] + "%; " + ctx[3]);
-        toggle_class(sprite, "hoverable", ctx[0]);
-        toggle_class(sprite, "active", ctx[2]);
-        toggle_class(sprite, "shadow", ctx[1]);
-      },
-      m(target, anchor) {
-        insert(target, sprite, anchor);
-        if (!mounted) {
-          dispose = listen(sprite, "click", ctx[6]);
-          mounted = true;
-        }
-      },
-      p(ctx2, [dirty]) {
-        if (dirty & 56 && sprite_style_value !== (sprite_style_value = "background-position: -" + ctx2[5] + "% -" + ctx2[4] + "%; " + ctx2[3])) {
-          attr(sprite, "style", sprite_style_value);
-        }
-        if (dirty & 1) {
-          toggle_class(sprite, "hoverable", ctx2[0]);
-        }
-        if (dirty & 4) {
-          toggle_class(sprite, "active", ctx2[2]);
-        }
-        if (dirty & 2) {
-          toggle_class(sprite, "shadow", ctx2[1]);
-        }
-      },
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(sprite);
-        mounted = false;
-        dispose();
-      }
-    };
-  }
-  function instance2($$self, $$props, $$invalidate) {
-    let x2;
-    let y2;
-    let { idx = 0 } = $$props;
-    let { hoverable = true } = $$props;
-    let { shadow = false } = $$props;
-    let { active = false } = $$props;
-    let { style = "" } = $$props;
-    const dispatch = createEventDispatcher();
-    function forward(event) {
-      dispatch(event.type, event.detail);
-    }
-    $$self.$$set = ($$props2) => {
-      if ("idx" in $$props2)
-        $$invalidate(7, idx = $$props2.idx);
-      if ("hoverable" in $$props2)
-        $$invalidate(0, hoverable = $$props2.hoverable);
-      if ("shadow" in $$props2)
-        $$invalidate(1, shadow = $$props2.shadow);
-      if ("active" in $$props2)
-        $$invalidate(2, active = $$props2.active);
-      if ("style" in $$props2)
-        $$invalidate(3, style = $$props2.style);
-    };
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & 128) {
-        $:
-          $$invalidate(5, x2 = idx % 32 * 100);
-      }
-      if ($$self.$$.dirty & 128) {
-        $:
-          $$invalidate(4, y2 = Math.floor(idx / 32) * 100);
-      }
-    };
-    return [hoverable, shadow, active, style, y2, x2, forward, idx];
-  }
-  var Sprite2 = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance2, create_fragment2, safe_not_equal, {
-        idx: 7,
-        hoverable: 0,
-        shadow: 1,
-        active: 2,
-        style: 3
-      });
-    }
-  };
-  var sprite_default = Sprite2;
-
   // src/ui/title.svelte
-  function create_fragment3(ctx) {
+  function create_fragment6(ctx) {
     let div3;
     let t8;
     let center;
     return {
       c() {
         div3 = element("div");
-        div3.innerHTML = `<div class="favicon svelte-12pdbth"></div> 
-	<div class="full svelte-12pdbth"><div class="title svelte-12pdbth"><offset class="svelte-12pdbth"><b class="svelte-12pdbth">a</b>      <br/></offset> 
-			<b class="svelte-12pdbth">G</b>oblin
-			<offset class="svelte-12pdbth"><b class="svelte-12pdbth">L</b>ife</offset></div></div>`;
+        div3.innerHTML = `<div class="favicon svelte-rq4u3z"></div> 
+	<div class="full svelte-rq4u3z"><div class="title svelte-rq4u3z"><offset class="svelte-rq4u3z"><b class="svelte-rq4u3z">a</b>  <br/></offset> 
+			<b class="svelte-rq4u3z">G</b>oblin
+			<offset class="svelte-rq4u3z"><b class="svelte-rq4u3z">L</b>ife</offset></div></div>`;
         t8 = space();
         center = element("center");
         center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank"><img height="36" style="border:0px;height:36px;" src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" border="0" alt="Buy Me a Coffee at ko-fi.com"/></a>`;
-        attr(div3, "class", "intro svelte-12pdbth");
+        attr(div3, "class", "intro svelte-rq4u3z");
       },
       m(target, anchor) {
         insert(target, div3, anchor);
@@ -33444,106 +33594,94 @@ No cookies intended. Accountless. Age 18+ only.
   var Title = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment3, safe_not_equal, {});
+      init(this, options, null, create_fragment6, safe_not_equal, {});
     }
   };
   var title_default = Title;
 
   // src/ui/home.svelte
-  function create_fragment4(ctx) {
+  function create_fragment7(ctx) {
     let div9;
     let div0;
     let t0;
-    let gap;
-    let t1;
     let title;
-    let t2;
+    let t1;
     let div8;
     let div3;
     let div1;
-    let t3;
+    let t2;
     let textarea;
-    let t4;
+    let t3;
     let div2;
-    let t5;
+    let t4;
     let div7;
     let div4;
-    let t6;
+    let t5;
     let div5;
-    let sprite;
     let t7;
     let div6;
     let current;
     let mounted;
     let dispose;
     title = new title_default({});
-    sprite = new sprite_default({
-      props: { idx: 927, hoverable: false, shadow: true }
-    });
     return {
       c() {
         div9 = element("div");
         div0 = element("div");
         t0 = space();
-        gap = element("gap");
-        t1 = space();
         create_component(title.$$.fragment);
-        t2 = space();
+        t1 = space();
         div8 = element("div");
         div3 = element("div");
         div1 = element("div");
-        t3 = space();
+        t2 = space();
         textarea = element("textarea");
-        t4 = space();
+        t3 = space();
         div2 = element("div");
-        t5 = space();
+        t4 = space();
         div7 = element("div");
         div4 = element("div");
-        t6 = space();
+        t5 = space();
         div5 = element("div");
-        create_component(sprite.$$.fragment);
+        div5.textContent = "\u{1F340}";
         t7 = space();
         div6 = element("div");
-        attr(div0, "class", "sprites sprite svelte-192n34x");
-        attr(gap, "class", "svelte-192n34x");
-        attr(div1, "class", "flex svelte-192n34x");
+        attr(div0, "class", "sprites sprite svelte-1vxfng6");
+        attr(div1, "class", "flex svelte-1vxfng6");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-192n34x");
+        attr(textarea, "class", "text button svelte-1vxfng6");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-192n34x");
-        attr(div3, "class", "span2 full svelte-192n34x");
-        attr(div4, "class", "flex svelte-192n34x");
+        attr(div2, "class", "flex svelte-1vxfng6");
+        attr(div3, "class", "span2 full svelte-1vxfng6");
+        attr(div4, "class", "flex svelte-1vxfng6");
         attr(div5, "type", "button");
-        attr(div5, "class", "button icon svelte-192n34x");
+        attr(div5, "class", "button icon svelte-1vxfng6");
         attr(div5, "value", "GO");
-        attr(div6, "class", "flex svelte-192n34x");
-        attr(div7, "class", "span2 full svelte-192n34x");
-        attr(div8, "class", "vbox svelte-192n34x");
-        attr(div9, "class", "menu svelte-192n34x");
+        attr(div6, "class", "flex svelte-1vxfng6");
+        attr(div7, "class", "span2 full svelte-1vxfng6");
+        attr(div8, "class", "vbox svelte-1vxfng6");
+        attr(div9, "class", "menu svelte-1vxfng6");
       },
       m(target, anchor) {
         insert(target, div9, anchor);
         append(div9, div0);
         append(div9, t0);
-        append(div9, gap);
-        append(div9, t1);
         mount_component(title, div9, null);
-        append(div9, t2);
+        append(div9, t1);
         append(div9, div8);
         append(div8, div3);
         append(div3, div1);
-        append(div3, t3);
+        append(div3, t2);
         append(div3, textarea);
-        append(div3, t4);
+        append(div3, t3);
         append(div3, div2);
-        append(div8, t5);
+        append(div8, t4);
         append(div8, div7);
         append(div7, div4);
-        append(div7, t6);
+        append(div7, t5);
         append(div7, div5);
-        mount_component(sprite, div5, null);
         append(div7, t7);
         append(div7, div6);
         current = true;
@@ -33566,19 +33704,16 @@ No cookies intended. Accountless. Age 18+ only.
         if (current)
           return;
         transition_in(title.$$.fragment, local);
-        transition_in(sprite.$$.fragment, local);
         current = true;
       },
       o(local) {
         transition_out(title.$$.fragment, local);
-        transition_out(sprite.$$.fragment, local);
         current = false;
       },
       d(detaching) {
         if (detaching)
           detach(div9);
         destroy_component(title);
-        destroy_component(sprite);
         mounted = false;
         run_all(dispose);
       }
@@ -33592,6 +33727,10 @@ No cookies intended. Accountless. Age 18+ only.
   function instance3($$self, $$props, $$invalidate) {
     let $motd;
     component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
+    if (location.search === "?go") {
+      open_game.set(true);
+      open_home.set(false);
+    }
     const paste_handler = (e) => {
       const v2 = decodeURI(e.clipboardData.getData("text"));
       e.preventDefault();
@@ -33605,62 +33744,10 @@ No cookies intended. Accountless. Age 18+ only.
   var Home = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance3, create_fragment4, safe_not_equal, {});
+      init(this, options, instance3, create_fragment7, safe_not_equal, {});
     }
   };
   var home_default = Home;
-
-  // src/template/webcam.svelte
-  function create_fragment5(ctx) {
-    let div;
-    let video;
-    return {
-      c() {
-        div = element("div");
-        video = element("video");
-        attr(div, "class", "hidden svelte-1elb9t4");
-      },
-      m(target, anchor) {
-        insert(target, div, anchor);
-        append(div, video);
-        ctx[1](video);
-      },
-      p: noop,
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(div);
-        ctx[1](null);
-      }
-    };
-  }
-  function instance4($$self, $$props, $$invalidate) {
-    let videoElementSource;
-    function video_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        videoElementSource = $$value;
-        $$invalidate(0, videoElementSource);
-      });
-    }
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & 1) {
-        $: {
-          if (videoElementSource && !videoElement.$) {
-            videoElement.set(videoElementSource);
-          }
-        }
-      }
-    };
-    return [videoElementSource, video_binding];
-  }
-  var Webcam = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance4, create_fragment5, safe_not_equal, {});
-    }
-  };
-  var webcam_default = Webcam;
 
   // src/main.svelte
   function create_if_block_1(ctx) {
@@ -33692,21 +33779,14 @@ No cookies intended. Accountless. Age 18+ only.
   }
   function create_if_block(ctx) {
     let volleyball;
-    let t;
-    let webcam;
     let current;
     volleyball = new volleyball_default({ props: { groundSize } });
-    webcam = new webcam_default({});
     return {
       c() {
         create_component(volleyball.$$.fragment);
-        t = space();
-        create_component(webcam.$$.fragment);
       },
       m(target, anchor) {
         mount_component(volleyball, target, anchor);
-        insert(target, t, anchor);
-        mount_component(webcam, target, anchor);
         current = true;
       },
       p: noop,
@@ -33714,23 +33794,18 @@ No cookies intended. Accountless. Age 18+ only.
         if (current)
           return;
         transition_in(volleyball.$$.fragment, local);
-        transition_in(webcam.$$.fragment, local);
         current = true;
       },
       o(local) {
         transition_out(volleyball.$$.fragment, local);
-        transition_out(webcam.$$.fragment, local);
         current = false;
       },
       d(detaching) {
         destroy_component(volleyball, detaching);
-        if (detaching)
-          detach(t);
-        destroy_component(webcam, detaching);
       }
     };
   }
-  function create_fragment6(ctx) {
+  function create_fragment8(ctx) {
     let t;
     let if_block1_anchor;
     let current;
@@ -33818,7 +33893,7 @@ No cookies intended. Accountless. Age 18+ only.
     };
   }
   var groundSize = 100;
-  function instance5($$self, $$props, $$invalidate) {
+  function instance4($$self, $$props, $$invalidate) {
     let $open_home;
     let $open_game;
     component_subscribe($$self, open_home, ($$value) => $$invalidate(0, $open_home = $$value));
@@ -33828,7 +33903,7 @@ No cookies intended. Accountless. Age 18+ only.
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment6, safe_not_equal, {});
+      init(this, options, instance4, create_fragment8, safe_not_equal, {});
     }
   };
   var main_default = Main;

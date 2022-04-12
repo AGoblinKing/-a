@@ -4,16 +4,17 @@ export const tick = new Value(0)
 export const open_home = new Value(true)
 export const open_game = new Value(false)
 
-export const motd = new Value(`🎊v0.0.5🎊
+export const motd = new Value(`🎊v0.0.7🎊
 
 ✅VRM✅Scene✅WebCam
-❌ FPS Camera
-❌ PhysX
-❌ AI / Gameplay
+✅ FPS Camera✅Physics
+❌ AI 
+❌ Gameplay
 ❌ Voice
 ❌ Editing 
 ❌ VRM Import
 ❌ WebRTC Multiplayer 
+❌ Media
 
 The web is a scary place. 
 🖥️ Use a VPN.🖥️
