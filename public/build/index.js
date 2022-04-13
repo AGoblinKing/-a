@@ -921,7 +921,7 @@
               a2.j = true, za(a2.h, a2.l);
           }
         }
-        function bb2(a2, b2, c2) {
+        function bb3(a2, b2, c2) {
           a2.N || (a2 = Ra(a2.g.h, c2, a2.g.g), (c2 = b2.o) ? c2.push(a2) : b2.o = [a2]);
         }
         function cb(a2, b2, c2) {
@@ -1161,10 +1161,10 @@
                 e = a2;
                 var g2 = d2.l;
                 ab(d2);
-                bb2(d2, e, g2);
+                bb3(d2, e, g2);
               }
             } else
-              d2 = b2, e = a2, g2 = d2.l, ab(d2), bb2(d2, e, g2);
+              d2 = b2, e = a2, g2 = d2.l, ab(d2), bb3(d2, e, g2);
           }
           return a2;
         }
@@ -6708,16 +6708,16 @@
     const plane = createEulerPlane(lm).vector;
     const rotate = Vector.rollPitchYaw(plane[0], plane[1], plane[2]);
     const midPoint = plane[0].lerp(plane[1], 0.5);
-    const width = plane[0].distance(plane[1]);
-    const height = midPoint.distance(plane[2]);
+    const width2 = plane[0].distance(plane[1]);
+    const height2 = midPoint.distance(plane[2]);
     rotate.x *= -1;
     rotate.z *= -1;
     return {
       y: rotate.y * PI,
       x: rotate.x * PI,
       z: rotate.z * PI,
-      width,
-      height,
+      width: width2,
+      height: height2,
       position: midPoint.lerp(plane[2], 0.5),
       normalized: {
         y: rotate.y,
@@ -8883,17 +8883,17 @@ No cookies intended. Accountless. Age 18+ only.
   };
   Vector4.prototype.isVector4 = true;
   var WebGLRenderTarget = class extends EventDispatcher {
-    constructor(width, height, options = {}) {
+    constructor(width2, height2, options = {}) {
       super();
-      this.width = width;
-      this.height = height;
+      this.width = width2;
+      this.height = height2;
       this.depth = 1;
-      this.scissor = new Vector4(0, 0, width, height);
+      this.scissor = new Vector4(0, 0, width2, height2);
       this.scissorTest = false;
-      this.viewport = new Vector4(0, 0, width, height);
+      this.viewport = new Vector4(0, 0, width2, height2);
       this.texture = new Texture(void 0, options.mapping, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.encoding);
       this.texture.isRenderTargetTexture = true;
-      this.texture.image = { width, height, depth: 1 };
+      this.texture.image = { width: width2, height: height2, depth: 1 };
       this.texture.generateMipmaps = options.generateMipmaps !== void 0 ? options.generateMipmaps : false;
       this.texture.internalFormat = options.internalFormat !== void 0 ? options.internalFormat : null;
       this.texture.minFilter = options.minFilter !== void 0 ? options.minFilter : LinearFilter;
@@ -8909,18 +8909,18 @@ No cookies intended. Accountless. Age 18+ only.
       };
       this.texture = texture;
     }
-    setSize(width, height, depth = 1) {
-      if (this.width !== width || this.height !== height || this.depth !== depth) {
-        this.width = width;
-        this.height = height;
+    setSize(width2, height2, depth = 1) {
+      if (this.width !== width2 || this.height !== height2 || this.depth !== depth) {
+        this.width = width2;
+        this.height = height2;
         this.depth = depth;
-        this.texture.image.width = width;
-        this.texture.image.height = height;
+        this.texture.image.width = width2;
+        this.texture.image.height = height2;
         this.texture.image.depth = depth;
         this.dispose();
       }
-      this.viewport.set(0, 0, width, height);
-      this.scissor.set(0, 0, width, height);
+      this.viewport.set(0, 0, width2, height2);
+      this.scissor.set(0, 0, width2, height2);
     }
     clone() {
       return new this.constructor().copy(this);
@@ -8943,28 +8943,28 @@ No cookies intended. Accountless. Age 18+ only.
   };
   WebGLRenderTarget.prototype.isWebGLRenderTarget = true;
   var WebGLMultipleRenderTargets = class extends WebGLRenderTarget {
-    constructor(width, height, count) {
-      super(width, height);
+    constructor(width2, height2, count) {
+      super(width2, height2);
       const texture = this.texture;
       this.texture = [];
       for (let i2 = 0; i2 < count; i2++) {
         this.texture[i2] = texture.clone();
       }
     }
-    setSize(width, height, depth = 1) {
-      if (this.width !== width || this.height !== height || this.depth !== depth) {
-        this.width = width;
-        this.height = height;
+    setSize(width2, height2, depth = 1) {
+      if (this.width !== width2 || this.height !== height2 || this.depth !== depth) {
+        this.width = width2;
+        this.height = height2;
         this.depth = depth;
         for (let i2 = 0, il = this.texture.length; i2 < il; i2++) {
-          this.texture[i2].image.width = width;
-          this.texture[i2].image.height = height;
+          this.texture[i2].image.width = width2;
+          this.texture[i2].image.height = height2;
           this.texture[i2].image.depth = depth;
         }
         this.dispose();
       }
-      this.viewport.set(0, 0, width, height);
-      this.scissor.set(0, 0, width, height);
+      this.viewport.set(0, 0, width2, height2);
+      this.scissor.set(0, 0, width2, height2);
       return this;
     }
     copy(source) {
@@ -8986,8 +8986,8 @@ No cookies intended. Accountless. Age 18+ only.
   };
   WebGLMultipleRenderTargets.prototype.isWebGLMultipleRenderTargets = true;
   var WebGLMultisampleRenderTarget = class extends WebGLRenderTarget {
-    constructor(width, height, options = {}) {
-      super(width, height, options);
+    constructor(width2, height2, options = {}) {
+      super(width2, height2, options);
       this.samples = 4;
       this.ignoreDepthForMultisampleCopy = options.ignoreDepth !== void 0 ? options.ignoreDepth : true;
       this.useRenderToTexture = options.useRenderToTexture !== void 0 ? options.useRenderToTexture : false;
@@ -13449,12 +13449,12 @@ No cookies intended. Accountless. Age 18+ only.
     return intersection;
   }
   var BoxGeometry = class extends BufferGeometry {
-    constructor(width = 1, height = 1, depth = 1, widthSegments = 1, heightSegments = 1, depthSegments = 1) {
+    constructor(width2 = 1, height2 = 1, depth = 1, widthSegments = 1, heightSegments = 1, depthSegments = 1) {
       super();
       this.type = "BoxGeometry";
       this.parameters = {
-        width,
-        height,
+        width: width2,
+        height: height2,
         depth,
         widthSegments,
         heightSegments,
@@ -13470,21 +13470,21 @@ No cookies intended. Accountless. Age 18+ only.
       const uvs = [];
       let numberOfVertices = 0;
       let groupStart = 0;
-      buildPlane("z", "y", "x", -1, -1, depth, height, width, depthSegments, heightSegments, 0);
-      buildPlane("z", "y", "x", 1, -1, depth, height, -width, depthSegments, heightSegments, 1);
-      buildPlane("x", "z", "y", 1, 1, width, depth, height, widthSegments, depthSegments, 2);
-      buildPlane("x", "z", "y", 1, -1, width, depth, -height, widthSegments, depthSegments, 3);
-      buildPlane("x", "y", "z", 1, -1, width, height, depth, widthSegments, heightSegments, 4);
-      buildPlane("x", "y", "z", -1, -1, width, height, -depth, widthSegments, heightSegments, 5);
+      buildPlane("z", "y", "x", -1, -1, depth, height2, width2, depthSegments, heightSegments, 0);
+      buildPlane("z", "y", "x", 1, -1, depth, height2, -width2, depthSegments, heightSegments, 1);
+      buildPlane("x", "z", "y", 1, 1, width2, depth, height2, widthSegments, depthSegments, 2);
+      buildPlane("x", "z", "y", 1, -1, width2, depth, -height2, widthSegments, depthSegments, 3);
+      buildPlane("x", "y", "z", 1, -1, width2, height2, depth, widthSegments, heightSegments, 4);
+      buildPlane("x", "y", "z", -1, -1, width2, height2, -depth, widthSegments, heightSegments, 5);
       this.setIndex(indices);
       this.setAttribute("position", new Float32BufferAttribute(vertices, 3));
       this.setAttribute("normal", new Float32BufferAttribute(normals, 3));
       this.setAttribute("uv", new Float32BufferAttribute(uvs, 2));
-      function buildPlane(u2, v2, w2, udir, vdir, width2, height2, depth2, gridX, gridY, materialIndex) {
-        const segmentWidth = width2 / gridX;
-        const segmentHeight = height2 / gridY;
-        const widthHalf = width2 / 2;
-        const heightHalf = height2 / 2;
+      function buildPlane(u2, v2, w2, udir, vdir, width3, height3, depth2, gridX, gridY, materialIndex) {
+        const segmentWidth = width3 / gridX;
+        const segmentHeight = height3 / gridY;
+        const widthHalf = width3 / 2;
+        const heightHalf = height3 / 2;
         const depthHalf = depth2 / 2;
         const gridX1 = gridX + 1;
         const gridY1 = gridY + 1;
@@ -13749,7 +13749,7 @@ No cookies intended. Accountless. Age 18+ only.
     getFilmHeight() {
       return this.filmGauge / Math.max(this.aspect, 1);
     }
-    setViewOffset(fullWidth, fullHeight, x2, y2, width, height) {
+    setViewOffset(fullWidth, fullHeight, x2, y2, width2, height2) {
       this.aspect = fullWidth / fullHeight;
       if (this.view === null) {
         this.view = {
@@ -13767,8 +13767,8 @@ No cookies intended. Accountless. Age 18+ only.
       this.view.fullHeight = fullHeight;
       this.view.offsetX = x2;
       this.view.offsetY = y2;
-      this.view.width = width;
-      this.view.height = height;
+      this.view.width = width2;
+      this.view.height = height2;
       this.updateProjectionMatrix();
     }
     clearViewOffset() {
@@ -13780,21 +13780,21 @@ No cookies intended. Accountless. Age 18+ only.
     updateProjectionMatrix() {
       const near = this.near;
       let top = near * Math.tan(DEG2RAD * 0.5 * this.fov) / this.zoom;
-      let height = 2 * top;
-      let width = this.aspect * height;
-      let left = -0.5 * width;
+      let height2 = 2 * top;
+      let width2 = this.aspect * height2;
+      let left = -0.5 * width2;
       const view = this.view;
       if (this.view !== null && this.view.enabled) {
         const fullWidth = view.fullWidth, fullHeight = view.fullHeight;
-        left += view.offsetX * width / fullWidth;
-        top -= view.offsetY * height / fullHeight;
-        width *= view.width / fullWidth;
-        height *= view.height / fullHeight;
+        left += view.offsetX * width2 / fullWidth;
+        top -= view.offsetY * height2 / fullHeight;
+        width2 *= view.width / fullWidth;
+        height2 *= view.height / fullHeight;
       }
       const skew = this.filmOffset;
       if (skew !== 0)
         left += near * skew / this.getFilmWidth();
-      this.projectionMatrix.makePerspective(left, left + width, top, top - height, near, this.far);
+      this.projectionMatrix.makePerspective(left, left + width2, top, top - height2, near, this.far);
       this.projectionMatrixInverse.copy(this.projectionMatrix).invert();
     }
     toJSON(meta) {
@@ -14315,23 +14315,23 @@ No cookies intended. Accountless. Age 18+ only.
     };
   }
   var PlaneGeometry = class extends BufferGeometry {
-    constructor(width = 1, height = 1, widthSegments = 1, heightSegments = 1) {
+    constructor(width2 = 1, height2 = 1, widthSegments = 1, heightSegments = 1) {
       super();
       this.type = "PlaneGeometry";
       this.parameters = {
-        width,
-        height,
+        width: width2,
+        height: height2,
         widthSegments,
         heightSegments
       };
-      const width_half = width / 2;
-      const height_half = height / 2;
+      const width_half = width2 / 2;
+      const height_half = height2 / 2;
       const gridX = Math.floor(widthSegments);
       const gridY = Math.floor(heightSegments);
       const gridX1 = gridX + 1;
       const gridY1 = gridY + 1;
-      const segment_width = width / gridX;
-      const segment_height = height / gridY;
+      const segment_width = width2 / gridX;
+      const segment_height = height2 / gridY;
       const indices = [];
       const vertices = [];
       const normals = [];
@@ -15719,7 +15719,7 @@ No cookies intended. Accountless. Age 18+ only.
       this.view = source.view === null ? null : Object.assign({}, source.view);
       return this;
     }
-    setViewOffset(fullWidth, fullHeight, x2, y2, width, height) {
+    setViewOffset(fullWidth, fullHeight, x2, y2, width2, height2) {
       if (this.view === null) {
         this.view = {
           enabled: true,
@@ -15736,8 +15736,8 @@ No cookies intended. Accountless. Age 18+ only.
       this.view.fullHeight = fullHeight;
       this.view.offsetX = x2;
       this.view.offsetY = y2;
-      this.view.width = width;
-      this.view.height = height;
+      this.view.width = width2;
+      this.view.height = height2;
       this.updateProjectionMatrix();
     }
     clearViewOffset() {
@@ -16113,9 +16113,9 @@ No cookies intended. Accountless. Age 18+ only.
     cubeUVRenderTarget.scissorTest = true;
     return cubeUVRenderTarget;
   }
-  function _setViewport(target, x2, y2, width, height) {
-    target.viewport.set(x2, y2, width, height);
-    target.scissor.set(x2, y2, width, height);
+  function _setViewport(target, x2, y2, width2, height2) {
+    target.viewport.set(x2, y2, width2, height2);
+    target.scissor.set(x2, y2, width2, height2);
   }
   function _getBlurShader(maxSamples) {
     const weights = new Float32Array(maxSamples);
@@ -16651,9 +16651,9 @@ No cookies intended. Accountless. Age 18+ only.
     };
   }
   var DataTexture2DArray = class extends Texture {
-    constructor(data = null, width = 1, height = 1, depth = 1) {
+    constructor(data = null, width2 = 1, height2 = 1, depth = 1) {
       super(null);
-      this.image = { data, width, height, depth };
+      this.image = { data, width: width2, height: height2, depth };
       this.magFilter = NearestFilter;
       this.minFilter = NearestFilter;
       this.wrapR = ClampToEdgeWrapping;
@@ -16709,14 +16709,14 @@ No cookies intended. Accountless. Age 18+ only.
           const morphNormals = geometry.morphAttributes.normal || [];
           const numberOfVertices = geometry.attributes.position.count;
           const numberOfVertexData = hasMorphNormals === true ? 2 : 1;
-          let width = numberOfVertices * numberOfVertexData;
-          let height = 1;
-          if (width > capabilities.maxTextureSize) {
-            height = Math.ceil(width / capabilities.maxTextureSize);
-            width = capabilities.maxTextureSize;
+          let width2 = numberOfVertices * numberOfVertexData;
+          let height2 = 1;
+          if (width2 > capabilities.maxTextureSize) {
+            height2 = Math.ceil(width2 / capabilities.maxTextureSize);
+            width2 = capabilities.maxTextureSize;
           }
-          const buffer = new Float32Array(width * height * 4 * numberOfMorphTargets);
-          const texture = new DataTexture2DArray(buffer, width, height, numberOfMorphTargets);
+          const buffer = new Float32Array(width2 * height2 * 4 * numberOfMorphTargets);
+          const texture = new DataTexture2DArray(buffer, width2, height2, numberOfMorphTargets);
           texture.format = RGBAFormat;
           texture.type = FloatType;
           texture.needsUpdate = true;
@@ -16724,7 +16724,7 @@ No cookies intended. Accountless. Age 18+ only.
           for (let i2 = 0; i2 < numberOfMorphTargets; i2++) {
             const morphTarget = morphTargets[i2];
             const morphNormal = morphNormals[i2];
-            const offset = width * height * 4 * i2;
+            const offset = width2 * height2 * 4 * i2;
             for (let j2 = 0; j2 < morphTarget.count; j2++) {
               morph.fromBufferAttribute(morphTarget, j2);
               if (morphTarget.normalized === true)
@@ -16748,7 +16748,7 @@ No cookies intended. Accountless. Age 18+ only.
           entry = {
             count: numberOfMorphTargets,
             texture,
-            size: new Vector2(width, height)
+            size: new Vector2(width2, height2)
           };
           morphTextures.set(geometry, entry);
           geometry.addEventListener("dispose", disposeTexture);
@@ -16860,9 +16860,9 @@ No cookies intended. Accountless. Age 18+ only.
     };
   }
   var DataTexture3D = class extends Texture {
-    constructor(data = null, width = 1, height = 1, depth = 1) {
+    constructor(data = null, width2 = 1, height2 = 1, depth = 1) {
       super(null);
-      this.image = { data, width, height, depth };
+      this.image = { data, width: width2, height: height2, depth };
       this.magFilter = NearestFilter;
       this.minFilter = NearestFilter;
       this.wrapR = ClampToEdgeWrapping;
@@ -18432,7 +18432,7 @@ No cookies intended. Accountless. Age 18+ only.
     const opaque = [];
     const transmissive = [];
     const transparent = [];
-    function init3() {
+    function init2() {
       renderItemsIndex = 0;
       opaque.length = 0;
       transmissive.length = 0;
@@ -18509,7 +18509,7 @@ No cookies intended. Accountless. Age 18+ only.
       opaque,
       transmissive,
       transparent,
-      init: init3,
+      init: init2,
       push,
       unshift,
       finish,
@@ -18891,7 +18891,7 @@ No cookies intended. Accountless. Age 18+ only.
     const lights = new WebGLLights(extensions, capabilities);
     const lightsArray = [];
     const shadowsArray = [];
-    function init3() {
+    function init2() {
       lightsArray.length = 0;
       shadowsArray.length = 0;
     }
@@ -18913,7 +18913,7 @@ No cookies intended. Accountless. Age 18+ only.
       lights
     };
     return {
-      init: init3,
+      init: init2,
       state,
       setupLights,
       setupLightsView,
@@ -19670,11 +19670,11 @@ No cookies intended. Accountless. Age 18+ only.
       }
       currentCullFace = cullFace;
     }
-    function setLineWidth(width) {
-      if (width !== currentLineWidth) {
+    function setLineWidth(width2) {
+      if (width2 !== currentLineWidth) {
         if (lineWidthAvailable)
-          gl.lineWidth(width);
-        currentLineWidth = width;
+          gl.lineWidth(width2);
+        currentLineWidth = width2;
       }
     }
     function setPolygonOffset(polygonOffset, factor, units) {
@@ -19904,8 +19904,8 @@ No cookies intended. Accountless. Age 18+ only.
       useOffscreenCanvas = typeof OffscreenCanvas !== "undefined" && new OffscreenCanvas(1, 1).getContext("2d") !== null;
     } catch (err) {
     }
-    function createCanvas(width, height) {
-      return useOffscreenCanvas ? new OffscreenCanvas(width, height) : createElementNS("canvas");
+    function createCanvas(width2, height2) {
+      return useOffscreenCanvas ? new OffscreenCanvas(width2, height2) : createElementNS("canvas");
     }
     function resizeImage(image, needsPowerOfTwo, needsNewCanvas, maxSize) {
       let scale = 1;
@@ -19915,16 +19915,16 @@ No cookies intended. Accountless. Age 18+ only.
       if (scale < 1 || needsPowerOfTwo === true) {
         if (typeof HTMLImageElement !== "undefined" && image instanceof HTMLImageElement || typeof HTMLCanvasElement !== "undefined" && image instanceof HTMLCanvasElement || typeof ImageBitmap !== "undefined" && image instanceof ImageBitmap) {
           const floor = needsPowerOfTwo ? floorPowerOfTwo : Math.floor;
-          const width = floor(scale * image.width);
-          const height = floor(scale * image.height);
+          const width2 = floor(scale * image.width);
+          const height2 = floor(scale * image.height);
           if (_canvas2 === void 0)
-            _canvas2 = createCanvas(width, height);
-          const canvas = needsNewCanvas ? createCanvas(width, height) : _canvas2;
-          canvas.width = width;
-          canvas.height = height;
+            _canvas2 = createCanvas(width2, height2);
+          const canvas = needsNewCanvas ? createCanvas(width2, height2) : _canvas2;
+          canvas.width = width2;
+          canvas.height = height2;
           const context = canvas.getContext("2d");
-          context.drawImage(image, 0, 0, width, height);
-          console.warn("THREE.WebGLRenderer: Texture has been resized from (" + image.width + "x" + image.height + ") to (" + width + "x" + height + ").");
+          context.drawImage(image, 0, 0, width2, height2);
+          console.warn("THREE.WebGLRenderer: Texture has been resized from (" + image.width + "x" + image.height + ") to (" + width2 + "x" + height2 + ").");
           return canvas;
         } else {
           if ("data" in image) {
@@ -20706,8 +20706,8 @@ No cookies intended. Accountless. Age 18+ only.
     function updateMultisampleRenderTarget(renderTarget) {
       if (renderTarget.useRenderbuffer) {
         if (isWebGL2) {
-          const width = renderTarget.width;
-          const height = renderTarget.height;
+          const width2 = renderTarget.width;
+          const height2 = renderTarget.height;
           let mask = 16384;
           const invalidationArray = [36064];
           const depthStyle = renderTarget.stencilBuffer ? 33306 : 36096;
@@ -20727,7 +20727,7 @@ No cookies intended. Accountless. Age 18+ only.
             _gl.invalidateFramebuffer(36008, [depthStyle]);
             _gl.invalidateFramebuffer(36009, [depthStyle]);
           }
-          _gl.blitFramebuffer(0, 0, width, height, 0, 0, width, height, mask, 9728);
+          _gl.blitFramebuffer(0, 0, width2, height2, 0, 0, width2, height2, mask, 9728);
           _gl.invalidateFramebuffer(36008, invalidationArray);
           state.bindFramebuffer(36008, null);
           state.bindFramebuffer(36009, renderTargetProperties.__webglMultisampledFramebuffer);
@@ -21180,7 +21180,7 @@ No cookies intended. Accountless. Age 18+ only.
     }
   };
   var DepthTexture = class extends Texture {
-    constructor(width, height, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, format) {
+    constructor(width2, height2, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, format) {
       format = format !== void 0 ? format : DepthFormat;
       if (format !== DepthFormat && format !== DepthStencilFormat) {
         throw new Error("DepthTexture format must be either THREE.DepthFormat or THREE.DepthStencilFormat");
@@ -21190,7 +21190,7 @@ No cookies intended. Accountless. Age 18+ only.
       if (type === void 0 && format === DepthStencilFormat)
         type = UnsignedInt248Type;
       super(null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
-      this.image = { width, height };
+      this.image = { width: width2, height: height2 };
       this.magFilter = magFilter !== void 0 ? magFilter : NearestFilter;
       this.minFilter = minFilter !== void 0 ? minFilter : NearestFilter;
       this.flipY = false;
@@ -21569,7 +21569,7 @@ No cookies intended. Accountless. Age 18+ only.
         uniforms.fogDensity.value = fog.density;
       }
     }
-    function refreshMaterialUniforms(uniforms, material, pixelRatio, height, transmissionRenderTarget) {
+    function refreshMaterialUniforms(uniforms, material, pixelRatio, height2, transmissionRenderTarget) {
       if (material.isMeshBasicMaterial) {
         refreshUniformsCommon(uniforms, material);
       } else if (material.isMeshLambertMaterial) {
@@ -21606,7 +21606,7 @@ No cookies intended. Accountless. Age 18+ only.
           refreshUniformsDash(uniforms, material);
         }
       } else if (material.isPointsMaterial) {
-        refreshUniformsPoints(uniforms, material, pixelRatio, height);
+        refreshUniformsPoints(uniforms, material, pixelRatio, height2);
       } else if (material.isSpriteMaterial) {
         refreshUniformsSprites(uniforms, material);
       } else if (material.isShadowMaterial) {
@@ -21724,11 +21724,11 @@ No cookies intended. Accountless. Age 18+ only.
       uniforms.totalSize.value = material.dashSize + material.gapSize;
       uniforms.scale.value = material.scale;
     }
-    function refreshUniformsPoints(uniforms, material, pixelRatio, height) {
+    function refreshUniformsPoints(uniforms, material, pixelRatio, height2) {
       uniforms.diffuse.value.copy(material.color);
       uniforms.opacity.value = material.opacity;
       uniforms.size.value = material.size * pixelRatio;
-      uniforms.scale.value = height * 0.5;
+      uniforms.scale.value = height2 * 0.5;
       if (material.map) {
         uniforms.map.value = material.map;
       }
@@ -22153,31 +22153,31 @@ No cookies intended. Accountless. Age 18+ only.
     this.getSize = function(target) {
       return target.set(_width, _height);
     };
-    this.setSize = function(width, height, updateStyle) {
+    this.setSize = function(width2, height2, updateStyle) {
       if (xr.isPresenting) {
         console.warn("THREE.WebGLRenderer: Can't change size while VR device is presenting.");
         return;
       }
-      _width = width;
-      _height = height;
-      _canvas2.width = Math.floor(width * _pixelRatio);
-      _canvas2.height = Math.floor(height * _pixelRatio);
+      _width = width2;
+      _height = height2;
+      _canvas2.width = Math.floor(width2 * _pixelRatio);
+      _canvas2.height = Math.floor(height2 * _pixelRatio);
       if (updateStyle !== false) {
-        _canvas2.style.width = width + "px";
-        _canvas2.style.height = height + "px";
+        _canvas2.style.width = width2 + "px";
+        _canvas2.style.height = height2 + "px";
       }
-      this.setViewport(0, 0, width, height);
+      this.setViewport(0, 0, width2, height2);
     };
     this.getDrawingBufferSize = function(target) {
       return target.set(_width * _pixelRatio, _height * _pixelRatio).floor();
     };
-    this.setDrawingBufferSize = function(width, height, pixelRatio) {
-      _width = width;
-      _height = height;
+    this.setDrawingBufferSize = function(width2, height2, pixelRatio) {
+      _width = width2;
+      _height = height2;
       _pixelRatio = pixelRatio;
-      _canvas2.width = Math.floor(width * pixelRatio);
-      _canvas2.height = Math.floor(height * pixelRatio);
-      this.setViewport(0, 0, width, height);
+      _canvas2.width = Math.floor(width2 * pixelRatio);
+      _canvas2.height = Math.floor(height2 * pixelRatio);
+      this.setViewport(0, 0, width2, height2);
     };
     this.getCurrentViewport = function(target) {
       return target.copy(_currentViewport);
@@ -22185,22 +22185,22 @@ No cookies intended. Accountless. Age 18+ only.
     this.getViewport = function(target) {
       return target.copy(_viewport);
     };
-    this.setViewport = function(x2, y2, width, height) {
+    this.setViewport = function(x2, y2, width2, height2) {
       if (x2.isVector4) {
         _viewport.set(x2.x, x2.y, x2.z, x2.w);
       } else {
-        _viewport.set(x2, y2, width, height);
+        _viewport.set(x2, y2, width2, height2);
       }
       state.viewport(_currentViewport.copy(_viewport).multiplyScalar(_pixelRatio).floor());
     };
     this.getScissor = function(target) {
       return target.copy(_scissor);
     };
-    this.setScissor = function(x2, y2, width, height) {
+    this.setScissor = function(x2, y2, width2, height2) {
       if (x2.isVector4) {
         _scissor.set(x2.x, x2.y, x2.z, x2.w);
       } else {
-        _scissor.set(x2, y2, width, height);
+        _scissor.set(x2, y2, width2, height2);
       }
       state.scissor(_currentScissor.copy(_scissor).multiplyScalar(_pixelRatio).floor());
     };
@@ -22963,7 +22963,7 @@ No cookies intended. Accountless. Age 18+ only.
       }
       _currentMaterialId = -1;
     };
-    this.readRenderTargetPixels = function(renderTarget, x2, y2, width, height, buffer, activeCubeFaceIndex) {
+    this.readRenderTargetPixels = function(renderTarget, x2, y2, width2, height2, buffer, activeCubeFaceIndex) {
       if (!(renderTarget && renderTarget.isWebGLRenderTarget)) {
         console.error("THREE.WebGLRenderer.readRenderTargetPixels: renderTarget is not THREE.WebGLRenderTarget.");
         return;
@@ -22988,8 +22988,8 @@ No cookies intended. Accountless. Age 18+ only.
             return;
           }
           if (_gl.checkFramebufferStatus(36160) === 36053) {
-            if (x2 >= 0 && x2 <= renderTarget.width - width && (y2 >= 0 && y2 <= renderTarget.height - height)) {
-              _gl.readPixels(x2, y2, width, height, utils.convert(textureFormat), utils.convert(textureType), buffer);
+            if (x2 >= 0 && x2 <= renderTarget.width - width2 && (y2 >= 0 && y2 <= renderTarget.height - height2)) {
+              _gl.readPixels(x2, y2, width2, height2, utils.convert(textureFormat), utils.convert(textureType), buffer);
             }
           } else {
             console.error("THREE.WebGLRenderer.readRenderTargetPixels: readPixels from renderTarget failed. Framebuffer not complete.");
@@ -23006,15 +23006,15 @@ No cookies intended. Accountless. Age 18+ only.
         return;
       }
       const levelScale = Math.pow(2, -level);
-      const width = Math.floor(texture.image.width * levelScale);
-      const height = Math.floor(texture.image.height * levelScale);
+      const width2 = Math.floor(texture.image.width * levelScale);
+      const height2 = Math.floor(texture.image.height * levelScale);
       textures.setTexture2D(texture, 0);
-      _gl.copyTexSubImage2D(3553, level, 0, 0, position.x, position.y, width, height);
+      _gl.copyTexSubImage2D(3553, level, 0, 0, position.x, position.y, width2, height2);
       state.unbindTexture();
     };
     this.copyTextureToTexture = function(position, srcTexture, dstTexture, level = 0) {
-      const width = srcTexture.image.width;
-      const height = srcTexture.image.height;
+      const width2 = srcTexture.image.width;
+      const height2 = srcTexture.image.height;
       const glFormat = utils.convert(dstTexture.format);
       const glType = utils.convert(dstTexture.type);
       textures.setTexture2D(dstTexture, 0);
@@ -23022,7 +23022,7 @@ No cookies intended. Accountless. Age 18+ only.
       _gl.pixelStorei(37441, dstTexture.premultiplyAlpha);
       _gl.pixelStorei(3317, dstTexture.unpackAlignment);
       if (srcTexture.isDataTexture) {
-        _gl.texSubImage2D(3553, level, position.x, position.y, width, height, glFormat, glType, srcTexture.image.data);
+        _gl.texSubImage2D(3553, level, position.x, position.y, width2, height2, glFormat, glType, srcTexture.image.data);
       } else {
         if (srcTexture.isCompressedTexture) {
           _gl.compressedTexSubImage2D(3553, level, position.x, position.y, srcTexture.mipmaps[0].width, srcTexture.mipmaps[0].height, glFormat, srcTexture.mipmaps[0].data);
@@ -23039,8 +23039,8 @@ No cookies intended. Accountless. Age 18+ only.
         console.warn("THREE.WebGLRenderer.copyTextureToTexture3D: can only be used with WebGL2.");
         return;
       }
-      const width = sourceBox.max.x - sourceBox.min.x + 1;
-      const height = sourceBox.max.y - sourceBox.min.y + 1;
+      const width2 = sourceBox.max.x - sourceBox.min.x + 1;
+      const height2 = sourceBox.max.y - sourceBox.min.y + 1;
       const depth = sourceBox.max.z - sourceBox.min.z + 1;
       const glFormat = utils.convert(dstTexture.format);
       const glType = utils.convert(dstTexture.type);
@@ -23070,13 +23070,13 @@ No cookies intended. Accountless. Age 18+ only.
       _gl.pixelStorei(3315, sourceBox.min.y);
       _gl.pixelStorei(32877, sourceBox.min.z);
       if (srcTexture.isDataTexture || srcTexture.isDataTexture3D) {
-        _gl.texSubImage3D(glTarget, level, position.x, position.y, position.z, width, height, depth, glFormat, glType, image.data);
+        _gl.texSubImage3D(glTarget, level, position.x, position.y, position.z, width2, height2, depth, glFormat, glType, image.data);
       } else {
         if (srcTexture.isCompressedTexture) {
           console.warn("THREE.WebGLRenderer.copyTextureToTexture3D: untested support for compressed srcTexture.");
-          _gl.compressedTexSubImage3D(glTarget, level, position.x, position.y, position.z, width, height, depth, glFormat, image.data);
+          _gl.compressedTexSubImage3D(glTarget, level, position.x, position.y, position.z, width2, height2, depth, glFormat, image.data);
         } else {
-          _gl.texSubImage3D(glTarget, level, position.x, position.y, position.z, width, height, depth, glFormat, glType, image);
+          _gl.texSubImage3D(glTarget, level, position.x, position.y, position.z, width2, height2, depth, glFormat, glType, image);
         }
       }
       _gl.pixelStorei(3314, unpackRowLen);
@@ -23636,9 +23636,9 @@ No cookies intended. Accountless. Age 18+ only.
   };
   Bone.prototype.isBone = true;
   var DataTexture = class extends Texture {
-    constructor(data = null, width = 1, height = 1, format, type, mapping, wrapS, wrapT, magFilter = NearestFilter, minFilter = NearestFilter, anisotropy, encoding) {
+    constructor(data = null, width2 = 1, height2 = 1, format, type, mapping, wrapS, wrapT, magFilter = NearestFilter, minFilter = NearestFilter, anisotropy, encoding) {
       super(null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding);
-      this.image = { data, width, height };
+      this.image = { data, width: width2, height: height2 };
       this.magFilter = magFilter;
       this.minFilter = minFilter;
       this.generateMipmaps = false;
@@ -24226,8 +24226,8 @@ No cookies intended. Accountless. Age 18+ only.
   };
   VideoTexture.prototype.isVideoTexture = true;
   var FramebufferTexture = class extends Texture {
-    constructor(width, height, format) {
-      super({ width, height });
+    constructor(width2, height2, format) {
+      super({ width: width2, height: height2 });
       this.format = format;
       this.magFilter = NearestFilter;
       this.minFilter = NearestFilter;
@@ -24237,9 +24237,9 @@ No cookies intended. Accountless. Age 18+ only.
   };
   FramebufferTexture.prototype.isFramebufferTexture = true;
   var CompressedTexture = class extends Texture {
-    constructor(mipmaps, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, encoding) {
+    constructor(mipmaps, width2, height2, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, encoding) {
       super(null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding);
-      this.image = { width, height };
+      this.image = { width: width2, height: height2 };
       this.mipmaps = mipmaps;
       this.flipY = false;
       this.generateMipmaps = false;
@@ -24541,7 +24541,7 @@ No cookies intended. Accountless. Age 18+ only.
   ArcCurve.prototype.isArcCurve = true;
   function CubicPoly() {
     let c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-    function init3(x0, x1, t0, t1) {
+    function init2(x0, x1, t0, t1) {
       c0 = x0;
       c1 = t0;
       c2 = -3 * x0 + 3 * x1 - 2 * t0 - t1;
@@ -24549,14 +24549,14 @@ No cookies intended. Accountless. Age 18+ only.
     }
     return {
       initCatmullRom: function(x0, x1, x2, x3, tension) {
-        init3(x1, x2, tension * (x2 - x0), tension * (x3 - x1));
+        init2(x1, x2, tension * (x2 - x0), tension * (x3 - x1));
       },
       initNonuniformCatmullRom: function(x0, x1, x2, x3, dt0, dt1, dt2) {
         let t1 = (x1 - x0) / dt0 - (x2 - x0) / (dt0 + dt1) + (x2 - x1) / dt1;
         let t2 = (x2 - x1) / dt1 - (x3 - x1) / (dt1 + dt2) + (x3 - x2) / dt2;
         t1 *= dt1;
         t2 *= dt1;
-        init3(x1, x2, t1, t2);
+        init2(x1, x2, t1, t2);
       },
       calc: function(t) {
         const t2 = t * t;
@@ -28278,11 +28278,11 @@ No cookies intended. Accountless. Age 18+ only.
   };
   AmbientLight.prototype.isAmbientLight = true;
   var RectAreaLight = class extends Light {
-    constructor(color, intensity, width = 10, height = 10) {
+    constructor(color, intensity, width2 = 10, height2 = 10) {
       super(color, intensity);
       this.type = "RectAreaLight";
-      this.width = width;
-      this.height = height;
+      this.width = width2;
+      this.height = height2;
     }
     get power() {
       return this.intensity * this.width * this.height * Math.PI;
@@ -32835,21 +32835,23 @@ No cookies intended. Accountless. Age 18+ only.
     refineFaceLandmarks: true
   });
   holistic.onResults(onResults);
+  var width = 320;
+  var height = 240;
   videoElement.on(($ve) => {
     if (!$ve)
       return;
-    canvasElement.$.width = 320;
-    canvasElement.$.height = 240;
+    canvasElement.$.width = width;
+    canvasElement.$.height = height;
     const ctx = canvasElement.$.getContext("2d");
-    ctx.translate(320, 0);
+    ctx.translate(width, 0);
     ctx.scale(-1, 1);
     const camera = new import_camera_utils.Camera($ve, {
       onFrame: async () => {
-        ctx.drawImage($ve, 0, 0, 320, 240);
+        ctx.drawImage($ve, 0, 0, width, height);
         await holistic.send({ image: canvasElement.$ });
       },
-      width: 320,
-      height: 240
+      width,
+      height
     });
     camera.start();
   });
@@ -32859,6 +32861,21 @@ No cookies intended. Accountless. Age 18+ only.
     }
     if (mirrorVRM.$) {
       mirrorVRM.$.update(0.01);
+    }
+  });
+
+  // src/component/vary.ts
+  var vec3 = new AFRAME.THREE.Vector3();
+  var bb2 = new AFRAME.THREE.Box3();
+  AFRAME.registerComponent("vary", {
+    schema: {
+      property: { type: "string", default: "position" },
+      range: { type: "string", default: "-1 -1 -1 1 1 1" }
+    },
+    update() {
+      const o3d = this.el.object3D;
+      bb2.setFromArray(this.data.range.split(" ").map((v2) => parseFloat(v2)));
+      o3d[this.data.property]?.set(bb2.min.x + Math.random() * (bb2.max.x - bb2.min.x), bb2.min.y + Math.random() * (bb2.max.y - bb2.min.y), bb2.min.z + Math.random() * (bb2.max.z - bb2.min.z));
     }
   });
 
@@ -32988,7 +33005,7 @@ No cookies intended. Accountless. Age 18+ only.
   });
 
   // src/component/wasd-controller.ts
-  var vec3 = new AFRAME.THREE.Vector3();
+  var vec32 = new AFRAME.THREE.Vector3();
   AFRAME.registerComponent("wasd-controller", {
     schema: {
       speed: { type: "number", default: 0.15 },
@@ -33000,22 +33017,22 @@ No cookies intended. Accountless. Age 18+ only.
       const o3d = this.el.object3D;
       let force;
       let torq;
-      vec3.set(0, 0, 0);
+      vec32.set(0, 0, 0);
       if (key_map.$["w"]) {
-        vec3.y = 1;
-        vec3.z += -this.data.speed * delta;
+        vec32.y = 1;
+        vec32.z += -this.data.speed * delta;
       }
       if (key_map.$["s"]) {
-        vec3.y = 1;
-        vec3.z += this.data.speed * delta;
+        vec32.y = 1;
+        vec32.z += this.data.speed * delta;
       }
       if (key_map.$["a"]) {
-        vec3.y = 1;
-        vec3.x += -this.data.speed * delta;
+        vec32.y = 1;
+        vec32.x += -this.data.speed * delta;
       }
       if (key_map.$["d"]) {
-        vec3.y = 1;
-        vec3.x += this.data.speed * delta;
+        vec32.y = 1;
+        vec32.x += this.data.speed * delta;
       }
       if (key_map.$["q"]) {
         torq = new Ammo.btVector3(0, delta * this.data.rot, 0);
@@ -33027,9 +33044,9 @@ No cookies intended. Accountless. Age 18+ only.
         this.el.body.applyTorque(torq);
         this.el.body.activate();
       }
-      if (vec3.length() > 0) {
-        vec3.applyQuaternion(o3d.quaternion);
-        force = new Ammo.btVector3(vec3.x, vec3.y, vec3.z);
+      if (vec32.length() > 0) {
+        vec32.applyQuaternion(o3d.quaternion);
+        force = new Ammo.btVector3(vec32.x, vec32.y, vec32.z);
         this.el.body.applyForce(force);
         this.el.body.activate();
         Ammo.destroy(force);
@@ -33042,31 +33059,44 @@ No cookies intended. Accountless. Age 18+ only.
   // src/component/speech-controller.ts
   var recognition = new webkitSpeechRecognition();
   var synth = window.speechSynthesis;
-  recognition.continuous = true;
+  var recog = new Value();
+  recognition.continuous = false;
   recognition.lang = "en-US";
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
+  var started = false;
+  recognition.onresult = (event) => {
+    recog.set(event);
+  };
+  recognition.onend = () => {
+    recognition.start();
+  };
+  var voices = synth.getVoices();
+  function findVoice(voiceName) {
+    return voices.find((voice) => voice.name.indexOf(voiceName) !== -1);
+  }
   AFRAME.registerComponent("speech-controller", {
     init() {
-      recognition.start();
-      const voices = synth.getVoices();
-      let voice = voices.find((voice2) => voice2.name.indexOf("Aus") !== -1);
-      if (!voice) {
-        voice = voices.find((voice2) => voice2.name.indexOf("UK English Female") !== -1);
+      let voice = findVoice("Aus") || findVoice("UK English Female") || voices[0];
+      if (!started) {
+        recognition.start();
+        started = true;
       }
-      recognition.onresult = (event) => {
+      this.cancel = recog.on((event) => {
+        if (!event)
+          return;
         var said = event.results[event.results.length - 1][0].transcript.trim();
         console.log(said);
         this.el.setAttribute("color", said.replace(".", ""));
         var utterThis = new SpeechSynthesisUtterance(said);
         utterThis.voice = voice;
-        utterThis.pitch = 1;
-        utterThis.rate = 1;
+        utterThis.pitch = 0.9;
+        utterThis.rate = 1.25;
         synth.speak(utterThis);
-      };
-      recognition.onend = () => {
-        this.init();
-      };
+      });
+    },
+    remove() {
+      this.cancel();
     }
   });
 
@@ -33287,6 +33317,8 @@ No cookies intended. Accountless. Age 18+ only.
     let characters;
     let t23;
     let a_plane;
+    let a_plane_width_value;
+    let a_plane_height_value;
     let t24;
     let a_entity8;
     let a_entity8_position_value;
@@ -33370,16 +33402,19 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_mixin2, "shadow", "");
         set_custom_element_data(a_mixin2, "gltf-model", "#glb-tree");
         set_custom_element_data(a_mixin2, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin2, "vary", "property: scale; range: 1 0.5 1 2 3 2");
         set_custom_element_data(a_mixin2, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_mixin2, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
         set_custom_element_data(a_mixin3, "id", "grass");
         set_custom_element_data(a_mixin3, "shadow", "");
         set_custom_element_data(a_mixin3, "gltf-model", "/glb/grass.glb");
         set_custom_element_data(a_mixin3, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin3, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
         set_custom_element_data(a_mixin4, "id", "grass2");
         set_custom_element_data(a_mixin4, "shadow", "");
         set_custom_element_data(a_mixin4, "gltf-model", "/glb/grassLarge.glb");
         set_custom_element_data(a_mixin4, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin4, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
         set_custom_element_data(a_mixin5, "id", "coinGold");
         set_custom_element_data(a_mixin5, "shadow", "");
         set_custom_element_data(a_mixin5, "gltf-model", "/glb/coinGold.glb");
@@ -33390,13 +33425,13 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_mixin6, "shadow", "");
         set_custom_element_data(a_mixin6, "gltf-model", "/glb/rockC.glb");
         set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 100");
-        set_custom_element_data(a_mixin6, "scale", "12 7.5 12");
         set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin6, "vary", "property: scale; range: 12 7.5 12 12 15 12");
         set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
         set_custom_element_data(a_mixin7, "id", "rock");
         set_custom_element_data(a_mixin7, "shadow", "");
         set_custom_element_data(a_mixin7, "gltf-model", "/glb/rockB.glb");
-        set_custom_element_data(a_mixin7, "scale", "0.5 0.25 0.5");
+        set_custom_element_data(a_mixin7, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
         set_custom_element_data(a_mixin7, "scatter", ctx[2]);
         set_custom_element_data(a_mixin7, "ammo-body", "type: static; mass: 0");
         set_custom_element_data(a_mixin7, "ammo-shape", "type: box; fit: manual; halfExtents: 0.25 0.5 0.25;");
@@ -33436,14 +33471,14 @@ No cookies intended. Accountless. Age 18+ only.
           shadowMapWidth: 1024 * 4,
           intensity: 0.9
         }));
-        set_custom_element_data(a_entity7, "light", a_entity7_light_value = "type:ambient; color:" + light + "; intensity:1;");
+        set_custom_element_data(a_entity7, "light", a_entity7_light_value = "type:ambient; color:" + light + "; intensity:2;");
         set_custom_element_data(a_entity7, "animate", a_entity7_animate_value = "property: light.color; to: " + light_dark + "; easing: easeInOutBounce; dur: 6000");
         set_custom_element_data(a_entity7, "position", "-1 1 1");
         set_custom_element_data(a_plane, "shadow", "");
         set_custom_element_data(a_plane, "position", "0 0 0");
         set_custom_element_data(a_plane, "rotation", "-90 0 0");
-        set_custom_element_data(a_plane, "width", ctx[0]);
-        set_custom_element_data(a_plane, "height", ctx[0]);
+        set_custom_element_data(a_plane, "width", a_plane_width_value = ctx[0] * 1.5);
+        set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 1.5);
         set_custom_element_data(a_plane, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_plane, "ammo-shape", "type:box");
         set_custom_element_data(a_plane, "color", "#334411");
@@ -33541,11 +33576,11 @@ No cookies intended. Accountless. Age 18+ only.
         }))) {
           set_custom_element_data(a_entity6, "light", a_entity6_light_value);
         }
-        if (!current || dirty & 1) {
-          set_custom_element_data(a_plane, "width", ctx2[0]);
+        if (!current || dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 1.5)) {
+          set_custom_element_data(a_plane, "width", a_plane_width_value);
         }
-        if (!current || dirty & 1) {
-          set_custom_element_data(a_plane, "height", ctx2[0]);
+        if (!current || dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 1.5)) {
+          set_custom_element_data(a_plane, "height", a_plane_height_value);
         }
         if (!current || dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = "0 20 " + ctx2[0] / 4)) {
           set_custom_element_data(a_entity8, "position", a_entity8_position_value);

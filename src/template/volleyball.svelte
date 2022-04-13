@@ -6,6 +6,7 @@
 
 	import '../component/webcam-vrm'
 	import '../component/vrm'
+	import "../component/vary"
 	import Webcam from './webcam.svelte'
 	import CharactersMixins from './characters-assets.svelte'
 	import Characters from './characters.svelte'
@@ -39,11 +40,12 @@
 			shadow
 			gltf-model="#glb-tree"
 			{scatter}
+			vary="property: scale; range: 1 0.5 1 2 3 2"
 			ammo-body="type: static; mass: 0;"
 			ammo-shape="type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0"
 		/>
-		<a-mixin id="grass" shadow gltf-model="/glb/grass.glb" {scatter} />
-		<a-mixin id="grass2" shadow gltf-model="/glb/grassLarge.glb" {scatter} />
+		<a-mixin id="grass" shadow gltf-model="/glb/grass.glb" {scatter} vary="property: scale; range: 1 0.5 1 1.5 1.5 1.5"/>
+		<a-mixin id="grass2" shadow gltf-model="/glb/grassLarge.glb" {scatter} vary="property: scale; range: 1 0.5 1 1.5 1.5 1.5"/>
 		<a-mixin
 			id="coinGold"
 			shadow
@@ -57,15 +59,16 @@
 			shadow
 			gltf-model="/glb/rockC.glb"
 			ring="radius: {groundSize * 0.7}; count: 100"
-			scale="12 7.5 12"
 			ammo-body="type: static; mass: 0;"
+			vary="property: scale; range: 12 7.5 12 12 15 12"
 			ammo-shape="type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0"
 		/>
 		<a-mixin
 			id="rock"
 			shadow
 			gltf-model="/glb/rockB.glb"
-			scale="0.5 0.25 0.5"
+			vary="property: scale; range: 0.5 0.25 0.5 2 1 2"
+		
 			{scatter}
 			ammo-body="type: static; mass: 0"
 			ammo-shape="type: box; fit: manual; halfExtents: 0.25 0.5 0.25;"
@@ -117,7 +120,7 @@
 		})}
 	/>
 	<a-entity
-		light="type:ambient; color:{light}; intensity:1;"
+		light="type:ambient; color:{light}; intensity:2;"
 		animate="property: light.color; to: {light_dark}; easing: easeInOutBounce; dur: 6000"
 		position="-1 1 1"
 	/>
@@ -128,8 +131,8 @@
 		shadow
 		position="0 0 0"
 		rotation="-90 0 0"
-		width={groundSize}
-		height={groundSize}
+		width={groundSize * 1.5}
+		height={groundSize * 1.5}
 		ammo-body="type: static; mass: 0;"
 		ammo-shape="type:box"
 		color="#334411"

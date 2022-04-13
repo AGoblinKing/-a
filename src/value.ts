@@ -6,7 +6,7 @@ export class Value<T> {
   protected reactions: Set<FSubscribe<T>>
   stopKeeping: ICancel
 
-  constructor(value: T = undefined) {
+  constructor(value: T = undefined as any) {
     this.$ = value
   }
 
@@ -99,7 +99,7 @@ export class Value<T> {
       if (v !== undefined && v !== null) {
         this.set(v)
       }
-    } catch (ex) {}
+    } catch (ex) { }
 
     this.on((v) => {
       localStorage.setItem(where, JSON.stringify(v))

@@ -231,26 +231,29 @@ holistic.setOptions({
 holistic.onResults(onResults);
 
 
+const width = 320
+const height = 240
+
 videoElement.on(($ve) => {
   if (!$ve) return
 
-  canvasElement.$.width = 320
-  canvasElement.$.height = 240
+  canvasElement.$.width = width
+  canvasElement.$.height = height
 
   const ctx = canvasElement.$.getContext("2d")
-  ctx.translate(320, 0)
+  ctx.translate(width, 0)
   ctx.scale(-1, 1)
   // Use `Mediapipe` utils to get camera - lower resolution = higher fps
   const camera = new Camera($ve, {
     onFrame: async () => {
 
-      ctx.drawImage($ve, 0, 0, 320, 240)
+      ctx.drawImage($ve, 0, 0, width, height)
 
       await holistic.send({ image: canvasElement.$ });
     },
 
-    width: 320,
-    height: 240
+    width,
+    height
   });
   camera.start();
 
