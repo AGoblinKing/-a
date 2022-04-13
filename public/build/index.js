@@ -7028,6 +7028,7 @@
   var open_home = new Value(true);
   var open_game = new Value(false);
   var open_text = new Value(void 0);
+  var open_loading = new Value(false);
   var motd = new Value(`\u{1F38A}v0.0.8\u{1F38A}
 Lighting Update
 
@@ -7052,6 +7053,10 @@ No cookies intended. Accountless. Age 18+ only.
     requestAnimationFrame(ticker);
     tick.set(tick.$ + 1);
   };
+  var loading = new Value(`
+    Loading...
+
+What should we put here ? `);
   ticker();
 
   // node_modules/three/build/three.module.js
@@ -27743,7 +27748,7 @@ No cookies intended. Accountless. Age 18+ only.
       return this;
     }
   };
-  var loading = {};
+  var loading2 = {};
   var FileLoader = class extends Loader {
     constructor(manager) {
       super(manager);
@@ -27764,16 +27769,16 @@ No cookies intended. Accountless. Age 18+ only.
         }, 0);
         return cached;
       }
-      if (loading[url] !== void 0) {
-        loading[url].push({
+      if (loading2[url] !== void 0) {
+        loading2[url].push({
           onLoad,
           onProgress,
           onError
         });
         return;
       }
-      loading[url] = [];
-      loading[url].push({
+      loading2[url] = [];
+      loading2[url].push({
         onLoad,
         onProgress,
         onError
@@ -27792,7 +27797,7 @@ No cookies intended. Accountless. Age 18+ only.
           if (typeof ReadableStream === "undefined" || response.body.getReader === void 0) {
             return response;
           }
-          const callbacks = loading[url];
+          const callbacks = loading2[url];
           const reader = response.body.getReader();
           const contentLength = response.headers.get("Content-Length");
           const total = contentLength ? parseInt(contentLength) : 0;
@@ -27850,20 +27855,20 @@ No cookies intended. Accountless. Age 18+ only.
         }
       }).then((data) => {
         Cache.add(url, data);
-        const callbacks = loading[url];
-        delete loading[url];
+        const callbacks = loading2[url];
+        delete loading2[url];
         for (let i2 = 0, il = callbacks.length; i2 < il; i2++) {
           const callback = callbacks[i2];
           if (callback.onLoad)
             callback.onLoad(data);
         }
       }).catch((err) => {
-        const callbacks = loading[url];
+        const callbacks = loading2[url];
         if (callbacks === void 0) {
           this.manager.itemError(url);
           throw err;
         }
-        delete loading[url];
+        delete loading2[url];
         for (let i2 = 0, il = callbacks.length; i2 < il; i2++) {
           const callback = callbacks[i2];
           if (callback.onError)
@@ -32675,6 +32680,8 @@ No cookies intended. Accountless. Age 18+ only.
     update() {
       if (this.data.src !== "") {
         Load(this.data.src).then((vrm) => {
+          we.removeUnnecessaryVertices(vrm.scene);
+          we.removeUnnecessaryJoints(vrm.scene);
           this.el.setObject3D("mesh", vrm.scene);
           this.data.vrm = vrm;
           if (this.data.current) {
@@ -32694,10 +32701,52 @@ No cookies intended. Accountless. Age 18+ only.
     }
   });
 
+  // src/chat.ts
+  var recognition = new webkitSpeechRecognition();
+  var synth = window.speechSynthesis;
+  var recog = new Value();
+  recognition.continuous = false;
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  recognition.onresult = (event) => {
+    recog.set(event);
+  };
+  recognition.onend = () => {
+    recognition.start();
+  };
+  function findVoice(voiceName) {
+    const voices = synth.getVoices();
+    return voices.find((voice) => voice.name.indexOf(voiceName) !== -1);
+  }
+  var talk = new Value("");
+  var control = new Value("" /* Nothing */);
+  var findTilde = /~/g;
+  function say(said) {
+    if (!said)
+      return;
+    const voices = synth.getVoices();
+    var utterThis = new SpeechSynthesisUtterance(said.replace(findTilde, "control"));
+    let voice = findVoice("Aus") || findVoice("UK English Female") || voices[0];
+    utterThis.voice = voice;
+    utterThis.pitch = 0.9;
+    utterThis.rate = 1.1;
+    synth.speak(utterThis);
+  }
+  talk.on(say);
+  recog.on((event) => {
+    if (!event)
+      return;
+    var said = event.results[event.results.length - 1][0].transcript.trim();
+    talk.set(said);
+  });
+  var start = () => recognition.start();
+
   // src/component/webcam-vrm.ts
   var remap2 = helpers_exports.remap;
   var clamp3 = helpers_exports.clamp;
   var lerp2 = Vector.lerp;
+  var once = false;
   var euler = new AFRAME.THREE.Euler();
   var quat = new AFRAME.THREE.Quaternion();
   var rigRotation = (vrm, name, rotation = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
@@ -32821,6 +32870,10 @@ No cookies intended. Accountless. Age 18+ only.
       rigRotation(vrm, "RightLittleIntermediate", riggedRightHand.RightLittleIntermediate);
       rigRotation(vrm, "RightLittleDistal", riggedRightHand.RightLittleDistal);
     }
+    if (!once) {
+      open_loading.set(false);
+      once = true;
+    }
   };
   var videoElement = new Value();
   var canvasElement = new Value();
@@ -32875,6 +32928,21 @@ No cookies intended. Accountless. Age 18+ only.
     if (mirrorVRM.$) {
       mirrorVRM.$.update(0.01);
     }
+  });
+  function Random(items) {
+    return items[Math.floor(Math.random() * items.length)];
+  }
+  talk.on(async ($talk) => {
+    const s2 = Math.sin(Math.PI * tick.$);
+    const spl = $talk.split(" ");
+    const intv = setInterval(() => {
+      const item = spl.pop();
+      if (!item) {
+        clearInterval(intv);
+        return;
+      }
+      mirrorVRM.$?.blendShapeProxy.setValue(u.BlendShapePresetName[Random("AEIOU")], 0.5 + 0.5 * s2);
+    }, 1 / 3.5 * 1e3);
   });
 
   // src/component/vary.ts
@@ -33428,47 +33496,6 @@ No cookies intended. Accountless. Age 18+ only.
   };
   var flora_assets_default = Flora_assets;
 
-  // src/chat.ts
-  var recognition = new webkitSpeechRecognition();
-  var synth = window.speechSynthesis;
-  var recog = new Value();
-  recognition.continuous = false;
-  recognition.lang = "en-US";
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-  recognition.onresult = (event) => {
-    recog.set(event);
-  };
-  recognition.onend = () => {
-    recognition.start();
-  };
-  function findVoice(voiceName) {
-    const voices = synth.getVoices();
-    return voices.find((voice) => voice.name.indexOf(voiceName) !== -1);
-  }
-  var talk = new Value("");
-  var control = new Value("" /* Nothing */);
-  var findTilde = /~/g;
-  function say(said) {
-    if (!said)
-      return;
-    const voices = synth.getVoices();
-    var utterThis = new SpeechSynthesisUtterance(said.replace(findTilde, "control"));
-    let voice = findVoice("Aus") || findVoice("UK English Female") || voices[0];
-    utterThis.voice = voice;
-    utterThis.pitch = 0.9;
-    utterThis.rate = 1.1;
-    synth.speak(utterThis);
-  }
-  talk.on(say);
-  recog.on((event) => {
-    if (!event)
-      return;
-    var said = event.results[event.results.length - 1][0].transcript.trim();
-    talk.set(said);
-  });
-  var start = () => recognition.start();
-
   // src/ui/text.svelte
   function create_if_block(ctx) {
     let div;
@@ -33801,7 +33828,6 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_mixin5, "shadow", "");
         set_custom_element_data(a_mixin5, "gltf-model", "/glb/coinGold.glb");
         set_custom_element_data(a_mixin5, "ammo-body", "mass:0.1");
-        set_custom_element_data(a_mixin5, "animation", "property: scale; to: 1.1 1.1 1.1; dur: 2000; loop: true; dir: alternate; easing: easeInOutQuad");
         set_custom_element_data(a_mixin5, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 0.35; offset: -1 0.25 0.5");
         set_custom_element_data(a_mixin5, "scatter", ctx[2]);
         set_custom_element_data(a_mixin6, "id", "mountains");
@@ -33879,6 +33905,7 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_sound, "volume", a_sound_volume_value = 0.5);
         if (!src_url_equal(a_sound.src, a_sound_src_value = "#sound-bg"))
           set_custom_element_data(a_sound, "src", a_sound_src_value);
+        set_custom_element_data(a_scene, "stats", "");
         set_custom_element_data(a_scene, "renderer", " highRefreshRate: true; alpha: false;precision: medium;");
         set_custom_element_data(a_scene, "shadow", "type:pcfsoft;");
         set_custom_element_data(a_scene, "fog", "type: linear; color: #AAA");
@@ -34227,6 +34254,7 @@ No cookies intended. Accountless. Age 18+ only.
     component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
     if (location.search === "?go") {
       open_game.set(true);
+      open_loading.set(true);
       open_home.set(false);
     }
     const paste_handler = (e) => {

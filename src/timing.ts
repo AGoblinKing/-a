@@ -4,6 +4,7 @@ export const tick = new Value(0)
 export const open_home = new Value(true)
 export const open_game = new Value(false)
 export const open_text = new Value<string>(undefined)
+export const open_loading = new Value(false)
 
 export const motd = new Value(`🎊v0.0.8🎊
 Lighting Update
@@ -31,4 +32,9 @@ const ticker = () => {
     tick.set(tick.$ + 1)
 }
 
+export const loading = new Value(`
+    Loading...
+
+What should we put here ? `
+)
 ticker()

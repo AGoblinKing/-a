@@ -1,17 +1,18 @@
 import * as Kalidokit from 'kalidokit'
 import { Holistic } from '@mediapipe/holistic/holistic';
 import { Camera } from '@mediapipe/camera_utils/camera_utils';
-import { tick } from 'src/timing';
+import { loading, open_loading, tick } from 'src/timing';
 
 import { VRMSchema } from "@pixiv/three-vrm"
 import { Value } from 'src/value';
 import { currentVRM, mirrorVRM } from './vrm';
+import { talk } from 'src/chat';
 
 const remap = Kalidokit.Utils.remap;
 const clamp = Kalidokit.Utils.clamp;
 const lerp = Kalidokit.Vector.lerp;
 
-
+let once = false
 const euler = new AFRAME.THREE.Euler()
 const quat = new AFRAME.THREE.Quaternion()
 // Animate Rotation Helper function
@@ -203,6 +204,11 @@ const animateVRM = (vrm, results) => {
     rigRotation(vrm, "RightLittleIntermediate", riggedRightHand.RightLittleIntermediate);
     rigRotation(vrm, "RightLittleDistal", riggedRightHand.RightLittleDistal);
   }
+
+  if (!once) {
+    open_loading.set(false)
+    once = true
+  }
 };
 
 /* SETUP MEDIAPIPE HOLISTIC INSTANCE */
@@ -274,4 +280,25 @@ tick.on(() => {
   if (mirrorVRM.$) {
     mirrorVRM.$.update(0.01);
   }
+})
+
+function Random(items: string) {
+  return items[Math.floor(Math.random() * items.length)]
+}
+
+talk.on(async ($talk) => {
+  const s = Math.sin(Math.PI * tick.$);
+
+
+  const spl = $talk.split(" ")
+  const intv = setInterval(() => {
+    const item = spl.pop()
+    if (!item) {
+      clearInterval(intv)
+      return
+    }
+
+    mirrorVRM.$?.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName[Random("AEIOU")], 0.5 + 0.5 * s)
+
+  }, 1 / 3.5 * 1000)
 })

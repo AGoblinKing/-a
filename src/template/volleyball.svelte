@@ -35,6 +35,7 @@
 <Text />
 
 <a-scene
+	stats
 	renderer=" highRefreshRate: true; alpha: false;precision: medium;"
 	shadow="type:pcfsoft;"
 	fog="type: linear; color: #AAA"
@@ -78,7 +79,6 @@
 			shadow
 			gltf-model="/glb/coinGold.glb"
 			ammo-body="mass:0.1"
-			animation="property: scale; to: 1.1 1.1 1.1; dur: 2000; loop: true; dir: alternate; easing: easeInOutQuad"
 			ammo-shape="type: sphere; fit: manual; sphereRadius: 0.35; offset: -1 0.25 0.5"
 			{scatter}
 		/>

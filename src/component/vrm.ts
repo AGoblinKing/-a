@@ -1,4 +1,4 @@
-import { VRM } from "@pixiv/three-vrm"
+import { VRM, VRMUtils } from "@pixiv/three-vrm"
 import { Value } from 'src/value';
 
 export const currentVRM = new Value<VRM>()
@@ -41,6 +41,8 @@ AFRAME.registerComponent('vrm', {
   update() {
     if (this.data.src !== "") {
       Load(this.data.src).then(vrm => {
+        VRMUtils.removeUnnecessaryVertices(vrm.scene);
+        VRMUtils.removeUnnecessaryJoints(vrm.scene);
         this.el.setObject3D('mesh', vrm.scene);
         this.data.vrm = vrm;
         if (this.data.current) {
