@@ -4,7 +4,7 @@ const vec3 = new AFRAME.THREE.Vector3()
 
 AFRAME.registerComponent("wasd-controller", {
     schema: {
-        speed: { type: "number", default: 0.15 },
+        speed: { type: "number", default: 0.3},
         rot: { type: "number", default: 0.15 },
     },
     tick(_, delta) {
@@ -17,24 +17,29 @@ AFRAME.registerComponent("wasd-controller", {
         let torq
         vec3.set(0, 0, 0)
         let intensity = 1
-        const jump = 2
+        let hop = 2
         if(key_map.$["shift"]) {
             intensity = 1.5
+        } 
+
+        // TODO: or if colliding with a climbable
+        if(key_map.$[" "] &&  o3d.position.y < 1) {
+            hop = 15
         }
         if (key_map.$["w"]) {
-            vec3.y = jump
+            vec3.y = hop
             vec3.z += -this.data.speed * delta * intensity
         }
         if (key_map.$["s"]) {
-            vec3.y = jump
+            vec3.y = hop
             vec3.z += this.data.speed * delta * intensity
         }
         if (key_map.$["a"]) {
-            vec3.y = jump
+            vec3.y = hop
             vec3.x += -this.data.speed * delta * intensity
         }
         if (key_map.$["d"]) {
-            vec3.y = jump
+            vec3.y = hop
             vec3.x += this.data.speed * delta * intensity
         }
         if (key_map.$["q"]) {

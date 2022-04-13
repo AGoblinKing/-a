@@ -4,7 +4,11 @@
 }
 
 /* fakecss:/workspaces/-a/src/ui/title.esbuild-svelte-fake-css */
-.title.svelte-rq4u3z {
+a.svelte-1uatlh0 {
+  font-size: 5vh;
+  text-decoration: none;
+}
+.title.svelte-1uatlh0 {
   text-shadow:
     -0.5vh -0.5vh 0 #000,
     0.5vh -0.5vh 0 #000,
@@ -16,20 +20,20 @@
   opacity: 0.8;
   font-family: cartoon;
 }
-offset.svelte-rq4u3z {
+offset.svelte-1uatlh0 {
   position: relative;
   display: block;
   margin-top: -10vh;
   margin-bottom: -10vh;
 }
-.full.svelte-rq4u3z {
+.full.svelte-1uatlh0 {
   margin-top: 10vh;
   left: 50%;
   transform: translate(-50%, 0);
   position: absolute;
   color: white;
 }
-@keyframes svelte-rq4u3z-color {
+@keyframes svelte-1uatlh0-color {
   0% {
     color: rgb(17, 168, 62);
   }
@@ -37,12 +41,12 @@ offset.svelte-rq4u3z {
     color: rgb(0, 158, 47);
   }
 }
-b.svelte-rq4u3z {
+b.svelte-1uatlh0 {
   position: relative;
   font-size: 15vh;
   margin-top: -10vh;
 }
-.favicon.svelte-rq4u3z {
+.favicon.svelte-1uatlh0 {
   position: absolute;
   left: 50%;
   margin-top: 0vh;
@@ -53,15 +57,15 @@ b.svelte-rq4u3z {
   width: 40vh;
   background-size: 100% 100%;
 }
-.intro.svelte-rq4u3z {
+.intro.svelte-1uatlh0 {
   height: 47vh;
   background: radial-gradient(circle at center, rgb(38, 0, 255) 0, rgb(0, 110, 255) 20vh, transparent 23vh);
-  animation: svelte-rq4u3z-breathe ease-in-out alternate 10s infinite;
+  animation: svelte-1uatlh0-breathe ease-in-out alternate 10s infinite;
 }
-.intro.svelte-rq4u3z:hover {
-  animation: svelte-rq4u3z-breathe ease-in-out alternate 1s infinite;
+.intro.svelte-1uatlh0:hover {
+  animation: svelte-1uatlh0-breathe ease-in-out alternate 1s infinite;
 }
-@keyframes svelte-rq4u3z-breathe {
+@keyframes svelte-1uatlh0-breathe {
   0% {
     opacity: 1;
   }

@@ -18,10 +18,18 @@
 			border="0"
 			alt="Buy Me a Coffee at ko-fi.com"
 		/></a
-	></center
+	>
+	<a href="https://discord.gg/8tkEQwsmwM" target="_blank">💬
+	
+</a>
+</center
 >
 
 <style>
+	a {
+		font-size: 5vh;
+		text-decoration: none;
+	}
 	.title {
 		text-shadow: -0.5vh -0.5vh 0 #000, 0.5vh -0.5vh 0 #000, -0.5vh 0.5vh 0 #000, 0.5vh 0.5vh 0 #000;
 		font-size: 10vh;

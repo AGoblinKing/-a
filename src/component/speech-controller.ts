@@ -22,15 +22,17 @@ recognition.onend = () => {
     recognition.start()
 }
 
-const voices = synth.getVoices();
+
 
 function findVoice(voiceName: string) {
+    const voices = synth.getVoices();
     return voices.find(voice => voice.name.indexOf(voiceName) !== -1)
 }
 
 AFRAME.registerComponent("speech-controller", {
 
     init() {
+        const voices = synth.getVoices();
         let voice = findVoice("Aus") || findVoice("UK English Female") || voices[0]
 
         if(!started) {
@@ -42,13 +44,13 @@ AFRAME.registerComponent("speech-controller", {
             if(!event) return
 
             var said = event.results[event.results.length - 1][0].transcript.trim();
-            console.log(said)
+
             this.el.setAttribute("color", said.replace(".", ""));
 
             var utterThis = new SpeechSynthesisUtterance(said);
             utterThis.voice = voice
             utterThis.pitch = 0.9
-            utterThis.rate = 1.25
+            utterThis.rate = 1.1
             synth.speak(utterThis);
         })
         

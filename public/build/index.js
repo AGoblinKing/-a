@@ -33010,7 +33010,7 @@ No cookies intended. Accountless. Age 18+ only.
   var vec32 = new AFRAME.THREE.Vector3();
   AFRAME.registerComponent("wasd-controller", {
     schema: {
-      speed: { type: "number", default: 0.15 },
+      speed: { type: "number", default: 0.3 },
       rot: { type: "number", default: 0.15 }
     },
     tick(_2, delta) {
@@ -33021,24 +33021,27 @@ No cookies intended. Accountless. Age 18+ only.
       let torq;
       vec32.set(0, 0, 0);
       let intensity = 1;
-      const jump = 2;
+      let hop = 2;
       if (key_map.$["shift"]) {
         intensity = 1.5;
       }
+      if (key_map.$[" "] && o3d.position.y < 1) {
+        hop = 15;
+      }
       if (key_map.$["w"]) {
-        vec32.y = jump;
+        vec32.y = hop;
         vec32.z += -this.data.speed * delta * intensity;
       }
       if (key_map.$["s"]) {
-        vec32.y = jump;
+        vec32.y = hop;
         vec32.z += this.data.speed * delta * intensity;
       }
       if (key_map.$["a"]) {
-        vec32.y = jump;
+        vec32.y = hop;
         vec32.x += -this.data.speed * delta * intensity;
       }
       if (key_map.$["d"]) {
-        vec32.y = jump;
+        vec32.y = hop;
         vec32.x += this.data.speed * delta * intensity;
       }
       if (key_map.$["q"]) {
@@ -33078,12 +33081,13 @@ No cookies intended. Accountless. Age 18+ only.
   recognition.onend = () => {
     recognition.start();
   };
-  var voices = synth.getVoices();
   function findVoice(voiceName) {
+    const voices = synth.getVoices();
     return voices.find((voice) => voice.name.indexOf(voiceName) !== -1);
   }
   AFRAME.registerComponent("speech-controller", {
     init() {
+      const voices = synth.getVoices();
       let voice = findVoice("Aus") || findVoice("UK English Female") || voices[0];
       if (!started) {
         recognition.start();
@@ -33093,12 +33097,11 @@ No cookies intended. Accountless. Age 18+ only.
         if (!event)
           return;
         var said = event.results[event.results.length - 1][0].transcript.trim();
-        console.log(said);
         this.el.setAttribute("color", said.replace(".", ""));
         var utterThis = new SpeechSynthesisUtterance(said);
         utterThis.voice = voice;
         utterThis.pitch = 0.9;
-        utterThis.rate = 1.25;
+        utterThis.rate = 1.1;
         synth.speak(utterThis);
       });
     },
@@ -33636,7 +33639,7 @@ No cookies intended. Accountless. Age 18+ only.
       }
     };
   }
-  var light = "#FFF";
+  var light = "#FEE";
   var sky = "#336";
   var sky_dark = "#003";
   function instance2($$self, $$props, $$invalidate) {
@@ -33665,14 +33668,15 @@ No cookies intended. Accountless. Age 18+ only.
     return {
       c() {
         div3 = element("div");
-        div3.innerHTML = `<div class="favicon svelte-rq4u3z"></div> 
-	<div class="full svelte-rq4u3z"><div class="title svelte-rq4u3z"><offset class="svelte-rq4u3z"><b class="svelte-rq4u3z">a</b>  <br/></offset> 
-			<b class="svelte-rq4u3z">G</b>oblin
-			<offset class="svelte-rq4u3z"><b class="svelte-rq4u3z">L</b>ife</offset></div></div>`;
+        div3.innerHTML = `<div class="favicon svelte-1uatlh0"></div> 
+	<div class="full svelte-1uatlh0"><div class="title svelte-1uatlh0"><offset class="svelte-1uatlh0"><b class="svelte-1uatlh0">a</b>  <br/></offset> 
+			<b class="svelte-1uatlh0">G</b>oblin
+			<offset class="svelte-1uatlh0"><b class="svelte-1uatlh0">L</b>ife</offset></div></div>`;
         t8 = space();
         center = element("center");
-        center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank"><img height="36" style="border:0px;height:36px;" src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" border="0" alt="Buy Me a Coffee at ko-fi.com"/></a>`;
-        attr(div3, "class", "intro svelte-rq4u3z");
+        center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-1uatlh0"><img height="36" style="border:0px;height:36px;" src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" border="0" alt="Buy Me a Coffee at ko-fi.com"/></a> 
+	<a href="https://discord.gg/8tkEQwsmwM" target="_blank" class="svelte-1uatlh0">\u{1F4AC}</a>`;
+        attr(div3, "class", "intro svelte-1uatlh0");
       },
       m(target, anchor) {
         insert(target, div3, anchor);

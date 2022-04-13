@@ -15,7 +15,7 @@
 
 	export let groundSize = 100
 
-	const light = '#FFF'
+	const light = '#FEE'
 
 	const sky = '#336'
 	const sky_dark = '#003'
