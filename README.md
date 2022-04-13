@@ -6,22 +6,47 @@
  - AI via tensorflow
  - Win / Lose hit boxes / reset + game counter
  - Setup Game area
- - control RESET
+ - UI Buttons text prompt / voice prompt [active modew]
+ - command RESET
  - Text entry
  - R to prompt for voice entry
  - Sound
  - settings button
  - acting via timeline of text + keyframe animations to lerp between
- - control REPEAT #
- - control DEFINE {controlName} [...actions] 
- - control BIND key [...actions] 
+ - command REPEAT #
+ - command DEFINE {commandName} [...actions] 
+ - command BIND key [...actions] 
  - ~ REPEAT #
- - control SAVE (saves all defines and binds to a file)
- - control PERSIST [...NAME] (defines/binds saved in localDB under a
- - control LOAD [...NAME]
- - control LIST (lists the persists available)
- - control REMOVE [...NAME] (removes the persisted name)
- - control PROMPT (promps for voice)
- - control MOVE [FORWARD, BACKWARD, LEFT, RIGHT]
- - control TURN [LEFT, RIGHT]
- - control SAY [...whatever] 
+ - command SAVE (saves all defines and binds to a file)
+ - command PERSIST [...NAME] (defines/binds saved in localDB under a
+ - command LOAD [...NAME]
+ - command LIST (lists the persists available)
+ - command REMOVE [...NAME] (removes the persisted name)
+ - command PROMPT (promps for voice)
+ - command MOVE [FORWARD, BACKWARD, LEFT, RIGHT]
+ - command TURN [LEFT, RIGHT]
+ - command SAY [...whatever] 
+ - command STOP (stops whatever is going on)
+ - ~ MIRROR (mirrors you with your assistant)
+ - ~ INVISIBLE
+ - ~ VISIBLE
+ - ~ SWAP
+- drag and drop VRM to change current to it
+- add animals roving the forest
+- loading screen
+- sun?
+- ~ SELECT (select whatever you're gazing at)
+- ~ BLUR (deselect)
+- ~ MUTE
+- ~ VOLUME number
+- ~ CLEAR (all media frames)
+- ~ DESTROY (selection)
+- ~ CLONE (selection)
+- ~ COPY (SELECTION)
+- ~ PASTE (previous copy)
+- fix clouds
+- heightmaps (displacement map)
+- water
+- particles for wisps/etc
+- webrtc networking (dump JSON of scene)
+- MediaSharing

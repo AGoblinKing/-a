@@ -15,8 +15,8 @@
 
 	export let groundSize = 100
 
-	const light = '#EEF'
-	const light_dark = '#aaF'
+	const light = '#FFF'
+
 	const sky = '#336'
 	const sky_dark = '#003'
 	const scatter = [-groundSize / 2, 0, -groundSize / 2, groundSize / 2, 0, groundSize / 2].join(' ')
@@ -32,6 +32,8 @@
 		<!-- <a-asset-item id="vrm-goblin" src="/vrm/goblin.vrm"></a-asset-item> -->
 
 		<a-asset-item id="glb-tree" src="/glb/tree.glb" />
+
+			<!-- <img id="heightmap" src="/image/heightmap.jpg" /> -->
 
 		<a-mixin id="shadow" shadow="cast: true" />
 		<a-mixin id="toon" material="roughness: 1;dithering: false;" />
@@ -76,11 +78,11 @@
 		<a-mixin
 			id="cloud"
 			{scatter}
-			animation="property:position; dur: {3000 *
-				60}; to:0 0 -{groundSize}; easing: linear; loop: true;"
-			material="color: #ffffff; opacity: 0.5; transparent: true; "
+			animation="property:position.z; dur: {3000 *
+				60}; to-{groundSize}; easing: linear; loop: true;"
+			material="color: #ffffff; opacity: 0.5; transparent: true; emissive: white; "
 			geometry
-			scale="15 5 5"
+			scale="25 5 15"
 		/>
 		<CharactersMixins />
 	</a-assets>
@@ -104,7 +106,7 @@
 
 	<a-entity
 		position="{groundSize / 4} {groundSize * 2} {groundSize / 4}"
-		animate="property: color; to: {light_dark}; easing: easeInOut"
+
 		light={str({
 			type: 'directional',
 			castShadow: true,
@@ -114,14 +116,27 @@
 			shadowCameraLeft: -groundSize,
 			shadowCameraRight: groundSize,
 			shadowCameraBottom: -groundSize,
+			shadowBias: -0.0001,
 			shadowMapHeight: 1024 * 4,
 			shadowMapWidth: 1024 * 4,
-			intensity: 0.9
+			intensity: 0.75
+		})}
+	/>
+
+	<a-entity
+		position="-{groundSize / 4} {groundSize * 2} -{groundSize / 4}"
+
+		light={str({
+			type: 'directional',
+		
+			color: light,
+
+			intensity: 0.75
 		})}
 	/>
 	<a-entity
-		light="type:ambient; color:{light}; intensity:2;"
-		animate="property: light.color; to: {light_dark}; easing: easeInOutBounce; dur: 6000"
+		light="type:ambient; color:white; intensity:0.1;"
+
 		position="-1 1 1"
 	/>
 
@@ -129,19 +144,23 @@
 
 	<a-plane
 		shadow
+
 		position="0 0 0"
 		rotation="-90 0 0"
 		width={groundSize * 1.5}
 		height={groundSize * 1.5}
 		ammo-body="type: static; mass: 0;"
 		ammo-shape="type:box"
+	
+
+		material="repeat: 10 10;"
 		color="#334411"
 	/>
 
 	<a-entity
 		pool__cloud="mixin: shadow cloud; size: 15"
 		activate__cloud
-		position="0 20 {groundSize / 4}"
+		position="0 25 {groundSize / 4}"
 	/>
 
 	<a-sound autoplay loop volume={0.5} src="#sound-bg" />

@@ -16,21 +16,26 @@ AFRAME.registerComponent("wasd-controller", {
 
         let torq
         vec3.set(0, 0, 0)
+        let intensity = 1
+        const jump = 2
+        if(key_map.$["shift"]) {
+            intensity = 1.5
+        }
         if (key_map.$["w"]) {
-            vec3.y = 1
-            vec3.z += -this.data.speed * delta
+            vec3.y = jump
+            vec3.z += -this.data.speed * delta * intensity
         }
         if (key_map.$["s"]) {
-            vec3.y = 1
-            vec3.z += this.data.speed * delta
+            vec3.y = jump
+            vec3.z += this.data.speed * delta * intensity
         }
         if (key_map.$["a"]) {
-            vec3.y = 1
-            vec3.x += -this.data.speed * delta
+            vec3.y = jump
+            vec3.x += -this.data.speed * delta * intensity
         }
         if (key_map.$["d"]) {
-            vec3.y = 1
-            vec3.x += this.data.speed * delta
+            vec3.y = jump
+            vec3.x += this.data.speed * delta * intensity
         }
         if (key_map.$["q"]) {
             torq = new Ammo.btVector3(0, delta * this.data.rot, 0)

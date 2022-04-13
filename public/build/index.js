@@ -7024,7 +7024,8 @@
   var tick = new Value(0);
   var open_home = new Value(true);
   var open_game = new Value(false);
-  var motd = new Value(`\u{1F38A}v0.0.7\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.0.8\u{1F38A}
+Lighting Update
 
 \u2705VRM\u2705Scene\u2705WebCam
 \u2705Camera\u2705Physics
@@ -7040,6 +7041,7 @@ The web is a scary place.
 \u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
 
 No cookies intended. Accountless. Age 18+ only.
+
 
 `);
   var ticker = () => {
@@ -33018,21 +33020,26 @@ No cookies intended. Accountless. Age 18+ only.
       let force;
       let torq;
       vec32.set(0, 0, 0);
+      let intensity = 1;
+      const jump = 2;
+      if (key_map.$["shift"]) {
+        intensity = 1.5;
+      }
       if (key_map.$["w"]) {
-        vec32.y = 1;
-        vec32.z += -this.data.speed * delta;
+        vec32.y = jump;
+        vec32.z += -this.data.speed * delta * intensity;
       }
       if (key_map.$["s"]) {
-        vec32.y = 1;
-        vec32.z += this.data.speed * delta;
+        vec32.y = jump;
+        vec32.z += this.data.speed * delta * intensity;
       }
       if (key_map.$["a"]) {
-        vec32.y = 1;
-        vec32.x += -this.data.speed * delta;
+        vec32.y = jump;
+        vec32.x += -this.data.speed * delta * intensity;
       }
       if (key_map.$["d"]) {
-        vec32.y = 1;
-        vec32.x += this.data.speed * delta;
+        vec32.y = jump;
+        vec32.x += this.data.speed * delta * intensity;
       }
       if (key_map.$["q"]) {
         torq = new Ammo.btVector3(0, delta * this.data.rot, 0);
@@ -33307,22 +33314,23 @@ No cookies intended. Accountless. Age 18+ only.
     let t20;
     let a_entity6;
     let a_entity6_position_value;
-    let a_entity6_animate_value;
     let a_entity6_light_value;
     let t21;
     let a_entity7;
+    let a_entity7_position_value;
     let a_entity7_light_value;
-    let a_entity7_animate_value;
     let t22;
-    let characters;
+    let a_entity8;
     let t23;
+    let characters;
+    let t24;
     let a_plane;
     let a_plane_width_value;
     let a_plane_height_value;
-    let t24;
-    let a_entity8;
-    let a_entity8_position_value;
     let t25;
+    let a_entity9;
+    let a_entity9_position_value;
+    let t26;
     let a_sound;
     let a_sound_volume_value;
     let a_sound_src_value;
@@ -33381,12 +33389,14 @@ No cookies intended. Accountless. Age 18+ only.
         t21 = space();
         a_entity7 = element("a-entity");
         t22 = space();
-        create_component(characters.$$.fragment);
-        t23 = space();
-        a_plane = element("a-plane");
-        t24 = space();
         a_entity8 = element("a-entity");
+        t23 = space();
+        create_component(characters.$$.fragment);
+        t24 = space();
+        a_plane = element("a-plane");
         t25 = space();
+        a_entity9 = element("a-entity");
+        t26 = space();
         a_sound = element("a-sound");
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "/sound/bg-ocean.mp3"))
@@ -33437,10 +33447,10 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_mixin7, "ammo-shape", "type: box; fit: manual; halfExtents: 0.25 0.5 0.25;");
         set_custom_element_data(a_mixin8, "id", "cloud");
         set_custom_element_data(a_mixin8, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin8, "animation", a_mixin8_animation_value = "property:position; dur: " + 3e3 * 60 + "; to:0 0 -" + ctx[0] + "; easing: linear; loop: true;");
-        set_custom_element_data(a_mixin8, "material", "color: #ffffff; opacity: 0.5; transparent: true; ");
+        set_custom_element_data(a_mixin8, "animation", a_mixin8_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx[0] + "; easing: linear; loop: true;");
+        set_custom_element_data(a_mixin8, "material", "color: #ffffff; opacity: 0.5; transparent: true; emissive: white; ");
         set_custom_element_data(a_mixin8, "geometry", "");
-        set_custom_element_data(a_mixin8, "scale", "15 5 5");
+        set_custom_element_data(a_mixin8, "scale", "25 5 15");
         set_custom_element_data(a_sky, "color", sky);
         set_custom_element_data(a_sky, "animate", a_sky_animate_value = "property: color; to: " + sky_dark + "; easing: easeInOut; dur: 6000 ");
         set_custom_element_data(a_entity0, "pool__tree", "mixin: tree; size: 100");
@@ -33458,7 +33468,6 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_entity5, "position", "0 20 0");
         set_custom_element_data(a_entity5, "activate__coins", "");
         set_custom_element_data(a_entity6, "position", a_entity6_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
-        set_custom_element_data(a_entity6, "animate", a_entity6_animate_value = "property: color; to: " + light_dark + "; easing: easeInOut");
         set_custom_element_data(a_entity6, "light", a_entity6_light_value = ctx[1]({
           type: "directional",
           castShadow: true,
@@ -33467,13 +33476,19 @@ No cookies intended. Accountless. Age 18+ only.
           shadowCameraLeft: -ctx[0],
           shadowCameraRight: ctx[0],
           shadowCameraBottom: -ctx[0],
+          shadowBias: -1e-4,
           shadowMapHeight: 1024 * 4,
           shadowMapWidth: 1024 * 4,
-          intensity: 0.9
+          intensity: 0.75
         }));
-        set_custom_element_data(a_entity7, "light", a_entity7_light_value = "type:ambient; color:" + light + "; intensity:2;");
-        set_custom_element_data(a_entity7, "animate", a_entity7_animate_value = "property: light.color; to: " + light_dark + "; easing: easeInOutBounce; dur: 6000");
-        set_custom_element_data(a_entity7, "position", "-1 1 1");
+        set_custom_element_data(a_entity7, "position", a_entity7_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
+        set_custom_element_data(a_entity7, "light", a_entity7_light_value = ctx[1]({
+          type: "directional",
+          color: light,
+          intensity: 0.75
+        }));
+        set_custom_element_data(a_entity8, "light", "type:ambient; color:white; intensity:0.1;");
+        set_custom_element_data(a_entity8, "position", "-1 1 1");
         set_custom_element_data(a_plane, "shadow", "");
         set_custom_element_data(a_plane, "position", "0 0 0");
         set_custom_element_data(a_plane, "rotation", "-90 0 0");
@@ -33481,10 +33496,11 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 1.5);
         set_custom_element_data(a_plane, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_plane, "ammo-shape", "type:box");
+        set_custom_element_data(a_plane, "material", "repeat: 10 10;");
         set_custom_element_data(a_plane, "color", "#334411");
-        set_custom_element_data(a_entity8, "pool__cloud", "mixin: shadow cloud; size: 15");
-        set_custom_element_data(a_entity8, "activate__cloud", "");
-        set_custom_element_data(a_entity8, "position", a_entity8_position_value = "0 20 " + ctx[0] / 4);
+        set_custom_element_data(a_entity9, "pool__cloud", "mixin: shadow cloud; size: 15");
+        set_custom_element_data(a_entity9, "activate__cloud", "");
+        set_custom_element_data(a_entity9, "position", a_entity9_position_value = "0 25 " + ctx[0] / 4);
         set_custom_element_data(a_sound, "autoplay", "");
         set_custom_element_data(a_sound, "loop", "");
         set_custom_element_data(a_sound, "volume", a_sound_volume_value = 0.5);
@@ -33543,12 +33559,14 @@ No cookies intended. Accountless. Age 18+ only.
         append(a_scene, t21);
         append(a_scene, a_entity7);
         append(a_scene, t22);
-        mount_component(characters, a_scene, null);
-        append(a_scene, t23);
-        append(a_scene, a_plane);
-        append(a_scene, t24);
         append(a_scene, a_entity8);
+        append(a_scene, t23);
+        mount_component(characters, a_scene, null);
+        append(a_scene, t24);
+        append(a_scene, a_plane);
         append(a_scene, t25);
+        append(a_scene, a_entity9);
+        append(a_scene, t26);
         append(a_scene, a_sound);
         current = true;
       },
@@ -33556,7 +33574,7 @@ No cookies intended. Accountless. Age 18+ only.
         if (!current || dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 100")) {
           set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value);
         }
-        if (!current || dirty & 1 && a_mixin8_animation_value !== (a_mixin8_animation_value = "property:position; dur: " + 3e3 * 60 + "; to:0 0 -" + ctx2[0] + "; easing: linear; loop: true;")) {
+        if (!current || dirty & 1 && a_mixin8_animation_value !== (a_mixin8_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx2[0] + "; easing: linear; loop: true;")) {
           set_custom_element_data(a_mixin8, "animation", a_mixin8_animation_value);
         }
         if (!current || dirty & 1 && a_entity6_position_value !== (a_entity6_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
@@ -33570,11 +33588,15 @@ No cookies intended. Accountless. Age 18+ only.
           shadowCameraLeft: -ctx2[0],
           shadowCameraRight: ctx2[0],
           shadowCameraBottom: -ctx2[0],
+          shadowBias: -1e-4,
           shadowMapHeight: 1024 * 4,
           shadowMapWidth: 1024 * 4,
-          intensity: 0.9
+          intensity: 0.75
         }))) {
           set_custom_element_data(a_entity6, "light", a_entity6_light_value);
+        }
+        if (!current || dirty & 1 && a_entity7_position_value !== (a_entity7_position_value = "-" + ctx2[0] / 4 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity7, "position", a_entity7_position_value);
         }
         if (!current || dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 1.5)) {
           set_custom_element_data(a_plane, "width", a_plane_width_value);
@@ -33582,8 +33604,8 @@ No cookies intended. Accountless. Age 18+ only.
         if (!current || dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 1.5)) {
           set_custom_element_data(a_plane, "height", a_plane_height_value);
         }
-        if (!current || dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = "0 20 " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity8, "position", a_entity8_position_value);
+        if (!current || dirty & 1 && a_entity9_position_value !== (a_entity9_position_value = "0 25 " + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity9, "position", a_entity9_position_value);
         }
       },
       i(local) {
@@ -33614,8 +33636,7 @@ No cookies intended. Accountless. Age 18+ only.
       }
     };
   }
-  var light = "#EEF";
-  var light_dark = "#aaF";
+  var light = "#FFF";
   var sky = "#336";
   var sky_dark = "#003";
   function instance2($$self, $$props, $$invalidate) {

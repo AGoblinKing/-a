@@ -4,7 +4,8 @@ export const tick = new Value(0)
 export const open_home = new Value(true)
 export const open_game = new Value(false)
 
-export const motd = new Value(`🎊v0.0.7🎊
+export const motd = new Value(`🎊v0.0.8🎊
+Lighting Update
 
 ✅VRM✅Scene✅WebCam
 ✅Camera✅Physics
@@ -20,6 +21,7 @@ The web is a scary place.
 🖥️ Use a VPN.🖥️
 
 No cookies intended. Accountless. Age 18+ only.
+
 
 `)
 
