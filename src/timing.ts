@@ -7,10 +7,10 @@ export const open_game = new Value(false)
 export const motd = new Value(`🎊v0.0.7🎊
 
 ✅VRM✅Scene✅WebCam
-✅ FPS Camera✅Physics
+✅Camera✅Physics
+✅Voice
 ❌ AI 
 ❌ Gameplay
-❌ Voice
 ❌ Editing 
 ❌ VRM Import
 ❌ WebRTC Multiplayer 

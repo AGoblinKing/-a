@@ -7027,10 +7027,10 @@
   var motd = new Value(`\u{1F38A}v0.0.7\u{1F38A}
 
 \u2705VRM\u2705Scene\u2705WebCam
-\u2705 FPS Camera\u2705Physics
+\u2705Camera\u2705Physics
+\u2705Voice
 \u274C AI 
 \u274C Gameplay
-\u274C Voice
 \u274C Editing 
 \u274C VRM Import
 \u274C WebRTC Multiplayer 
@@ -18432,7 +18432,7 @@ No cookies intended. Accountless. Age 18+ only.
     const opaque = [];
     const transmissive = [];
     const transparent = [];
-    function init2() {
+    function init3() {
       renderItemsIndex = 0;
       opaque.length = 0;
       transmissive.length = 0;
@@ -18509,7 +18509,7 @@ No cookies intended. Accountless. Age 18+ only.
       opaque,
       transmissive,
       transparent,
-      init: init2,
+      init: init3,
       push,
       unshift,
       finish,
@@ -18891,7 +18891,7 @@ No cookies intended. Accountless. Age 18+ only.
     const lights = new WebGLLights(extensions, capabilities);
     const lightsArray = [];
     const shadowsArray = [];
-    function init2() {
+    function init3() {
       lightsArray.length = 0;
       shadowsArray.length = 0;
     }
@@ -18913,7 +18913,7 @@ No cookies intended. Accountless. Age 18+ only.
       lights
     };
     return {
-      init: init2,
+      init: init3,
       state,
       setupLights,
       setupLightsView,
@@ -24541,7 +24541,7 @@ No cookies intended. Accountless. Age 18+ only.
   ArcCurve.prototype.isArcCurve = true;
   function CubicPoly() {
     let c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-    function init2(x0, x1, t0, t1) {
+    function init3(x0, x1, t0, t1) {
       c0 = x0;
       c1 = t0;
       c2 = -3 * x0 + 3 * x1 - 2 * t0 - t1;
@@ -24549,14 +24549,14 @@ No cookies intended. Accountless. Age 18+ only.
     }
     return {
       initCatmullRom: function(x0, x1, x2, x3, tension) {
-        init2(x1, x2, tension * (x2 - x0), tension * (x3 - x1));
+        init3(x1, x2, tension * (x2 - x0), tension * (x3 - x1));
       },
       initNonuniformCatmullRom: function(x0, x1, x2, x3, dt0, dt1, dt2) {
         let t1 = (x1 - x0) / dt0 - (x2 - x0) / (dt0 + dt1) + (x2 - x1) / dt1;
         let t2 = (x2 - x1) / dt1 - (x3 - x1) / (dt1 + dt2) + (x3 - x2) / dt2;
         t1 *= dt1;
         t2 *= dt1;
-        init2(x1, x2, t1, t2);
+        init3(x1, x2, t1, t2);
       },
       calc: function(t) {
         const t2 = t * t;
@@ -33039,21 +33039,61 @@ No cookies intended. Accountless. Age 18+ only.
     }
   });
 
+  // src/component/speech-controller.ts
+  var recognition = new webkitSpeechRecognition();
+  var synth = window.speechSynthesis;
+  recognition.continuous = true;
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  AFRAME.registerComponent("speech-controller", {
+    init() {
+      recognition.start();
+      const voices = synth.getVoices();
+      let voice = voices.find((voice2) => voice2.name.indexOf("Aus") !== -1);
+      if (!voice) {
+        voice = voices.find((voice2) => voice2.name.indexOf("UK English Female") !== -1);
+      }
+      recognition.onresult = (event) => {
+        var said = event.results[event.results.length - 1][0].transcript.trim();
+        console.log(said);
+        this.el.setAttribute("color", said.replace(".", ""));
+        var utterThis = new SpeechSynthesisUtterance(said);
+        utterThis.voice = voice;
+        utterThis.pitch = 1;
+        utterThis.rate = 1;
+        synth.speak(utterThis);
+      };
+      recognition.onend = () => {
+        this.init();
+      };
+    }
+  });
+
   // src/template/characters.svelte
   function create_fragment3(ctx) {
     let a_entity0;
-    let t;
+    let t0;
+    let a_box;
+    let t1;
     let a_entity1;
     return {
       c() {
         a_entity0 = element("a-entity");
-        t = space();
+        t0 = space();
+        a_box = element("a-box");
+        t1 = space();
         a_entity1 = element("a-entity");
         set_custom_element_data(a_entity0, "mixin", "shadow character");
         set_custom_element_data(a_entity0, "position", "0 0 -5");
         set_custom_element_data(a_entity0, "vrm", "src: /vrm/goblin.vrm; current: true");
         set_custom_element_data(a_entity0, "id", "focus");
         set_custom_element_data(a_entity0, "wasd-controller", "");
+        set_custom_element_data(a_box, "position", "1 1 -5");
+        set_custom_element_data(a_box, "rotation", "0 0 0");
+        set_custom_element_data(a_box, "scale", "1 1 1");
+        set_custom_element_data(a_box, "color", "#FFF");
+        set_custom_element_data(a_box, "speech-controller", "");
         set_custom_element_data(a_entity1, "mixin", "shadow character");
         set_custom_element_data(a_entity1, "position", "0 0.15 -6");
         set_custom_element_data(a_entity1, "rotation", "0 180 0");
@@ -33061,7 +33101,9 @@ No cookies intended. Accountless. Age 18+ only.
       },
       m(target, anchor) {
         insert(target, a_entity0, anchor);
-        insert(target, t, anchor);
+        insert(target, t0, anchor);
+        insert(target, a_box, anchor);
+        insert(target, t1, anchor);
         insert(target, a_entity1, anchor);
       },
       p: noop,
@@ -33071,7 +33113,11 @@ No cookies intended. Accountless. Age 18+ only.
         if (detaching)
           detach(a_entity0);
         if (detaching)
-          detach(t);
+          detach(t0);
+        if (detaching)
+          detach(a_box);
+        if (detaching)
+          detach(t1);
         if (detaching)
           detach(a_entity1);
       }
@@ -33338,7 +33384,6 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_mixin5, "shadow", "");
         set_custom_element_data(a_mixin5, "gltf-model", "/glb/coinGold.glb");
         set_custom_element_data(a_mixin5, "ammo-body", "");
-        set_custom_element_data(a_mixin5, "material", "flatShading: true;shader:flat; emissive: #FFF");
         set_custom_element_data(a_mixin5, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 0.35; offset: -1 0.25 0.5");
         set_custom_element_data(a_mixin5, "scatter", ctx[2]);
         set_custom_element_data(a_mixin6, "id", "mountains");

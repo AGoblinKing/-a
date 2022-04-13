@@ -49,7 +49,6 @@
 			shadow
 			gltf-model="/glb/coinGold.glb"
 			ammo-body
-			material="flatShading: true;shader:flat; emissive: #FFF"
 			ammo-shape="type: sphere; fit: manual; sphereRadius: 0.35; offset: -1 0.25 0.5"
 			{scatter}
 		/>
