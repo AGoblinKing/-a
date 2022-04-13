@@ -6,11 +6,17 @@
 
 	import '../component/webcam-vrm'
 	import '../component/vrm'
-	import "../component/vary"
+	import '../component/vary'
 	import Webcam from './webcam.svelte'
 	import CharactersMixins from './characters-assets.svelte'
 	import Characters from './characters.svelte'
 	import CameraFps from './camera-fps.svelte'
+	import Flora from './flora.svelte'
+	import FloraAssets from './flora-assets.svelte'
+	import { start } from 'src/chat'
+	import Text from 'src/ui/text.svelte'
+
+	start()
 	const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser)
 
 	export let groundSize = 100
@@ -26,14 +32,21 @@
 </script>
 
 <Webcam />
-<a-scene shadow="type:pcfsoft;" fog="type: linear; color: #AAA" physics="driver: ammo; ">
+<Text />
+
+<a-scene
+	renderer=" highRefreshRate: true; alpha: false;precision: medium;"
+	shadow="type:pcfsoft;"
+	fog="type: linear; color: #AAA"
+	physics="driver: ammo; "
+>
 	<a-assets>
 		<audio id="sound-bg" src="/sound/bg-ocean.mp3" />
 		<!-- <a-asset-item id="vrm-goblin" src="/vrm/goblin.vrm"></a-asset-item> -->
 
 		<a-asset-item id="glb-tree" src="/glb/tree.glb" />
 
-			<!-- <img id="heightmap" src="/image/heightmap.jpg" /> -->
+		<!-- <img id="heightmap" src="/image/heightmap.jpg" /> -->
 
 		<a-mixin id="shadow" shadow="cast: true" />
 		<a-mixin id="toon" material="roughness: 1;dithering: false;" />
@@ -46,13 +59,26 @@
 			ammo-body="type: static; mass: 0;"
 			ammo-shape="type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0"
 		/>
-		<a-mixin id="grass" shadow gltf-model="/glb/grass.glb" {scatter} vary="property: scale; range: 1 0.5 1 1.5 1.5 1.5"/>
-		<a-mixin id="grass2" shadow gltf-model="/glb/grassLarge.glb" {scatter} vary="property: scale; range: 1 0.5 1 1.5 1.5 1.5"/>
+		<a-mixin
+			id="grass"
+			shadow
+			gltf-model="/glb/grass.glb"
+			{scatter}
+			vary="property: scale; range: 1 0.5 1 1.5 1.5 1.5"
+		/>
+		<a-mixin
+			id="grass2"
+			shadow
+			gltf-model="/glb/grassLarge.glb"
+			{scatter}
+			vary="property: scale; range: 1 0.5 1 1.5 1.5 1.5"
+		/>
 		<a-mixin
 			id="coinGold"
 			shadow
 			gltf-model="/glb/coinGold.glb"
-			ammo-body
+			ammo-body="mass:0.1"
+			animation="property: scale; to: 1.1 1.1 1.1; dur: 2000; loop: true; dir: alternate; easing: easeInOutQuad"
 			ammo-shape="type: sphere; fit: manual; sphereRadius: 0.35; offset: -1 0.25 0.5"
 			{scatter}
 		/>
@@ -70,10 +96,9 @@
 			shadow
 			gltf-model="/glb/rockB.glb"
 			vary="property: scale; range: 0.5 0.25 0.5 2 1 2"
-		
 			{scatter}
 			ammo-body="type: static; mass: 0"
-			ammo-shape="type: box; fit: manual; halfExtents: 0.25 0.5 0.25;"
+			ammo-shape="type: sphere; fit: manual; sphereRadius: 1.5 "
 		/>
 		<a-mixin
 			id="cloud"
@@ -85,16 +110,18 @@
 			scale="25 5 15"
 		/>
 		<CharactersMixins />
+		<FloraAssets {groundSize} />
 	</a-assets>
 
 	<CameraFps />
+	<Flora />
 
 	<a-sky color={sky} animate="property: color; to: {sky_dark}; easing: easeInOut; dur: 6000 " />
 
-	<a-entity pool__tree="mixin: tree; size: 100" activate__tree />
+	<a-entity pool__tree="mixin: tree; size: 50" activate__tree />
 	<a-entity pool__grass="mixin: grass; size: 100" activate__grass />
 	<a-entity pool__grass2="mixin: grass2; size: 100" activate__grass2 />
-	<a-entity pool__rock="mixin: rock; size: 100" activate__rock />
+	<a-entity pool__rock="mixin: rock; size: 50" activate__rock />
 	<a-entity pool__mountains="mixin: mountains; size: 100" activate__mountains />
 
 	<a-entity
@@ -106,7 +133,6 @@
 
 	<a-entity
 		position="{groundSize / 4} {groundSize * 2} {groundSize / 4}"
-
 		light={str({
 			type: 'directional',
 			castShadow: true,
@@ -125,34 +151,26 @@
 
 	<a-entity
 		position="-{groundSize / 4} {groundSize * 2} -{groundSize / 4}"
-
 		light={str({
 			type: 'directional',
-		
+
 			color: light,
 
 			intensity: 0.75
 		})}
 	/>
-	<a-entity
-		light="type:ambient; color:white; intensity:0.1;"
-
-		position="-1 1 1"
-	/>
+	<a-entity light="type:ambient; color:white; intensity:0.1;" position="-1 1 1" />
 
 	<Characters />
 
 	<a-plane
 		shadow
-
 		position="0 0 0"
 		rotation="-90 0 0"
 		width={groundSize * 1.5}
 		height={groundSize * 1.5}
 		ammo-body="type: static; mass: 0;"
 		ammo-shape="type:box"
-	
-
 		material="repeat: 10 10;"
 		color="#334411"
 	/>

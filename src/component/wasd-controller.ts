@@ -4,7 +4,7 @@ const vec3 = new AFRAME.THREE.Vector3()
 
 AFRAME.registerComponent("wasd-controller", {
     schema: {
-        speed: { type: "number", default: 0.3},
+        speed: { type: "number", default: 0.25},
         rot: { type: "number", default: 0.15 },
     },
     tick(_, delta) {

@@ -5427,6 +5427,9 @@
   function children(element2) {
     return Array.from(element2.childNodes);
   }
+  function set_input_value(input, value) {
+    input.value = value == null ? "" : value;
+  }
   var current_component;
   function set_current_component(component) {
     current_component = component;
@@ -5562,7 +5565,7 @@
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance5, create_fragment9, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance7, create_fragment12, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5585,7 +5588,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance5 ? instance5(component, options.props || {}, (i2, ret, ...rest) => {
+    $$.ctx = instance7 ? instance7(component, options.props || {}, (i2, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
         if (!$$.skip_bound && $$.bound[i2])
@@ -5598,7 +5601,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment9 ? create_fragment9($$.ctx) : false;
+    $$.fragment = create_fragment12 ? create_fragment12($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -7024,6 +7027,7 @@
   var tick = new Value(0);
   var open_home = new Value(true);
   var open_game = new Value(false);
+  var open_text = new Value(void 0);
   var motd = new Value(`\u{1F38A}v0.0.8\u{1F38A}
 Lighting Update
 
@@ -12680,9 +12684,9 @@ No cookies intended. Accountless. Age 18+ only.
     hasAttribute(name) {
       return this.attributes[name] !== void 0;
     }
-    addGroup(start, count, materialIndex = 0) {
+    addGroup(start2, count, materialIndex = 0) {
       this.groups.push({
-        start,
+        start: start2,
         count,
         materialIndex
       });
@@ -12690,8 +12694,8 @@ No cookies intended. Accountless. Age 18+ only.
     clearGroups() {
       this.groups = [];
     }
-    setDrawRange(start, count) {
-      this.drawRange.start = start;
+    setDrawRange(start2, count) {
+      this.drawRange.start = start2;
       this.drawRange.count = count;
     }
     applyMatrix4(matrix) {
@@ -12914,9 +12918,9 @@ No cookies intended. Accountless. Age 18+ only.
       }
       for (let i2 = 0, il = groups.length; i2 < il; ++i2) {
         const group = groups[i2];
-        const start = group.start;
+        const start2 = group.start;
         const count = group.count;
-        for (let j2 = start, jl = start + count; j2 < jl; j2 += 3) {
+        for (let j2 = start2, jl = start2 + count; j2 < jl; j2 += 3) {
           handleTriangle(indices[j2 + 0], indices[j2 + 1], indices[j2 + 2]);
         }
       }
@@ -12938,9 +12942,9 @@ No cookies intended. Accountless. Age 18+ only.
       }
       for (let i2 = 0, il = groups.length; i2 < il; ++i2) {
         const group = groups[i2];
-        const start = group.start;
+        const start2 = group.start;
         const count = group.count;
-        for (let j2 = start, jl = start + count; j2 < jl; j2 += 3) {
+        for (let j2 = start2, jl = start2 + count; j2 < jl; j2 += 3) {
           handleVertex(indices[j2 + 0]);
           handleVertex(indices[j2 + 1]);
           handleVertex(indices[j2 + 2]);
@@ -13300,9 +13304,9 @@ No cookies intended. Accountless. Age 18+ only.
             for (let i2 = 0, il = groups.length; i2 < il; i2++) {
               const group = groups[i2];
               const groupMaterial = material[group.materialIndex];
-              const start = Math.max(group.start, drawRange.start);
+              const start2 = Math.max(group.start, drawRange.start);
               const end = Math.min(index.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
-              for (let j2 = start, jl = end; j2 < jl; j2 += 3) {
+              for (let j2 = start2, jl = end; j2 < jl; j2 += 3) {
                 const a2 = index.getX(j2);
                 const b2 = index.getX(j2 + 1);
                 const c2 = index.getX(j2 + 2);
@@ -13315,9 +13319,9 @@ No cookies intended. Accountless. Age 18+ only.
               }
             }
           } else {
-            const start = Math.max(0, drawRange.start);
+            const start2 = Math.max(0, drawRange.start);
             const end = Math.min(index.count, drawRange.start + drawRange.count);
-            for (let i2 = start, il = end; i2 < il; i2 += 3) {
+            for (let i2 = start2, il = end; i2 < il; i2 += 3) {
               const a2 = index.getX(i2);
               const b2 = index.getX(i2 + 1);
               const c2 = index.getX(i2 + 2);
@@ -13333,9 +13337,9 @@ No cookies intended. Accountless. Age 18+ only.
             for (let i2 = 0, il = groups.length; i2 < il; i2++) {
               const group = groups[i2];
               const groupMaterial = material[group.materialIndex];
-              const start = Math.max(group.start, drawRange.start);
+              const start2 = Math.max(group.start, drawRange.start);
               const end = Math.min(position.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
-              for (let j2 = start, jl = end; j2 < jl; j2 += 3) {
+              for (let j2 = start2, jl = end; j2 < jl; j2 += 3) {
                 const a2 = j2;
                 const b2 = j2 + 1;
                 const c2 = j2 + 2;
@@ -13348,9 +13352,9 @@ No cookies intended. Accountless. Age 18+ only.
               }
             }
           } else {
-            const start = Math.max(0, drawRange.start);
+            const start2 = Math.max(0, drawRange.start);
             const end = Math.min(position.count, drawRange.start + drawRange.count);
-            for (let i2 = start, il = end; i2 < il; i2 += 3) {
+            for (let i2 = start2, il = end; i2 < il; i2 += 3) {
               const a2 = i2;
               const b2 = i2 + 1;
               const c2 = i2 + 2;
@@ -15473,11 +15477,11 @@ No cookies intended. Accountless. Age 18+ only.
     function setMode(value) {
       mode = value;
     }
-    function render(start, count) {
-      gl.drawArrays(mode, start, count);
+    function render(start2, count) {
+      gl.drawArrays(mode, start2, count);
       info.update(count, mode, 1);
     }
-    function renderInstances(start, count, primcount) {
+    function renderInstances(start2, count, primcount) {
       if (primcount === 0)
         return;
       let extension, methodName;
@@ -15492,7 +15496,7 @@ No cookies intended. Accountless. Age 18+ only.
           return;
         }
       }
-      extension[methodName](mode, start, count, primcount);
+      extension[methodName](mode, start2, count, primcount);
       info.update(count, mode, primcount);
     }
     this.setMode = setMode;
@@ -16574,11 +16578,11 @@ No cookies intended. Accountless. Age 18+ only.
       type = value.type;
       bytesPerElement = value.bytesPerElement;
     }
-    function render(start, count) {
-      gl.drawElements(mode, count, type, start * bytesPerElement);
+    function render(start2, count) {
+      gl.drawElements(mode, count, type, start2 * bytesPerElement);
       info.update(count, mode, 1);
     }
-    function renderInstances(start, count, primcount) {
+    function renderInstances(start2, count, primcount) {
       if (primcount === 0)
         return;
       let extension, methodName;
@@ -16593,7 +16597,7 @@ No cookies intended. Accountless. Age 18+ only.
           return;
         }
       }
-      extension[methodName](mode, count, type, start * bytesPerElement, primcount);
+      extension[methodName](mode, count, type, start2 * bytesPerElement, primcount);
       info.update(count, mode, primcount);
     }
     this.setMode = setMode;
@@ -17549,13 +17553,13 @@ No cookies intended. Accountless. Age 18+ only.
   function unrollLoops(string) {
     return string.replace(unrollLoopPattern, loopReplacer).replace(deprecatedUnrollLoopPattern, deprecatedLoopReplacer);
   }
-  function deprecatedLoopReplacer(match, start, end, snippet) {
+  function deprecatedLoopReplacer(match, start2, end, snippet) {
     console.warn("WebGLProgram: #pragma unroll_loop shader syntax is deprecated. Please use #pragma unroll_loop_start syntax instead.");
-    return loopReplacer(match, start, end, snippet);
+    return loopReplacer(match, start2, end, snippet);
   }
-  function loopReplacer(match, start, end, snippet) {
+  function loopReplacer(match, start2, end, snippet) {
     let string = "";
-    for (let i2 = parseInt(start); i2 < parseInt(end); i2++) {
+    for (let i2 = parseInt(start2); i2 < parseInt(end); i2++) {
       string += snippet.replace(/\[\s*i\s*\]/g, "[ " + i2 + " ]").replace(/UNROLLED_LOOP_INDEX/g, i2);
     }
     return string;
@@ -23962,9 +23966,9 @@ No cookies intended. Accountless. Age 18+ only.
         const attributes = geometry.attributes;
         const positionAttribute = attributes.position;
         if (index !== null) {
-          const start = Math.max(0, drawRange.start);
+          const start2 = Math.max(0, drawRange.start);
           const end = Math.min(index.count, drawRange.start + drawRange.count);
-          for (let i2 = start, l2 = end - 1; i2 < l2; i2 += step) {
+          for (let i2 = start2, l2 = end - 1; i2 < l2; i2 += step) {
             const a2 = index.getX(i2);
             const b2 = index.getX(i2 + 1);
             vStart.fromBufferAttribute(positionAttribute, a2);
@@ -23986,9 +23990,9 @@ No cookies intended. Accountless. Age 18+ only.
             });
           }
         } else {
-          const start = Math.max(0, drawRange.start);
+          const start2 = Math.max(0, drawRange.start);
           const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
-          for (let i2 = start, l2 = end - 1; i2 < l2; i2 += step) {
+          for (let i2 = start2, l2 = end - 1; i2 < l2; i2 += step) {
             vStart.fromBufferAttribute(positionAttribute, i2);
             vEnd.fromBufferAttribute(positionAttribute, i2 + 1);
             const distSq = _ray$1.distanceSqToSegment(vStart, vEnd, interRay, interSegment);
@@ -24136,17 +24140,17 @@ No cookies intended. Accountless. Age 18+ only.
         const attributes = geometry.attributes;
         const positionAttribute = attributes.position;
         if (index !== null) {
-          const start = Math.max(0, drawRange.start);
+          const start2 = Math.max(0, drawRange.start);
           const end = Math.min(index.count, drawRange.start + drawRange.count);
-          for (let i2 = start, il = end; i2 < il; i2++) {
+          for (let i2 = start2, il = end; i2 < il; i2++) {
             const a2 = index.getX(i2);
             _position$2.fromBufferAttribute(positionAttribute, a2);
             testPoint(_position$2, a2, localThresholdSq, matrixWorld, raycaster, intersects2, this);
           }
         } else {
-          const start = Math.max(0, drawRange.start);
+          const start2 = Math.max(0, drawRange.start);
           const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
-          for (let i2 = start, l2 = end; i2 < l2; i2++) {
+          for (let i2 = start2, l2 = end; i2 < l2; i2++) {
             _position$2.fromBufferAttribute(positionAttribute, i2);
             testPoint(_position$2, i2, localThresholdSq, matrixWorld, raycaster, intersects2, this);
           }
@@ -25296,13 +25300,13 @@ No cookies intended. Accountless. Age 18+ only.
       return triangles;
     }
   };
-  function linkedList(data, start, end, dim, clockwise) {
+  function linkedList(data, start2, end, dim, clockwise) {
     let i2, last;
-    if (clockwise === signedArea(data, start, end, dim) > 0) {
-      for (i2 = start; i2 < end; i2 += dim)
+    if (clockwise === signedArea(data, start2, end, dim) > 0) {
+      for (i2 = start2; i2 < end; i2 += dim)
         last = insertNode(i2, data[i2], data[i2 + 1], last);
     } else {
-      for (i2 = end - dim; i2 >= start; i2 -= dim)
+      for (i2 = end - dim; i2 >= start2; i2 -= dim)
         last = insertNode(i2, data[i2], data[i2 + 1], last);
     }
     if (last && equals(last, last.next)) {
@@ -25311,12 +25315,12 @@ No cookies intended. Accountless. Age 18+ only.
     }
     return last;
   }
-  function filterPoints(start, end) {
-    if (!start)
-      return start;
+  function filterPoints(start2, end) {
+    if (!start2)
+      return start2;
     if (!end)
-      end = start;
-    let p2 = start, again;
+      end = start2;
+    let p2 = start2, again;
     do {
       again = false;
       if (!p2.steiner && (equals(p2, p2.next) || area(p2.prev, p2, p2.next) === 0)) {
@@ -25402,8 +25406,8 @@ No cookies intended. Accountless. Age 18+ only.
     }
     return true;
   }
-  function cureLocalIntersections(start, triangles, dim) {
-    let p2 = start;
+  function cureLocalIntersections(start2, triangles, dim) {
+    let p2 = start2;
     do {
       const a2 = p2.prev, b2 = p2.next.next;
       if (!equals(a2, b2) && intersects(a2, p2, p2.next, b2) && locallyInside(a2, b2) && locallyInside(b2, a2)) {
@@ -25412,14 +25416,14 @@ No cookies intended. Accountless. Age 18+ only.
         triangles.push(b2.i / dim);
         removeNode(p2);
         removeNode(p2.next);
-        p2 = start = b2;
+        p2 = start2 = b2;
       }
       p2 = p2.next;
-    } while (p2 !== start);
+    } while (p2 !== start2);
     return filterPoints(p2);
   }
-  function splitEarcut(start, triangles, dim, minX, minY, invSize) {
-    let a2 = start;
+  function splitEarcut(start2, triangles, dim, minX, minY, invSize) {
+    let a2 = start2;
     do {
       let b2 = a2.next.next;
       while (b2 !== a2.prev) {
@@ -25434,15 +25438,15 @@ No cookies intended. Accountless. Age 18+ only.
         b2 = b2.next;
       }
       a2 = a2.next;
-    } while (a2 !== start);
+    } while (a2 !== start2);
   }
   function eliminateHoles(data, holeIndices, outerNode, dim) {
     const queue = [];
-    let i2, len, start, end, list;
+    let i2, len, start2, end, list;
     for (i2 = 0, len = holeIndices.length; i2 < len; i2++) {
-      start = holeIndices[i2] * dim;
+      start2 = holeIndices[i2] * dim;
       end = i2 < len - 1 ? holeIndices[i2 + 1] * dim : data.length;
-      list = linkedList(data, start, end, dim, false);
+      list = linkedList(data, start2, end, dim, false);
       if (list === list.next)
         list.steiner = true;
       queue.push(getLeftmost(list));
@@ -25508,15 +25512,15 @@ No cookies intended. Accountless. Age 18+ only.
   function sectorContainsSector(m2, p2) {
     return area(m2.prev, m2, p2.prev) < 0 && area(p2.next, m2, m2.next) < 0;
   }
-  function indexCurve(start, minX, minY, invSize) {
-    let p2 = start;
+  function indexCurve(start2, minX, minY, invSize) {
+    let p2 = start2;
     do {
       if (p2.z === null)
         p2.z = zOrder(p2.x, p2.y, minX, minY, invSize);
       p2.prevZ = p2.prev;
       p2.nextZ = p2.next;
       p2 = p2.next;
-    } while (p2 !== start);
+    } while (p2 !== start2);
     p2.prevZ.nextZ = null;
     p2.prevZ = null;
     sortLinked(p2);
@@ -25576,13 +25580,13 @@ No cookies intended. Accountless. Age 18+ only.
     y2 = (y2 | y2 << 1) & 1431655765;
     return x2 | y2 << 1;
   }
-  function getLeftmost(start) {
-    let p2 = start, leftmost = start;
+  function getLeftmost(start2) {
+    let p2 = start2, leftmost = start2;
     do {
       if (p2.x < leftmost.x || p2.x === leftmost.x && p2.y < leftmost.y)
         leftmost = p2;
       p2 = p2.next;
-    } while (p2 !== start);
+    } while (p2 !== start2);
     return leftmost;
   }
   function pointInTriangle(ax, ay, bx, by, cx, cy, px2, py2) {
@@ -25686,9 +25690,9 @@ No cookies intended. Accountless. Age 18+ only.
     this.nextZ = null;
     this.steiner = false;
   }
-  function signedArea(data, start, end, dim) {
+  function signedArea(data, start2, end, dim) {
     let sum = 0;
-    for (let i2 = start, j2 = end - dim; i2 < end; i2 += dim) {
+    for (let i2 = start2, j2 = end - dim; i2 < end; i2 += dim) {
       sum += (data[j2] - data[i2]) * (data[i2 + 1] + data[j2 + 1]);
       j2 = i2;
     }
@@ -25955,7 +25959,7 @@ No cookies intended. Accountless. Age 18+ only.
         buildLidFaces();
         buildSideFaces();
         function buildLidFaces() {
-          const start = verticesArray.length / 3;
+          const start2 = verticesArray.length / 3;
           if (bevelEnabled) {
             let layer = 0;
             let offset = vlen * layer;
@@ -25979,10 +25983,10 @@ No cookies intended. Accountless. Age 18+ only.
               f3(face[0] + vlen * steps, face[1] + vlen * steps, face[2] + vlen * steps);
             }
           }
-          scope.addGroup(start, verticesArray.length / 3 - start, 0);
+          scope.addGroup(start2, verticesArray.length / 3 - start2, 0);
         }
         function buildSideFaces() {
-          const start = verticesArray.length / 3;
+          const start2 = verticesArray.length / 3;
           let layeroffset = 0;
           sidewalls(contour, layeroffset);
           layeroffset += contour.length;
@@ -25991,7 +25995,7 @@ No cookies intended. Accountless. Age 18+ only.
             sidewalls(ahole, layeroffset);
             layeroffset += ahole.length;
           }
-          scope.addGroup(start, verticesArray.length / 3 - start, 1);
+          scope.addGroup(start2, verticesArray.length / 3 - start2, 1);
         }
         function sidewalls(contour2, layeroffset) {
           let i2 = contour2.length;
@@ -30348,12 +30352,12 @@ No cookies intended. Accountless. Age 18+ only.
   var _startP = /* @__PURE__ */ new Vector3();
   var _startEnd = /* @__PURE__ */ new Vector3();
   var Line3 = class {
-    constructor(start = new Vector3(), end = new Vector3()) {
-      this.start = start;
+    constructor(start2 = new Vector3(), end = new Vector3()) {
+      this.start = start2;
       this.end = end;
     }
-    set(start, end) {
-      this.start.copy(start);
+    set(start2, end) {
+      this.start.copy(start2);
       this.end.copy(end);
       return this;
     }
@@ -30965,12 +30969,12 @@ No cookies intended. Accountless. Age 18+ only.
     }
     return this.setAttribute(name, attribute);
   };
-  BufferGeometry.prototype.addDrawCall = function(start, count, indexOffset) {
+  BufferGeometry.prototype.addDrawCall = function(start2, count, indexOffset) {
     if (indexOffset !== void 0) {
       console.warn("THREE.BufferGeometry: .addDrawCall() no longer supports indexOffset.");
     }
     console.warn("THREE.BufferGeometry: .addDrawCall() is now .addGroup().");
-    this.addGroup(start, count);
+    this.addGroup(start2, count);
   };
   BufferGeometry.prototype.clearDrawCalls = function() {
     console.warn("THREE.BufferGeometry: .clearDrawCalls() is now .clearGroups().");
@@ -32837,8 +32841,8 @@ No cookies intended. Accountless. Age 18+ only.
     refineFaceLandmarks: true
   });
   holistic.onResults(onResults);
-  var width = 320;
-  var height = 240;
+  var width = 320 / 2;
+  var height = 240 / 2;
   videoElement.on(($ve) => {
     if (!$ve)
       return;
@@ -32847,14 +32851,21 @@ No cookies intended. Accountless. Age 18+ only.
     const ctx = canvasElement.$.getContext("2d");
     ctx.translate(width, 0);
     ctx.scale(-1, 1);
+    let ready = false;
     const camera = new import_camera_utils.Camera($ve, {
       onFrame: async () => {
+        if (!ready)
+          return;
         ctx.drawImage($ve, 0, 0, width, height);
         await holistic.send({ image: canvasElement.$ });
+        ready = false;
       },
       width,
       height
     });
+    setInterval(() => {
+      ready = true;
+    }, 1 / 60 * 1e3);
     camera.start();
   });
   tick.on(() => {
@@ -32870,6 +32881,7 @@ No cookies intended. Accountless. Age 18+ only.
   var vec3 = new AFRAME.THREE.Vector3();
   var bb2 = new AFRAME.THREE.Box3();
   AFRAME.registerComponent("vary", {
+    multiple: true,
     schema: {
       property: { type: "string", default: "position" },
       range: { type: "string", default: "-1 -1 -1 1 1 1" }
@@ -32959,7 +32971,7 @@ No cookies intended. Accountless. Age 18+ only.
         a_mixin = element("a-mixin");
         set_custom_element_data(a_mixin, "id", "character");
         set_custom_element_data(a_mixin, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 1;angularFactor: 0 1 0;");
-        set_custom_element_data(a_mixin, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.2 0.6 0.2; offset: 0 1 0");
+        set_custom_element_data(a_mixin, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.2 0.6 0.2; offset: 0 0.75 0");
       },
       m(target, anchor) {
         insert(target, a_mixin, anchor);
@@ -33010,7 +33022,7 @@ No cookies intended. Accountless. Age 18+ only.
   var vec32 = new AFRAME.THREE.Vector3();
   AFRAME.registerComponent("wasd-controller", {
     schema: {
-      speed: { type: "number", default: 0.3 },
+      speed: { type: "number", default: 0.25 },
       rot: { type: "number", default: 0.15 }
     },
     tick(_2, delta) {
@@ -33066,84 +33078,29 @@ No cookies intended. Accountless. Age 18+ only.
     }
   });
 
-  // src/component/speech-controller.ts
-  var recognition = new webkitSpeechRecognition();
-  var synth = window.speechSynthesis;
-  var recog = new Value();
-  recognition.continuous = false;
-  recognition.lang = "en-US";
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-  var started = false;
-  recognition.onresult = (event) => {
-    recog.set(event);
-  };
-  recognition.onend = () => {
-    recognition.start();
-  };
-  function findVoice(voiceName) {
-    const voices = synth.getVoices();
-    return voices.find((voice) => voice.name.indexOf(voiceName) !== -1);
-  }
-  AFRAME.registerComponent("speech-controller", {
-    init() {
-      const voices = synth.getVoices();
-      let voice = findVoice("Aus") || findVoice("UK English Female") || voices[0];
-      if (!started) {
-        recognition.start();
-        started = true;
-      }
-      this.cancel = recog.on((event) => {
-        if (!event)
-          return;
-        var said = event.results[event.results.length - 1][0].transcript.trim();
-        this.el.setAttribute("color", said.replace(".", ""));
-        var utterThis = new SpeechSynthesisUtterance(said);
-        utterThis.voice = voice;
-        utterThis.pitch = 0.9;
-        utterThis.rate = 1.1;
-        synth.speak(utterThis);
-      });
-    },
-    remove() {
-      this.cancel();
-    }
-  });
-
   // src/template/characters.svelte
   function create_fragment3(ctx) {
     let a_entity0;
-    let t0;
-    let a_box;
-    let t1;
+    let t;
     let a_entity1;
     return {
       c() {
         a_entity0 = element("a-entity");
-        t0 = space();
-        a_box = element("a-box");
-        t1 = space();
+        t = space();
         a_entity1 = element("a-entity");
         set_custom_element_data(a_entity0, "mixin", "shadow character");
         set_custom_element_data(a_entity0, "position", "0 0 -5");
         set_custom_element_data(a_entity0, "vrm", "src: /vrm/goblin.vrm; current: true");
         set_custom_element_data(a_entity0, "id", "focus");
         set_custom_element_data(a_entity0, "wasd-controller", "");
-        set_custom_element_data(a_box, "position", "1 1 -5");
-        set_custom_element_data(a_box, "rotation", "0 0 0");
-        set_custom_element_data(a_box, "scale", "1 1 1");
-        set_custom_element_data(a_box, "color", "#FFF");
-        set_custom_element_data(a_box, "speech-controller", "");
         set_custom_element_data(a_entity1, "mixin", "shadow character");
-        set_custom_element_data(a_entity1, "position", "0 0.15 -6");
+        set_custom_element_data(a_entity1, "position", "0 0.25 -6");
         set_custom_element_data(a_entity1, "rotation", "0 180 0");
         set_custom_element_data(a_entity1, "vrm", "src: /vrm/doer.vrm; mirror: true");
       },
       m(target, anchor) {
         insert(target, a_entity0, anchor);
-        insert(target, t0, anchor);
-        insert(target, a_box, anchor);
-        insert(target, t1, anchor);
+        insert(target, t, anchor);
         insert(target, a_entity1, anchor);
       },
       p: noop,
@@ -33153,11 +33110,7 @@ No cookies intended. Accountless. Age 18+ only.
         if (detaching)
           detach(a_entity0);
         if (detaching)
-          detach(t0);
-        if (detaching)
-          detach(a_box);
-        if (detaching)
-          detach(t1);
+          detach(t);
         if (detaching)
           detach(a_entity1);
       }
@@ -33264,142 +33217,558 @@ No cookies intended. Accountless. Age 18+ only.
   };
   var camera_fps_default = Camera_fps;
 
-  // src/template/volleyball.svelte
+  // src/template/flora.svelte
   function create_fragment5(ctx) {
+    let a_entity0;
+    let t0;
+    let a_entity1;
+    let t1;
+    let a_entity2;
+    return {
+      c() {
+        a_entity0 = element("a-entity");
+        t0 = space();
+        a_entity1 = element("a-entity");
+        t1 = space();
+        a_entity2 = element("a-entity");
+        set_custom_element_data(a_entity0, "pool__mushroom", "mixin: mushroom; size: 100");
+        set_custom_element_data(a_entity0, "activate__mushroom", "");
+        set_custom_element_data(a_entity1, "pool__flowerslow", "mixin: flowersLow; size: 100");
+        set_custom_element_data(a_entity1, "activate__flowerslow", "");
+        set_custom_element_data(a_entity2, "pool__flowers", "mixin: flowers; size: 100");
+        set_custom_element_data(a_entity2, "activate__flowers", "");
+      },
+      m(target, anchor) {
+        insert(target, a_entity0, anchor);
+        insert(target, t0, anchor);
+        insert(target, a_entity1, anchor);
+        insert(target, t1, anchor);
+        insert(target, a_entity2, anchor);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_entity0);
+        if (detaching)
+          detach(t0);
+        if (detaching)
+          detach(a_entity1);
+        if (detaching)
+          detach(t1);
+        if (detaching)
+          detach(a_entity2);
+      }
+    };
+  }
+  var Flora = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, create_fragment5, safe_not_equal, {});
+    }
+  };
+  var flora_default = Flora;
+
+  // src/template/flora-assets.svelte
+  function create_fragment6(ctx) {
+    let a_asset_item;
+    let a_asset_item_src_value;
+    let t0;
+    let a_mixin0;
+    let t1;
+    let a_mixin1;
+    let t2;
+    let a_mixin2;
+    let t3;
+    let a_mixin3;
+    let t4;
+    let a_mixin4;
+    let t5;
+    let a_mixin5;
+    let t6;
+    let a_mixin6;
+    return {
+      c() {
+        a_asset_item = element("a-asset-item");
+        t0 = space();
+        a_mixin0 = element("a-mixin");
+        t1 = space();
+        a_mixin1 = element("a-mixin");
+        t2 = space();
+        a_mixin2 = element("a-mixin");
+        t3 = space();
+        a_mixin3 = element("a-mixin");
+        t4 = space();
+        a_mixin4 = element("a-mixin");
+        t5 = space();
+        a_mixin5 = element("a-mixin");
+        t6 = space();
+        a_mixin6 = element("a-mixin");
+        set_custom_element_data(a_asset_item, "id", "glb-tree");
+        if (!src_url_equal(a_asset_item.src, a_asset_item_src_value = "/glb/tree.glb"))
+          set_custom_element_data(a_asset_item, "src", a_asset_item_src_value);
+        set_custom_element_data(a_mixin0, "id", "flowers");
+        set_custom_element_data(a_mixin0, "shadow", "");
+        set_custom_element_data(a_mixin0, "gltf-model", "/glb/flowers.glb");
+        set_custom_element_data(a_mixin0, "scatter", ctx[0]);
+        set_custom_element_data(a_mixin0, "vary", vary);
+        set_custom_element_data(a_mixin0, "vary__rot", vary__rot);
+        set_custom_element_data(a_mixin1, "id", "mushroom");
+        set_custom_element_data(a_mixin1, "shadow", "");
+        set_custom_element_data(a_mixin1, "gltf-model", "/glb/mushrooms.glb");
+        set_custom_element_data(a_mixin1, "scatter", ctx[0]);
+        set_custom_element_data(a_mixin1, "vary", vary);
+        set_custom_element_data(a_mixin1, "vary__rot", vary__rot);
+        set_custom_element_data(a_mixin2, "id", "flowersLow");
+        set_custom_element_data(a_mixin2, "shadow", "");
+        set_custom_element_data(a_mixin2, "gltf-model", "/glb/flowersLow.glb");
+        set_custom_element_data(a_mixin2, "scatter", ctx[0]);
+        set_custom_element_data(a_mixin2, "vary", vary);
+        set_custom_element_data(a_mixin2, "vary__rot", vary__rot);
+        set_custom_element_data(a_mixin3, "id", "rock");
+        set_custom_element_data(a_mixin3, "shadow", "");
+        set_custom_element_data(a_mixin3, "gltf-model", "/glb/rockB.glb");
+        set_custom_element_data(a_mixin3, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
+        set_custom_element_data(a_mixin3, "scatter", ctx[0]);
+        set_custom_element_data(a_mixin3, "vary__rot", vary__rot);
+        set_custom_element_data(a_mixin3, "ammo-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin3, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
+        set_custom_element_data(a_mixin4, "id", "tree");
+        set_custom_element_data(a_mixin4, "shadow", "");
+        set_custom_element_data(a_mixin4, "gltf-model", "#glb-tree");
+        set_custom_element_data(a_mixin4, "scatter", ctx[0]);
+        set_custom_element_data(a_mixin4, "vary", "property: scale; range: 1 0.5 1 2 3 2");
+        set_custom_element_data(a_mixin4, "vary__rot", vary__rot);
+        set_custom_element_data(a_mixin4, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin4, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
+        set_custom_element_data(a_mixin5, "id", "grass");
+        set_custom_element_data(a_mixin5, "shadow", "");
+        set_custom_element_data(a_mixin5, "vary__rot", vary__rot);
+        set_custom_element_data(a_mixin5, "gltf-model", "/glb/grass.glb");
+        set_custom_element_data(a_mixin5, "scatter", ctx[0]);
+        set_custom_element_data(a_mixin5, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
+        set_custom_element_data(a_mixin6, "id", "grass2");
+        set_custom_element_data(a_mixin6, "shadow", "");
+        set_custom_element_data(a_mixin6, "gltf-model", "/glb/grassLarge.glb");
+        set_custom_element_data(a_mixin6, "scatter", ctx[0]);
+        set_custom_element_data(a_mixin6, "vary__rot", vary__rot);
+        set_custom_element_data(a_mixin6, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
+      },
+      m(target, anchor) {
+        insert(target, a_asset_item, anchor);
+        insert(target, t0, anchor);
+        insert(target, a_mixin0, anchor);
+        insert(target, t1, anchor);
+        insert(target, a_mixin1, anchor);
+        insert(target, t2, anchor);
+        insert(target, a_mixin2, anchor);
+        insert(target, t3, anchor);
+        insert(target, a_mixin3, anchor);
+        insert(target, t4, anchor);
+        insert(target, a_mixin4, anchor);
+        insert(target, t5, anchor);
+        insert(target, a_mixin5, anchor);
+        insert(target, t6, anchor);
+        insert(target, a_mixin6, anchor);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_asset_item);
+        if (detaching)
+          detach(t0);
+        if (detaching)
+          detach(a_mixin0);
+        if (detaching)
+          detach(t1);
+        if (detaching)
+          detach(a_mixin1);
+        if (detaching)
+          detach(t2);
+        if (detaching)
+          detach(a_mixin2);
+        if (detaching)
+          detach(t3);
+        if (detaching)
+          detach(a_mixin3);
+        if (detaching)
+          detach(t4);
+        if (detaching)
+          detach(a_mixin4);
+        if (detaching)
+          detach(t5);
+        if (detaching)
+          detach(a_mixin5);
+        if (detaching)
+          detach(t6);
+        if (detaching)
+          detach(a_mixin6);
+      }
+    };
+  }
+  var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
+  var vary__rot = "property: rotation; range: 0 0 0 0 360 0";
+  function instance2($$self, $$props, $$invalidate) {
+    let { groundSize: groundSize2 } = $$props;
+    const scatter = `-${groundSize2} 0 -${groundSize2} ${groundSize2} 0 ${groundSize2}`;
+    $$self.$$set = ($$props2) => {
+      if ("groundSize" in $$props2)
+        $$invalidate(1, groundSize2 = $$props2.groundSize);
+    };
+    return [scatter, groundSize2];
+  }
+  var Flora_assets = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance2, create_fragment6, safe_not_equal, { groundSize: 1 });
+    }
+  };
+  var flora_assets_default = Flora_assets;
+
+  // src/chat.ts
+  var recognition = new webkitSpeechRecognition();
+  var synth = window.speechSynthesis;
+  var recog = new Value();
+  recognition.continuous = false;
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  recognition.onresult = (event) => {
+    recog.set(event);
+  };
+  recognition.onend = () => {
+    recognition.start();
+  };
+  function findVoice(voiceName) {
+    const voices = synth.getVoices();
+    return voices.find((voice) => voice.name.indexOf(voiceName) !== -1);
+  }
+  var talk = new Value("");
+  var control = new Value("" /* Nothing */);
+  var findTilde = /~/g;
+  function say(said) {
+    if (!said)
+      return;
+    const voices = synth.getVoices();
+    var utterThis = new SpeechSynthesisUtterance(said.replace(findTilde, "control"));
+    let voice = findVoice("Aus") || findVoice("UK English Female") || voices[0];
+    utterThis.voice = voice;
+    utterThis.pitch = 0.9;
+    utterThis.rate = 1.1;
+    synth.speak(utterThis);
+  }
+  talk.on(say);
+  recog.on((event) => {
+    if (!event)
+      return;
+    var said = event.results[event.results.length - 1][0].transcript.trim();
+    talk.set(said);
+  });
+  var start = () => recognition.start();
+
+  // src/ui/text.svelte
+  function create_if_block(ctx) {
+    let div;
+    let input;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        div = element("div");
+        input = element("input");
+        attr(input, "type", "text");
+        attr(input, "class", "entry svelte-14ifc7d");
+        attr(div, "class", "lofi svelte-14ifc7d");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, input);
+        set_input_value(input, ctx[1]);
+        ctx[5](input);
+        if (!mounted) {
+          dispose = [
+            listen(input, "input", ctx[4]),
+            listen(input, "blur", ctx[3]),
+            listen(input, "keydown", ctx[6])
+          ];
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 2 && input.value !== ctx2[1]) {
+          set_input_value(input, ctx2[1]);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        ctx[5](null);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function create_fragment7(ctx) {
+    let if_block_anchor;
+    let if_block = ctx[1] !== void 0 && create_if_block(ctx);
+    return {
+      c() {
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (ctx2[1] !== void 0) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block(ctx2);
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(if_block_anchor);
+      }
+    };
+  }
+  function instance3($$self, $$props, $$invalidate) {
+    let $open_text;
+    component_subscribe($$self, open_text, ($$value) => $$invalidate(1, $open_text = $$value));
+    let ele;
+    function send() {
+      talk.set(open_text.$);
+      open_text.set(void 0);
+    }
+    function escape2() {
+      open_text.set(void 0);
+    }
+    key_down.on(() => {
+      switch (key_down.$) {
+        case "`":
+          if (open_text.$ === void 0) {
+            open_text.set("~ ");
+            requestAnimationFrame(() => ele?.focus());
+          }
+          break;
+        case "enter":
+          if (open_text.$ === void 0) {
+            open_text.set("");
+            requestAnimationFrame(() => ele?.focus());
+          }
+      }
+    });
+    function input_input_handler() {
+      $open_text = this.value;
+      open_text.set($open_text);
+    }
+    function input_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        ele = $$value;
+        $$invalidate(0, ele);
+      });
+    }
+    const keydown_handler2 = (e) => {
+      if (e.key === "Enter") {
+        send();
+      }
+      switch (e.key) {
+        case "Enter":
+          send();
+          break;
+        case "Escape":
+          escape2();
+          break;
+      }
+    };
+    return [
+      ele,
+      $open_text,
+      send,
+      escape2,
+      input_input_handler,
+      input_binding,
+      keydown_handler2
+    ];
+  }
+  var Text = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance3, create_fragment7, safe_not_equal, {});
+    }
+  };
+  var text_default = Text;
+
+  // src/template/volleyball.svelte
+  function create_fragment8(ctx) {
     let webcam;
     let t0;
+    let text_1;
+    let t1;
     let a_scene;
     let a_assets;
     let audio;
     let audio_src_value;
-    let t1;
+    let t2;
     let a_asset_item;
     let a_asset_item_src_value;
-    let t2;
-    let a_mixin0;
     let t3;
-    let a_mixin1;
+    let a_mixin0;
     let t4;
-    let a_mixin2;
+    let a_mixin1;
     let t5;
-    let a_mixin3;
+    let a_mixin2;
     let t6;
-    let a_mixin4;
+    let a_mixin3;
     let t7;
-    let a_mixin5;
+    let a_mixin4;
     let t8;
+    let a_mixin5;
+    let t9;
     let a_mixin6;
     let a_mixin6_ring_value;
-    let t9;
-    let a_mixin7;
     let t10;
+    let a_mixin7;
+    let t11;
     let a_mixin8;
     let a_mixin8_animation_value;
-    let t11;
-    let charactersmixins;
     let t12;
-    let camerafps;
+    let charactersmixins;
     let t13;
+    let floraassets;
+    let t14;
+    let camerafps;
+    let t15;
+    let flora;
+    let t16;
     let a_sky;
     let a_sky_animate_value;
-    let t14;
-    let a_entity0;
-    let t15;
-    let a_entity1;
-    let t16;
-    let a_entity2;
     let t17;
-    let a_entity3;
+    let a_entity0;
     let t18;
-    let a_entity4;
+    let a_entity1;
     let t19;
-    let a_entity5;
+    let a_entity2;
     let t20;
+    let a_entity3;
+    let t21;
+    let a_entity4;
+    let t22;
+    let a_entity5;
+    let t23;
     let a_entity6;
     let a_entity6_position_value;
     let a_entity6_light_value;
-    let t21;
+    let t24;
     let a_entity7;
     let a_entity7_position_value;
     let a_entity7_light_value;
-    let t22;
+    let t25;
     let a_entity8;
-    let t23;
+    let t26;
     let characters;
-    let t24;
+    let t27;
     let a_plane;
     let a_plane_width_value;
     let a_plane_height_value;
-    let t25;
+    let t28;
     let a_entity9;
     let a_entity9_position_value;
-    let t26;
+    let t29;
     let a_sound;
     let a_sound_volume_value;
     let a_sound_src_value;
     let current;
     webcam = new webcam_default({});
+    text_1 = new text_default({});
     charactersmixins = new characters_assets_default({});
+    floraassets = new flora_assets_default({
+      props: { groundSize: ctx[0] }
+    });
     camerafps = new camera_fps_default({});
+    flora = new flora_default({});
     characters = new characters_default({});
     return {
       c() {
         create_component(webcam.$$.fragment);
         t0 = space();
+        create_component(text_1.$$.fragment);
+        t1 = space();
         a_scene = element("a-scene");
         a_assets = element("a-assets");
         audio = element("audio");
-        t1 = space();
-        a_asset_item = element("a-asset-item");
         t2 = space();
-        a_mixin0 = element("a-mixin");
+        a_asset_item = element("a-asset-item");
         t3 = space();
-        a_mixin1 = element("a-mixin");
+        a_mixin0 = element("a-mixin");
         t4 = space();
-        a_mixin2 = element("a-mixin");
+        a_mixin1 = element("a-mixin");
         t5 = space();
-        a_mixin3 = element("a-mixin");
+        a_mixin2 = element("a-mixin");
         t6 = space();
-        a_mixin4 = element("a-mixin");
+        a_mixin3 = element("a-mixin");
         t7 = space();
-        a_mixin5 = element("a-mixin");
+        a_mixin4 = element("a-mixin");
         t8 = space();
-        a_mixin6 = element("a-mixin");
+        a_mixin5 = element("a-mixin");
         t9 = space();
-        a_mixin7 = element("a-mixin");
+        a_mixin6 = element("a-mixin");
         t10 = space();
-        a_mixin8 = element("a-mixin");
+        a_mixin7 = element("a-mixin");
         t11 = space();
-        create_component(charactersmixins.$$.fragment);
+        a_mixin8 = element("a-mixin");
         t12 = space();
-        create_component(camerafps.$$.fragment);
+        create_component(charactersmixins.$$.fragment);
         t13 = space();
-        a_sky = element("a-sky");
+        create_component(floraassets.$$.fragment);
         t14 = space();
-        a_entity0 = element("a-entity");
+        create_component(camerafps.$$.fragment);
         t15 = space();
-        a_entity1 = element("a-entity");
+        create_component(flora.$$.fragment);
         t16 = space();
-        a_entity2 = element("a-entity");
+        a_sky = element("a-sky");
         t17 = space();
-        a_entity3 = element("a-entity");
+        a_entity0 = element("a-entity");
         t18 = space();
-        a_entity4 = element("a-entity");
+        a_entity1 = element("a-entity");
         t19 = space();
-        a_entity5 = element("a-entity");
+        a_entity2 = element("a-entity");
         t20 = space();
-        a_entity6 = element("a-entity");
+        a_entity3 = element("a-entity");
         t21 = space();
-        a_entity7 = element("a-entity");
+        a_entity4 = element("a-entity");
         t22 = space();
-        a_entity8 = element("a-entity");
+        a_entity5 = element("a-entity");
         t23 = space();
-        create_component(characters.$$.fragment);
+        a_entity6 = element("a-entity");
         t24 = space();
-        a_plane = element("a-plane");
+        a_entity7 = element("a-entity");
         t25 = space();
-        a_entity9 = element("a-entity");
+        a_entity8 = element("a-entity");
         t26 = space();
+        create_component(characters.$$.fragment);
+        t27 = space();
+        a_plane = element("a-plane");
+        t28 = space();
+        a_entity9 = element("a-entity");
+        t29 = space();
         a_sound = element("a-sound");
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "/sound/bg-ocean.mp3"))
@@ -33431,7 +33800,8 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_mixin5, "id", "coinGold");
         set_custom_element_data(a_mixin5, "shadow", "");
         set_custom_element_data(a_mixin5, "gltf-model", "/glb/coinGold.glb");
-        set_custom_element_data(a_mixin5, "ammo-body", "");
+        set_custom_element_data(a_mixin5, "ammo-body", "mass:0.1");
+        set_custom_element_data(a_mixin5, "animation", "property: scale; to: 1.1 1.1 1.1; dur: 2000; loop: true; dir: alternate; easing: easeInOutQuad");
         set_custom_element_data(a_mixin5, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 0.35; offset: -1 0.25 0.5");
         set_custom_element_data(a_mixin5, "scatter", ctx[2]);
         set_custom_element_data(a_mixin6, "id", "mountains");
@@ -33447,7 +33817,7 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_mixin7, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
         set_custom_element_data(a_mixin7, "scatter", ctx[2]);
         set_custom_element_data(a_mixin7, "ammo-body", "type: static; mass: 0");
-        set_custom_element_data(a_mixin7, "ammo-shape", "type: box; fit: manual; halfExtents: 0.25 0.5 0.25;");
+        set_custom_element_data(a_mixin7, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
         set_custom_element_data(a_mixin8, "id", "cloud");
         set_custom_element_data(a_mixin8, "scatter", ctx[2]);
         set_custom_element_data(a_mixin8, "animation", a_mixin8_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx[0] + "; easing: linear; loop: true;");
@@ -33456,13 +33826,13 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_mixin8, "scale", "25 5 15");
         set_custom_element_data(a_sky, "color", sky);
         set_custom_element_data(a_sky, "animate", a_sky_animate_value = "property: color; to: " + sky_dark + "; easing: easeInOut; dur: 6000 ");
-        set_custom_element_data(a_entity0, "pool__tree", "mixin: tree; size: 100");
+        set_custom_element_data(a_entity0, "pool__tree", "mixin: tree; size: 50");
         set_custom_element_data(a_entity0, "activate__tree", "");
         set_custom_element_data(a_entity1, "pool__grass", "mixin: grass; size: 100");
         set_custom_element_data(a_entity1, "activate__grass", "");
         set_custom_element_data(a_entity2, "pool__grass2", "mixin: grass2; size: 100");
         set_custom_element_data(a_entity2, "activate__grass2", "");
-        set_custom_element_data(a_entity3, "pool__rock", "mixin: rock; size: 100");
+        set_custom_element_data(a_entity3, "pool__rock", "mixin: rock; size: 50");
         set_custom_element_data(a_entity3, "activate__rock", "");
         set_custom_element_data(a_entity4, "pool__mountains", "mixin: mountains; size: 100");
         set_custom_element_data(a_entity4, "activate__mountains", "");
@@ -33509,6 +33879,7 @@ No cookies intended. Accountless. Age 18+ only.
         set_custom_element_data(a_sound, "volume", a_sound_volume_value = 0.5);
         if (!src_url_equal(a_sound.src, a_sound_src_value = "#sound-bg"))
           set_custom_element_data(a_sound, "src", a_sound_src_value);
+        set_custom_element_data(a_scene, "renderer", " highRefreshRate: true; alpha: false;precision: medium;");
         set_custom_element_data(a_scene, "shadow", "type:pcfsoft;");
         set_custom_element_data(a_scene, "fog", "type: linear; color: #AAA");
         set_custom_element_data(a_scene, "physics", "driver: ammo; ");
@@ -33516,60 +33887,66 @@ No cookies intended. Accountless. Age 18+ only.
       m(target, anchor) {
         mount_component(webcam, target, anchor);
         insert(target, t0, anchor);
+        mount_component(text_1, target, anchor);
+        insert(target, t1, anchor);
         insert(target, a_scene, anchor);
         append(a_scene, a_assets);
         append(a_assets, audio);
-        append(a_assets, t1);
-        append(a_assets, a_asset_item);
         append(a_assets, t2);
-        append(a_assets, a_mixin0);
+        append(a_assets, a_asset_item);
         append(a_assets, t3);
-        append(a_assets, a_mixin1);
+        append(a_assets, a_mixin0);
         append(a_assets, t4);
-        append(a_assets, a_mixin2);
+        append(a_assets, a_mixin1);
         append(a_assets, t5);
-        append(a_assets, a_mixin3);
+        append(a_assets, a_mixin2);
         append(a_assets, t6);
-        append(a_assets, a_mixin4);
+        append(a_assets, a_mixin3);
         append(a_assets, t7);
-        append(a_assets, a_mixin5);
+        append(a_assets, a_mixin4);
         append(a_assets, t8);
-        append(a_assets, a_mixin6);
+        append(a_assets, a_mixin5);
         append(a_assets, t9);
-        append(a_assets, a_mixin7);
+        append(a_assets, a_mixin6);
         append(a_assets, t10);
-        append(a_assets, a_mixin8);
+        append(a_assets, a_mixin7);
         append(a_assets, t11);
+        append(a_assets, a_mixin8);
+        append(a_assets, t12);
         mount_component(charactersmixins, a_assets, null);
-        append(a_scene, t12);
-        mount_component(camerafps, a_scene, null);
-        append(a_scene, t13);
-        append(a_scene, a_sky);
+        append(a_assets, t13);
+        mount_component(floraassets, a_assets, null);
         append(a_scene, t14);
-        append(a_scene, a_entity0);
+        mount_component(camerafps, a_scene, null);
         append(a_scene, t15);
-        append(a_scene, a_entity1);
+        mount_component(flora, a_scene, null);
         append(a_scene, t16);
-        append(a_scene, a_entity2);
+        append(a_scene, a_sky);
         append(a_scene, t17);
-        append(a_scene, a_entity3);
+        append(a_scene, a_entity0);
         append(a_scene, t18);
-        append(a_scene, a_entity4);
+        append(a_scene, a_entity1);
         append(a_scene, t19);
-        append(a_scene, a_entity5);
+        append(a_scene, a_entity2);
         append(a_scene, t20);
-        append(a_scene, a_entity6);
+        append(a_scene, a_entity3);
         append(a_scene, t21);
-        append(a_scene, a_entity7);
+        append(a_scene, a_entity4);
         append(a_scene, t22);
-        append(a_scene, a_entity8);
+        append(a_scene, a_entity5);
         append(a_scene, t23);
-        mount_component(characters, a_scene, null);
+        append(a_scene, a_entity6);
         append(a_scene, t24);
-        append(a_scene, a_plane);
+        append(a_scene, a_entity7);
         append(a_scene, t25);
-        append(a_scene, a_entity9);
+        append(a_scene, a_entity8);
         append(a_scene, t26);
+        mount_component(characters, a_scene, null);
+        append(a_scene, t27);
+        append(a_scene, a_plane);
+        append(a_scene, t28);
+        append(a_scene, a_entity9);
+        append(a_scene, t29);
         append(a_scene, a_sound);
         current = true;
       },
@@ -33580,6 +33957,10 @@ No cookies intended. Accountless. Age 18+ only.
         if (!current || dirty & 1 && a_mixin8_animation_value !== (a_mixin8_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx2[0] + "; easing: linear; loop: true;")) {
           set_custom_element_data(a_mixin8, "animation", a_mixin8_animation_value);
         }
+        const floraassets_changes = {};
+        if (dirty & 1)
+          floraassets_changes.groundSize = ctx2[0];
+        floraassets.$set(floraassets_changes);
         if (!current || dirty & 1 && a_entity6_position_value !== (a_entity6_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
           set_custom_element_data(a_entity6, "position", a_entity6_position_value);
         }
@@ -33615,15 +33996,21 @@ No cookies intended. Accountless. Age 18+ only.
         if (current)
           return;
         transition_in(webcam.$$.fragment, local);
+        transition_in(text_1.$$.fragment, local);
         transition_in(charactersmixins.$$.fragment, local);
+        transition_in(floraassets.$$.fragment, local);
         transition_in(camerafps.$$.fragment, local);
+        transition_in(flora.$$.fragment, local);
         transition_in(characters.$$.fragment, local);
         current = true;
       },
       o(local) {
         transition_out(webcam.$$.fragment, local);
+        transition_out(text_1.$$.fragment, local);
         transition_out(charactersmixins.$$.fragment, local);
+        transition_out(floraassets.$$.fragment, local);
         transition_out(camerafps.$$.fragment, local);
+        transition_out(flora.$$.fragment, local);
         transition_out(characters.$$.fragment, local);
         current = false;
       },
@@ -33631,10 +34018,15 @@ No cookies intended. Accountless. Age 18+ only.
         destroy_component(webcam, detaching);
         if (detaching)
           detach(t0);
+        destroy_component(text_1, detaching);
+        if (detaching)
+          detach(t1);
         if (detaching)
           detach(a_scene);
         destroy_component(charactersmixins);
+        destroy_component(floraassets);
         destroy_component(camerafps);
+        destroy_component(flora);
         destroy_component(characters);
       }
     };
@@ -33642,7 +34034,8 @@ No cookies intended. Accountless. Age 18+ only.
   var light = "#FEE";
   var sky = "#336";
   var sky_dark = "#003";
-  function instance2($$self, $$props, $$invalidate) {
+  function instance4($$self, $$props, $$invalidate) {
+    start();
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize: groundSize2 = 100 } = $$props;
     const scatter = [-groundSize2 / 2, 0, -groundSize2 / 2, groundSize2 / 2, 0, groundSize2 / 2].join(" ");
@@ -33655,13 +34048,13 @@ No cookies intended. Accountless. Age 18+ only.
   var Volleyball = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance2, create_fragment5, safe_not_equal, { groundSize: 0 });
+      init(this, options, instance4, create_fragment8, safe_not_equal, { groundSize: 0 });
     }
   };
   var volleyball_default = Volleyball;
 
   // src/ui/title.svelte
-  function create_fragment6(ctx) {
+  function create_fragment9(ctx) {
     let div3;
     let t8;
     let center;
@@ -33699,13 +34092,13 @@ No cookies intended. Accountless. Age 18+ only.
   var Title = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment6, safe_not_equal, {});
+      init(this, options, null, create_fragment9, safe_not_equal, {});
     }
   };
   var title_default = Title;
 
   // src/ui/home.svelte
-  function create_fragment7(ctx) {
+  function create_fragment10(ctx) {
     let div9;
     let div0;
     let t0;
@@ -33829,7 +34222,7 @@ No cookies intended. Accountless. Age 18+ only.
   };
   var keydown_handler = (e) => {
   };
-  function instance3($$self, $$props, $$invalidate) {
+  function instance5($$self, $$props, $$invalidate) {
     let $motd;
     component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
     if (location.search === "?go") {
@@ -33849,7 +34242,7 @@ No cookies intended. Accountless. Age 18+ only.
   var Home = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance3, create_fragment7, safe_not_equal, {});
+      init(this, options, instance5, create_fragment10, safe_not_equal, {});
     }
   };
   var home_default = Home;
@@ -33882,7 +34275,7 @@ No cookies intended. Accountless. Age 18+ only.
       }
     };
   }
-  function create_if_block(ctx) {
+  function create_if_block2(ctx) {
     let volleyball;
     let current;
     volleyball = new volleyball_default({ props: { groundSize } });
@@ -33910,25 +34303,32 @@ No cookies intended. Accountless. Age 18+ only.
       }
     };
   }
-  function create_fragment8(ctx) {
-    let t;
+  function create_fragment11(ctx) {
+    let text_1;
+    let t0;
+    let t1;
     let if_block1_anchor;
     let current;
+    text_1 = new text_default({});
     let if_block0 = ctx[0] && create_if_block_1(ctx);
-    let if_block1 = ctx[1] && create_if_block(ctx);
+    let if_block1 = ctx[1] && create_if_block2(ctx);
     return {
       c() {
+        create_component(text_1.$$.fragment);
+        t0 = space();
         if (if_block0)
           if_block0.c();
-        t = space();
+        t1 = space();
         if (if_block1)
           if_block1.c();
         if_block1_anchor = empty();
       },
       m(target, anchor) {
+        mount_component(text_1, target, anchor);
+        insert(target, t0, anchor);
         if (if_block0)
           if_block0.m(target, anchor);
-        insert(target, t, anchor);
+        insert(target, t1, anchor);
         if (if_block1)
           if_block1.m(target, anchor);
         insert(target, if_block1_anchor, anchor);
@@ -33944,7 +34344,7 @@ No cookies intended. Accountless. Age 18+ only.
             if_block0 = create_if_block_1(ctx2);
             if_block0.c();
             transition_in(if_block0, 1);
-            if_block0.m(t.parentNode, t);
+            if_block0.m(t1.parentNode, t1);
           }
         } else if (if_block0) {
           group_outros();
@@ -33960,7 +34360,7 @@ No cookies intended. Accountless. Age 18+ only.
               transition_in(if_block1, 1);
             }
           } else {
-            if_block1 = create_if_block(ctx2);
+            if_block1 = create_if_block2(ctx2);
             if_block1.c();
             transition_in(if_block1, 1);
             if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
@@ -33976,20 +34376,25 @@ No cookies intended. Accountless. Age 18+ only.
       i(local) {
         if (current)
           return;
+        transition_in(text_1.$$.fragment, local);
         transition_in(if_block0);
         transition_in(if_block1);
         current = true;
       },
       o(local) {
+        transition_out(text_1.$$.fragment, local);
         transition_out(if_block0);
         transition_out(if_block1);
         current = false;
       },
       d(detaching) {
+        destroy_component(text_1, detaching);
+        if (detaching)
+          detach(t0);
         if (if_block0)
           if_block0.d(detaching);
         if (detaching)
-          detach(t);
+          detach(t1);
         if (if_block1)
           if_block1.d(detaching);
         if (detaching)
@@ -33998,7 +34403,7 @@ No cookies intended. Accountless. Age 18+ only.
     };
   }
   var groundSize = 100;
-  function instance4($$self, $$props, $$invalidate) {
+  function instance6($$self, $$props, $$invalidate) {
     let $open_home;
     let $open_game;
     component_subscribe($$self, open_home, ($$value) => $$invalidate(0, $open_home = $$value));
@@ -34008,7 +34413,7 @@ No cookies intended. Accountless. Age 18+ only.
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance4, create_fragment8, safe_not_equal, {});
+      init(this, options, instance6, create_fragment11, safe_not_equal, {});
     }
   };
   var main_default = Main;

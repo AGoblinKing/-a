@@ -3,6 +3,7 @@ import { Value } from "./value";
 export const tick = new Value(0)
 export const open_home = new Value(true)
 export const open_game = new Value(false)
+export const open_text = new Value<string>(undefined)
 
 export const motd = new Value(`🎊v0.0.8🎊
 Lighting Update

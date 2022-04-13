@@ -2,6 +2,7 @@ const vec3 = new AFRAME.THREE.Vector3()
 const bb = new AFRAME.THREE.Box3()
 
 AFRAME.registerComponent("vary", {
+    multiple: true,
     schema: {
         property: { type: "string", default: "position"},
         range: { type: "string", default: "-1 -1 -1 1 1 1" }
