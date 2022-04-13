@@ -6,7 +6,7 @@ export const open_game = new Value(false)
 export const open_text = new Value<string>(undefined)
 export const open_loading = new Value(false)
 
-export const motd = new Value(`🎊v0.0.8🎊
+export const motd = new Value(`🎊v0.0.9🎊
 Lighting Update
 
 ✅VRM✅Scene✅WebCam

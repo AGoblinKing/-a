@@ -7029,7 +7029,7 @@
   var open_game = new Value(false);
   var open_text = new Value(void 0);
   var open_loading = new Value(false);
-  var motd = new Value(`\u{1F38A}v0.0.8\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.0.9\u{1F38A}
 Lighting Update
 
 \u2705VRM\u2705Scene\u2705WebCam
@@ -33905,8 +33905,7 @@ What should we put here ? `);
         set_custom_element_data(a_sound, "volume", a_sound_volume_value = 0.5);
         if (!src_url_equal(a_sound.src, a_sound_src_value = "#sound-bg"))
           set_custom_element_data(a_sound, "src", a_sound_src_value);
-        set_custom_element_data(a_scene, "stats", "");
-        set_custom_element_data(a_scene, "renderer", " highRefreshRate: true; alpha: false;precision: medium;");
+        set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: medium;");
         set_custom_element_data(a_scene, "shadow", "type:pcfsoft;");
         set_custom_element_data(a_scene, "fog", "type: linear; color: #AAA");
         set_custom_element_data(a_scene, "physics", "driver: ammo; ");

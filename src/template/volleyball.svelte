@@ -35,8 +35,7 @@
 <Text />
 
 <a-scene
-	stats
-	renderer=" highRefreshRate: true; alpha: false;precision: medium;"
+	renderer="highRefreshRate: true; alpha: false;precision: medium;"
 	shadow="type:pcfsoft;"
 	fog="type: linear; color: #AAA"
 	physics="driver: ammo; "
