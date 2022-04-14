@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { motd, open_game, open_home, open_loading } from 'src/timing'
+	import { motd, open_game, open_home } from 'src/timing'
 
 	import Title from './title.svelte'
 
 	if (location.search === '?go') {
 		open_game.set(true)
-		open_loading.set(true)
 		open_home.set(false)
 	}
 </script>
@@ -29,8 +28,6 @@
 					e.preventDefault()
 				}}
 				on:paste={(e) => {
-					const v = decodeURI(e.clipboardData.getData('text'))
-
 					e.preventDefault()
 				}}
 				on:keydown={(e) => {

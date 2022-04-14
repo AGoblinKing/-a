@@ -42,8 +42,8 @@ function say(said: string) {
     var utterThis = new SpeechSynthesisUtterance(said.replace(findTilde, "control"));
     let voice = findVoice("Aus") || findVoice("UK English Female") || voices[0]
     utterThis.voice = voice
-    utterThis.pitch = 0.9
-    utterThis.rate = 1.1
+    utterThis.pitch = 1
+    utterThis.rate = 1
     synth.speak(utterThis);
 }
 

@@ -180,5 +180,5 @@
 		position="0 25 {groundSize / 4}"
 	/>
 
-	<a-sound autoplay loop volume={0.5} src="#sound-bg" />
+	<a-entity sound="autoplay: true; loop: true; volume: 0.1; src:#sound-bg;positional:false" />
 </a-scene>

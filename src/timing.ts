@@ -6,6 +6,12 @@ export const open_game = new Value(false)
 export const open_text = new Value<string>(undefined)
 export const open_loading = new Value(false)
 
+open_game.on(($g) => {
+    if (open_game.$) {
+        open_loading.set(true)
+    }
+})
+
 export const motd = new Value(`🎊v0.0.9🎊
 Lighting Update
 

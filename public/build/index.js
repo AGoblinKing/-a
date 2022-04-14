@@ -5565,7 +5565,7 @@
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance7, create_fragment12, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance8, create_fragment13, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5588,7 +5588,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance7 ? instance7(component, options.props || {}, (i2, ret, ...rest) => {
+    $$.ctx = instance8 ? instance8(component, options.props || {}, (i2, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
         if (!$$.skip_bound && $$.bound[i2])
@@ -5601,7 +5601,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment12 ? create_fragment12($$.ctx) : false;
+    $$.fragment = create_fragment13 ? create_fragment13($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -7029,6 +7029,11 @@
   var open_game = new Value(false);
   var open_text = new Value(void 0);
   var open_loading = new Value(false);
+  open_game.on(($g) => {
+    if (open_game.$) {
+      open_loading.set(true);
+    }
+  });
   var motd = new Value(`\u{1F38A}v0.0.9\u{1F38A}
 Lighting Update
 
@@ -32729,8 +32734,8 @@ What should we put here ? `);
     var utterThis = new SpeechSynthesisUtterance(said.replace(findTilde, "control"));
     let voice = findVoice("Aus") || findVoice("UK English Female") || voices[0];
     utterThis.voice = voice;
-    utterThis.pitch = 0.9;
-    utterThis.rate = 1.1;
+    utterThis.pitch = 1;
+    utterThis.rate = 1;
     synth.speak(utterThis);
   }
   talk.on(say);
@@ -33612,7 +33617,7 @@ What should we put here ? `);
         $$invalidate(0, ele);
       });
     }
-    const keydown_handler2 = (e) => {
+    const keydown_handler3 = (e) => {
       if (e.key === "Enter") {
         send();
       }
@@ -33632,7 +33637,7 @@ What should we put here ? `);
       escape2,
       input_input_handler,
       input_binding,
-      keydown_handler2
+      keydown_handler3
     ];
   }
   var Text = class extends SvelteComponent {
@@ -33719,9 +33724,7 @@ What should we put here ? `);
     let a_entity9;
     let a_entity9_position_value;
     let t29;
-    let a_sound;
-    let a_sound_volume_value;
-    let a_sound_src_value;
+    let a_entity10;
     let current;
     webcam = new webcam_default({});
     text_1 = new text_default({});
@@ -33796,7 +33799,7 @@ What should we put here ? `);
         t28 = space();
         a_entity9 = element("a-entity");
         t29 = space();
-        a_sound = element("a-sound");
+        a_entity10 = element("a-entity");
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "/sound/bg-ocean.mp3"))
           attr(audio, "src", audio_src_value);
@@ -33900,11 +33903,7 @@ What should we put here ? `);
         set_custom_element_data(a_entity9, "pool__cloud", "mixin: shadow cloud; size: 15");
         set_custom_element_data(a_entity9, "activate__cloud", "");
         set_custom_element_data(a_entity9, "position", a_entity9_position_value = "0 25 " + ctx[0] / 4);
-        set_custom_element_data(a_sound, "autoplay", "");
-        set_custom_element_data(a_sound, "loop", "");
-        set_custom_element_data(a_sound, "volume", a_sound_volume_value = 0.5);
-        if (!src_url_equal(a_sound.src, a_sound_src_value = "#sound-bg"))
-          set_custom_element_data(a_sound, "src", a_sound_src_value);
+        set_custom_element_data(a_entity10, "sound", "autoplay: true; loop: true; volume: 0.1; src:#sound-bg;positional:false");
         set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: medium;");
         set_custom_element_data(a_scene, "shadow", "type:pcfsoft;");
         set_custom_element_data(a_scene, "fog", "type: linear; color: #AAA");
@@ -33973,7 +33972,7 @@ What should we put here ? `);
         append(a_scene, t28);
         append(a_scene, a_entity9);
         append(a_scene, t29);
-        append(a_scene, a_sound);
+        append(a_scene, a_entity10);
         current = true;
       },
       p(ctx2, [dirty]) {
@@ -34212,9 +34211,9 @@ What should we put here ? `);
         if (!mounted) {
           dispose = [
             listen(textarea, "copy", copy_handler),
-            listen(textarea, "paste", ctx[1]),
+            listen(textarea, "paste", paste_handler),
             listen(textarea, "keydown", keydown_handler),
-            listen(div5, "click", ctx[2])
+            listen(div5, "click", ctx[1])
           ];
           mounted = true;
         }
@@ -34246,6 +34245,9 @@ What should we put here ? `);
   var copy_handler = (e) => {
     e.preventDefault();
   };
+  var paste_handler = (e) => {
+    e.preventDefault();
+  };
   var keydown_handler = (e) => {
   };
   function instance5($$self, $$props, $$invalidate) {
@@ -34253,18 +34255,13 @@ What should we put here ? `);
     component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
     if (location.search === "?go") {
       open_game.set(true);
-      open_loading.set(true);
       open_home.set(false);
     }
-    const paste_handler = (e) => {
-      const v2 = decodeURI(e.clipboardData.getData("text"));
-      e.preventDefault();
-    };
     const click_handler = () => {
       open_home.set(false);
       open_game.set(true);
     };
-    return [$motd, paste_handler, click_handler];
+    return [$motd, click_handler];
   }
   var Home = class extends SvelteComponent {
     constructor(options) {
@@ -34274,7 +34271,147 @@ What should we put here ? `);
   };
   var home_default = Home;
 
+  // src/ui/loading.svelte
+  function create_fragment11(ctx) {
+    let div5;
+    let div0;
+    let t0;
+    let title;
+    let t1;
+    let div4;
+    let div3;
+    let div1;
+    let t2;
+    let textarea;
+    let t3;
+    let div2;
+    let current;
+    let mounted;
+    let dispose;
+    title = new title_default({});
+    return {
+      c() {
+        div5 = element("div");
+        div0 = element("div");
+        t0 = space();
+        create_component(title.$$.fragment);
+        t1 = space();
+        div4 = element("div");
+        div3 = element("div");
+        div1 = element("div");
+        t2 = space();
+        textarea = element("textarea");
+        t3 = space();
+        div2 = element("div");
+        attr(div0, "class", "sprites sprite svelte-1o269");
+        attr(div1, "class", "flex svelte-1o269");
+        attr(textarea, "type", "text");
+        attr(textarea, "class", "text button svelte-1o269");
+        attr(textarea, "maxlength", "200");
+        textarea.value = ctx[0];
+        textarea.readOnly = true;
+        attr(div2, "class", "flex svelte-1o269");
+        attr(div3, "class", "span2 full svelte-1o269");
+        attr(div4, "class", "vbox svelte-1o269");
+        attr(div5, "class", "menu svelte-1o269");
+      },
+      m(target, anchor) {
+        insert(target, div5, anchor);
+        append(div5, div0);
+        append(div5, t0);
+        mount_component(title, div5, null);
+        append(div5, t1);
+        append(div5, div4);
+        append(div4, div3);
+        append(div3, div1);
+        append(div3, t2);
+        append(div3, textarea);
+        append(div3, t3);
+        append(div3, div2);
+        current = true;
+        if (!mounted) {
+          dispose = [
+            listen(textarea, "copy", copy_handler2),
+            listen(textarea, "paste", ctx[1]),
+            listen(textarea, "keydown", keydown_handler2)
+          ];
+          mounted = true;
+        }
+      },
+      p(ctx2, [dirty]) {
+        if (!current || dirty & 1) {
+          textarea.value = ctx2[0];
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(title.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(title.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div5);
+        destroy_component(title);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  var copy_handler2 = (e) => {
+    e.preventDefault();
+  };
+  var keydown_handler2 = (e) => {
+  };
+  function instance6($$self, $$props, $$invalidate) {
+    let $loading;
+    component_subscribe($$self, loading, ($$value) => $$invalidate(0, $loading = $$value));
+    const paste_handler2 = (e) => {
+      const v2 = decodeURI(e.clipboardData.getData("text"));
+      e.preventDefault();
+    };
+    return [$loading, paste_handler2];
+  }
+  var Loading = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance6, create_fragment11, safe_not_equal, {});
+    }
+  };
+  var loading_default = Loading;
+
   // src/main.svelte
+  function create_if_block_2(ctx) {
+    let loading4;
+    let current;
+    loading4 = new loading_default({});
+    return {
+      c() {
+        create_component(loading4.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(loading4, target, anchor);
+        current = true;
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(loading4.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(loading4.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(loading4, detaching);
+      }
+    };
+  }
   function create_if_block_1(ctx) {
     let home;
     let current;
@@ -34330,15 +34467,17 @@ What should we put here ? `);
       }
     };
   }
-  function create_fragment11(ctx) {
+  function create_fragment12(ctx) {
     let text_1;
     let t0;
     let t1;
-    let if_block1_anchor;
+    let t2;
+    let if_block2_anchor;
     let current;
     text_1 = new text_default({});
-    let if_block0 = ctx[0] && create_if_block_1(ctx);
-    let if_block1 = ctx[1] && create_if_block2(ctx);
+    let if_block0 = ctx[0] && create_if_block_2(ctx);
+    let if_block1 = ctx[1] && create_if_block_1(ctx);
+    let if_block2 = ctx[2] && create_if_block2(ctx);
     return {
       c() {
         create_component(text_1.$$.fragment);
@@ -34348,7 +34487,10 @@ What should we put here ? `);
         t1 = space();
         if (if_block1)
           if_block1.c();
-        if_block1_anchor = empty();
+        t2 = space();
+        if (if_block2)
+          if_block2.c();
+        if_block2_anchor = empty();
       },
       m(target, anchor) {
         mount_component(text_1, target, anchor);
@@ -34358,7 +34500,10 @@ What should we put here ? `);
         insert(target, t1, anchor);
         if (if_block1)
           if_block1.m(target, anchor);
-        insert(target, if_block1_anchor, anchor);
+        insert(target, t2, anchor);
+        if (if_block2)
+          if_block2.m(target, anchor);
+        insert(target, if_block2_anchor, anchor);
         current = true;
       },
       p(ctx2, [dirty]) {
@@ -34368,7 +34513,7 @@ What should we put here ? `);
               transition_in(if_block0, 1);
             }
           } else {
-            if_block0 = create_if_block_1(ctx2);
+            if_block0 = create_if_block_2(ctx2);
             if_block0.c();
             transition_in(if_block0, 1);
             if_block0.m(t1.parentNode, t1);
@@ -34382,20 +34527,38 @@ What should we put here ? `);
         }
         if (ctx2[1]) {
           if (if_block1) {
-            if_block1.p(ctx2, dirty);
             if (dirty & 2) {
               transition_in(if_block1, 1);
             }
           } else {
-            if_block1 = create_if_block2(ctx2);
+            if_block1 = create_if_block_1(ctx2);
             if_block1.c();
             transition_in(if_block1, 1);
-            if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
+            if_block1.m(t2.parentNode, t2);
           }
         } else if (if_block1) {
           group_outros();
           transition_out(if_block1, 1, 1, () => {
             if_block1 = null;
+          });
+          check_outros();
+        }
+        if (ctx2[2]) {
+          if (if_block2) {
+            if_block2.p(ctx2, dirty);
+            if (dirty & 4) {
+              transition_in(if_block2, 1);
+            }
+          } else {
+            if_block2 = create_if_block2(ctx2);
+            if_block2.c();
+            transition_in(if_block2, 1);
+            if_block2.m(if_block2_anchor.parentNode, if_block2_anchor);
+          }
+        } else if (if_block2) {
+          group_outros();
+          transition_out(if_block2, 1, 1, () => {
+            if_block2 = null;
           });
           check_outros();
         }
@@ -34406,12 +34569,14 @@ What should we put here ? `);
         transition_in(text_1.$$.fragment, local);
         transition_in(if_block0);
         transition_in(if_block1);
+        transition_in(if_block2);
         current = true;
       },
       o(local) {
         transition_out(text_1.$$.fragment, local);
         transition_out(if_block0);
         transition_out(if_block1);
+        transition_out(if_block2);
         current = false;
       },
       d(detaching) {
@@ -34425,22 +34590,28 @@ What should we put here ? `);
         if (if_block1)
           if_block1.d(detaching);
         if (detaching)
-          detach(if_block1_anchor);
+          detach(t2);
+        if (if_block2)
+          if_block2.d(detaching);
+        if (detaching)
+          detach(if_block2_anchor);
       }
     };
   }
   var groundSize = 100;
-  function instance6($$self, $$props, $$invalidate) {
+  function instance7($$self, $$props, $$invalidate) {
+    let $open_loading;
     let $open_home;
     let $open_game;
-    component_subscribe($$self, open_home, ($$value) => $$invalidate(0, $open_home = $$value));
-    component_subscribe($$self, open_game, ($$value) => $$invalidate(1, $open_game = $$value));
-    return [$open_home, $open_game];
+    component_subscribe($$self, open_loading, ($$value) => $$invalidate(0, $open_loading = $$value));
+    component_subscribe($$self, open_home, ($$value) => $$invalidate(1, $open_home = $$value));
+    component_subscribe($$self, open_game, ($$value) => $$invalidate(2, $open_game = $$value));
+    return [$open_loading, $open_home, $open_game];
   }
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment11, safe_not_equal, {});
+      init(this, options, instance7, create_fragment12, safe_not_equal, {});
     }
   };
   var main_default = Main;
