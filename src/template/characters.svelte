@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../component/wasd-controller'
-
 </script>
 
 <a-entity
@@ -16,5 +15,5 @@
 	mixin="shadow character"
 	position="0 0.25 -6"
 	rotation="0 180 0"
-	vrm="src: /vrm/doer.vrm; mirror: true"
+	vrm="src: /vrm/femgoblin.vrm; mirror: true"
 />

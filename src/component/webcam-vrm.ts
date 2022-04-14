@@ -253,7 +253,7 @@ videoElement.on(($ve) => {
   let ready = false
   const camera = new Camera($ve, {
     onFrame: async () => {
-      if (!ready) return
+      // if (!ready) return
       ctx.drawImage($ve, 0, 0, width, height)
       await holistic.send({ image: canvasElement.$ });
       ready = false
@@ -287,10 +287,13 @@ function Random(items: string) {
 }
 
 talk.on(async ($talk) => {
+  if (!$talk) return
+
   const s = Math.sin(Math.PI * tick.$);
 
 
   const spl = $talk.split(" ")
+  spl.push("pop")
   const intv = setInterval(() => {
     const item = spl.pop()
     if (!item) {
@@ -298,7 +301,7 @@ talk.on(async ($talk) => {
       return
     }
 
-    mirrorVRM.$?.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName[Random("AEIOU")], 0.5 + 0.5 * s)
+    mirrorVRM.$?.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName[Random("O")], 0.5 + 2 * s)
 
   }, 1 / 3.5 * 1000)
 })

@@ -61,9 +61,6 @@
 </div>
 
 <style>
-	gap {
-		height: 10vh;
-	}
 	.full {
 		width: 90vw;
 	}
@@ -89,7 +86,7 @@
 		right: 0;
 		pointer-events: all;
 		bottom: 0;
-		z-index: 1;
+		z-index: 10;
 		background-color: black;
 		box-shadow: inset 0 5vh 5rem rgba(0, 140, 255, 0.2), inset 0 -5vh 5rem rgba(0, 140, 255, 0.2),
 			inset 40vw 0 5rem rgba(0, 140, 255, 0.2), inset -40vw 0 5rem rgba(0, 140, 255, 0.2) !important;

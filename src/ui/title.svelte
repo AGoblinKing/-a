@@ -12,8 +12,7 @@
 <center>
 	<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank"
 		><img
-			height="30"
-			style="border:0px;height:36px;"
+			style="border:0px;height:4vh;"
 			src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3"
 			border="0"
 			alt="Buy Me a Coffee at ko-fi.com"

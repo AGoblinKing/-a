@@ -5565,7 +5565,7 @@
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance8, create_fragment13, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance9, create_fragment14, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5588,7 +5588,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance8 ? instance8(component, options.props || {}, (i2, ret, ...rest) => {
+    $$.ctx = instance9 ? instance9(component, options.props || {}, (i2, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
         if (!$$.skip_bound && $$.bound[i2])
@@ -5601,7 +5601,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment13 ? create_fragment13($$.ctx) : false;
+    $$.fragment = create_fragment14 ? create_fragment14($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -32735,7 +32735,7 @@ What should we put here ? `);
     let voice = findVoice("Aus") || findVoice("UK English Female") || voices[0];
     utterThis.voice = voice;
     utterThis.pitch = 1;
-    utterThis.rate = 1;
+    utterThis.rate = 0.8;
     synth.speak(utterThis);
   }
   talk.on(say);
@@ -32912,8 +32912,6 @@ What should we put here ? `);
     let ready = false;
     const camera = new import_camera_utils.Camera($ve, {
       onFrame: async () => {
-        if (!ready)
-          return;
         ctx.drawImage($ve, 0, 0, width, height);
         await holistic.send({ image: canvasElement.$ });
         ready = false;
@@ -32938,15 +32936,18 @@ What should we put here ? `);
     return items[Math.floor(Math.random() * items.length)];
   }
   talk.on(async ($talk) => {
+    if (!$talk)
+      return;
     const s2 = Math.sin(Math.PI * tick.$);
     const spl = $talk.split(" ");
+    spl.push("pop");
     const intv = setInterval(() => {
       const item = spl.pop();
       if (!item) {
         clearInterval(intv);
         return;
       }
-      mirrorVRM.$?.blendShapeProxy.setValue(u.BlendShapePresetName[Random("AEIOU")], 0.5 + 0.5 * s2);
+      mirrorVRM.$?.blendShapeProxy.setValue(u.BlendShapePresetName[Random("O")], 0.5 + 2 * s2);
     }, 1 / 3.5 * 1e3);
   });
 
@@ -33169,7 +33170,7 @@ What should we put here ? `);
         set_custom_element_data(a_entity1, "mixin", "shadow character");
         set_custom_element_data(a_entity1, "position", "0 0.25 -6");
         set_custom_element_data(a_entity1, "rotation", "0 180 0");
-        set_custom_element_data(a_entity1, "vrm", "src: /vrm/doer.vrm; mirror: true");
+        set_custom_element_data(a_entity1, "vrm", "src: /vrm/femgoblin.vrm; mirror: true");
       },
       m(target, anchor) {
         insert(target, a_entity0, anchor);
@@ -33512,8 +33513,8 @@ What should we put here ? `);
         div = element("div");
         input = element("input");
         attr(input, "type", "text");
-        attr(input, "class", "entry svelte-14ifc7d");
-        attr(div, "class", "lofi svelte-14ifc7d");
+        attr(input, "class", "entry svelte-e0lgn5");
+        attr(div, "class", "lofi svelte-e0lgn5");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -33648,86 +33649,152 @@ What should we put here ? `);
   };
   var text_default = Text;
 
-  // src/template/volleyball.svelte
+  // src/ui/heard.svelte
   function create_fragment8(ctx) {
+    let div;
+    let input;
+    return {
+      c() {
+        div = element("div");
+        input = element("input");
+        attr(input, "type", "text");
+        attr(input, "class", "entry svelte-pqe1v5");
+        input.readOnly = true;
+        attr(div, "class", "lofi svelte-pqe1v5");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, input);
+        ctx[1](input);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        ctx[1](null);
+      }
+    };
+  }
+  function instance4($$self, $$props, $$invalidate) {
+    let text2;
+    talk.on(() => {
+      if (!text2 || !talk.$)
+        return;
+      $$invalidate(0, text2.value = talk.$, text2);
+    });
+    function input_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        text2 = $$value;
+        $$invalidate(0, text2);
+      });
+    }
+    return [text2, input_binding];
+  }
+  var Heard = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance4, create_fragment8, safe_not_equal, {});
+    }
+  };
+  var heard_default = Heard;
+
+  // src/template/volleyball.svelte
+  function create_fragment9(ctx) {
     let webcam;
     let t0;
     let text_1;
     let t1;
+    let heard;
+    let t2;
     let a_scene;
     let a_assets;
     let audio;
     let audio_src_value;
-    let t2;
-    let a_asset_item;
-    let a_asset_item_src_value;
     let t3;
-    let a_mixin0;
+    let a_asset_item0;
+    let a_asset_item0_src_value;
     let t4;
-    let a_mixin1;
+    let a_asset_item1;
+    let a_asset_item1_src_value;
     let t5;
-    let a_mixin2;
+    let a_mixin0;
     let t6;
-    let a_mixin3;
+    let a_mixin1;
     let t7;
-    let a_mixin4;
+    let a_mixin2;
     let t8;
-    let a_mixin5;
+    let a_mixin3;
     let t9;
-    let a_mixin6;
-    let a_mixin6_ring_value;
+    let a_mixin4;
     let t10;
-    let a_mixin7;
+    let a_mixin5;
     let t11;
-    let a_mixin8;
-    let a_mixin8_animation_value;
+    let a_mixin6;
+    let a_mixin6_bounds_value;
     let t12;
-    let charactersmixins;
+    let a_mixin7;
+    let a_mixin7_ring_value;
     let t13;
-    let floraassets;
+    let a_mixin8;
     let t14;
-    let camerafps;
+    let a_mixin9;
     let t15;
-    let flora;
+    let a_mixin10;
+    let a_mixin10_animation_value;
     let t16;
+    let charactersmixins;
+    let t17;
+    let floraassets;
+    let t18;
+    let camerafps;
+    let t19;
+    let flora;
+    let t20;
     let a_sky;
     let a_sky_animate_value;
-    let t17;
-    let a_entity0;
-    let t18;
-    let a_entity1;
-    let t19;
-    let a_entity2;
-    let t20;
-    let a_entity3;
     let t21;
-    let a_entity4;
+    let a_entity0;
     let t22;
-    let a_entity5;
+    let a_entity1;
     let t23;
-    let a_entity6;
-    let a_entity6_position_value;
-    let a_entity6_light_value;
+    let a_entity2;
     let t24;
-    let a_entity7;
-    let a_entity7_position_value;
-    let a_entity7_light_value;
+    let a_entity3;
     let t25;
-    let a_entity8;
+    let a_entity4;
     let t26;
-    let characters;
+    let a_entity5;
     let t27;
+    let a_entity6;
+    let t28;
+    let a_entity7;
+    let t29;
+    let a_entity8;
+    let a_entity8_position_value;
+    let a_entity8_light_value;
+    let t30;
+    let a_entity9;
+    let a_entity9_position_value;
+    let a_entity9_light_value;
+    let t31;
+    let a_entity10;
+    let t32;
+    let characters;
+    let t33;
     let a_plane;
     let a_plane_width_value;
     let a_plane_height_value;
-    let t28;
-    let a_entity9;
-    let a_entity9_position_value;
-    let t29;
-    let a_entity10;
+    let t34;
+    let a_entity11;
+    let a_entity11_position_value;
+    let t35;
+    let a_entity12;
     let current;
     webcam = new webcam_default({});
     text_1 = new text_default({});
+    heard = new heard_default({});
     charactersmixins = new characters_assets_default({});
     floraassets = new flora_assets_default({
       props: { groundSize: ctx[0] }
@@ -33741,71 +33808,86 @@ What should we put here ? `);
         t0 = space();
         create_component(text_1.$$.fragment);
         t1 = space();
+        create_component(heard.$$.fragment);
+        t2 = space();
         a_scene = element("a-scene");
         a_assets = element("a-assets");
         audio = element("audio");
-        t2 = space();
-        a_asset_item = element("a-asset-item");
         t3 = space();
-        a_mixin0 = element("a-mixin");
+        a_asset_item0 = element("a-asset-item");
         t4 = space();
-        a_mixin1 = element("a-mixin");
+        a_asset_item1 = element("a-asset-item");
         t5 = space();
-        a_mixin2 = element("a-mixin");
+        a_mixin0 = element("a-mixin");
         t6 = space();
-        a_mixin3 = element("a-mixin");
+        a_mixin1 = element("a-mixin");
         t7 = space();
-        a_mixin4 = element("a-mixin");
+        a_mixin2 = element("a-mixin");
         t8 = space();
-        a_mixin5 = element("a-mixin");
+        a_mixin3 = element("a-mixin");
         t9 = space();
-        a_mixin6 = element("a-mixin");
+        a_mixin4 = element("a-mixin");
         t10 = space();
-        a_mixin7 = element("a-mixin");
+        a_mixin5 = element("a-mixin");
         t11 = space();
-        a_mixin8 = element("a-mixin");
+        a_mixin6 = element("a-mixin");
         t12 = space();
-        create_component(charactersmixins.$$.fragment);
+        a_mixin7 = element("a-mixin");
         t13 = space();
-        create_component(floraassets.$$.fragment);
+        a_mixin8 = element("a-mixin");
         t14 = space();
-        create_component(camerafps.$$.fragment);
+        a_mixin9 = element("a-mixin");
         t15 = space();
-        create_component(flora.$$.fragment);
+        a_mixin10 = element("a-mixin");
         t16 = space();
-        a_sky = element("a-sky");
+        create_component(charactersmixins.$$.fragment);
         t17 = space();
-        a_entity0 = element("a-entity");
+        create_component(floraassets.$$.fragment);
         t18 = space();
-        a_entity1 = element("a-entity");
+        create_component(camerafps.$$.fragment);
         t19 = space();
-        a_entity2 = element("a-entity");
+        create_component(flora.$$.fragment);
         t20 = space();
-        a_entity3 = element("a-entity");
+        a_sky = element("a-sky");
         t21 = space();
-        a_entity4 = element("a-entity");
+        a_entity0 = element("a-entity");
         t22 = space();
-        a_entity5 = element("a-entity");
+        a_entity1 = element("a-entity");
         t23 = space();
-        a_entity6 = element("a-entity");
+        a_entity2 = element("a-entity");
         t24 = space();
-        a_entity7 = element("a-entity");
+        a_entity3 = element("a-entity");
         t25 = space();
-        a_entity8 = element("a-entity");
+        a_entity4 = element("a-entity");
         t26 = space();
-        create_component(characters.$$.fragment);
+        a_entity5 = element("a-entity");
         t27 = space();
-        a_plane = element("a-plane");
+        a_entity6 = element("a-entity");
         t28 = space();
-        a_entity9 = element("a-entity");
+        a_entity7 = element("a-entity");
         t29 = space();
+        a_entity8 = element("a-entity");
+        t30 = space();
+        a_entity9 = element("a-entity");
+        t31 = space();
         a_entity10 = element("a-entity");
+        t32 = space();
+        create_component(characters.$$.fragment);
+        t33 = space();
+        a_plane = element("a-plane");
+        t34 = space();
+        a_entity11 = element("a-entity");
+        t35 = space();
+        a_entity12 = element("a-entity");
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "/sound/bg-ocean.mp3"))
           attr(audio, "src", audio_src_value);
-        set_custom_element_data(a_asset_item, "id", "glb-tree");
-        if (!src_url_equal(a_asset_item.src, a_asset_item_src_value = "/glb/tree.glb"))
-          set_custom_element_data(a_asset_item, "src", a_asset_item_src_value);
+        set_custom_element_data(a_asset_item0, "id", "glb-tree");
+        if (!src_url_equal(a_asset_item0.src, a_asset_item0_src_value = "/glb/tree.glb"))
+          set_custom_element_data(a_asset_item0, "src", a_asset_item0_src_value);
+        set_custom_element_data(a_asset_item1, "id", "glb-rockC");
+        if (!src_url_equal(a_asset_item1.src, a_asset_item1_src_value = "/glb/rockC.glb"))
+          set_custom_element_data(a_asset_item1, "src", a_asset_item1_src_value);
         set_custom_element_data(a_mixin0, "id", "shadow");
         set_custom_element_data(a_mixin0, "shadow", "cast: true");
         set_custom_element_data(a_mixin1, "id", "toon");
@@ -33833,26 +33915,42 @@ What should we put here ? `);
         set_custom_element_data(a_mixin5, "ammo-body", "mass:0.1");
         set_custom_element_data(a_mixin5, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 0.35; offset: -1 0.25 0.5");
         set_custom_element_data(a_mixin5, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin6, "id", "mountains");
-        set_custom_element_data(a_mixin6, "shadow", "");
-        set_custom_element_data(a_mixin6, "gltf-model", "/glb/rockC.glb");
-        set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 100");
-        set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin6, "vary", "property: scale; range: 12 7.5 12 12 15 12");
-        set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
-        set_custom_element_data(a_mixin7, "id", "rock");
+        set_custom_element_data(a_mixin6, "id", "water");
+        set_custom_element_data(a_mixin6, "geometry", "");
+        set_custom_element_data(a_mixin6, "scale", "0.5 0.1 0.5");
+        set_custom_element_data(a_mixin6, "ammo-body", "mass:0.1");
+        set_custom_element_data(a_mixin6, "force", "0 0 -2");
+        set_custom_element_data(a_mixin6, "material", "color: blue; transparent: true; emissive: blue; opacity: 0.5");
+        set_custom_element_data(a_mixin6, "bounds", a_mixin6_bounds_value = "-" + ctx[0] + " -5 -" + ctx[0] + " " + ctx[0] + " 40 " + ctx[0]);
+        set_custom_element_data(a_mixin6, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 0.2; offset: 0 0.2 0");
+        set_custom_element_data(a_mixin6, "position", "0 5 0");
+        set_custom_element_data(a_mixin7, "id", "mountains");
         set_custom_element_data(a_mixin7, "shadow", "");
-        set_custom_element_data(a_mixin7, "gltf-model", "/glb/rockB.glb");
-        set_custom_element_data(a_mixin7, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
-        set_custom_element_data(a_mixin7, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin7, "ammo-body", "type: static; mass: 0");
-        set_custom_element_data(a_mixin7, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
-        set_custom_element_data(a_mixin8, "id", "cloud");
+        set_custom_element_data(a_mixin7, "gltf-model", "#glb-rockC");
+        set_custom_element_data(a_mixin7, "ring", a_mixin7_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 100");
+        set_custom_element_data(a_mixin7, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin7, "vary", "property: scale; range: 12 7.5 12 12 15 12");
+        set_custom_element_data(a_mixin7, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
+        set_custom_element_data(a_mixin8, "id", "rock");
+        set_custom_element_data(a_mixin8, "shadow", "");
+        set_custom_element_data(a_mixin8, "gltf-model", "/glb/rockB.glb");
+        set_custom_element_data(a_mixin8, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
         set_custom_element_data(a_mixin8, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin8, "animation", a_mixin8_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx[0] + "; easing: linear; loop: true;");
-        set_custom_element_data(a_mixin8, "material", "color: #ffffff; opacity: 0.5; transparent: true; emissive: white; ");
-        set_custom_element_data(a_mixin8, "geometry", "");
-        set_custom_element_data(a_mixin8, "scale", "25 5 15");
+        set_custom_element_data(a_mixin8, "ammo-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin8, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
+        set_custom_element_data(a_mixin9, "id", "rockwater");
+        set_custom_element_data(a_mixin9, "shadow", "");
+        set_custom_element_data(a_mixin9, "gltf-model", "#glb-rockC");
+        set_custom_element_data(a_mixin9, "vary", "property: scale; range: 1.5 0.1 1.5 2.5 0.5 2.5");
+        set_custom_element_data(a_mixin9, "ring", "radius: 5; count: 10");
+        set_custom_element_data(a_mixin9, "ammo-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin9, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
+        set_custom_element_data(a_mixin10, "id", "cloud");
+        set_custom_element_data(a_mixin10, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin10, "animation", a_mixin10_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx[0] + "; easing: linear; loop: true;");
+        set_custom_element_data(a_mixin10, "material", "color: #ffffff; opacity: 0.5; transparent: true; emissive: white; ");
+        set_custom_element_data(a_mixin10, "geometry", "");
+        set_custom_element_data(a_mixin10, "scale", "25 5 15");
         set_custom_element_data(a_sky, "color", sky);
         set_custom_element_data(a_sky, "animate", a_sky_animate_value = "property: color; to: " + sky_dark + "; easing: easeInOut; dur: 6000 ");
         set_custom_element_data(a_entity0, "pool__tree", "mixin: tree; size: 50");
@@ -33863,14 +33961,18 @@ What should we put here ? `);
         set_custom_element_data(a_entity2, "activate__grass2", "");
         set_custom_element_data(a_entity3, "pool__rock", "mixin: rock; size: 50");
         set_custom_element_data(a_entity3, "activate__rock", "");
-        set_custom_element_data(a_entity4, "pool__mountains", "mixin: mountains; size: 100");
-        set_custom_element_data(a_entity4, "activate__mountains", "");
-        set_custom_element_data(a_entity5, "pool__coins", "mixin: coinGold; size: 20");
-        set_custom_element_data(a_entity5, "material", "shader: flat;");
-        set_custom_element_data(a_entity5, "position", "0 20 0");
-        set_custom_element_data(a_entity5, "activate__coins", "");
-        set_custom_element_data(a_entity6, "position", a_entity6_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
-        set_custom_element_data(a_entity6, "light", a_entity6_light_value = ctx[1]({
+        set_custom_element_data(a_entity4, "pool__rockwater", "mixin: rockwater; size: 10");
+        set_custom_element_data(a_entity4, "activate__rockwater", "");
+        set_custom_element_data(a_entity5, "pool__mountains", "mixin: mountains; size: 100");
+        set_custom_element_data(a_entity5, "activate__mountains", "");
+        set_custom_element_data(a_entity6, "pool__water", "mixin: water; size: 500");
+        set_custom_element_data(a_entity6, "activate__water", "");
+        set_custom_element_data(a_entity7, "pool__coins", "mixin: coinGold; size: 20");
+        set_custom_element_data(a_entity7, "material", "shader: flat;");
+        set_custom_element_data(a_entity7, "position", "0 20 0");
+        set_custom_element_data(a_entity7, "activate__coins", "");
+        set_custom_element_data(a_entity8, "position", a_entity8_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
+        set_custom_element_data(a_entity8, "light", a_entity8_light_value = ctx[1]({
           type: "directional",
           castShadow: true,
           color: light,
@@ -33883,14 +33985,14 @@ What should we put here ? `);
           shadowMapWidth: 1024 * 4,
           intensity: 0.75
         }));
-        set_custom_element_data(a_entity7, "position", a_entity7_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
-        set_custom_element_data(a_entity7, "light", a_entity7_light_value = ctx[1]({
+        set_custom_element_data(a_entity9, "position", a_entity9_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
+        set_custom_element_data(a_entity9, "light", a_entity9_light_value = ctx[1]({
           type: "directional",
           color: light,
           intensity: 0.75
         }));
-        set_custom_element_data(a_entity8, "light", "type:ambient; color:white; intensity:0.1;");
-        set_custom_element_data(a_entity8, "position", "-1 1 1");
+        set_custom_element_data(a_entity10, "light", "type:ambient; color:white; intensity:0.1;");
+        set_custom_element_data(a_entity10, "position", "-1 1 1");
         set_custom_element_data(a_plane, "shadow", "");
         set_custom_element_data(a_plane, "position", "0 0 0");
         set_custom_element_data(a_plane, "rotation", "-90 0 0");
@@ -33900,10 +34002,10 @@ What should we put here ? `);
         set_custom_element_data(a_plane, "ammo-shape", "type:box");
         set_custom_element_data(a_plane, "material", "repeat: 10 10;");
         set_custom_element_data(a_plane, "color", "#334411");
-        set_custom_element_data(a_entity9, "pool__cloud", "mixin: shadow cloud; size: 15");
-        set_custom_element_data(a_entity9, "activate__cloud", "");
-        set_custom_element_data(a_entity9, "position", a_entity9_position_value = "0 25 " + ctx[0] / 4);
-        set_custom_element_data(a_entity10, "sound", "autoplay: true; loop: true; volume: 0.1; src:#sound-bg;positional:false");
+        set_custom_element_data(a_entity11, "pool__cloud", "mixin: shadow cloud; size: 15");
+        set_custom_element_data(a_entity11, "activate__cloud", "");
+        set_custom_element_data(a_entity11, "position", a_entity11_position_value = "0 25 " + ctx[0] / 4);
+        set_custom_element_data(a_entity12, "sound", "autoplay: true; loop: true; volume: 0.1; src:#sound-bg;positional:false");
         set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: medium;");
         set_custom_element_data(a_scene, "shadow", "type:pcfsoft;");
         set_custom_element_data(a_scene, "fog", "type: linear; color: #AAA");
@@ -33914,82 +34016,97 @@ What should we put here ? `);
         insert(target, t0, anchor);
         mount_component(text_1, target, anchor);
         insert(target, t1, anchor);
+        mount_component(heard, target, anchor);
+        insert(target, t2, anchor);
         insert(target, a_scene, anchor);
         append(a_scene, a_assets);
         append(a_assets, audio);
-        append(a_assets, t2);
-        append(a_assets, a_asset_item);
         append(a_assets, t3);
-        append(a_assets, a_mixin0);
+        append(a_assets, a_asset_item0);
         append(a_assets, t4);
-        append(a_assets, a_mixin1);
+        append(a_assets, a_asset_item1);
         append(a_assets, t5);
-        append(a_assets, a_mixin2);
+        append(a_assets, a_mixin0);
         append(a_assets, t6);
-        append(a_assets, a_mixin3);
+        append(a_assets, a_mixin1);
         append(a_assets, t7);
-        append(a_assets, a_mixin4);
+        append(a_assets, a_mixin2);
         append(a_assets, t8);
-        append(a_assets, a_mixin5);
+        append(a_assets, a_mixin3);
         append(a_assets, t9);
-        append(a_assets, a_mixin6);
+        append(a_assets, a_mixin4);
         append(a_assets, t10);
-        append(a_assets, a_mixin7);
+        append(a_assets, a_mixin5);
         append(a_assets, t11);
-        append(a_assets, a_mixin8);
+        append(a_assets, a_mixin6);
         append(a_assets, t12);
-        mount_component(charactersmixins, a_assets, null);
+        append(a_assets, a_mixin7);
         append(a_assets, t13);
+        append(a_assets, a_mixin8);
+        append(a_assets, t14);
+        append(a_assets, a_mixin9);
+        append(a_assets, t15);
+        append(a_assets, a_mixin10);
+        append(a_assets, t16);
+        mount_component(charactersmixins, a_assets, null);
+        append(a_assets, t17);
         mount_component(floraassets, a_assets, null);
-        append(a_scene, t14);
-        mount_component(camerafps, a_scene, null);
-        append(a_scene, t15);
-        mount_component(flora, a_scene, null);
-        append(a_scene, t16);
-        append(a_scene, a_sky);
-        append(a_scene, t17);
-        append(a_scene, a_entity0);
         append(a_scene, t18);
-        append(a_scene, a_entity1);
+        mount_component(camerafps, a_scene, null);
         append(a_scene, t19);
-        append(a_scene, a_entity2);
+        mount_component(flora, a_scene, null);
         append(a_scene, t20);
-        append(a_scene, a_entity3);
+        append(a_scene, a_sky);
         append(a_scene, t21);
-        append(a_scene, a_entity4);
+        append(a_scene, a_entity0);
         append(a_scene, t22);
-        append(a_scene, a_entity5);
+        append(a_scene, a_entity1);
         append(a_scene, t23);
-        append(a_scene, a_entity6);
+        append(a_scene, a_entity2);
         append(a_scene, t24);
-        append(a_scene, a_entity7);
+        append(a_scene, a_entity3);
         append(a_scene, t25);
-        append(a_scene, a_entity8);
+        append(a_scene, a_entity4);
         append(a_scene, t26);
-        mount_component(characters, a_scene, null);
+        append(a_scene, a_entity5);
         append(a_scene, t27);
-        append(a_scene, a_plane);
+        append(a_scene, a_entity6);
         append(a_scene, t28);
-        append(a_scene, a_entity9);
+        append(a_scene, a_entity7);
         append(a_scene, t29);
+        append(a_scene, a_entity8);
+        append(a_scene, t30);
+        append(a_scene, a_entity9);
+        append(a_scene, t31);
         append(a_scene, a_entity10);
+        append(a_scene, t32);
+        mount_component(characters, a_scene, null);
+        append(a_scene, t33);
+        append(a_scene, a_plane);
+        append(a_scene, t34);
+        append(a_scene, a_entity11);
+        append(a_scene, t35);
+        append(a_scene, a_entity12);
         current = true;
       },
       p(ctx2, [dirty]) {
-        if (!current || dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 100")) {
-          set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value);
+        if (!current || dirty & 1 && a_mixin6_bounds_value !== (a_mixin6_bounds_value = "-" + ctx2[0] + " -5 -" + ctx2[0] + " " + ctx2[0] + " 40 " + ctx2[0])) {
+          set_custom_element_data(a_mixin6, "bounds", a_mixin6_bounds_value);
         }
-        if (!current || dirty & 1 && a_mixin8_animation_value !== (a_mixin8_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx2[0] + "; easing: linear; loop: true;")) {
-          set_custom_element_data(a_mixin8, "animation", a_mixin8_animation_value);
+        if (!current || dirty & 1 && a_mixin7_ring_value !== (a_mixin7_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 100")) {
+          set_custom_element_data(a_mixin7, "ring", a_mixin7_ring_value);
+        }
+        if (!current || dirty & 1 && a_mixin10_animation_value !== (a_mixin10_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx2[0] + "; easing: linear; loop: true;")) {
+          set_custom_element_data(a_mixin10, "animation", a_mixin10_animation_value);
         }
         const floraassets_changes = {};
         if (dirty & 1)
           floraassets_changes.groundSize = ctx2[0];
         floraassets.$set(floraassets_changes);
-        if (!current || dirty & 1 && a_entity6_position_value !== (a_entity6_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity6, "position", a_entity6_position_value);
+        if (!current || dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity8, "position", a_entity8_position_value);
         }
-        if (!current || dirty & 1 && a_entity6_light_value !== (a_entity6_light_value = ctx2[1]({
+        if (!current || dirty & 1 && a_entity8_light_value !== (a_entity8_light_value = ctx2[1]({
           type: "directional",
           castShadow: true,
           color: light,
@@ -34002,10 +34119,10 @@ What should we put here ? `);
           shadowMapWidth: 1024 * 4,
           intensity: 0.75
         }))) {
-          set_custom_element_data(a_entity6, "light", a_entity6_light_value);
+          set_custom_element_data(a_entity8, "light", a_entity8_light_value);
         }
-        if (!current || dirty & 1 && a_entity7_position_value !== (a_entity7_position_value = "-" + ctx2[0] / 4 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity7, "position", a_entity7_position_value);
+        if (!current || dirty & 1 && a_entity9_position_value !== (a_entity9_position_value = "-" + ctx2[0] / 4 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity9, "position", a_entity9_position_value);
         }
         if (!current || dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 1.5)) {
           set_custom_element_data(a_plane, "width", a_plane_width_value);
@@ -34013,8 +34130,8 @@ What should we put here ? `);
         if (!current || dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 1.5)) {
           set_custom_element_data(a_plane, "height", a_plane_height_value);
         }
-        if (!current || dirty & 1 && a_entity9_position_value !== (a_entity9_position_value = "0 25 " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity9, "position", a_entity9_position_value);
+        if (!current || dirty & 1 && a_entity11_position_value !== (a_entity11_position_value = "0 25 " + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity11, "position", a_entity11_position_value);
         }
       },
       i(local) {
@@ -34022,6 +34139,7 @@ What should we put here ? `);
           return;
         transition_in(webcam.$$.fragment, local);
         transition_in(text_1.$$.fragment, local);
+        transition_in(heard.$$.fragment, local);
         transition_in(charactersmixins.$$.fragment, local);
         transition_in(floraassets.$$.fragment, local);
         transition_in(camerafps.$$.fragment, local);
@@ -34032,6 +34150,7 @@ What should we put here ? `);
       o(local) {
         transition_out(webcam.$$.fragment, local);
         transition_out(text_1.$$.fragment, local);
+        transition_out(heard.$$.fragment, local);
         transition_out(charactersmixins.$$.fragment, local);
         transition_out(floraassets.$$.fragment, local);
         transition_out(camerafps.$$.fragment, local);
@@ -34046,6 +34165,9 @@ What should we put here ? `);
         destroy_component(text_1, detaching);
         if (detaching)
           detach(t1);
+        destroy_component(heard, detaching);
+        if (detaching)
+          detach(t2);
         if (detaching)
           detach(a_scene);
         destroy_component(charactersmixins);
@@ -34059,7 +34181,7 @@ What should we put here ? `);
   var light = "#FEE";
   var sky = "#336";
   var sky_dark = "#003";
-  function instance4($$self, $$props, $$invalidate) {
+  function instance5($$self, $$props, $$invalidate) {
     start();
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize: groundSize2 = 100 } = $$props;
@@ -34073,13 +34195,13 @@ What should we put here ? `);
   var Volleyball = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance4, create_fragment8, safe_not_equal, { groundSize: 0 });
+      init(this, options, instance5, create_fragment9, safe_not_equal, { groundSize: 0 });
     }
   };
   var volleyball_default = Volleyball;
 
   // src/ui/title.svelte
-  function create_fragment9(ctx) {
+  function create_fragment10(ctx) {
     let div3;
     let t8;
     let center;
@@ -34092,7 +34214,7 @@ What should we put here ? `);
 			<offset class="svelte-1uatlh0"><b class="svelte-1uatlh0">L</b>ife</offset></div></div>`;
         t8 = space();
         center = element("center");
-        center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-1uatlh0"><img height="30" style="border:0px;height:36px;" src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" border="0" alt="Buy Me a Coffee at ko-fi.com"/></a> 
+        center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-1uatlh0"><img style="border:0px;height:4vh;" src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" border="0" alt="Buy Me a Coffee at ko-fi.com"/></a> 
 	<a href="https://discord.gg/8tkEQwsmwM" target="_blank" class="svelte-1uatlh0">\u{1F4AC}</a>`;
         attr(div3, "class", "intro svelte-1uatlh0");
       },
@@ -34117,13 +34239,13 @@ What should we put here ? `);
   var Title = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment9, safe_not_equal, {});
+      init(this, options, null, create_fragment10, safe_not_equal, {});
     }
   };
   var title_default = Title;
 
   // src/ui/home.svelte
-  function create_fragment10(ctx) {
+  function create_fragment11(ctx) {
     let div9;
     let div0;
     let t0;
@@ -34169,23 +34291,23 @@ What should we put here ? `);
         div5.textContent = "\u{1F340}";
         t7 = space();
         div6 = element("div");
-        attr(div0, "class", "sprites sprite svelte-1vxfng6");
-        attr(div1, "class", "flex svelte-1vxfng6");
+        attr(div0, "class", "sprites sprite svelte-1uo4d6t");
+        attr(div1, "class", "flex svelte-1uo4d6t");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-1vxfng6");
+        attr(textarea, "class", "text button svelte-1uo4d6t");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-1vxfng6");
-        attr(div3, "class", "span2 full svelte-1vxfng6");
-        attr(div4, "class", "flex svelte-1vxfng6");
+        attr(div2, "class", "flex svelte-1uo4d6t");
+        attr(div3, "class", "span2 full svelte-1uo4d6t");
+        attr(div4, "class", "flex svelte-1uo4d6t");
         attr(div5, "type", "button");
-        attr(div5, "class", "button icon svelte-1vxfng6");
+        attr(div5, "class", "button icon svelte-1uo4d6t");
         attr(div5, "value", "GO");
-        attr(div6, "class", "flex svelte-1vxfng6");
-        attr(div7, "class", "span2 full svelte-1vxfng6");
-        attr(div8, "class", "vbox svelte-1vxfng6");
-        attr(div9, "class", "menu svelte-1vxfng6");
+        attr(div6, "class", "flex svelte-1uo4d6t");
+        attr(div7, "class", "span2 full svelte-1uo4d6t");
+        attr(div8, "class", "vbox svelte-1uo4d6t");
+        attr(div9, "class", "menu svelte-1uo4d6t");
       },
       m(target, anchor) {
         insert(target, div9, anchor);
@@ -34250,7 +34372,7 @@ What should we put here ? `);
   };
   var keydown_handler = (e) => {
   };
-  function instance5($$self, $$props, $$invalidate) {
+  function instance6($$self, $$props, $$invalidate) {
     let $motd;
     component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
     if (location.search === "?go") {
@@ -34266,13 +34388,13 @@ What should we put here ? `);
   var Home = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment10, safe_not_equal, {});
+      init(this, options, instance6, create_fragment11, safe_not_equal, {});
     }
   };
   var home_default = Home;
 
   // src/ui/loading.svelte
-  function create_fragment11(ctx) {
+  function create_fragment12(ctx) {
     let div5;
     let div0;
     let t0;
@@ -34303,17 +34425,17 @@ What should we put here ? `);
         textarea = element("textarea");
         t3 = space();
         div2 = element("div");
-        attr(div0, "class", "sprites sprite svelte-1o269");
-        attr(div1, "class", "flex svelte-1o269");
+        attr(div0, "class", "sprites sprite svelte-qfprcl");
+        attr(div1, "class", "flex svelte-qfprcl");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-1o269");
+        attr(textarea, "class", "text button svelte-qfprcl");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-1o269");
-        attr(div3, "class", "span2 full svelte-1o269");
-        attr(div4, "class", "vbox svelte-1o269");
-        attr(div5, "class", "menu svelte-1o269");
+        attr(div2, "class", "flex svelte-qfprcl");
+        attr(div3, "class", "span2 full svelte-qfprcl");
+        attr(div4, "class", "vbox svelte-qfprcl");
+        attr(div5, "class", "menu svelte-qfprcl");
       },
       m(target, anchor) {
         insert(target, div5, anchor);
@@ -34367,7 +34489,7 @@ What should we put here ? `);
   };
   var keydown_handler2 = (e) => {
   };
-  function instance6($$self, $$props, $$invalidate) {
+  function instance7($$self, $$props, $$invalidate) {
     let $loading;
     component_subscribe($$self, loading, ($$value) => $$invalidate(0, $loading = $$value));
     const paste_handler2 = (e) => {
@@ -34379,7 +34501,7 @@ What should we put here ? `);
   var Loading = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment11, safe_not_equal, {});
+      init(this, options, instance7, create_fragment12, safe_not_equal, {});
     }
   };
   var loading_default = Loading;
@@ -34467,7 +34589,7 @@ What should we put here ? `);
       }
     };
   }
-  function create_fragment12(ctx) {
+  function create_fragment13(ctx) {
     let text_1;
     let t0;
     let t1;
@@ -34599,7 +34721,7 @@ What should we put here ? `);
     };
   }
   var groundSize = 100;
-  function instance7($$self, $$props, $$invalidate) {
+  function instance8($$self, $$props, $$invalidate) {
     let $open_loading;
     let $open_home;
     let $open_game;
@@ -34611,7 +34733,7 @@ What should we put here ? `);
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance7, create_fragment12, safe_not_equal, {});
+      init(this, options, instance8, create_fragment13, safe_not_equal, {});
     }
   };
   var main_default = Main;

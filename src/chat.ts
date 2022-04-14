@@ -37,13 +37,14 @@ const findTilde = /~/g
 
 function say(said: string) {
     if (!said) return
+
     const voices = synth.getVoices();
 
     var utterThis = new SpeechSynthesisUtterance(said.replace(findTilde, "control"));
     let voice = findVoice("Aus") || findVoice("UK English Female") || voices[0]
     utterThis.voice = voice
     utterThis.pitch = 1
-    utterThis.rate = 1
+    utterThis.rate = 0.8
     synth.speak(utterThis);
 }
 

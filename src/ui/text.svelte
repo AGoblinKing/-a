@@ -85,12 +85,6 @@
 		transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 	}
 
-	spi {
-		width: 9vh;
-		display: flex;
-		height: 9vh;
-		margin: 0;
-	}
 	.lofi {
 		display: flex;
 		position: absolute;
