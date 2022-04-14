@@ -124,7 +124,7 @@
 	<a-entity pool__mountains="mixin: mountains; size: 100" activate__mountains />
 
 	<a-entity
-		pool__coins="mixin: coinGold; size: 100"
+		pool__coins="mixin: coinGold; size: 20"
 		material="shader: flat;"
 		position="0 20 0"
 		activate__coins

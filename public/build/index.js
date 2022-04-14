@@ -33865,7 +33865,7 @@ What should we put here ? `);
         set_custom_element_data(a_entity3, "activate__rock", "");
         set_custom_element_data(a_entity4, "pool__mountains", "mixin: mountains; size: 100");
         set_custom_element_data(a_entity4, "activate__mountains", "");
-        set_custom_element_data(a_entity5, "pool__coins", "mixin: coinGold; size: 100");
+        set_custom_element_data(a_entity5, "pool__coins", "mixin: coinGold; size: 20");
         set_custom_element_data(a_entity5, "material", "shader: flat;");
         set_custom_element_data(a_entity5, "position", "0 20 0");
         set_custom_element_data(a_entity5, "activate__coins", "");
@@ -34092,7 +34092,7 @@ What should we put here ? `);
 			<offset class="svelte-1uatlh0"><b class="svelte-1uatlh0">L</b>ife</offset></div></div>`;
         t8 = space();
         center = element("center");
-        center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-1uatlh0"><img height="36" style="border:0px;height:36px;" src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" border="0" alt="Buy Me a Coffee at ko-fi.com"/></a> 
+        center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-1uatlh0"><img height="30" style="border:0px;height:36px;" src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" border="0" alt="Buy Me a Coffee at ko-fi.com"/></a> 
 	<a href="https://discord.gg/8tkEQwsmwM" target="_blank" class="svelte-1uatlh0">\u{1F4AC}</a>`;
         attr(div3, "class", "intro svelte-1uatlh0");
       },
