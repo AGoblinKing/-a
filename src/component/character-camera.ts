@@ -1,11 +1,12 @@
 
-import { camera, toggle_selfie } from "src/timing"
+import { camera, camera_el, toggle_selfie } from "src/timing"
 import { currentVRM } from "./vrm"
 
 AFRAME.registerComponent("character-camera", {
     init() {
 
         camera.set(this.el.object3D)
+        camera_el.set(this)
         this.cancel = currentVRM.on(() => {
             // stay attached
             const o3d = this.el.object3D

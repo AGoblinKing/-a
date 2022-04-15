@@ -1,5 +1,5 @@
 import { VRM, VRMUtils } from "@pixiv/three-vrm"
-import { avatar_current, avatar_doer, open_loading } from "src/timing";
+import { avatar_current, avatar_doer, camera, open_loading, toggle_selfie } from "src/timing";
 import { Value } from 'src/value';
 
 export const currentVRM = new Value<VRM>()
@@ -42,8 +42,8 @@ AFRAME.registerComponent('vrm', {
   schema: {
     src: { type: 'string', default: "" },
     fps: { type: 'bool', default: false },
-    current: { type: 'bool' },
-    doer: { type: 'bool' }
+    current: { type: 'bool', default: false },
+    mirror: { type: 'bool', default: false }
   },
   load() {
     Load(this.data.src).then(vrm => {
@@ -51,11 +51,15 @@ AFRAME.registerComponent('vrm', {
       VRMUtils.removeUnnecessaryJoints(vrm.scene);
       this.el.setObject3D('mesh', vrm.scene);
       this.data.vrm = vrm;
+
       if (this.data.current) {
         vrm.firstPerson.setup();
+
         currentVRM.set(vrm)
       }
+
       if (this.data.mirror) {
+
         mirrorVRM.set(vrm)
       }
     });

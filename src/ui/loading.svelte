@@ -13,30 +13,7 @@
 	<div class="vbox">
 		<div class="span2 full">
 			<div class="flex" />
-			<textarea
-				type="text"
-				class="text button"
-				maxlength="200"
-				value={$loading}
-				readonly
-				on:copy={(e) => {
-					e.preventDefault()
-				}}
-				on:paste={(e) => {
-					const v = decodeURI(e.clipboardData.getData('text'))
-
-					e.preventDefault()
-				}}
-				on:keydown={(e) => {
-					// if (e.key === 'Escape') {
-					// 	open_home.set(false)
-					// 	return
-					// }
-					// if (e.key === 'Enter') {
-					//     open_home.set(false)
-					// }
-				}}
-			/>
+			<textarea type="text" class="text button" maxlength="200" value={$loading} readonly />
 			<div class="flex" />
 		</div>
 	</div>

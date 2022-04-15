@@ -5565,7 +5565,7 @@
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance11, create_fragment13, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance10, create_fragment13, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5588,7 +5588,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance11 ? instance11(component, options.props || {}, (i2, ret, ...rest) => {
+    $$.ctx = instance10 ? instance10(component, options.props || {}, (i2, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
         if (!$$.skip_bound && $$.bound[i2])
@@ -6950,7 +6950,8 @@
       "m": "control not selfie",
       "h": "hi! | hey ! | hey you! | hello...",
       "i": "it's doer 1 | it's me, doer 1 | doer 1 that's me",
-      "f1": "control help"
+      "f1": "control help",
+      "f2": "control not help"
     },
     "vars": {},
     "selfie": false,
@@ -7044,6 +7045,8 @@
   var tick = new Value(0);
   var avatar_current = new Value(state_default.avatar.current).save("avatar_current_2");
   var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
+  var voice_current = new Value("Aus | UK English").save("voice_current");
+  var voice_doer = new Value("Aus | UK English").save("voice_doer");
   var open_home = new Value(true);
   var open_game = new Value(false);
   var open_text = new Value(void 0);
@@ -7051,7 +7054,9 @@
   var open_help = new Value(false);
   var open_stats = new Value(false).save("stats");
   var open_heard = new Value(true).save("heard");
+  var open_debug = new Value(false).save("debug");
   var camera = new Value();
+  var camera_el = new Value();
   var toggle_selfie = new Value(state_default.selfie).save("selfie");
   var do_echo = new Value(true).save("do_echo");
   open_game.on(($g) => {
@@ -7059,11 +7064,11 @@
       open_loading.set(true);
     }
   });
-  var motd = new Value(`\u{1F38A}v0.1.0\u{1F38A}
-Controls + Persist
-\u2705 Controls \u2705 Persist 
+  var motd = new Value(`\u{1F38A}v0.1.2\u{1F38A}
 
-\u274C Performance Pass
+\u2705 Controls \u2705 Persist 
+\u2705 Help [f1]
+\u2705 Performance Pass
 
 \u274C AI DOER \u274C Gameplay 
 
@@ -7100,15 +7105,18 @@ Age 18+ only.
   };
   var loading = new Value(`Loading...
 
- WASD Move | Q+E Rotate
- Enter | Chat
- ~ | Command
- Space | Jump
+ WASD Move > Q+E Rotate
+ Enter > Chat
+     ~ > Command
+ Space > Jump
  
  Default Binds:
+
  N: Selfie
  M: NotSelfie
  H: Hi | Hi! | Hello | Heya | Yo
+ F1: Help
+ F2: NotHelp
 `);
   ticker();
   var helptext = new Value(`\u{1F916}Commands\u{1F916}
@@ -9667,11 +9675,11 @@ unbinds variable name
       this.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
       return this;
     }
-    project(camera2) {
-      return this.applyMatrix4(camera2.matrixWorldInverse).applyMatrix4(camera2.projectionMatrix);
+    project(camera4) {
+      return this.applyMatrix4(camera4.matrixWorldInverse).applyMatrix4(camera4.projectionMatrix);
     }
-    unproject(camera2) {
-      return this.applyMatrix4(camera2.projectionMatrixInverse).applyMatrix4(camera2.matrixWorld);
+    unproject(camera4) {
+      return this.applyMatrix4(camera4.projectionMatrixInverse).applyMatrix4(camera4.matrixWorld);
     }
     transformDirection(m2) {
       const x2 = this.x, y2 = this.y, z2 = this.z;
@@ -14064,8 +14072,8 @@ unbinds variable name
       const currentMinFilter = texture.minFilter;
       if (texture.minFilter === LinearMipmapLinearFilter)
         texture.minFilter = LinearFilter;
-      const camera2 = new CubeCamera(1, 10, this);
-      camera2.update(renderer, mesh);
+      const camera4 = new CubeCamera(1, 10, this);
+      camera4.update(renderer, mesh);
       texture.minFilter = currentMinFilter;
       mesh.geometry.dispose();
       mesh.material.dispose();
@@ -15151,8 +15159,8 @@ unbinds variable name
           }));
           boxMesh.geometry.deleteAttribute("normal");
           boxMesh.geometry.deleteAttribute("uv");
-          boxMesh.onBeforeRender = function(renderer2, scene2, camera2) {
-            this.matrixWorld.copyPosition(camera2.matrixWorld);
+          boxMesh.onBeforeRender = function(renderer2, scene2, camera4) {
+            this.matrixWorld.copyPosition(camera4.matrixWorld);
           };
           Object.defineProperty(boxMesh.material, "envMap", {
             get: function() {
@@ -15663,10 +15671,10 @@ unbinds variable name
     this.uniform = uniform;
     this.numPlanes = 0;
     this.numIntersection = 0;
-    this.init = function(planes, enableLocalClipping, camera2) {
+    this.init = function(planes, enableLocalClipping, camera4) {
       const enabled = planes.length !== 0 || enableLocalClipping || numGlobalPlanes !== 0 || localClippingEnabled;
       localClippingEnabled = enableLocalClipping;
-      globalState = projectPlanes(planes, camera2, 0);
+      globalState = projectPlanes(planes, camera4, 0);
       numGlobalPlanes = planes.length;
       return enabled;
     };
@@ -15678,7 +15686,7 @@ unbinds variable name
       renderingShadows = false;
       resetGlobalState();
     };
-    this.setState = function(material, camera2, useCache) {
+    this.setState = function(material, camera4, useCache) {
       const planes = material.clippingPlanes, clipIntersection = material.clipIntersection, clipShadows = material.clipShadows;
       const materialProperties = properties.get(material);
       if (!localClippingEnabled || planes === null || planes.length === 0 || renderingShadows && !clipShadows) {
@@ -15691,7 +15699,7 @@ unbinds variable name
         const nGlobal = renderingShadows ? 0 : numGlobalPlanes, lGlobal = nGlobal * 4;
         let dstArray = materialProperties.clippingState || null;
         uniform.value = dstArray;
-        dstArray = projectPlanes(planes, camera2, lGlobal, useCache);
+        dstArray = projectPlanes(planes, camera4, lGlobal, useCache);
         for (let i2 = 0; i2 !== lGlobal; ++i2) {
           dstArray[i2] = globalState[i2];
         }
@@ -15708,13 +15716,13 @@ unbinds variable name
       scope.numPlanes = numGlobalPlanes;
       scope.numIntersection = 0;
     }
-    function projectPlanes(planes, camera2, dstOffset, skipTransform) {
+    function projectPlanes(planes, camera4, dstOffset, skipTransform) {
       const nPlanes = planes !== null ? planes.length : 0;
       let dstArray = null;
       if (nPlanes !== 0) {
         dstArray = uniform.value;
         if (skipTransform !== true || dstArray === null) {
-          const flatSize = dstOffset + nPlanes * 4, viewMatrix = camera2.matrixWorldInverse;
+          const flatSize = dstOffset + nPlanes * 4, viewMatrix = camera4.matrixWorldInverse;
           viewNormalMatrix.getNormalMatrix(viewMatrix);
           if (dstArray === null || dstArray.length < flatSize) {
             dstArray = new Float32Array(flatSize);
@@ -18919,13 +18927,13 @@ unbinds variable name
         state.version = nextVersion++;
       }
     }
-    function setupView(lights, camera2) {
+    function setupView(lights, camera4) {
       let directionalLength = 0;
       let pointLength = 0;
       let spotLength = 0;
       let rectAreaLength = 0;
       let hemiLength = 0;
-      const viewMatrix = camera2.matrixWorldInverse;
+      const viewMatrix = camera4.matrixWorldInverse;
       for (let i2 = 0, l2 = lights.length; i2 < l2; i2++) {
         const light2 = lights[i2];
         if (light2.isDirectionalLight) {
@@ -18994,8 +19002,8 @@ unbinds variable name
     function setupLights(physicallyCorrectLights) {
       lights.setup(lightsArray, physicallyCorrectLights);
     }
-    function setupLightsView(camera2) {
-      lights.setupView(lightsArray, camera2);
+    function setupLightsView(camera4) {
+      lights.setupView(lightsArray, camera4);
     }
     const state = {
       lightsArray,
@@ -19122,7 +19130,7 @@ unbinds variable name
     this.autoUpdate = true;
     this.needsUpdate = false;
     this.type = PCFShadowMap;
-    this.render = function(lights, scene, camera2) {
+    this.render = function(lights, scene, camera4) {
       if (scope.enabled === false)
         return;
       if (scope.autoUpdate === false && scope.needsUpdate === false)
@@ -19184,17 +19192,17 @@ unbinds variable name
           _state.viewport(_viewport);
           shadow.updateMatrices(light2, vp);
           _frustum = shadow.getFrustum();
-          renderObject(scene, camera2, shadow.camera, light2, this.type);
+          renderObject(scene, camera4, shadow.camera, light2, this.type);
         }
         if (!shadow.isPointLightShadow && this.type === VSMShadowMap) {
-          VSMPass(shadow, camera2);
+          VSMPass(shadow, camera4);
         }
         shadow.needsUpdate = false;
       }
       scope.needsUpdate = false;
       _renderer.setRenderTarget(currentRenderTarget, activeCubeFace, activeMipmapLevel);
     };
-    function VSMPass(shadow, camera2) {
+    function VSMPass(shadow, camera4) {
       const geometry = _objects.update(fullScreenMesh);
       if (shadowMaterialVertical.defines.VSM_SAMPLES !== shadow.blurSamples) {
         shadowMaterialVertical.defines.VSM_SAMPLES = shadow.blurSamples;
@@ -19207,13 +19215,13 @@ unbinds variable name
       shadowMaterialVertical.uniforms.radius.value = shadow.radius;
       _renderer.setRenderTarget(shadow.mapPass);
       _renderer.clear();
-      _renderer.renderBufferDirect(camera2, null, geometry, shadowMaterialVertical, fullScreenMesh, null);
+      _renderer.renderBufferDirect(camera4, null, geometry, shadowMaterialVertical, fullScreenMesh, null);
       shadowMaterialHorizontal.uniforms.shadow_pass.value = shadow.mapPass.texture;
       shadowMaterialHorizontal.uniforms.resolution.value = shadow.mapSize;
       shadowMaterialHorizontal.uniforms.radius.value = shadow.radius;
       _renderer.setRenderTarget(shadow.map);
       _renderer.clear();
-      _renderer.renderBufferDirect(camera2, null, geometry, shadowMaterialHorizontal, fullScreenMesh, null);
+      _renderer.renderBufferDirect(camera4, null, geometry, shadowMaterialHorizontal, fullScreenMesh, null);
     }
     function getDepthMaterial(object, geometry, material, light2, shadowCameraNear, shadowCameraFar, type) {
       let result = null;
@@ -19261,10 +19269,10 @@ unbinds variable name
       }
       return result;
     }
-    function renderObject(object, camera2, shadowCamera, light2, type) {
+    function renderObject(object, camera4, shadowCamera, light2, type) {
       if (object.visible === false)
         return;
-      const visible = object.layers.test(camera2.layers);
+      const visible = object.layers.test(camera4.layers);
       if (visible && (object.isMesh || object.isLine || object.isPoints)) {
         if ((object.castShadow || object.receiveShadow && type === VSMShadowMap) && (!object.frustumCulled || _frustum.intersectsObject(object))) {
           object.modelViewMatrix.multiplyMatrices(shadowCamera.matrixWorldInverse, object.matrixWorld);
@@ -19288,7 +19296,7 @@ unbinds variable name
       }
       const children2 = object.children;
       for (let i2 = 0, l2 = children2.length; i2 < l2; i2++) {
-        renderObject(children2[i2], camera2, shadowCamera, light2, type);
+        renderObject(children2[i2], camera4, shadowCamera, light2, type);
       }
     }
   }
@@ -21498,7 +21506,7 @@ unbinds variable name
       }
       const cameraLPos = new Vector3();
       const cameraRPos = new Vector3();
-      function setProjectionFromUnion(camera2, cameraL2, cameraR2) {
+      function setProjectionFromUnion(camera4, cameraL2, cameraR2) {
         cameraLPos.setFromMatrixPosition(cameraL2.matrixWorld);
         cameraRPos.setFromMatrixPosition(cameraR2.matrixWorld);
         const ipd = cameraLPos.distanceTo(cameraRPos);
@@ -21514,32 +21522,32 @@ unbinds variable name
         const right = near * rightFov;
         const zOffset = ipd / (-leftFov + rightFov);
         const xOffset = zOffset * -leftFov;
-        cameraL2.matrixWorld.decompose(camera2.position, camera2.quaternion, camera2.scale);
-        camera2.translateX(xOffset);
-        camera2.translateZ(zOffset);
-        camera2.matrixWorld.compose(camera2.position, camera2.quaternion, camera2.scale);
-        camera2.matrixWorldInverse.copy(camera2.matrixWorld).invert();
+        cameraL2.matrixWorld.decompose(camera4.position, camera4.quaternion, camera4.scale);
+        camera4.translateX(xOffset);
+        camera4.translateZ(zOffset);
+        camera4.matrixWorld.compose(camera4.position, camera4.quaternion, camera4.scale);
+        camera4.matrixWorldInverse.copy(camera4.matrixWorld).invert();
         const near2 = near + zOffset;
         const far2 = far + zOffset;
         const left2 = left - xOffset;
         const right2 = right + (ipd - xOffset);
         const top2 = topFov * far / far2 * near2;
         const bottom2 = bottomFov * far / far2 * near2;
-        camera2.projectionMatrix.makePerspective(left2, right2, top2, bottom2, near2, far2);
+        camera4.projectionMatrix.makePerspective(left2, right2, top2, bottom2, near2, far2);
       }
-      function updateCamera(camera2, parent) {
+      function updateCamera(camera4, parent) {
         if (parent === null) {
-          camera2.matrixWorld.copy(camera2.matrix);
+          camera4.matrixWorld.copy(camera4.matrix);
         } else {
-          camera2.matrixWorld.multiplyMatrices(parent.matrixWorld, camera2.matrix);
+          camera4.matrixWorld.multiplyMatrices(parent.matrixWorld, camera4.matrix);
         }
-        camera2.matrixWorldInverse.copy(camera2.matrixWorld).invert();
+        camera4.matrixWorldInverse.copy(camera4.matrixWorld).invert();
       }
-      this.updateCamera = function(camera2) {
+      this.updateCamera = function(camera4) {
         if (session === null)
           return;
-        cameraVR.near = cameraR.near = cameraL.near = camera2.near;
-        cameraVR.far = cameraR.far = cameraL.far = camera2.far;
+        cameraVR.near = cameraR.near = cameraL.near = camera4.near;
+        cameraVR.far = cameraR.far = cameraL.far = camera4.far;
         if (_currentDepthNear !== cameraVR.near || _currentDepthFar !== cameraVR.far) {
           session.updateRenderState({
             depthNear: cameraVR.near,
@@ -21548,19 +21556,19 @@ unbinds variable name
           _currentDepthNear = cameraVR.near;
           _currentDepthFar = cameraVR.far;
         }
-        const parent = camera2.parent;
+        const parent = camera4.parent;
         const cameras2 = cameraVR.cameras;
         updateCamera(cameraVR, parent);
         for (let i2 = 0; i2 < cameras2.length; i2++) {
           updateCamera(cameras2[i2], parent);
         }
         cameraVR.matrixWorld.decompose(cameraVR.position, cameraVR.quaternion, cameraVR.scale);
-        camera2.position.copy(cameraVR.position);
-        camera2.quaternion.copy(cameraVR.quaternion);
-        camera2.scale.copy(cameraVR.scale);
-        camera2.matrix.copy(cameraVR.matrix);
-        camera2.matrixWorld.copy(cameraVR.matrixWorld);
-        const children2 = camera2.children;
+        camera4.position.copy(cameraVR.position);
+        camera4.quaternion.copy(cameraVR.quaternion);
+        camera4.scale.copy(cameraVR.scale);
+        camera4.matrix.copy(cameraVR.matrix);
+        camera4.matrixWorld.copy(cameraVR.matrixWorld);
+        const children2 = camera4.children;
         for (let i2 = 0, l2 = children2.length; i2 < l2; i2++) {
           children2[i2].updateMatrixWorld(true);
         }
@@ -21618,15 +21626,15 @@ unbinds variable name
                 renderer.setRenderTarget(newRenderTarget);
               }
             }
-            const camera2 = cameras[i2];
-            camera2.matrix.fromArray(view.transform.matrix);
-            camera2.projectionMatrix.fromArray(view.projectionMatrix);
-            camera2.viewport.set(viewport.x, viewport.y, viewport.width, viewport.height);
+            const camera4 = cameras[i2];
+            camera4.matrix.fromArray(view.transform.matrix);
+            camera4.projectionMatrix.fromArray(view.projectionMatrix);
+            camera4.viewport.set(viewport.x, viewport.y, viewport.width, viewport.height);
             if (i2 === 0) {
-              cameraVR.matrix.copy(camera2.matrix);
+              cameraVR.matrix.copy(camera4.matrix);
             }
             if (cameraVRNeedsUpdate === true) {
-              cameraVR.cameras.push(camera2);
+              cameraVR.cameras.push(camera4);
             }
           }
         }
@@ -22397,11 +22405,11 @@ unbinds variable name
         }
       }
     }
-    this.renderBufferDirect = function(camera2, scene, geometry, material, object, group) {
+    this.renderBufferDirect = function(camera4, scene, geometry, material, object, group) {
       if (scene === null)
         scene = _emptyScene;
       const frontFaceCW = object.isMesh && object.matrixWorld.determinant() < 0;
-      const program = setProgram(camera2, scene, geometry, material, object);
+      const program = setProgram(camera4, scene, geometry, material, object);
       state.setMaterial(material, frontFaceCW);
       let index = geometry.index;
       const position = geometry.attributes.position;
@@ -22467,12 +22475,12 @@ unbinds variable name
         renderer.render(drawStart, drawCount);
       }
     };
-    this.compile = function(scene, camera2) {
+    this.compile = function(scene, camera4) {
       currentRenderState = renderStates.get(scene);
       currentRenderState.init();
       renderStateStack.push(currentRenderState);
       scene.traverseVisible(function(object) {
-        if (object.isLight && object.layers.test(camera2.layers)) {
+        if (object.isLight && object.layers.test(camera4.layers)) {
           currentRenderState.pushLight(object);
           if (object.castShadow) {
             currentRenderState.pushShadow(object);
@@ -22518,8 +22526,8 @@ unbinds variable name
     };
     xr.addEventListener("sessionstart", onXRSessionStart);
     xr.addEventListener("sessionend", onXRSessionEnd);
-    this.render = function(scene, camera2) {
-      if (camera2 !== void 0 && camera2.isCamera !== true) {
+    this.render = function(scene, camera4) {
+      if (camera4 !== void 0 && camera4.isCamera !== true) {
         console.error("THREE.WebGLRenderer.render: camera is not an instance of THREE.Camera.");
         return;
       }
@@ -22527,26 +22535,26 @@ unbinds variable name
         return;
       if (scene.autoUpdate === true)
         scene.updateMatrixWorld();
-      if (camera2.parent === null)
-        camera2.updateMatrixWorld();
+      if (camera4.parent === null)
+        camera4.updateMatrixWorld();
       if (xr.enabled === true && xr.isPresenting === true) {
         if (xr.cameraAutoUpdate === true)
-          xr.updateCamera(camera2);
-        camera2 = xr.getCamera();
+          xr.updateCamera(camera4);
+        camera4 = xr.getCamera();
       }
       if (scene.isScene === true)
-        scene.onBeforeRender(_this, scene, camera2, _currentRenderTarget);
+        scene.onBeforeRender(_this, scene, camera4, _currentRenderTarget);
       currentRenderState = renderStates.get(scene, renderStateStack.length);
       currentRenderState.init();
       renderStateStack.push(currentRenderState);
-      _projScreenMatrix2.multiplyMatrices(camera2.projectionMatrix, camera2.matrixWorldInverse);
+      _projScreenMatrix2.multiplyMatrices(camera4.projectionMatrix, camera4.matrixWorldInverse);
       _frustum.setFromProjectionMatrix(_projScreenMatrix2);
       _localClippingEnabled = this.localClippingEnabled;
-      _clippingEnabled = clipping.init(this.clippingPlanes, _localClippingEnabled, camera2);
+      _clippingEnabled = clipping.init(this.clippingPlanes, _localClippingEnabled, camera4);
       currentRenderList = renderLists.get(scene, renderListStack.length);
       currentRenderList.init();
       renderListStack.push(currentRenderList);
-      projectObject(scene, camera2, 0, _this.sortObjects);
+      projectObject(scene, camera4, 0, _this.sortObjects);
       currentRenderList.finish();
       if (_this.sortObjects === true) {
         currentRenderList.sort(_opaqueSort, _transparentSort);
@@ -22554,28 +22562,28 @@ unbinds variable name
       if (_clippingEnabled === true)
         clipping.beginShadows();
       const shadowsArray = currentRenderState.state.shadowsArray;
-      shadowMap.render(shadowsArray, scene, camera2);
+      shadowMap.render(shadowsArray, scene, camera4);
       if (_clippingEnabled === true)
         clipping.endShadows();
       if (this.info.autoReset === true)
         this.info.reset();
       background.render(currentRenderList, scene);
       currentRenderState.setupLights(_this.physicallyCorrectLights);
-      if (camera2.isArrayCamera) {
-        const cameras = camera2.cameras;
+      if (camera4.isArrayCamera) {
+        const cameras = camera4.cameras;
         for (let i2 = 0, l2 = cameras.length; i2 < l2; i2++) {
           const camera22 = cameras[i2];
           renderScene(currentRenderList, scene, camera22, camera22.viewport);
         }
       } else {
-        renderScene(currentRenderList, scene, camera2);
+        renderScene(currentRenderList, scene, camera4);
       }
       if (_currentRenderTarget !== null) {
         textures.updateMultisampleRenderTarget(_currentRenderTarget);
         textures.updateRenderTargetMipmap(_currentRenderTarget);
       }
       if (scene.isScene === true)
-        scene.onAfterRender(_this, scene, camera2);
+        scene.onAfterRender(_this, scene, camera4);
       state.buffers.depth.setTest(true);
       state.buffers.depth.setMask(true);
       state.buffers.color.setMask(true);
@@ -22596,16 +22604,16 @@ unbinds variable name
         currentRenderList = null;
       }
     };
-    function projectObject(object, camera2, groupOrder, sortObjects) {
+    function projectObject(object, camera4, groupOrder, sortObjects) {
       if (object.visible === false)
         return;
-      const visible = object.layers.test(camera2.layers);
+      const visible = object.layers.test(camera4.layers);
       if (visible) {
         if (object.isGroup) {
           groupOrder = object.renderOrder;
         } else if (object.isLOD) {
           if (object.autoUpdate === true)
-            object.update(camera2);
+            object.update(camera4);
         } else if (object.isLight) {
           currentRenderState.pushLight(object);
           if (object.castShadow) {
@@ -22652,26 +22660,26 @@ unbinds variable name
       }
       const children2 = object.children;
       for (let i2 = 0, l2 = children2.length; i2 < l2; i2++) {
-        projectObject(children2[i2], camera2, groupOrder, sortObjects);
+        projectObject(children2[i2], camera4, groupOrder, sortObjects);
       }
     }
-    function renderScene(currentRenderList2, scene, camera2, viewport) {
+    function renderScene(currentRenderList2, scene, camera4, viewport) {
       const opaqueObjects = currentRenderList2.opaque;
       const transmissiveObjects = currentRenderList2.transmissive;
       const transparentObjects = currentRenderList2.transparent;
-      currentRenderState.setupLightsView(camera2);
+      currentRenderState.setupLightsView(camera4);
       if (transmissiveObjects.length > 0)
-        renderTransmissionPass(opaqueObjects, scene, camera2);
+        renderTransmissionPass(opaqueObjects, scene, camera4);
       if (viewport)
         state.viewport(_currentViewport.copy(viewport));
       if (opaqueObjects.length > 0)
-        renderObjects(opaqueObjects, scene, camera2);
+        renderObjects(opaqueObjects, scene, camera4);
       if (transmissiveObjects.length > 0)
-        renderObjects(transmissiveObjects, scene, camera2);
+        renderObjects(transmissiveObjects, scene, camera4);
       if (transparentObjects.length > 0)
-        renderObjects(transparentObjects, scene, camera2);
+        renderObjects(transparentObjects, scene, camera4);
     }
-    function renderTransmissionPass(opaqueObjects, scene, camera2) {
+    function renderTransmissionPass(opaqueObjects, scene, camera4) {
       if (_transmissionRenderTarget === null) {
         const needsAntialias = _antialias === true && capabilities.isWebGL2 === true;
         const renderTargetType = needsAntialias ? WebGLMultisampleRenderTarget : WebGLRenderTarget;
@@ -22690,13 +22698,13 @@ unbinds variable name
       _this.clear();
       const currentToneMapping = _this.toneMapping;
       _this.toneMapping = NoToneMapping;
-      renderObjects(opaqueObjects, scene, camera2);
+      renderObjects(opaqueObjects, scene, camera4);
       _this.toneMapping = currentToneMapping;
       textures.updateMultisampleRenderTarget(_transmissionRenderTarget);
       textures.updateRenderTargetMipmap(_transmissionRenderTarget);
       _this.setRenderTarget(currentRenderTarget);
     }
-    function renderObjects(renderList, scene, camera2) {
+    function renderObjects(renderList, scene, camera4) {
       const overrideMaterial = scene.isScene === true ? scene.overrideMaterial : null;
       for (let i2 = 0, l2 = renderList.length; i2 < l2; i2++) {
         const renderItem = renderList[i2];
@@ -22704,28 +22712,28 @@ unbinds variable name
         const geometry = renderItem.geometry;
         const material = overrideMaterial === null ? renderItem.material : overrideMaterial;
         const group = renderItem.group;
-        if (object.layers.test(camera2.layers)) {
-          renderObject(object, scene, camera2, geometry, material, group);
+        if (object.layers.test(camera4.layers)) {
+          renderObject(object, scene, camera4, geometry, material, group);
         }
       }
     }
-    function renderObject(object, scene, camera2, geometry, material, group) {
-      object.onBeforeRender(_this, scene, camera2, geometry, material, group);
-      object.modelViewMatrix.multiplyMatrices(camera2.matrixWorldInverse, object.matrixWorld);
+    function renderObject(object, scene, camera4, geometry, material, group) {
+      object.onBeforeRender(_this, scene, camera4, geometry, material, group);
+      object.modelViewMatrix.multiplyMatrices(camera4.matrixWorldInverse, object.matrixWorld);
       object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
-      material.onBeforeRender(_this, scene, camera2, geometry, object, group);
+      material.onBeforeRender(_this, scene, camera4, geometry, object, group);
       if (material.transparent === true && material.side === DoubleSide) {
         material.side = BackSide;
         material.needsUpdate = true;
-        _this.renderBufferDirect(camera2, scene, geometry, material, object, group);
+        _this.renderBufferDirect(camera4, scene, geometry, material, object, group);
         material.side = FrontSide;
         material.needsUpdate = true;
-        _this.renderBufferDirect(camera2, scene, geometry, material, object, group);
+        _this.renderBufferDirect(camera4, scene, geometry, material, object, group);
         material.side = DoubleSide;
       } else {
-        _this.renderBufferDirect(camera2, scene, geometry, material, object, group);
+        _this.renderBufferDirect(camera4, scene, geometry, material, object, group);
       }
-      object.onAfterRender(_this, scene, camera2, geometry, material, group);
+      object.onAfterRender(_this, scene, camera4, geometry, material, group);
     }
     function getProgram(material, scene, object) {
       if (scene.isScene !== true)
@@ -22806,7 +22814,7 @@ unbinds variable name
       materialProperties.vertexTangents = parameters2.vertexTangents;
       materialProperties.toneMapping = parameters2.toneMapping;
     }
-    function setProgram(camera2, scene, geometry, material, object) {
+    function setProgram(camera4, scene, geometry, material, object) {
       if (scene.isScene !== true)
         scene = _emptyScene;
       textures.resetTextureUnits();
@@ -22823,9 +22831,9 @@ unbinds variable name
       const materialProperties = properties.get(material);
       const lights = currentRenderState.state.lights;
       if (_clippingEnabled === true) {
-        if (_localClippingEnabled === true || camera2 !== _currentCamera) {
-          const useCache = camera2 === _currentCamera && material.id === _currentMaterialId;
-          clipping.setState(material, camera2, useCache);
+        if (_localClippingEnabled === true || camera4 !== _currentCamera) {
+          const useCache = camera4 === _currentCamera && material.id === _currentMaterialId;
+          clipping.setState(material, camera4, useCache);
         }
       }
       let needsProgramChange = false;
@@ -22882,27 +22890,27 @@ unbinds variable name
         _currentMaterialId = material.id;
         refreshMaterial = true;
       }
-      if (refreshProgram || _currentCamera !== camera2) {
-        p_uniforms.setValue(_gl, "projectionMatrix", camera2.projectionMatrix);
+      if (refreshProgram || _currentCamera !== camera4) {
+        p_uniforms.setValue(_gl, "projectionMatrix", camera4.projectionMatrix);
         if (capabilities.logarithmicDepthBuffer) {
-          p_uniforms.setValue(_gl, "logDepthBufFC", 2 / (Math.log(camera2.far + 1) / Math.LN2));
+          p_uniforms.setValue(_gl, "logDepthBufFC", 2 / (Math.log(camera4.far + 1) / Math.LN2));
         }
-        if (_currentCamera !== camera2) {
-          _currentCamera = camera2;
+        if (_currentCamera !== camera4) {
+          _currentCamera = camera4;
           refreshMaterial = true;
           refreshLights = true;
         }
         if (material.isShaderMaterial || material.isMeshPhongMaterial || material.isMeshToonMaterial || material.isMeshStandardMaterial || material.envMap) {
           const uCamPos = p_uniforms.map.cameraPosition;
           if (uCamPos !== void 0) {
-            uCamPos.setValue(_gl, _vector3.setFromMatrixPosition(camera2.matrixWorld));
+            uCamPos.setValue(_gl, _vector3.setFromMatrixPosition(camera4.matrixWorld));
           }
         }
         if (material.isMeshPhongMaterial || material.isMeshToonMaterial || material.isMeshLambertMaterial || material.isMeshBasicMaterial || material.isMeshStandardMaterial || material.isShaderMaterial) {
-          p_uniforms.setValue(_gl, "isOrthographic", camera2.isOrthographicCamera === true);
+          p_uniforms.setValue(_gl, "isOrthographic", camera4.isOrthographicCamera === true);
         }
         if (material.isMeshPhongMaterial || material.isMeshToonMaterial || material.isMeshLambertMaterial || material.isMeshBasicMaterial || material.isMeshStandardMaterial || material.isShaderMaterial || material.isShadowMaterial || object.isSkinnedMesh) {
-          p_uniforms.setValue(_gl, "viewMatrix", camera2.matrixWorldInverse);
+          p_uniforms.setValue(_gl, "viewMatrix", camera4.matrixWorldInverse);
         }
       }
       if (object.isSkinnedMesh) {
@@ -28117,8 +28125,8 @@ unbinds variable name
   var _lightPositionWorld$1 = /* @__PURE__ */ new Vector3();
   var _lookTarget$1 = /* @__PURE__ */ new Vector3();
   var LightShadow = class {
-    constructor(camera2) {
-      this.camera = camera2;
+    constructor(camera4) {
+      this.camera = camera4;
       this.bias = 0;
       this.normalBias = 0;
       this.radius = 1;
@@ -28201,15 +28209,15 @@ unbinds variable name
       this.focus = 1;
     }
     updateMatrices(light2) {
-      const camera2 = this.camera;
+      const camera4 = this.camera;
       const fov2 = RAD2DEG * 2 * light2.angle * this.focus;
       const aspect2 = this.mapSize.width / this.mapSize.height;
-      const far = light2.distance || camera2.far;
-      if (fov2 !== camera2.fov || aspect2 !== camera2.aspect || far !== camera2.far) {
-        camera2.fov = fov2;
-        camera2.aspect = aspect2;
-        camera2.far = far;
-        camera2.updateProjectionMatrix();
+      const far = light2.distance || camera4.far;
+      if (fov2 !== camera4.fov || aspect2 !== camera4.aspect || far !== camera4.far) {
+        camera4.fov = fov2;
+        camera4.aspect = aspect2;
+        camera4.far = far;
+        camera4.updateProjectionMatrix();
       }
       super.updateMatrices(light2);
     }
@@ -28288,22 +28296,22 @@ unbinds variable name
       ];
     }
     updateMatrices(light2, viewportIndex = 0) {
-      const camera2 = this.camera;
+      const camera4 = this.camera;
       const shadowMatrix = this.matrix;
-      const far = light2.distance || camera2.far;
-      if (far !== camera2.far) {
-        camera2.far = far;
-        camera2.updateProjectionMatrix();
+      const far = light2.distance || camera4.far;
+      if (far !== camera4.far) {
+        camera4.far = far;
+        camera4.updateProjectionMatrix();
       }
       _lightPositionWorld.setFromMatrixPosition(light2.matrixWorld);
-      camera2.position.copy(_lightPositionWorld);
-      _lookTarget.copy(camera2.position);
+      camera4.position.copy(_lightPositionWorld);
+      _lookTarget.copy(camera4.position);
       _lookTarget.add(this._cubeDirections[viewportIndex]);
-      camera2.up.copy(this._cubeUps[viewportIndex]);
-      camera2.lookAt(_lookTarget);
-      camera2.updateMatrixWorld();
+      camera4.up.copy(this._cubeUps[viewportIndex]);
+      camera4.lookAt(_lookTarget);
+      camera4.updateMatrixWorld();
       shadowMatrix.makeTranslation(-_lightPositionWorld.x, -_lightPositionWorld.y, -_lightPositionWorld.z);
-      _projScreenMatrix.multiplyMatrices(camera2.projectionMatrix, camera2.matrixWorldInverse);
+      _projScreenMatrix.multiplyMatrices(camera4.projectionMatrix, camera4.matrixWorldInverse);
       this._frustum.setFromProjectionMatrix(_projScreenMatrix);
     }
   };
@@ -32758,8 +32766,8 @@ unbinds variable name
     schema: {
       src: { type: "string", default: "" },
       fps: { type: "bool", default: false },
-      current: { type: "bool" },
-      doer: { type: "bool" }
+      current: { type: "bool", default: false },
+      mirror: { type: "bool", default: false }
     },
     load() {
       Load(this.data.src).then((vrm) => {
@@ -32818,6 +32826,103 @@ unbinds variable name
     }
   });
 
+  // src/control.ts
+  var binds = new Value(clone(state_default.binds)).save("binds");
+  var vars = new Value(clone(state_default.vars)).save("vars");
+  function clone(target) {
+    return Object.fromEntries(Object.entries(target));
+  }
+  function saveState() {
+    console.log(JSON.stringify({
+      binds: binds.$,
+      vars: vars.$,
+      selfie: toggle_selfie.$
+    }, null, "	"));
+  }
+  function loadState(state) {
+    binds.set(state.binds);
+    vars.set(state.vars);
+    toggle_selfie.set(state.selfie);
+  }
+  window.loadState = loadState;
+  var controls = {
+    ["bind" /* Bind */]: (items) => {
+      binds.$[items[2]] = items.slice(3).join(" ");
+      binds.poke();
+    },
+    ["notbind" /* NotBind */]: (items) => {
+      delete binds.$[items[3]];
+      binds.poke();
+    },
+    ["clearbind" /* ClearBind */]: (items) => {
+      binds.set(clone(state_default.binds));
+    },
+    ["var" /* Var */]: (items) => {
+      vars.$[items[2]] = items.slice(3).join(" ");
+      vars.poke();
+    },
+    ["notvar" /* NotVar */]: (items) => {
+      delete vars.$[items[3]];
+      vars.poke();
+    },
+    ["clearvar" /* ClearVar */]: (items) => {
+      vars.set(clone(state_default.vars));
+    },
+    ["selfie" /* Selfie */]: (items) => {
+      toggle_selfie.set(true);
+    },
+    ["notselfie" /* NotSelfie */]: (items) => {
+      toggle_selfie.set(false);
+    },
+    ["save" /* Save */]: () => {
+      saveState();
+    },
+    ["swap" /* Swap */]: (items) => {
+      const cur = avatar_current.$;
+      avatar_current.set(avatar_doer.$);
+      avatar_doer.set(cur);
+    },
+    ["visible" /* Visible */]: (items) => {
+      currentVRM.$.scene.visible = true;
+    },
+    ["notvisible" /* NotVisible */]: (items) => {
+      currentVRM.$.scene.visible = false;
+    },
+    ["avatar" /* Avatar */]: (items) => {
+      avatar_current.set(items[2]);
+    },
+    ["clearavatar" /* ClearAvatar */]: (items) => {
+      avatar_current.set(state_default.avatar.current);
+    },
+    ["echo" /* Echo */]: (items) => {
+      do_echo.set(true);
+    },
+    ["notecho" /* NotEcho */]: (items) => {
+      do_echo.set(false);
+    },
+    ["help" /* Help */]: (items) => {
+      open_help.set(true);
+    },
+    ["nothelp" /* NotHelp */]: (items) => {
+      open_help.set(false);
+    },
+    ["stats" /* Stats */]: (items) => {
+      open_stats.set(true);
+    },
+    ["notstats" /* NotStats */]: (items) => {
+      open_stats.set(false);
+    },
+    ["heard" /* Heard */]: (items) => {
+      open_heard.set(true);
+    },
+    ["notheard" /* NotHeard */]: (items) => {
+      open_heard.set(false);
+    },
+    ["voice" /* Voice */]: (items) => {
+      voice_current.set(items.slice(3).join(" "));
+    }
+  };
+
   // src/keyboard.ts
   var key_down = new Value("");
   var key_up = new Value("");
@@ -32859,10 +32964,9 @@ unbinds variable name
   };
   function findVoice(voiceName) {
     const voices = synth.getVoices();
-    return voices.find((voice2) => voice2.name.indexOf(voiceName) !== -1);
+    return voices.find((voice) => voice.name.indexOf(voiceName) !== -1);
   }
   var talk = new Value("");
-  var voice = new Value("UK English");
   var assist = new Value("");
   var findTilde = /~/g;
   function say(said) {
@@ -32875,104 +32979,11 @@ unbinds variable name
     said = spli[Math.floor(Math.random() * spli.length)];
     const voices = synth.getVoices();
     var utterThis = new SpeechSynthesisUtterance(said);
-    utterThis.voice = findVoice(voice.$) || findVoice("Aus") || findVoice("UK English Female") || voices[0];
+    utterThis.voice = findVoice(voice_current.$) || findVoice("Aus") || findVoice("UK English Female") || voices[0];
     utterThis.pitch = 1;
     utterThis.rate = 0.8;
     synth.speak(utterThis);
   }
-  function clone(target) {
-    return Object.fromEntries(Object.entries(target));
-  }
-  var binds = new Value(clone(state_default.binds)).save("binds");
-  var vars = new Value(clone(state_default.vars)).save("vars");
-  var controls = {
-    ["bind" /* Bind */]: (items) => {
-      binds.$[items[2]] = items.slice(3).join(" ");
-      binds.poke();
-    },
-    ["notbind" /* NotBind */]: (items) => {
-      delete binds.$[items[3]];
-      binds.poke();
-    },
-    ["clearbind" /* ClearBind */]: (items) => {
-      binds.set(clone(state_default.binds));
-    },
-    ["var" /* Var */]: (items) => {
-      vars.$[items[2]] = items.slice(3).join(" ");
-      vars.poke();
-    },
-    ["notvar" /* NotVar */]: (items) => {
-      delete vars.$[items[3]];
-      vars.poke();
-    },
-    ["clearvar" /* ClearVar */]: (items) => {
-      vars.set(clone(state_default.vars));
-    },
-    ["selfie" /* Selfie */]: (items) => {
-      toggle_selfie.set(true);
-    },
-    ["notselfie" /* NotSelfie */]: (items) => {
-      toggle_selfie.set(false);
-    },
-    ["save" /* Save */]: () => {
-      saveState();
-    },
-    ["swap" /* Swap */]: (items) => {
-      const cur = currentVRM.$;
-      const mir = mirrorVRM.$;
-      currentVRM.$ = mir;
-      mirrorVRM.$ = cur;
-      currentVRM.poke();
-      mirrorVRM.poke();
-    },
-    ["visible" /* Visible */]: (items) => {
-    },
-    ["notvisible" /* NotVisible */]: (items) => {
-    },
-    ["avatar" /* Avatar */]: (items) => {
-      avatar_current.set(items[2]);
-    },
-    ["clearavatar" /* ClearAvatar */]: (items) => {
-      avatar_current.set(state_default.avatar.current);
-    },
-    ["echo" /* Echo */]: (items) => {
-      do_echo.set(true);
-    },
-    ["notecho" /* NotEcho */]: (items) => {
-      do_echo.set(false);
-    },
-    ["help" /* Help */]: (items) => {
-      open_help.set(true);
-    },
-    ["nothelp" /* NotHelp */]: (items) => {
-      open_help.set(false);
-    },
-    ["stats" /* Stats */]: (items) => {
-      open_stats.set(true);
-    },
-    ["notstats" /* NotStats */]: (items) => {
-      open_stats.set(false);
-    },
-    ["heard" /* Heard */]: (items) => {
-      open_heard.set(true);
-    },
-    ["notheard" /* NotHeard */]: (items) => {
-      open_heard.set(false);
-    }
-  };
-  function saveState() {
-    console.log(JSON.stringify({
-      binds: binds.$,
-      vars: vars.$,
-      selfie: toggle_selfie.$
-    }, null, "	"));
-  }
-  function loadState(state) {
-    binds.set(state.binds);
-    vars.set(state.vars);
-    toggle_selfie.set(state.selfie);
-  }
-  window.loadState = loadState;
   function doControl(said) {
     const items = said.toLowerCase().trim().split(" ");
     if (items[0] !== "control")
@@ -33183,7 +33194,7 @@ unbinds variable name
     const ctx = canvasElement.$.getContext("2d");
     ctx.translate(width, 0);
     ctx.scale(-1, 1);
-    const camera2 = new import_camera_utils.Camera($ve, {
+    const camera4 = new import_camera_utils.Camera($ve, {
       onFrame: async () => {
         ctx.drawImage($ve, 0, 0, width, height);
         await holistic.send({ image: canvasElement.$ });
@@ -33191,7 +33202,7 @@ unbinds variable name
       width,
       height
     });
-    camera2.start();
+    camera4.start();
   });
   tick.on(() => {
     if (currentVRM.$) {
@@ -33466,6 +33477,7 @@ unbinds variable name
   AFRAME.registerComponent("character-camera", {
     init() {
       camera.set(this.el.object3D);
+      camera_el.set(this);
       this.cancel = currentVRM.on(() => {
         const o3d = this.el.object3D;
         if (currentVRM.$) {
@@ -33543,33 +33555,6 @@ unbinds variable name
     }
   };
   var camera_fps_default = Camera_fps;
-
-  // src/template/flora.svelte
-  var Flora = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, null, null, safe_not_equal, {});
-    }
-  };
-  var flora_default = Flora;
-
-  // src/template/flora-assets.svelte
-  function instance3($$self, $$props, $$invalidate) {
-    let { groundSize: groundSize2 } = $$props;
-    const scatter = `-${groundSize2} 0 -${groundSize2} ${groundSize2} 0 ${groundSize2}`;
-    $$self.$$set = ($$props2) => {
-      if ("groundSize" in $$props2)
-        $$invalidate(0, groundSize2 = $$props2.groundSize);
-    };
-    return [groundSize2];
-  }
-  var Flora_assets = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance3, null, safe_not_equal, { groundSize: 0 });
-    }
-  };
-  var flora_assets_default = Flora_assets;
 
   // src/ui/text.svelte
   function create_if_block(ctx) {
@@ -33651,7 +33636,7 @@ unbinds variable name
       }
     };
   }
-  function instance4($$self, $$props, $$invalidate) {
+  function instance3($$self, $$props, $$invalidate) {
     let $open_text;
     component_subscribe($$self, open_text, ($$value) => $$invalidate(1, $open_text = $$value));
     let ele;
@@ -33687,7 +33672,7 @@ unbinds variable name
         $$invalidate(0, ele);
       });
     }
-    const keydown_handler3 = (e) => {
+    const keydown_handler2 = (e) => {
       if (e.key === "Enter") {
         send();
       }
@@ -33707,13 +33692,13 @@ unbinds variable name
       escape2,
       input_input_handler,
       input_binding,
-      keydown_handler3
+      keydown_handler2
     ];
   }
   var Text = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance4, create_fragment5, safe_not_equal, {});
+      init(this, options, instance3, create_fragment5, safe_not_equal, {});
     }
   };
   var text_default = Text;
@@ -33782,7 +33767,7 @@ unbinds variable name
       }
     };
   }
-  function instance5($$self, $$props, $$invalidate) {
+  function instance4($$self, $$props, $$invalidate) {
     let $open_heard;
     component_subscribe($$self, open_heard, ($$value) => $$invalidate(1, $open_heard = $$value));
     let text2;
@@ -33802,7 +33787,7 @@ unbinds variable name
   var Heard = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment6, safe_not_equal, {});
+      init(this, options, instance4, create_fragment6, safe_not_equal, {});
     }
   };
   var heard_default = Heard;
@@ -33820,99 +33805,78 @@ unbinds variable name
     let audio;
     let audio_src_value;
     let t3;
-    let a_asset_item0;
-    let a_asset_item0_src_value;
-    let t4;
-    let a_asset_item1;
-    let a_asset_item1_src_value;
-    let t5;
     let a_mixin0;
-    let t6;
+    let t4;
     let a_mixin1;
-    let t7;
+    let t5;
     let a_mixin2;
-    let a_mixin2_bounds_value;
-    let t8;
-    let a_mixin3;
-    let a_mixin3_ring_value;
-    let t9;
-    let a_mixin4;
-    let t10;
-    let a_mixin5;
-    let a_mixin5_animation_value;
-    let t11;
+    let a_mixin2_animation_value;
+    let t6;
     let charactersmixins;
-    let t12;
-    let a_asset_item2;
-    let a_asset_item2_src_value;
-    let t13;
-    let a_mixin6;
-    let t14;
-    let a_mixin7;
-    let t15;
-    let a_mixin8;
-    let t16;
-    let a_mixin9;
-    let t17;
-    let a_mixin10;
-    let t18;
-    let a_mixin11;
-    let t19;
-    let a_mixin12;
-    let t20;
-    let a_mixin13;
-    let t21;
-    let a_mixin14;
-    let t22;
-    let floraassets;
-    let t23;
+    let t7;
     let camerafps;
-    let t24;
+    let t8;
+    let a_entity0;
+    let t9;
+    let a_mixin3;
+    let t10;
+    let a_mixin4;
+    let t11;
+    let a_mixin5;
+    let t12;
+    let a_mixin6;
+    let t13;
+    let a_mixin7;
+    let t14;
+    let a_mixin8;
+    let t15;
+    let a_mixin9;
+    let a_mixin9_ring_value;
+    let t16;
     let a_sky;
     let a_sky_animate_value;
-    let t25;
-    let a_entity0;
-    let t26;
-    let flora;
-    let t27;
+    let t17;
     let a_entity1;
-    let t28;
+    let t18;
     let a_entity2;
-    let t29;
+    let t19;
     let a_entity3;
-    let t30;
+    let t20;
     let a_entity4;
-    let t31;
+    let t21;
     let a_entity5;
-    let a_entity5_position_value;
-    let a_entity5_light_value;
-    let t32;
+    let t22;
     let a_entity6;
-    let a_entity6_position_value;
-    let a_entity6_light_value;
-    let t33;
+    let t23;
     let a_entity7;
-    let t34;
+    let t24;
+    let a_entity8;
+    let a_entity8_position_value;
+    let a_entity8_light_value;
+    let t25;
+    let a_entity9;
+    let a_entity9_position_value;
+    let a_entity9_light_value;
+    let t26;
+    let a_entity10;
+    let t27;
     let characters;
-    let t35;
+    let t28;
     let a_plane;
     let a_plane_width_value;
     let a_plane_height_value;
-    let t36;
-    let a_entity8;
-    let a_entity8_position_value;
-    let t37;
-    let a_entity9;
+    let t29;
+    let a_entity11;
+    let a_entity11_position_value;
+    let t30;
+    let a_entity12;
+    let a_scene_physics_value;
     let current;
     webcam = new webcam_default({});
     text_1 = new text_default({});
     heard = new heard_default({});
     charactersmixins = new characters_assets_default({});
-    floraassets = new flora_assets_default({
-      props: { groundSize: ctx[0] }
-    });
     camerafps = new camera_fps_default({});
-    flora = new flora_default({});
     characters = new characters_default({});
     return {
       c() {
@@ -33926,189 +33890,139 @@ unbinds variable name
         a_assets = element("a-assets");
         audio = element("audio");
         t3 = space();
-        a_asset_item0 = element("a-asset-item");
-        t4 = space();
-        a_asset_item1 = element("a-asset-item");
-        t5 = space();
         a_mixin0 = element("a-mixin");
-        t6 = space();
+        t4 = space();
         a_mixin1 = element("a-mixin");
-        t7 = space();
+        t5 = space();
         a_mixin2 = element("a-mixin");
-        t8 = space();
-        a_mixin3 = element("a-mixin");
-        t9 = space();
-        a_mixin4 = element("a-mixin");
-        t10 = space();
-        a_mixin5 = element("a-mixin");
-        t11 = space();
+        t6 = space();
         create_component(charactersmixins.$$.fragment);
-        t12 = space();
-        a_asset_item2 = element("a-asset-item");
-        t13 = space();
-        a_mixin6 = element("a-mixin");
-        t14 = space();
-        a_mixin7 = element("a-mixin");
-        t15 = space();
-        a_mixin8 = element("a-mixin");
-        t16 = space();
-        a_mixin9 = element("a-mixin");
-        t17 = space();
-        a_mixin10 = element("a-mixin");
-        t18 = space();
-        a_mixin11 = element("a-mixin");
-        t19 = space();
-        a_mixin12 = element("a-mixin");
-        t20 = space();
-        a_mixin13 = element("a-mixin");
-        t21 = space();
-        a_mixin14 = element("a-mixin");
-        t22 = space();
-        create_component(floraassets.$$.fragment);
-        t23 = space();
+        t7 = space();
         create_component(camerafps.$$.fragment);
-        t24 = space();
-        a_sky = element("a-sky");
-        t25 = space();
+        t8 = space();
         a_entity0 = element("a-entity");
-        t26 = space();
-        create_component(flora.$$.fragment);
-        t27 = space();
+        t9 = space();
+        a_mixin3 = element("a-mixin");
+        t10 = space();
+        a_mixin4 = element("a-mixin");
+        t11 = space();
+        a_mixin5 = element("a-mixin");
+        t12 = space();
+        a_mixin6 = element("a-mixin");
+        t13 = space();
+        a_mixin7 = element("a-mixin");
+        t14 = space();
+        a_mixin8 = element("a-mixin");
+        t15 = space();
+        a_mixin9 = element("a-mixin");
+        t16 = space();
+        a_sky = element("a-sky");
+        t17 = space();
         a_entity1 = element("a-entity");
-        t28 = space();
+        t18 = space();
         a_entity2 = element("a-entity");
-        t29 = space();
+        t19 = space();
         a_entity3 = element("a-entity");
-        t30 = space();
+        t20 = space();
         a_entity4 = element("a-entity");
-        t31 = space();
+        t21 = space();
         a_entity5 = element("a-entity");
-        t32 = space();
+        t22 = space();
         a_entity6 = element("a-entity");
-        t33 = space();
+        t23 = space();
         a_entity7 = element("a-entity");
-        t34 = space();
-        create_component(characters.$$.fragment);
-        t35 = space();
-        a_plane = element("a-plane");
-        t36 = space();
+        t24 = space();
         a_entity8 = element("a-entity");
-        t37 = space();
+        t25 = space();
         a_entity9 = element("a-entity");
+        t26 = space();
+        a_entity10 = element("a-entity");
+        t27 = space();
+        create_component(characters.$$.fragment);
+        t28 = space();
+        a_plane = element("a-plane");
+        t29 = space();
+        a_entity11 = element("a-entity");
+        t30 = space();
+        a_entity12 = element("a-entity");
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "/sound/bg-ocean.mp3"))
           attr(audio, "src", audio_src_value);
-        set_custom_element_data(a_asset_item0, "id", "glb-tree");
-        if (!src_url_equal(a_asset_item0.src, a_asset_item0_src_value = "/glb/tree.glb"))
-          set_custom_element_data(a_asset_item0, "src", a_asset_item0_src_value);
-        set_custom_element_data(a_asset_item1, "id", "glb-rockC");
-        if (!src_url_equal(a_asset_item1.src, a_asset_item1_src_value = "/glb/rockC.glb"))
-          set_custom_element_data(a_asset_item1, "src", a_asset_item1_src_value);
         set_custom_element_data(a_mixin0, "id", "shadow");
         set_custom_element_data(a_mixin0, "shadow", "cast: true");
         set_custom_element_data(a_mixin1, "id", "toon");
         set_custom_element_data(a_mixin1, "material", "roughness: 1;dithering: false;");
-        set_custom_element_data(a_mixin2, "id", "water");
+        set_custom_element_data(a_mixin2, "id", "cloud");
+        set_custom_element_data(a_mixin2, "scatter", ctx[4]);
+        set_custom_element_data(a_mixin2, "animation", a_mixin2_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx[0] + "; easing: linear; loop: true;");
+        set_custom_element_data(a_mixin2, "material", "color: #ffffff; opacity: 0.75; transparent: true; emissive: white; ");
         set_custom_element_data(a_mixin2, "geometry", "");
-        set_custom_element_data(a_mixin2, "scale", "0.5 0.1 0.5");
-        set_custom_element_data(a_mixin2, "ammo-body", "mass:0.1");
-        set_custom_element_data(a_mixin2, "force", "0 0 -2");
-        set_custom_element_data(a_mixin2, "material", "color: blue; transparent: true; emissive: blue; opacity: 0.5");
-        set_custom_element_data(a_mixin2, "bounds", a_mixin2_bounds_value = "-" + ctx[0] + " -5 -" + ctx[0] + " " + ctx[0] + " 40 " + ctx[0]);
-        set_custom_element_data(a_mixin2, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 0.2; offset: 0 0.2 0");
-        set_custom_element_data(a_mixin2, "position", "0 5 0");
-        set_custom_element_data(a_mixin3, "id", "mountains");
+        set_custom_element_data(a_mixin2, "scale", "25 5 15");
+        set_custom_element_data(a_entity0, "id", "mountain-model");
+        set_custom_element_data(a_entity0, "gltf-model", "/glb/rockC.glb");
+        set_custom_element_data(a_entity0, "instanced-mesh", "capacity: 50");
+        set_custom_element_data(a_mixin3, "id", "flowers");
         set_custom_element_data(a_mixin3, "shadow", "");
-        set_custom_element_data(a_mixin3, "gltf-model", "#glb-rockC");
-        set_custom_element_data(a_mixin3, "ring", a_mixin3_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 50");
-        set_custom_element_data(a_mixin3, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin3, "vary", "property: scale; range: 12 7.5 12 12 15 12");
-        set_custom_element_data(a_mixin3, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
-        set_custom_element_data(a_mixin4, "id", "rockwater");
+        set_custom_element_data(a_mixin3, "gltf-model", "/glb/flowers.glb");
+        set_custom_element_data(a_mixin3, "scatter", ctx[4]);
+        set_custom_element_data(a_mixin3, "vary", vary);
+        set_custom_element_data(a_mixin4, "id", "mushroom");
         set_custom_element_data(a_mixin4, "shadow", "");
-        set_custom_element_data(a_mixin4, "gltf-model", "#glb-rockC");
-        set_custom_element_data(a_mixin4, "vary", "property: scale; range: 1.5 0.1 1.5 2.5 0.5 2.5");
-        set_custom_element_data(a_mixin4, "ring", "radius: 5; count: 10");
-        set_custom_element_data(a_mixin4, "ammo-body", "type: static; mass: 0");
-        set_custom_element_data(a_mixin4, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
-        set_custom_element_data(a_mixin5, "id", "cloud");
-        set_custom_element_data(a_mixin5, "scatter", ctx[3]);
-        set_custom_element_data(a_mixin5, "animation", a_mixin5_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx[0] + "; easing: linear; loop: true;");
-        set_custom_element_data(a_mixin5, "material", "color: #ffffff; opacity: 0.75; transparent: true; emissive: white; ");
-        set_custom_element_data(a_mixin5, "geometry", "");
-        set_custom_element_data(a_mixin5, "scale", "25 5 15");
-        set_custom_element_data(a_asset_item2, "id", "glb-tree");
-        if (!src_url_equal(a_asset_item2.src, a_asset_item2_src_value = "/glb/tree.glb"))
-          set_custom_element_data(a_asset_item2, "src", a_asset_item2_src_value);
-        set_custom_element_data(a_mixin6, "id", "flowers");
+        set_custom_element_data(a_mixin4, "gltf-model", "/glb/mushrooms.glb");
+        set_custom_element_data(a_mixin4, "scatter", ctx[4]);
+        set_custom_element_data(a_mixin4, "vary", vary);
+        set_custom_element_data(a_mixin5, "id", "flowersLow");
+        set_custom_element_data(a_mixin5, "shadow", "");
+        set_custom_element_data(a_mixin5, "gltf-model", "/glb/flowersLow.glb");
+        set_custom_element_data(a_mixin5, "scatter", ctx[4]);
+        set_custom_element_data(a_mixin5, "vary", vary);
+        set_custom_element_data(a_mixin6, "id", "tree");
         set_custom_element_data(a_mixin6, "shadow", "");
-        set_custom_element_data(a_mixin6, "gltf-model", "/glb/flowers.glb");
-        set_custom_element_data(a_mixin6, "scatter", ctx[3]);
-        set_custom_element_data(a_mixin6, "vary", vary);
-        set_custom_element_data(a_mixin7, "id", "mushroom");
+        set_custom_element_data(a_mixin6, "gltf-model", "/glb/tree.glb");
+        set_custom_element_data(a_mixin6, "scatter", ctx[4]);
+        set_custom_element_data(a_mixin6, "vary", "property: scale; range: 1 0.5 1 2 3 2");
+        set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin6, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
+        set_custom_element_data(a_mixin7, "id", "grass");
+        set_custom_element_data(a_mixin7, "gltf-model", "/glb/grass.glb");
         set_custom_element_data(a_mixin7, "shadow", "");
-        set_custom_element_data(a_mixin7, "gltf-model", "/glb/mushrooms.glb");
-        set_custom_element_data(a_mixin7, "scatter", ctx[3]);
-        set_custom_element_data(a_mixin7, "vary", vary);
-        set_custom_element_data(a_mixin8, "id", "flowersLow");
+        set_custom_element_data(a_mixin7, "scatter", ctx[4]);
+        set_custom_element_data(a_mixin7, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
+        set_custom_element_data(a_mixin8, "id", "rock");
         set_custom_element_data(a_mixin8, "shadow", "");
-        set_custom_element_data(a_mixin8, "gltf-model", "/glb/flowersLow.glb");
-        set_custom_element_data(a_mixin8, "scatter", ctx[3]);
-        set_custom_element_data(a_mixin8, "vary", vary);
-        set_custom_element_data(a_mixin9, "id", "rock");
+        set_custom_element_data(a_mixin8, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
+        set_custom_element_data(a_mixin8, "scatter", ctx[4]);
+        set_custom_element_data(a_mixin8, "gltf-model", "/glb/rockB.glb");
+        set_custom_element_data(a_mixin8, "ammo-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin8, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
+        set_custom_element_data(a_mixin9, "id", "mountains");
         set_custom_element_data(a_mixin9, "shadow", "");
-        set_custom_element_data(a_mixin9, "gltf-model", "/glb/rockB.glb");
-        set_custom_element_data(a_mixin9, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
-        set_custom_element_data(a_mixin9, "scatter", ctx[3]);
-        set_custom_element_data(a_mixin9, "ammo-body", "type: static; mass: 0");
-        set_custom_element_data(a_mixin9, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
-        set_custom_element_data(a_mixin10, "id", "tree");
-        set_custom_element_data(a_mixin10, "shadow", "");
-        set_custom_element_data(a_mixin10, "gltf-model", "#glb-tree");
-        set_custom_element_data(a_mixin10, "scatter", ctx[3]);
-        set_custom_element_data(a_mixin10, "vary", "property: scale; range: 1 0.5 1 2 3 2");
-        set_custom_element_data(a_mixin10, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin10, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
-        set_custom_element_data(a_mixin11, "id", "grass");
-        set_custom_element_data(a_mixin11, "shadow", "");
-        set_custom_element_data(a_mixin11, "gltf-model", "/glb/grass.glb");
-        set_custom_element_data(a_mixin11, "scatter", ctx[3]);
-        set_custom_element_data(a_mixin11, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
-        set_custom_element_data(a_mixin12, "id", "grass2");
-        set_custom_element_data(a_mixin12, "shadow", "");
-        set_custom_element_data(a_mixin12, "gltf-model", "/glb/grassLarge.glb");
-        set_custom_element_data(a_mixin12, "scatter", ctx[3]);
-        set_custom_element_data(a_mixin12, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
-        set_custom_element_data(a_mixin13, "id", "coinGold");
-        set_custom_element_data(a_mixin13, "shadow", "");
-        set_custom_element_data(a_mixin13, "gltf-model", "/glb/coinGold.glb");
-        set_custom_element_data(a_mixin13, "ammo-body", "mass:0.1");
-        set_custom_element_data(a_mixin13, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 0.35; offset: -1 0.25 0.5");
-        set_custom_element_data(a_mixin13, "scatter", ctx[3]);
-        set_custom_element_data(a_mixin14, "id", "rock");
-        set_custom_element_data(a_mixin14, "shadow", "");
-        set_custom_element_data(a_mixin14, "gltf-model", "/glb/rockB.glb");
-        set_custom_element_data(a_mixin14, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
-        set_custom_element_data(a_mixin14, "scatter", ctx[3]);
-        set_custom_element_data(a_mixin14, "ammo-body", "type: static; mass: 0");
-        set_custom_element_data(a_mixin14, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
+        set_custom_element_data(a_mixin9, "instanced-mesh-member", "mesh:#mountain-model");
+        set_custom_element_data(a_mixin9, "ring", a_mixin9_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 50");
+        set_custom_element_data(a_mixin9, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin9, "vary", "property: scale; range: 12 7.5 12 12 15 12");
+        set_custom_element_data(a_mixin9, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
         set_custom_element_data(a_sky, "color", sky);
         set_custom_element_data(a_sky, "animate", a_sky_animate_value = "property: color; to: " + sky_dark + "; easing: easeInOut; dur: 6000 ");
-        set_custom_element_data(a_entity0, "pool__mountains", "mixin: mountains; size: 50");
-        set_custom_element_data(a_entity0, "activate__mountains", "");
-        set_custom_element_data(a_entity1, "pool__mushroom", "mixin: mushroom; size: 20");
-        set_custom_element_data(a_entity1, "activate__mushroom", "");
-        set_custom_element_data(a_entity2, "pool__tree", "mixin: tree; size: 50");
-        set_custom_element_data(a_entity2, "activate__tree", "");
-        set_custom_element_data(a_entity3, "pool__grass", "mixin: grass; size: 50");
-        set_custom_element_data(a_entity3, "activate__grass", "");
-        set_custom_element_data(a_entity4, "pool__rock", "mixin: rock; size: 50");
-        set_custom_element_data(a_entity4, "activate__rock", "");
-        set_custom_element_data(a_entity5, "position", a_entity5_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
-        set_custom_element_data(a_entity5, "light", a_entity5_light_value = ctx[2]({
+        set_custom_element_data(a_entity1, "pool__tree", "mixin: tree; size: 50");
+        set_custom_element_data(a_entity1, "activate__tree", "");
+        set_custom_element_data(a_entity2, "pool__mountains", "mixin: mountains; size: 50");
+        set_custom_element_data(a_entity2, "activate__mountains", "");
+        set_custom_element_data(a_entity3, "pool__mushroom", "mixin: mushroom; size: 20");
+        set_custom_element_data(a_entity3, "activate__mushroom", "");
+        set_custom_element_data(a_entity4, "pool__grass", "mixin: grass; size: 50");
+        set_custom_element_data(a_entity4, "activate__grass", "");
+        set_custom_element_data(a_entity5, "pool__rock", "mixin: rock; size: 50");
+        set_custom_element_data(a_entity5, "activate__rock", "");
+        set_custom_element_data(a_entity6, "pool__flowers", "mixin: flowers; size: 50");
+        set_custom_element_data(a_entity6, "activate__flowers", "");
+        set_custom_element_data(a_entity7, "pool__flowerslow", "mixin: flowersLow; size: 50");
+        set_custom_element_data(a_entity7, "activate__flowerslow", "");
+        set_custom_element_data(a_entity8, "position", a_entity8_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
+        set_custom_element_data(a_entity8, "light", a_entity8_light_value = ctx[3]({
           type: "directional",
-          castShadow: true,
           color: light,
+          castShadow: true,
           shadowCameraTop: ctx[0],
           shadowCameraLeft: -ctx[0],
           shadowCameraRight: ctx[0],
@@ -34118,14 +34032,14 @@ unbinds variable name
           shadowMapWidth: 1024 * 4,
           intensity: 0.75
         }));
-        set_custom_element_data(a_entity6, "position", a_entity6_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
-        set_custom_element_data(a_entity6, "light", a_entity6_light_value = ctx[2]({
+        set_custom_element_data(a_entity9, "position", a_entity9_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
+        set_custom_element_data(a_entity9, "light", a_entity9_light_value = ctx[3]({
           type: "directional",
           color: light,
           intensity: 0.75
         }));
-        set_custom_element_data(a_entity7, "light", "type:ambient; color:white; intensity:0.1;");
-        set_custom_element_data(a_entity7, "position", "-1 1 1");
+        set_custom_element_data(a_entity10, "light", "type:ambient; color:white; intensity:0.1;");
+        set_custom_element_data(a_entity10, "position", "-1 1 1");
         set_custom_element_data(a_plane, "shadow", "");
         set_custom_element_data(a_plane, "position", "0 0 0");
         set_custom_element_data(a_plane, "rotation", "-90 0 0");
@@ -34135,15 +34049,15 @@ unbinds variable name
         set_custom_element_data(a_plane, "ammo-shape", "type:box");
         set_custom_element_data(a_plane, "material", "repeat: 10 10;");
         set_custom_element_data(a_plane, "color", "#334411");
-        set_custom_element_data(a_entity8, "pool__cloud", "mixin: shadow cloud; size: 5");
-        set_custom_element_data(a_entity8, "activate__cloud", "");
-        set_custom_element_data(a_entity8, "position", a_entity8_position_value = "0 25 " + ctx[0] / 4);
-        set_custom_element_data(a_entity9, "sound", "autoplay: true; loop: true; volume: 0.1; src:#sound-bg;positional:false");
+        set_custom_element_data(a_entity11, "pool__cloud", "mixin: shadow cloud; size: 5");
+        set_custom_element_data(a_entity11, "activate__cloud", "");
+        set_custom_element_data(a_entity11, "position", a_entity11_position_value = "0 25 " + ctx[0] / 4);
+        set_custom_element_data(a_entity12, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
         set_custom_element_data(a_scene, "stats", ctx[1]);
         set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: medium;");
-        set_custom_element_data(a_scene, "shadow", "type:pcfsoft;");
-        set_custom_element_data(a_scene, "fog", "type: linear; color: #AAA");
-        set_custom_element_data(a_scene, "physics", "driver: ammo; ");
+        set_custom_element_data(a_scene, "shadow", "type:basic;");
+        set_custom_element_data(a_scene, "fog", "type: exponential; color: #555");
+        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2] + " ");
       },
       m(target, anchor) {
         mount_component(webcam, target, anchor);
@@ -34156,98 +34070,77 @@ unbinds variable name
         append(a_scene, a_assets);
         append(a_assets, audio);
         append(a_assets, t3);
-        append(a_assets, a_asset_item0);
-        append(a_assets, t4);
-        append(a_assets, a_asset_item1);
-        append(a_assets, t5);
         append(a_assets, a_mixin0);
-        append(a_assets, t6);
+        append(a_assets, t4);
         append(a_assets, a_mixin1);
-        append(a_assets, t7);
+        append(a_assets, t5);
         append(a_assets, a_mixin2);
-        append(a_assets, t8);
-        append(a_assets, a_mixin3);
-        append(a_assets, t9);
-        append(a_assets, a_mixin4);
-        append(a_assets, t10);
-        append(a_assets, a_mixin5);
-        append(a_assets, t11);
+        append(a_assets, t6);
         mount_component(charactersmixins, a_assets, null);
-        append(a_assets, t12);
-        append(a_assets, a_asset_item2);
-        append(a_assets, t13);
-        append(a_assets, a_mixin6);
-        append(a_assets, t14);
-        append(a_assets, a_mixin7);
-        append(a_assets, t15);
-        append(a_assets, a_mixin8);
-        append(a_assets, t16);
-        append(a_assets, a_mixin9);
-        append(a_assets, t17);
-        append(a_assets, a_mixin10);
-        append(a_assets, t18);
-        append(a_assets, a_mixin11);
-        append(a_assets, t19);
-        append(a_assets, a_mixin12);
-        append(a_assets, t20);
-        append(a_assets, a_mixin13);
-        append(a_assets, t21);
-        append(a_assets, a_mixin14);
-        append(a_assets, t22);
-        mount_component(floraassets, a_assets, null);
-        append(a_scene, t23);
+        append(a_scene, t7);
         mount_component(camerafps, a_scene, null);
-        append(a_scene, t24);
-        append(a_scene, a_sky);
-        append(a_scene, t25);
+        append(a_scene, t8);
         append(a_scene, a_entity0);
-        append(a_scene, t26);
-        mount_component(flora, a_scene, null);
-        append(a_scene, t27);
+        append(a_scene, t9);
+        append(a_scene, a_mixin3);
+        append(a_scene, t10);
+        append(a_scene, a_mixin4);
+        append(a_scene, t11);
+        append(a_scene, a_mixin5);
+        append(a_scene, t12);
+        append(a_scene, a_mixin6);
+        append(a_scene, t13);
+        append(a_scene, a_mixin7);
+        append(a_scene, t14);
+        append(a_scene, a_mixin8);
+        append(a_scene, t15);
+        append(a_scene, a_mixin9);
+        append(a_scene, t16);
+        append(a_scene, a_sky);
+        append(a_scene, t17);
         append(a_scene, a_entity1);
-        append(a_scene, t28);
+        append(a_scene, t18);
         append(a_scene, a_entity2);
-        append(a_scene, t29);
+        append(a_scene, t19);
         append(a_scene, a_entity3);
-        append(a_scene, t30);
+        append(a_scene, t20);
         append(a_scene, a_entity4);
-        append(a_scene, t31);
+        append(a_scene, t21);
         append(a_scene, a_entity5);
-        append(a_scene, t32);
+        append(a_scene, t22);
         append(a_scene, a_entity6);
-        append(a_scene, t33);
+        append(a_scene, t23);
         append(a_scene, a_entity7);
-        append(a_scene, t34);
-        mount_component(characters, a_scene, null);
-        append(a_scene, t35);
-        append(a_scene, a_plane);
-        append(a_scene, t36);
+        append(a_scene, t24);
         append(a_scene, a_entity8);
-        append(a_scene, t37);
+        append(a_scene, t25);
         append(a_scene, a_entity9);
+        append(a_scene, t26);
+        append(a_scene, a_entity10);
+        append(a_scene, t27);
+        mount_component(characters, a_scene, null);
+        append(a_scene, t28);
+        append(a_scene, a_plane);
+        append(a_scene, t29);
+        append(a_scene, a_entity11);
+        append(a_scene, t30);
+        append(a_scene, a_entity12);
         current = true;
       },
       p(ctx2, [dirty]) {
-        if (!current || dirty & 1 && a_mixin2_bounds_value !== (a_mixin2_bounds_value = "-" + ctx2[0] + " -5 -" + ctx2[0] + " " + ctx2[0] + " 40 " + ctx2[0])) {
-          set_custom_element_data(a_mixin2, "bounds", a_mixin2_bounds_value);
+        if (!current || dirty & 1 && a_mixin2_animation_value !== (a_mixin2_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx2[0] + "; easing: linear; loop: true;")) {
+          set_custom_element_data(a_mixin2, "animation", a_mixin2_animation_value);
         }
-        if (!current || dirty & 1 && a_mixin3_ring_value !== (a_mixin3_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
-          set_custom_element_data(a_mixin3, "ring", a_mixin3_ring_value);
+        if (!current || dirty & 1 && a_mixin9_ring_value !== (a_mixin9_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
+          set_custom_element_data(a_mixin9, "ring", a_mixin9_ring_value);
         }
-        if (!current || dirty & 1 && a_mixin5_animation_value !== (a_mixin5_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx2[0] + "; easing: linear; loop: true;")) {
-          set_custom_element_data(a_mixin5, "animation", a_mixin5_animation_value);
+        if (!current || dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity8, "position", a_entity8_position_value);
         }
-        const floraassets_changes = {};
-        if (dirty & 1)
-          floraassets_changes.groundSize = ctx2[0];
-        floraassets.$set(floraassets_changes);
-        if (!current || dirty & 1 && a_entity5_position_value !== (a_entity5_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity5, "position", a_entity5_position_value);
-        }
-        if (!current || dirty & 1 && a_entity5_light_value !== (a_entity5_light_value = ctx2[2]({
+        if (!current || dirty & 1 && a_entity8_light_value !== (a_entity8_light_value = ctx2[3]({
           type: "directional",
-          castShadow: true,
           color: light,
+          castShadow: true,
           shadowCameraTop: ctx2[0],
           shadowCameraLeft: -ctx2[0],
           shadowCameraRight: ctx2[0],
@@ -34257,10 +34150,10 @@ unbinds variable name
           shadowMapWidth: 1024 * 4,
           intensity: 0.75
         }))) {
-          set_custom_element_data(a_entity5, "light", a_entity5_light_value);
+          set_custom_element_data(a_entity8, "light", a_entity8_light_value);
         }
-        if (!current || dirty & 1 && a_entity6_position_value !== (a_entity6_position_value = "-" + ctx2[0] / 4 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity6, "position", a_entity6_position_value);
+        if (!current || dirty & 1 && a_entity9_position_value !== (a_entity9_position_value = "-" + ctx2[0] / 4 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity9, "position", a_entity9_position_value);
         }
         if (!current || dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 1.5)) {
           set_custom_element_data(a_plane, "width", a_plane_width_value);
@@ -34268,11 +34161,14 @@ unbinds variable name
         if (!current || dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 1.5)) {
           set_custom_element_data(a_plane, "height", a_plane_height_value);
         }
-        if (!current || dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = "0 25 " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity8, "position", a_entity8_position_value);
+        if (!current || dirty & 1 && a_entity11_position_value !== (a_entity11_position_value = "0 25 " + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity11, "position", a_entity11_position_value);
         }
         if (!current || dirty & 2) {
           set_custom_element_data(a_scene, "stats", ctx2[1]);
+        }
+        if (!current || dirty & 4 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[2] + " ")) {
+          set_custom_element_data(a_scene, "physics", a_scene_physics_value);
         }
       },
       i(local) {
@@ -34282,9 +34178,7 @@ unbinds variable name
         transition_in(text_1.$$.fragment, local);
         transition_in(heard.$$.fragment, local);
         transition_in(charactersmixins.$$.fragment, local);
-        transition_in(floraassets.$$.fragment, local);
         transition_in(camerafps.$$.fragment, local);
-        transition_in(flora.$$.fragment, local);
         transition_in(characters.$$.fragment, local);
         current = true;
       },
@@ -34293,9 +34187,7 @@ unbinds variable name
         transition_out(text_1.$$.fragment, local);
         transition_out(heard.$$.fragment, local);
         transition_out(charactersmixins.$$.fragment, local);
-        transition_out(floraassets.$$.fragment, local);
         transition_out(camerafps.$$.fragment, local);
-        transition_out(flora.$$.fragment, local);
         transition_out(characters.$$.fragment, local);
         current = false;
       },
@@ -34312,9 +34204,7 @@ unbinds variable name
         if (detaching)
           detach(a_scene);
         destroy_component(charactersmixins);
-        destroy_component(floraassets);
         destroy_component(camerafps);
-        destroy_component(flora);
         destroy_component(characters);
       }
     };
@@ -34323,9 +34213,11 @@ unbinds variable name
   var sky = "#336";
   var sky_dark = "#003";
   var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
-  function instance6($$self, $$props, $$invalidate) {
+  function instance5($$self, $$props, $$invalidate) {
     let $open_stats;
+    let $open_debug;
     component_subscribe($$self, open_stats, ($$value) => $$invalidate(1, $open_stats = $$value));
+    component_subscribe($$self, open_debug, ($$value) => $$invalidate(2, $open_debug = $$value));
     start();
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize: groundSize2 = 100 } = $$props;
@@ -34334,12 +34226,12 @@ unbinds variable name
       if ("groundSize" in $$props2)
         $$invalidate(0, groundSize2 = $$props2.groundSize);
     };
-    return [groundSize2, $open_stats, str, scatter];
+    return [groundSize2, $open_stats, $open_debug, str, scatter];
   }
   var Volleyball = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment7, safe_not_equal, { groundSize: 0 });
+      init(this, options, instance5, create_fragment7, safe_not_equal, { groundSize: 0 });
     }
   };
   var volleyball_default = Volleyball;
@@ -34516,7 +34408,7 @@ unbinds variable name
   };
   var keydown_handler = (e) => {
   };
-  function instance7($$self, $$props, $$invalidate) {
+  function instance6($$self, $$props, $$invalidate) {
     let $motd;
     component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
     if (location.search === "?go") {
@@ -34532,7 +34424,7 @@ unbinds variable name
   var Home = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance7, create_fragment9, safe_not_equal, {});
+      init(this, options, instance6, create_fragment9, safe_not_equal, {});
     }
   };
   var home_default = Home;
@@ -34552,8 +34444,6 @@ unbinds variable name
     let t3;
     let div2;
     let current;
-    let mounted;
-    let dispose;
     title = new title_default({});
     return {
       c() {
@@ -34595,14 +34485,6 @@ unbinds variable name
         append(div3, t3);
         append(div3, div2);
         current = true;
-        if (!mounted) {
-          dispose = [
-            listen(textarea, "copy", copy_handler2),
-            listen(textarea, "paste", ctx[1]),
-            listen(textarea, "keydown", keydown_handler2)
-          ];
-          mounted = true;
-        }
       },
       p(ctx2, [dirty]) {
         if (!current || dirty & 1) {
@@ -34623,29 +34505,18 @@ unbinds variable name
         if (detaching)
           detach(div5);
         destroy_component(title);
-        mounted = false;
-        run_all(dispose);
       }
     };
   }
-  var copy_handler2 = (e) => {
-    e.preventDefault();
-  };
-  var keydown_handler2 = (e) => {
-  };
-  function instance8($$self, $$props, $$invalidate) {
+  function instance7($$self, $$props, $$invalidate) {
     let $loading;
     component_subscribe($$self, loading, ($$value) => $$invalidate(0, $loading = $$value));
-    const paste_handler2 = (e) => {
-      const v2 = decodeURI(e.clipboardData.getData("text"));
-      e.preventDefault();
-    };
-    return [$loading, paste_handler2];
+    return [$loading];
   }
   var Loading = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance8, create_fragment10, safe_not_equal, {});
+      init(this, options, instance7, create_fragment10, safe_not_equal, {});
     }
   };
   var loading_default = Loading;
@@ -34722,7 +34593,7 @@ unbinds variable name
       }
     };
   }
-  function instance9($$self, $$props, $$invalidate) {
+  function instance8($$self, $$props, $$invalidate) {
     let $helptext;
     component_subscribe($$self, helptext, ($$value) => $$invalidate(0, $helptext = $$value));
     function close() {
@@ -34733,7 +34604,7 @@ unbinds variable name
   var Help = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance9, create_fragment11, safe_not_equal, {});
+      init(this, options, instance8, create_fragment11, safe_not_equal, {});
     }
   };
   var help_default = Help;
@@ -35012,7 +34883,7 @@ unbinds variable name
     };
   }
   var groundSize = 100;
-  function instance10($$self, $$props, $$invalidate) {
+  function instance9($$self, $$props, $$invalidate) {
     let $open_loading;
     let $open_home;
     let $open_game;
@@ -35026,7 +34897,7 @@ unbinds variable name
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance10, create_fragment12, safe_not_equal, {});
+      init(this, options, instance9, create_fragment12, safe_not_equal, {});
     }
   };
   var main_default = Main;

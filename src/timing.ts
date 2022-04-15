@@ -5,6 +5,8 @@ import { Value } from "./value";
 export const tick = new Value(0)
 export const avatar_current = new Value<string>(state.avatar.current).save("avatar_current_2")
 export const avatar_doer = new Value<string>(state.avatar.doer).save("avatar_doer_1")
+export const voice_current = new Value("Aus | UK English").save("voice_current")
+export const voice_doer = new Value("Aus | UK English").save("voice_doer")
 
 export const open_home = new Value(true)
 export const open_game = new Value(false)
@@ -13,8 +15,10 @@ export const open_loading = new Value(false)
 export const open_help = new Value(false)
 export const open_stats = new Value(false).save("stats")
 export const open_heard = new Value(true).save("heard")
+export const open_debug = new Value(false).save("debug")
 
 export const camera = new Value<Object3D>()
+export const camera_el = new Value<any>()
 export const toggle_selfie = new Value(state.selfie).save("selfie")
 export const do_echo = new Value(true).save("do_echo")
 
@@ -24,13 +28,11 @@ open_game.on(($g) => {
     }
 })
 
+export const motd = new Value(`🎊v0.1.2🎊
 
-
-export const motd = new Value(`🎊v0.1.0🎊
-Controls + Persist
-✅ Controls ✅ Persist ✅ Help [f1]
-
-❌ Performance Pass
+✅ Controls ✅ Persist 
+✅ Help [f1]
+✅ Performance Pass
 
 ❌ AI DOER ❌ Gameplay 
 
@@ -69,15 +71,18 @@ const ticker = () => {
 
 export const loading = new Value(`Loading...
 
- WASD Move | Q+E Rotate
- Enter | Chat
- ~ | Command
- Space | Jump
+ WASD Move > Q+E Rotate
+ Enter > Chat
+     ~ > Command
+ Space > Jump
  
  Default Binds:
+
  N: Selfie
  M: NotSelfie
  H: Hi | Hi! | Hello | Heya | Yo
+ F1: Help
+ F2: NotHelp
 `
 )
 ticker()
