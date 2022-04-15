@@ -43,7 +43,7 @@ function say(said: string) {
 
     said = said.replace(findTilde, "control")
 
-    if (doControl(said)) return
+    if (doControl(said) && !do_echo.$) return
 
     const spli = said.split("|")
 
@@ -79,7 +79,7 @@ function doControl(said: string) {
         return false
     }
 
-    return do_echo.$
+    return true
 }
 
 talk.on(say)

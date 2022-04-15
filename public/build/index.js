@@ -32973,7 +32973,7 @@ unbinds variable name
     if (!said)
       return;
     said = said.replace(findTilde, "control");
-    if (doControl(said))
+    if (doControl(said) && !do_echo.$)
       return;
     const spli = said.split("|");
     said = spli[Math.floor(Math.random() * spli.length)];
@@ -33000,7 +33000,7 @@ unbinds variable name
     } else {
       return false;
     }
-    return do_echo.$;
+    return true;
   }
   talk.on(say);
   recog.on((event) => {
