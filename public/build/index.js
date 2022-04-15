@@ -7045,7 +7045,7 @@
   var tick = new Value(0);
   var avatar_current = new Value(state_default.avatar.current).save("avatar_current_2");
   var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
-  var voice_current = new Value("Aus | UK English").save("voice_current");
+  var voice_current = new Value("Guy | UK English").save("voice_current");
   var voice_doer = new Value("Aus | UK English").save("voice_doer");
   var open_home = new Value(true);
   var open_game = new Value(false);
@@ -7144,6 +7144,45 @@ binds variable name to commands
 
 ~ not var name 
 unbinds variable name
+
+~ stats 
+show fps stats
+
+~ not stats
+hide fps stats
+
+~ heard
+show top heard messages
+
+~ not heard
+hide top heard messages
+
+~ help
+show this help
+
+~ not help
+hide this help
+
+~ voice ...nameToSearch
+set voice to nameToSearch ie: aus would find an Australian voice or UK for British, persisted
+per browser
+
+~ swap
+swap places with your doer
+
+~ visible
+show your avatar
+
+~ not visible
+hide your avatar
+
+~ selfie
+selfie camera mode
+
+~ not selfie
+not selfie camera mode
+
+
 `);
 
   // node_modules/three/build/three.module.js

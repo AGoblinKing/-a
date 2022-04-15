@@ -5,7 +5,7 @@ import { Value } from "./value";
 export const tick = new Value(0)
 export const avatar_current = new Value<string>(state.avatar.current).save("avatar_current_2")
 export const avatar_doer = new Value<string>(state.avatar.doer).save("avatar_doer_1")
-export const voice_current = new Value("Aus | UK English").save("voice_current")
+export const voice_current = new Value("Guy | UK English").save("voice_current")
 export const voice_doer = new Value("Aus | UK English").save("voice_doer")
 
 export const open_home = new Value(true)
@@ -113,5 +113,44 @@ binds variable name to commands
 
 ~ not var name 
 unbinds variable name
+
+~ stats 
+show fps stats
+
+~ not stats
+hide fps stats
+
+~ heard
+show top heard messages
+
+~ not heard
+hide top heard messages
+
+~ help
+show this help
+
+~ not help
+hide this help
+
+~ voice ...nameToSearch
+set voice to nameToSearch ie: aus would find an Australian voice or UK for British, persisted
+per browser
+
+~ swap
+swap places with your doer
+
+~ visible
+show your avatar
+
+~ not visible
+hide your avatar
+
+~ selfie
+selfie camera mode
+
+~ not selfie
+not selfie camera mode
+
+
 `
 )
