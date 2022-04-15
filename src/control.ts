@@ -1,6 +1,6 @@
 import { currentVRM, mirrorVRM } from "./component/vrm"
 import state from "./state"
-import { avatar_current, avatar_doer, camera, camera_el, do_echo, open_heard, open_help, open_stats, toggle_selfie, voice_current } from "./timing"
+import { avatar_current, avatar_doer, camera, camera_el, do_echo, open_heard, open_help, open_stats, toggle_selfie, toggle_visible, voice_current } from "./timing"
 import { Value } from "./value"
 
 export const binds = new Value<{ [key: string]: string }>(clone(state.binds)).save("binds")
@@ -57,6 +57,11 @@ export enum EControl {
     NotStats = "notstats",
     Heard = "heard",
     NotHeard = "notheard",
+    Join = "join",
+    NotJoin = "notjoin",
+
+    Host = "host",
+    NotHost = "nothost",
 
     Voice = "voice"
 
@@ -103,10 +108,10 @@ export const controls = {
     },
 
     [EControl.Visible]: (items: string[]) => {
-        currentVRM.$.scene.visible = true
+        toggle_visible.set(true)
     },
     [EControl.NotVisible]: (items: string[]) => {
-        currentVRM.$.scene.visible = false
+        toggle_visible.set(false)
     },
     [EControl.Avatar]: (items: string[]) => {
         avatar_current.set(items[2])

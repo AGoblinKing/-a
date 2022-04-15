@@ -6958,7 +6958,8 @@
     avatar: {
       doer: "/vrm/goblin.2.vrm",
       current: "/vrm/doer.2.vrm"
-    }
+    },
+    visible: true
   };
 
   // src/value.ts
@@ -7058,6 +7059,7 @@
   var camera = new Value();
   var camera_el = new Value();
   var toggle_selfie = new Value(state_default.selfie).save("selfie");
+  var toggle_visible = new Value(state_default.visible).save("visible");
   var do_echo = new Value(true).save("do_echo");
   open_game.on(($g) => {
     if (open_game.$) {
@@ -32787,7 +32789,13 @@ not selfie camera mode
   currentVRM.on(($vrm) => {
     if (!$vrm || !open_loading.$)
       return;
+    currentVRM.$.scene.visible = toggle_visible.$;
     open_loading.set(false);
+  });
+  toggle_visible.on(() => {
+    if (!currentVRM.$)
+      return;
+    currentVRM.$.scene.visible = toggle_visible.$;
   });
   function Load(url) {
     return new Promise((resolve, reject) => {
@@ -32922,10 +32930,10 @@ not selfie camera mode
       avatar_doer.set(cur);
     },
     ["visible" /* Visible */]: (items) => {
-      currentVRM.$.scene.visible = true;
+      toggle_visible.set(true);
     },
     ["notvisible" /* NotVisible */]: (items) => {
-      currentVRM.$.scene.visible = false;
+      toggle_visible.set(false);
     },
     ["avatar" /* Avatar */]: (items) => {
       avatar_current.set(items[2]);

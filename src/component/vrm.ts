@@ -1,5 +1,5 @@
 import { VRM, VRMUtils } from "@pixiv/three-vrm"
-import { avatar_current, avatar_doer, camera, open_loading, toggle_selfie } from "src/timing";
+import { avatar_current, avatar_doer, camera, open_loading, toggle_selfie, toggle_visible } from "src/timing";
 import { Value } from 'src/value';
 
 export const currentVRM = new Value<VRM>()
@@ -8,7 +8,14 @@ export const mirrorVRM = new Value<VRM>()
 currentVRM.on(($vrm) => {
   if (!$vrm || !open_loading.$) return
 
+  currentVRM.$.scene.visible = toggle_visible.$
   open_loading.set(false)
+})
+
+toggle_visible.on(() => {
+  if (!currentVRM.$) return
+
+  currentVRM.$.scene.visible = toggle_visible.$
 })
 
 
