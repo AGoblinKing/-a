@@ -1,11 +1,14 @@
 <script lang="ts">
+	import { avatar_current, avatar_doer } from 'src/timing'
+
 	import '../component/wasd-controller'
 </script>
 
 <a-entity
 	mixin="shadow character"
-	position="0 0 -5"
-	vrm="src: /vrm/goblin.vrm; current: true"
+	position="0 0 15"
+	vrm="src: {$avatar_current}; current: true"
+	look-controls
 	id="focus"
 	wasd-controller
 />
@@ -13,7 +16,7 @@
 <!-- <a-entity mixin="shadow" position="0 0 -5"  rotation="0 180 0" vrm="src: /vrm/femgoblin.vrm; mirror: true" scatter="-5 0 -5 5 0 5"  /> -->
 <a-entity
 	mixin="shadow character"
-	position="0 0.25 -6"
+	position="0 0.25 14"
 	rotation="0 180 0"
-	vrm="src: /vrm/femgoblin.vrm; mirror: true"
+	vrm="src: {$avatar_doer}; doer: true; mirror: true"
 />

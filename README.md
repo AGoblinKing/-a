@@ -51,3 +51,5 @@
 - webrtc networking (dump JSON of scene)
 - MediaSharing
 - ~ INSPECT text overlay like goblin.life showing what they said/other stats
+- persistance
+- selfie cam

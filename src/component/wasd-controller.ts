@@ -1,11 +1,13 @@
 import { key_map } from "src/keyboard";
+import { camera } from "src/timing";
 
 const vec3 = new AFRAME.THREE.Vector3()
+const quat = new AFRAME.THREE.Quaternion()
 
 AFRAME.registerComponent("wasd-controller", {
     schema: {
-        speed: { type: "number", default: 0.25},
-        rot: { type: "number", default: 0.15 },
+        speed: { type: "number", default: 0.2 },
+        rot: { type: "number", default: 0.25 },
     },
     tick(_, delta) {
         if (!this.el.body) return
@@ -18,12 +20,12 @@ AFRAME.registerComponent("wasd-controller", {
         vec3.set(0, 0, 0)
         let intensity = 1
         let hop = 2
-        if(key_map.$["shift"]) {
+        if (key_map.$["shift"]) {
             intensity = 1.5
-        } 
+        }
 
         // TODO: or if colliding with a climbable
-        if(key_map.$[" "] &&  o3d.position.y < 1) {
+        if (key_map.$[" "] && o3d.position.y < 1) {
             hop = 15
         }
         if (key_map.$["w"]) {
@@ -53,13 +55,16 @@ AFRAME.registerComponent("wasd-controller", {
             this.el.body.activate()
 
         }
-        if (vec3.length() > 0) {
-            vec3.applyQuaternion(o3d.quaternion)
+        if (Math.abs(vec3.length()) > 0 && camera.$) {
+            camera.$.updateMatrixWorld()
+            quat.setFromRotationMatrix(camera.$.matrixWorld)
+            vec3.applyQuaternion(quat)
             force = new Ammo.btVector3(vec3.x, vec3.y, vec3.z)
             // apply to currentVRM body
             this.el.body.applyForce(force)
             this.el.body.activate()
             Ammo.destroy(force);
+
         }
 
         if (torq) Ammo.destroy(torq)

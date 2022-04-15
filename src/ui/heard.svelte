@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { talk } from 'src/chat'
+	import { open_heard } from 'src/timing'
 	let text
 
 	talk.on(() => {
@@ -9,9 +10,11 @@
 	})
 </script>
 
-<div class="lofi">
-	<input type="text" class="entry" bind:this={text} readonly />
-</div>
+{#if $open_heard}
+	<div class="lofi">
+		<input type="text" class="entry" bind:this={text} readonly />
+	</div>
+{/if}
 
 <style>
 	.entry {

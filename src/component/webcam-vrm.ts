@@ -1,9 +1,9 @@
 import * as Kalidokit from 'kalidokit'
 import { Holistic } from '@mediapipe/holistic/holistic';
 import { Camera } from '@mediapipe/camera_utils/camera_utils';
-import { loading, open_loading, tick } from 'src/timing';
+import { tick } from 'src/timing';
 
-import { VRMSchema } from "@pixiv/three-vrm"
+import { VRM, VRMSchema } from "@pixiv/three-vrm"
 import { Value } from 'src/value';
 import { currentVRM, mirrorVRM } from './vrm';
 import { talk } from 'src/chat';
@@ -12,7 +12,6 @@ const remap = Kalidokit.Utils.remap;
 const clamp = Kalidokit.Utils.clamp;
 const lerp = Kalidokit.Vector.lerp;
 
-let once = false
 const euler = new AFRAME.THREE.Euler()
 const quat = new AFRAME.THREE.Quaternion()
 // Animate Rotation Helper function
@@ -98,13 +97,12 @@ const rigFace = (vrm, riggedFace) => {
 }
 
 /* VRM Character Animator */
-const animateVRM = (vrm, results) => {
+const animateVRM = (vrm, results, riggedPose, riggedLeftHand, riggedRightHand) => {
   if (!vrm || !videoElement.$) {
     return;
   }
+  let riggedFace
   // Take the results from `Holistic` and animate character based on its Face, Pose, and Hand Keypoints.
-  let riggedPose, riggedLeftHand, riggedRightHand, riggedFace;
-
   const faceLandmarks = results.faceLandmarks;
   // Pose 3D Landmarks are with respect to Hip distance in meters
   const pose3DLandmarks = results.ea;
@@ -125,10 +123,7 @@ const animateVRM = (vrm, results) => {
 
   // Animate Pose
   if (pose2DLandmarks && pose3DLandmarks) {
-    riggedPose = Kalidokit.Pose.solve(pose3DLandmarks, pose2DLandmarks, {
-      runtime: "mediapipe",
-      video: videoElement.$,
-    });
+
     rigRotation(vrm, "Hips", riggedPose.Hips.rotation, 0.7);
     rigPosition(vrm,
       "Hips",
@@ -157,7 +152,7 @@ const animateVRM = (vrm, results) => {
 
   // Animate Hands
   if (leftHandLandmarks) {
-    riggedLeftHand = Kalidokit.Hand.solve(leftHandLandmarks, "Left");
+
     rigRotation(vrm, "LeftHand", {
       // Combine pose rotation Z and hand rotation X Y
       z: riggedPose.LeftHand.z,
@@ -181,7 +176,7 @@ const animateVRM = (vrm, results) => {
     rigRotation(vrm, "LeftLittleDistal", riggedLeftHand.LeftLittleDistal);
   }
   if (rightHandLandmarks) {
-    riggedRightHand = Kalidokit.Hand.solve(rightHandLandmarks, "Right");
+
     rigRotation(vrm, "RightHand", {
       // Combine Z axis from pose hand and X/Y axis from hand wrist rotation
       z: riggedPose.RightHand.z,
@@ -204,20 +199,61 @@ const animateVRM = (vrm, results) => {
     rigRotation(vrm, "RightLittleIntermediate", riggedRightHand.RightLittleIntermediate);
     rigRotation(vrm, "RightLittleDistal", riggedRightHand.RightLittleDistal);
   }
-
-  if (!once) {
-    open_loading.set(false)
-    once = true
-  }
 };
 
+const bones = Object.keys(VRMSchema.HumanoidBoneName)
+function mirror(source: VRM, target: VRM) {
+  for (let name of bones) {
+    const s = source.humanoid.getBoneNode(
+      VRMSchema.HumanoidBoneName[name]
+    );
+    const t = target.humanoid.getBoneNode(
+      VRMSchema.HumanoidBoneName[name]
+    )
+
+    if (t && s) t.copy(s)
+  }
+
+}
 /* SETUP MEDIAPIPE HOLISTIC INSTANCE */
 export const videoElement = new Value<HTMLVideoElement>()
 export const canvasElement = new Value<HTMLCanvasElement>()
 const onResults = (results) => {
+
+  const faceLandmarks = results.faceLandmarks;
+  // Pose 3D Landmarks are with respect to Hip distance in meters
+  const pose3DLandmarks = results.ea;
+  // Pose 2D landmarks are with respect to videoWidth and videoHeight
+  const pose2DLandmarks = results.poseLandmarks;
+  // Be careful, hand landmarks may be reversed
+  const leftHandLandmarks = results.rightHandLandmarks;
+  const rightHandLandmarks = results.leftHandLandmarks;
+
+  let riggedFace, riggedPose, riggedLeftHand, riggedRightHand
+
+  // Animate Pose
+  if (pose2DLandmarks && pose3DLandmarks) {
+    riggedPose = Kalidokit.Pose.solve(pose3DLandmarks, pose2DLandmarks, {
+      runtime: "mediapipe",
+      video: videoElement.$,
+    });
+
+  }
+
+  // Animate Hands
+  if (leftHandLandmarks) {
+    riggedLeftHand = Kalidokit.Hand.solve(leftHandLandmarks, "Left");
+
+  }
+  if (rightHandLandmarks) {
+    riggedRightHand = Kalidokit.Hand.solve(rightHandLandmarks, "Right");
+
+  }
   // Animate model
-  animateVRM(currentVRM.$, results)
-  animateVRM(mirrorVRM.$, results)
+  animateVRM(currentVRM.$, results, riggedPose, riggedLeftHand, riggedRightHand)
+
+  //if (currentVRM.$ && mirrorVRM.$) mirror(currentVRM.$, mirrorVRM.$)
+  animateVRM(mirrorVRM.$, results, riggedPose, riggedLeftHand, riggedRightHand)
 }
 
 const holistic = new Holistic({
@@ -250,22 +286,18 @@ videoElement.on(($ve) => {
   ctx.translate(width, 0)
   ctx.scale(-1, 1)
   // Use `Mediapipe` utils to get camera - lower resolution = higher fps
-  let ready = false
+
   const camera = new Camera($ve, {
     onFrame: async () => {
       // if (!ready) return
       ctx.drawImage($ve, 0, 0, width, height)
       await holistic.send({ image: canvasElement.$ });
-      ready = false
+   
     },
-
     width,
     height
   });
 
-  setInterval(() => {
-    ready = true
-  }, 1 / 60 * 1000)
   camera.start();
 
 })

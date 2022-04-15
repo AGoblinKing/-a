@@ -13,6 +13,7 @@
 		"@mediapipe/camera_utils": "^0.3.1640029074",
 		"@mediapipe/holistic": "^0.5.1635989137",
 		"@pixiv/three-vrm": "^0.6.10",
+		"@types/aframe": "^1.2.0",
 		"@types/three": "^0.137.0",
 		"aframe": "^1.3.0",
 		"esbuild": "^0.14.34",
@@ -25,9 +26,10 @@
 		"svelte": "^3.46.6",
 		"svelte-preprocess": "^4.10.5",
 		"three": "^0.137.5",
-		"typescript": "^4.6.3",
-		"@types/aframe": "^1.2.0"
+		"typescript": "^4.6.3"
 	},
 	"type": "module",
-	"dependencies": {}
+	"dependencies": {
+		"aframe-instanced-mesh": "^0.5.0"
+	}
 }

@@ -5565,7 +5565,7 @@
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance9, create_fragment14, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance11, create_fragment13, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5588,7 +5588,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance9 ? instance9(component, options.props || {}, (i2, ret, ...rest) => {
+    $$.ctx = instance11 ? instance11(component, options.props || {}, (i2, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
         if (!$$.skip_bound && $$.bound[i2])
@@ -5601,7 +5601,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment14 ? create_fragment14($$.ctx) : false;
+    $$.fragment = create_fragment13 ? create_fragment13($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -6943,6 +6943,23 @@
   var import_holistic = __toESM(require_holistic(), 1);
   var import_camera_utils = __toESM(require_camera_utils(), 1);
 
+  // src/state.ts
+  var state_default = {
+    "binds": {
+      "n": "control selfie",
+      "m": "control not selfie",
+      "h": "hi! | hey ! | hey you! | hello...",
+      "i": "it's doer 1 | it's me, doer 1 | doer 1 that's me",
+      "f1": "control help"
+    },
+    "vars": {},
+    "selfie": false,
+    avatar: {
+      current: "/vrm/goblin.vrm",
+      doer: "/vrm/doer.vrm"
+    }
+  };
+
   // src/value.ts
   var Value = class {
     constructor(value = void 0) {
@@ -7025,44 +7042,101 @@
 
   // src/timing.ts
   var tick = new Value(0);
+  var avatar_current = new Value(state_default.avatar.current).save("avatar_current_2");
+  var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
   var open_home = new Value(true);
   var open_game = new Value(false);
   var open_text = new Value(void 0);
   var open_loading = new Value(false);
+  var open_help = new Value(false);
+  var open_stats = new Value(false).save("stats");
+  var open_heard = new Value(true).save("heard");
+  var camera = new Value();
+  var toggle_selfie = new Value(state_default.selfie).save("selfie");
+  var do_echo = new Value(true).save("do_echo");
   open_game.on(($g) => {
     if (open_game.$) {
       open_loading.set(true);
     }
   });
-  var motd = new Value(`\u{1F38A}v0.0.9\u{1F38A}
-Lighting Update
+  var motd = new Value(`\u{1F38A}v0.1.0\u{1F38A}
+Controls + Persist
+\u2705 Controls \u2705 Persist 
 
-\u2705VRM\u2705Scene\u2705WebCam
-\u2705Camera\u2705Physics
-\u2705Voice
-\u274C AI 
-\u274C Gameplay
-\u274C Editing 
-\u274C VRM Import
+\u274C Performance Pass
+
+\u274C AI DOER \u274C Gameplay 
+
 \u274C WebRTC Multiplayer 
-\u274C Media
+6 player, 5 clients to 1 host
+
+\u274C 1 MediaStream 
+music / video / camera source / picture
+
+\u274C Factions \u274C Rules 
 
 The web is a scary place. 
 \u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
 
-No cookies intended. Accountless. Age 18+ only.
+WebRTC connection details stored in central DB to allow connection by alias. 
 
+WebRTC data is sent to peers only. 
+
+Camera data is processed by mediapipe via tensorflow locally.
+
+Microphone data is handled by the browser provider, ie: Chrome / Edge / etc.
+
+Cookies for localStorage only. 
+If that's a problem then reject the cookie use policy by closing your browser.
+
+Accountless. 
+
+Age 18+ only.
 
 `);
   var ticker = () => {
     requestAnimationFrame(ticker);
     tick.set(tick.$ + 1);
   };
-  var loading = new Value(`
-    Loading...
+  var loading = new Value(`Loading...
 
-What should we put here ? `);
+ WASD Move | Q+E Rotate
+ Enter | Chat
+ ~ | Command
+ Space | Jump
+ 
+ Default Binds:
+ N: Selfie
+ M: NotSelfie
+ H: Hi | Hi! | Hello | Heya | Yo
+`);
   ticker();
+  var helptext = new Value(`\u{1F916}Commands\u{1F916}
+
+~ echo 
+echo on, persisted
+
+~ not echo 
+echo off, persisted
+
+~ avatar ...url 
+set avatar to URL, persisted
+
+~ clear avatar 
+set avatar to default
+
+~ bind key ...commands 
+bind key to commands, persisted
+
+~ not bind key
+unbinds key, persisted
+
+~ var name ...commands 
+binds variable name to commands
+
+~ not var name 
+unbinds variable name
+`);
 
   // node_modules/three/build/three.module.js
   var REVISION = "137";
@@ -9593,11 +9667,11 @@ What should we put here ? `);
       this.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
       return this;
     }
-    project(camera) {
-      return this.applyMatrix4(camera.matrixWorldInverse).applyMatrix4(camera.projectionMatrix);
+    project(camera2) {
+      return this.applyMatrix4(camera2.matrixWorldInverse).applyMatrix4(camera2.projectionMatrix);
     }
-    unproject(camera) {
-      return this.applyMatrix4(camera.projectionMatrixInverse).applyMatrix4(camera.matrixWorld);
+    unproject(camera2) {
+      return this.applyMatrix4(camera2.projectionMatrixInverse).applyMatrix4(camera2.matrixWorld);
     }
     transformDirection(m2) {
       const x2 = this.x, y2 = this.y, z2 = this.z;
@@ -13990,8 +14064,8 @@ What should we put here ? `);
       const currentMinFilter = texture.minFilter;
       if (texture.minFilter === LinearMipmapLinearFilter)
         texture.minFilter = LinearFilter;
-      const camera = new CubeCamera(1, 10, this);
-      camera.update(renderer, mesh);
+      const camera2 = new CubeCamera(1, 10, this);
+      camera2.update(renderer, mesh);
       texture.minFilter = currentMinFilter;
       mesh.geometry.dispose();
       mesh.material.dispose();
@@ -15077,8 +15151,8 @@ What should we put here ? `);
           }));
           boxMesh.geometry.deleteAttribute("normal");
           boxMesh.geometry.deleteAttribute("uv");
-          boxMesh.onBeforeRender = function(renderer2, scene2, camera) {
-            this.matrixWorld.copyPosition(camera.matrixWorld);
+          boxMesh.onBeforeRender = function(renderer2, scene2, camera2) {
+            this.matrixWorld.copyPosition(camera2.matrixWorld);
           };
           Object.defineProperty(boxMesh.material, "envMap", {
             get: function() {
@@ -15589,10 +15663,10 @@ What should we put here ? `);
     this.uniform = uniform;
     this.numPlanes = 0;
     this.numIntersection = 0;
-    this.init = function(planes, enableLocalClipping, camera) {
+    this.init = function(planes, enableLocalClipping, camera2) {
       const enabled = planes.length !== 0 || enableLocalClipping || numGlobalPlanes !== 0 || localClippingEnabled;
       localClippingEnabled = enableLocalClipping;
-      globalState = projectPlanes(planes, camera, 0);
+      globalState = projectPlanes(planes, camera2, 0);
       numGlobalPlanes = planes.length;
       return enabled;
     };
@@ -15604,7 +15678,7 @@ What should we put here ? `);
       renderingShadows = false;
       resetGlobalState();
     };
-    this.setState = function(material, camera, useCache) {
+    this.setState = function(material, camera2, useCache) {
       const planes = material.clippingPlanes, clipIntersection = material.clipIntersection, clipShadows = material.clipShadows;
       const materialProperties = properties.get(material);
       if (!localClippingEnabled || planes === null || planes.length === 0 || renderingShadows && !clipShadows) {
@@ -15617,7 +15691,7 @@ What should we put here ? `);
         const nGlobal = renderingShadows ? 0 : numGlobalPlanes, lGlobal = nGlobal * 4;
         let dstArray = materialProperties.clippingState || null;
         uniform.value = dstArray;
-        dstArray = projectPlanes(planes, camera, lGlobal, useCache);
+        dstArray = projectPlanes(planes, camera2, lGlobal, useCache);
         for (let i2 = 0; i2 !== lGlobal; ++i2) {
           dstArray[i2] = globalState[i2];
         }
@@ -15634,13 +15708,13 @@ What should we put here ? `);
       scope.numPlanes = numGlobalPlanes;
       scope.numIntersection = 0;
     }
-    function projectPlanes(planes, camera, dstOffset, skipTransform) {
+    function projectPlanes(planes, camera2, dstOffset, skipTransform) {
       const nPlanes = planes !== null ? planes.length : 0;
       let dstArray = null;
       if (nPlanes !== 0) {
         dstArray = uniform.value;
         if (skipTransform !== true || dstArray === null) {
-          const flatSize = dstOffset + nPlanes * 4, viewMatrix = camera.matrixWorldInverse;
+          const flatSize = dstOffset + nPlanes * 4, viewMatrix = camera2.matrixWorldInverse;
           viewNormalMatrix.getNormalMatrix(viewMatrix);
           if (dstArray === null || dstArray.length < flatSize) {
             dstArray = new Float32Array(flatSize);
@@ -18037,15 +18111,15 @@ What should we put here ? `);
     };
     function getMaxBones(object) {
       const skeleton = object.skeleton;
-      const bones = skeleton.bones;
+      const bones2 = skeleton.bones;
       if (floatVertexTextures) {
         return 1024;
       } else {
         const nVertexUniforms = maxVertexUniforms;
         const nVertexMatrices = Math.floor((nVertexUniforms - 20) / 4);
-        const maxBones = Math.min(nVertexMatrices, bones.length);
-        if (maxBones < bones.length) {
-          console.warn("THREE.WebGLRenderer: Skeleton has " + bones.length + " bones. This GPU supports " + maxBones + ".");
+        const maxBones = Math.min(nVertexMatrices, bones2.length);
+        if (maxBones < bones2.length) {
+          console.warn("THREE.WebGLRenderer: Skeleton has " + bones2.length + " bones. This GPU supports " + maxBones + ".");
           return 0;
         }
         return maxBones;
@@ -18845,13 +18919,13 @@ What should we put here ? `);
         state.version = nextVersion++;
       }
     }
-    function setupView(lights, camera) {
+    function setupView(lights, camera2) {
       let directionalLength = 0;
       let pointLength = 0;
       let spotLength = 0;
       let rectAreaLength = 0;
       let hemiLength = 0;
-      const viewMatrix = camera.matrixWorldInverse;
+      const viewMatrix = camera2.matrixWorldInverse;
       for (let i2 = 0, l2 = lights.length; i2 < l2; i2++) {
         const light2 = lights[i2];
         if (light2.isDirectionalLight) {
@@ -18920,8 +18994,8 @@ What should we put here ? `);
     function setupLights(physicallyCorrectLights) {
       lights.setup(lightsArray, physicallyCorrectLights);
     }
-    function setupLightsView(camera) {
-      lights.setupView(lightsArray, camera);
+    function setupLightsView(camera2) {
+      lights.setupView(lightsArray, camera2);
     }
     const state = {
       lightsArray,
@@ -19048,7 +19122,7 @@ What should we put here ? `);
     this.autoUpdate = true;
     this.needsUpdate = false;
     this.type = PCFShadowMap;
-    this.render = function(lights, scene, camera) {
+    this.render = function(lights, scene, camera2) {
       if (scope.enabled === false)
         return;
       if (scope.autoUpdate === false && scope.needsUpdate === false)
@@ -19110,17 +19184,17 @@ What should we put here ? `);
           _state.viewport(_viewport);
           shadow.updateMatrices(light2, vp);
           _frustum = shadow.getFrustum();
-          renderObject(scene, camera, shadow.camera, light2, this.type);
+          renderObject(scene, camera2, shadow.camera, light2, this.type);
         }
         if (!shadow.isPointLightShadow && this.type === VSMShadowMap) {
-          VSMPass(shadow, camera);
+          VSMPass(shadow, camera2);
         }
         shadow.needsUpdate = false;
       }
       scope.needsUpdate = false;
       _renderer.setRenderTarget(currentRenderTarget, activeCubeFace, activeMipmapLevel);
     };
-    function VSMPass(shadow, camera) {
+    function VSMPass(shadow, camera2) {
       const geometry = _objects.update(fullScreenMesh);
       if (shadowMaterialVertical.defines.VSM_SAMPLES !== shadow.blurSamples) {
         shadowMaterialVertical.defines.VSM_SAMPLES = shadow.blurSamples;
@@ -19133,13 +19207,13 @@ What should we put here ? `);
       shadowMaterialVertical.uniforms.radius.value = shadow.radius;
       _renderer.setRenderTarget(shadow.mapPass);
       _renderer.clear();
-      _renderer.renderBufferDirect(camera, null, geometry, shadowMaterialVertical, fullScreenMesh, null);
+      _renderer.renderBufferDirect(camera2, null, geometry, shadowMaterialVertical, fullScreenMesh, null);
       shadowMaterialHorizontal.uniforms.shadow_pass.value = shadow.mapPass.texture;
       shadowMaterialHorizontal.uniforms.resolution.value = shadow.mapSize;
       shadowMaterialHorizontal.uniforms.radius.value = shadow.radius;
       _renderer.setRenderTarget(shadow.map);
       _renderer.clear();
-      _renderer.renderBufferDirect(camera, null, geometry, shadowMaterialHorizontal, fullScreenMesh, null);
+      _renderer.renderBufferDirect(camera2, null, geometry, shadowMaterialHorizontal, fullScreenMesh, null);
     }
     function getDepthMaterial(object, geometry, material, light2, shadowCameraNear, shadowCameraFar, type) {
       let result = null;
@@ -19187,10 +19261,10 @@ What should we put here ? `);
       }
       return result;
     }
-    function renderObject(object, camera, shadowCamera, light2, type) {
+    function renderObject(object, camera2, shadowCamera, light2, type) {
       if (object.visible === false)
         return;
-      const visible = object.layers.test(camera.layers);
+      const visible = object.layers.test(camera2.layers);
       if (visible && (object.isMesh || object.isLine || object.isPoints)) {
         if ((object.castShadow || object.receiveShadow && type === VSMShadowMap) && (!object.frustumCulled || _frustum.intersectsObject(object))) {
           object.modelViewMatrix.multiplyMatrices(shadowCamera.matrixWorldInverse, object.matrixWorld);
@@ -19214,7 +19288,7 @@ What should we put here ? `);
       }
       const children2 = object.children;
       for (let i2 = 0, l2 = children2.length; i2 < l2; i2++) {
-        renderObject(children2[i2], camera, shadowCamera, light2, type);
+        renderObject(children2[i2], camera2, shadowCamera, light2, type);
       }
     }
   }
@@ -21424,7 +21498,7 @@ What should we put here ? `);
       }
       const cameraLPos = new Vector3();
       const cameraRPos = new Vector3();
-      function setProjectionFromUnion(camera, cameraL2, cameraR2) {
+      function setProjectionFromUnion(camera2, cameraL2, cameraR2) {
         cameraLPos.setFromMatrixPosition(cameraL2.matrixWorld);
         cameraRPos.setFromMatrixPosition(cameraR2.matrixWorld);
         const ipd = cameraLPos.distanceTo(cameraRPos);
@@ -21440,32 +21514,32 @@ What should we put here ? `);
         const right = near * rightFov;
         const zOffset = ipd / (-leftFov + rightFov);
         const xOffset = zOffset * -leftFov;
-        cameraL2.matrixWorld.decompose(camera.position, camera.quaternion, camera.scale);
-        camera.translateX(xOffset);
-        camera.translateZ(zOffset);
-        camera.matrixWorld.compose(camera.position, camera.quaternion, camera.scale);
-        camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
+        cameraL2.matrixWorld.decompose(camera2.position, camera2.quaternion, camera2.scale);
+        camera2.translateX(xOffset);
+        camera2.translateZ(zOffset);
+        camera2.matrixWorld.compose(camera2.position, camera2.quaternion, camera2.scale);
+        camera2.matrixWorldInverse.copy(camera2.matrixWorld).invert();
         const near2 = near + zOffset;
         const far2 = far + zOffset;
         const left2 = left - xOffset;
         const right2 = right + (ipd - xOffset);
         const top2 = topFov * far / far2 * near2;
         const bottom2 = bottomFov * far / far2 * near2;
-        camera.projectionMatrix.makePerspective(left2, right2, top2, bottom2, near2, far2);
+        camera2.projectionMatrix.makePerspective(left2, right2, top2, bottom2, near2, far2);
       }
-      function updateCamera(camera, parent) {
+      function updateCamera(camera2, parent) {
         if (parent === null) {
-          camera.matrixWorld.copy(camera.matrix);
+          camera2.matrixWorld.copy(camera2.matrix);
         } else {
-          camera.matrixWorld.multiplyMatrices(parent.matrixWorld, camera.matrix);
+          camera2.matrixWorld.multiplyMatrices(parent.matrixWorld, camera2.matrix);
         }
-        camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
+        camera2.matrixWorldInverse.copy(camera2.matrixWorld).invert();
       }
-      this.updateCamera = function(camera) {
+      this.updateCamera = function(camera2) {
         if (session === null)
           return;
-        cameraVR.near = cameraR.near = cameraL.near = camera.near;
-        cameraVR.far = cameraR.far = cameraL.far = camera.far;
+        cameraVR.near = cameraR.near = cameraL.near = camera2.near;
+        cameraVR.far = cameraR.far = cameraL.far = camera2.far;
         if (_currentDepthNear !== cameraVR.near || _currentDepthFar !== cameraVR.far) {
           session.updateRenderState({
             depthNear: cameraVR.near,
@@ -21474,19 +21548,19 @@ What should we put here ? `);
           _currentDepthNear = cameraVR.near;
           _currentDepthFar = cameraVR.far;
         }
-        const parent = camera.parent;
+        const parent = camera2.parent;
         const cameras2 = cameraVR.cameras;
         updateCamera(cameraVR, parent);
         for (let i2 = 0; i2 < cameras2.length; i2++) {
           updateCamera(cameras2[i2], parent);
         }
         cameraVR.matrixWorld.decompose(cameraVR.position, cameraVR.quaternion, cameraVR.scale);
-        camera.position.copy(cameraVR.position);
-        camera.quaternion.copy(cameraVR.quaternion);
-        camera.scale.copy(cameraVR.scale);
-        camera.matrix.copy(cameraVR.matrix);
-        camera.matrixWorld.copy(cameraVR.matrixWorld);
-        const children2 = camera.children;
+        camera2.position.copy(cameraVR.position);
+        camera2.quaternion.copy(cameraVR.quaternion);
+        camera2.scale.copy(cameraVR.scale);
+        camera2.matrix.copy(cameraVR.matrix);
+        camera2.matrixWorld.copy(cameraVR.matrixWorld);
+        const children2 = camera2.children;
         for (let i2 = 0, l2 = children2.length; i2 < l2; i2++) {
           children2[i2].updateMatrixWorld(true);
         }
@@ -21544,15 +21618,15 @@ What should we put here ? `);
                 renderer.setRenderTarget(newRenderTarget);
               }
             }
-            const camera = cameras[i2];
-            camera.matrix.fromArray(view.transform.matrix);
-            camera.projectionMatrix.fromArray(view.projectionMatrix);
-            camera.viewport.set(viewport.x, viewport.y, viewport.width, viewport.height);
+            const camera2 = cameras[i2];
+            camera2.matrix.fromArray(view.transform.matrix);
+            camera2.projectionMatrix.fromArray(view.projectionMatrix);
+            camera2.viewport.set(viewport.x, viewport.y, viewport.width, viewport.height);
             if (i2 === 0) {
-              cameraVR.matrix.copy(camera.matrix);
+              cameraVR.matrix.copy(camera2.matrix);
             }
             if (cameraVRNeedsUpdate === true) {
-              cameraVR.cameras.push(camera);
+              cameraVR.cameras.push(camera2);
             }
           }
         }
@@ -22323,11 +22397,11 @@ What should we put here ? `);
         }
       }
     }
-    this.renderBufferDirect = function(camera, scene, geometry, material, object, group) {
+    this.renderBufferDirect = function(camera2, scene, geometry, material, object, group) {
       if (scene === null)
         scene = _emptyScene;
       const frontFaceCW = object.isMesh && object.matrixWorld.determinant() < 0;
-      const program = setProgram(camera, scene, geometry, material, object);
+      const program = setProgram(camera2, scene, geometry, material, object);
       state.setMaterial(material, frontFaceCW);
       let index = geometry.index;
       const position = geometry.attributes.position;
@@ -22393,12 +22467,12 @@ What should we put here ? `);
         renderer.render(drawStart, drawCount);
       }
     };
-    this.compile = function(scene, camera) {
+    this.compile = function(scene, camera2) {
       currentRenderState = renderStates.get(scene);
       currentRenderState.init();
       renderStateStack.push(currentRenderState);
       scene.traverseVisible(function(object) {
-        if (object.isLight && object.layers.test(camera.layers)) {
+        if (object.isLight && object.layers.test(camera2.layers)) {
           currentRenderState.pushLight(object);
           if (object.castShadow) {
             currentRenderState.pushShadow(object);
@@ -22444,8 +22518,8 @@ What should we put here ? `);
     };
     xr.addEventListener("sessionstart", onXRSessionStart);
     xr.addEventListener("sessionend", onXRSessionEnd);
-    this.render = function(scene, camera) {
-      if (camera !== void 0 && camera.isCamera !== true) {
+    this.render = function(scene, camera2) {
+      if (camera2 !== void 0 && camera2.isCamera !== true) {
         console.error("THREE.WebGLRenderer.render: camera is not an instance of THREE.Camera.");
         return;
       }
@@ -22453,26 +22527,26 @@ What should we put here ? `);
         return;
       if (scene.autoUpdate === true)
         scene.updateMatrixWorld();
-      if (camera.parent === null)
-        camera.updateMatrixWorld();
+      if (camera2.parent === null)
+        camera2.updateMatrixWorld();
       if (xr.enabled === true && xr.isPresenting === true) {
         if (xr.cameraAutoUpdate === true)
-          xr.updateCamera(camera);
-        camera = xr.getCamera();
+          xr.updateCamera(camera2);
+        camera2 = xr.getCamera();
       }
       if (scene.isScene === true)
-        scene.onBeforeRender(_this, scene, camera, _currentRenderTarget);
+        scene.onBeforeRender(_this, scene, camera2, _currentRenderTarget);
       currentRenderState = renderStates.get(scene, renderStateStack.length);
       currentRenderState.init();
       renderStateStack.push(currentRenderState);
-      _projScreenMatrix2.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+      _projScreenMatrix2.multiplyMatrices(camera2.projectionMatrix, camera2.matrixWorldInverse);
       _frustum.setFromProjectionMatrix(_projScreenMatrix2);
       _localClippingEnabled = this.localClippingEnabled;
-      _clippingEnabled = clipping.init(this.clippingPlanes, _localClippingEnabled, camera);
+      _clippingEnabled = clipping.init(this.clippingPlanes, _localClippingEnabled, camera2);
       currentRenderList = renderLists.get(scene, renderListStack.length);
       currentRenderList.init();
       renderListStack.push(currentRenderList);
-      projectObject(scene, camera, 0, _this.sortObjects);
+      projectObject(scene, camera2, 0, _this.sortObjects);
       currentRenderList.finish();
       if (_this.sortObjects === true) {
         currentRenderList.sort(_opaqueSort, _transparentSort);
@@ -22480,28 +22554,28 @@ What should we put here ? `);
       if (_clippingEnabled === true)
         clipping.beginShadows();
       const shadowsArray = currentRenderState.state.shadowsArray;
-      shadowMap.render(shadowsArray, scene, camera);
+      shadowMap.render(shadowsArray, scene, camera2);
       if (_clippingEnabled === true)
         clipping.endShadows();
       if (this.info.autoReset === true)
         this.info.reset();
       background.render(currentRenderList, scene);
       currentRenderState.setupLights(_this.physicallyCorrectLights);
-      if (camera.isArrayCamera) {
-        const cameras = camera.cameras;
+      if (camera2.isArrayCamera) {
+        const cameras = camera2.cameras;
         for (let i2 = 0, l2 = cameras.length; i2 < l2; i2++) {
-          const camera2 = cameras[i2];
-          renderScene(currentRenderList, scene, camera2, camera2.viewport);
+          const camera22 = cameras[i2];
+          renderScene(currentRenderList, scene, camera22, camera22.viewport);
         }
       } else {
-        renderScene(currentRenderList, scene, camera);
+        renderScene(currentRenderList, scene, camera2);
       }
       if (_currentRenderTarget !== null) {
         textures.updateMultisampleRenderTarget(_currentRenderTarget);
         textures.updateRenderTargetMipmap(_currentRenderTarget);
       }
       if (scene.isScene === true)
-        scene.onAfterRender(_this, scene, camera);
+        scene.onAfterRender(_this, scene, camera2);
       state.buffers.depth.setTest(true);
       state.buffers.depth.setMask(true);
       state.buffers.color.setMask(true);
@@ -22522,16 +22596,16 @@ What should we put here ? `);
         currentRenderList = null;
       }
     };
-    function projectObject(object, camera, groupOrder, sortObjects) {
+    function projectObject(object, camera2, groupOrder, sortObjects) {
       if (object.visible === false)
         return;
-      const visible = object.layers.test(camera.layers);
+      const visible = object.layers.test(camera2.layers);
       if (visible) {
         if (object.isGroup) {
           groupOrder = object.renderOrder;
         } else if (object.isLOD) {
           if (object.autoUpdate === true)
-            object.update(camera);
+            object.update(camera2);
         } else if (object.isLight) {
           currentRenderState.pushLight(object);
           if (object.castShadow) {
@@ -22578,26 +22652,26 @@ What should we put here ? `);
       }
       const children2 = object.children;
       for (let i2 = 0, l2 = children2.length; i2 < l2; i2++) {
-        projectObject(children2[i2], camera, groupOrder, sortObjects);
+        projectObject(children2[i2], camera2, groupOrder, sortObjects);
       }
     }
-    function renderScene(currentRenderList2, scene, camera, viewport) {
+    function renderScene(currentRenderList2, scene, camera2, viewport) {
       const opaqueObjects = currentRenderList2.opaque;
       const transmissiveObjects = currentRenderList2.transmissive;
       const transparentObjects = currentRenderList2.transparent;
-      currentRenderState.setupLightsView(camera);
+      currentRenderState.setupLightsView(camera2);
       if (transmissiveObjects.length > 0)
-        renderTransmissionPass(opaqueObjects, scene, camera);
+        renderTransmissionPass(opaqueObjects, scene, camera2);
       if (viewport)
         state.viewport(_currentViewport.copy(viewport));
       if (opaqueObjects.length > 0)
-        renderObjects(opaqueObjects, scene, camera);
+        renderObjects(opaqueObjects, scene, camera2);
       if (transmissiveObjects.length > 0)
-        renderObjects(transmissiveObjects, scene, camera);
+        renderObjects(transmissiveObjects, scene, camera2);
       if (transparentObjects.length > 0)
-        renderObjects(transparentObjects, scene, camera);
+        renderObjects(transparentObjects, scene, camera2);
     }
-    function renderTransmissionPass(opaqueObjects, scene, camera) {
+    function renderTransmissionPass(opaqueObjects, scene, camera2) {
       if (_transmissionRenderTarget === null) {
         const needsAntialias = _antialias === true && capabilities.isWebGL2 === true;
         const renderTargetType = needsAntialias ? WebGLMultisampleRenderTarget : WebGLRenderTarget;
@@ -22616,13 +22690,13 @@ What should we put here ? `);
       _this.clear();
       const currentToneMapping = _this.toneMapping;
       _this.toneMapping = NoToneMapping;
-      renderObjects(opaqueObjects, scene, camera);
+      renderObjects(opaqueObjects, scene, camera2);
       _this.toneMapping = currentToneMapping;
       textures.updateMultisampleRenderTarget(_transmissionRenderTarget);
       textures.updateRenderTargetMipmap(_transmissionRenderTarget);
       _this.setRenderTarget(currentRenderTarget);
     }
-    function renderObjects(renderList, scene, camera) {
+    function renderObjects(renderList, scene, camera2) {
       const overrideMaterial = scene.isScene === true ? scene.overrideMaterial : null;
       for (let i2 = 0, l2 = renderList.length; i2 < l2; i2++) {
         const renderItem = renderList[i2];
@@ -22630,28 +22704,28 @@ What should we put here ? `);
         const geometry = renderItem.geometry;
         const material = overrideMaterial === null ? renderItem.material : overrideMaterial;
         const group = renderItem.group;
-        if (object.layers.test(camera.layers)) {
-          renderObject(object, scene, camera, geometry, material, group);
+        if (object.layers.test(camera2.layers)) {
+          renderObject(object, scene, camera2, geometry, material, group);
         }
       }
     }
-    function renderObject(object, scene, camera, geometry, material, group) {
-      object.onBeforeRender(_this, scene, camera, geometry, material, group);
-      object.modelViewMatrix.multiplyMatrices(camera.matrixWorldInverse, object.matrixWorld);
+    function renderObject(object, scene, camera2, geometry, material, group) {
+      object.onBeforeRender(_this, scene, camera2, geometry, material, group);
+      object.modelViewMatrix.multiplyMatrices(camera2.matrixWorldInverse, object.matrixWorld);
       object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
-      material.onBeforeRender(_this, scene, camera, geometry, object, group);
+      material.onBeforeRender(_this, scene, camera2, geometry, object, group);
       if (material.transparent === true && material.side === DoubleSide) {
         material.side = BackSide;
         material.needsUpdate = true;
-        _this.renderBufferDirect(camera, scene, geometry, material, object, group);
+        _this.renderBufferDirect(camera2, scene, geometry, material, object, group);
         material.side = FrontSide;
         material.needsUpdate = true;
-        _this.renderBufferDirect(camera, scene, geometry, material, object, group);
+        _this.renderBufferDirect(camera2, scene, geometry, material, object, group);
         material.side = DoubleSide;
       } else {
-        _this.renderBufferDirect(camera, scene, geometry, material, object, group);
+        _this.renderBufferDirect(camera2, scene, geometry, material, object, group);
       }
-      object.onAfterRender(_this, scene, camera, geometry, material, group);
+      object.onAfterRender(_this, scene, camera2, geometry, material, group);
     }
     function getProgram(material, scene, object) {
       if (scene.isScene !== true)
@@ -22732,7 +22806,7 @@ What should we put here ? `);
       materialProperties.vertexTangents = parameters2.vertexTangents;
       materialProperties.toneMapping = parameters2.toneMapping;
     }
-    function setProgram(camera, scene, geometry, material, object) {
+    function setProgram(camera2, scene, geometry, material, object) {
       if (scene.isScene !== true)
         scene = _emptyScene;
       textures.resetTextureUnits();
@@ -22749,9 +22823,9 @@ What should we put here ? `);
       const materialProperties = properties.get(material);
       const lights = currentRenderState.state.lights;
       if (_clippingEnabled === true) {
-        if (_localClippingEnabled === true || camera !== _currentCamera) {
-          const useCache = camera === _currentCamera && material.id === _currentMaterialId;
-          clipping.setState(material, camera, useCache);
+        if (_localClippingEnabled === true || camera2 !== _currentCamera) {
+          const useCache = camera2 === _currentCamera && material.id === _currentMaterialId;
+          clipping.setState(material, camera2, useCache);
         }
       }
       let needsProgramChange = false;
@@ -22808,27 +22882,27 @@ What should we put here ? `);
         _currentMaterialId = material.id;
         refreshMaterial = true;
       }
-      if (refreshProgram || _currentCamera !== camera) {
-        p_uniforms.setValue(_gl, "projectionMatrix", camera.projectionMatrix);
+      if (refreshProgram || _currentCamera !== camera2) {
+        p_uniforms.setValue(_gl, "projectionMatrix", camera2.projectionMatrix);
         if (capabilities.logarithmicDepthBuffer) {
-          p_uniforms.setValue(_gl, "logDepthBufFC", 2 / (Math.log(camera.far + 1) / Math.LN2));
+          p_uniforms.setValue(_gl, "logDepthBufFC", 2 / (Math.log(camera2.far + 1) / Math.LN2));
         }
-        if (_currentCamera !== camera) {
-          _currentCamera = camera;
+        if (_currentCamera !== camera2) {
+          _currentCamera = camera2;
           refreshMaterial = true;
           refreshLights = true;
         }
         if (material.isShaderMaterial || material.isMeshPhongMaterial || material.isMeshToonMaterial || material.isMeshStandardMaterial || material.envMap) {
           const uCamPos = p_uniforms.map.cameraPosition;
           if (uCamPos !== void 0) {
-            uCamPos.setValue(_gl, _vector3.setFromMatrixPosition(camera.matrixWorld));
+            uCamPos.setValue(_gl, _vector3.setFromMatrixPosition(camera2.matrixWorld));
           }
         }
         if (material.isMeshPhongMaterial || material.isMeshToonMaterial || material.isMeshLambertMaterial || material.isMeshBasicMaterial || material.isMeshStandardMaterial || material.isShaderMaterial) {
-          p_uniforms.setValue(_gl, "isOrthographic", camera.isOrthographicCamera === true);
+          p_uniforms.setValue(_gl, "isOrthographic", camera2.isOrthographicCamera === true);
         }
         if (material.isMeshPhongMaterial || material.isMeshToonMaterial || material.isMeshLambertMaterial || material.isMeshBasicMaterial || material.isMeshStandardMaterial || material.isShaderMaterial || material.isShadowMaterial || object.isSkinnedMesh) {
-          p_uniforms.setValue(_gl, "viewMatrix", camera.matrixWorldInverse);
+          p_uniforms.setValue(_gl, "viewMatrix", camera2.matrixWorldInverse);
         }
       }
       if (object.isSkinnedMesh) {
@@ -23666,9 +23740,9 @@ What should we put here ? `);
   var _offsetMatrix = /* @__PURE__ */ new Matrix4();
   var _identityMatrix = /* @__PURE__ */ new Matrix4();
   var Skeleton = class {
-    constructor(bones = [], boneInverses = []) {
+    constructor(bones2 = [], boneInverses = []) {
       this.uuid = generateUUID();
-      this.bones = bones.slice(0);
+      this.bones = bones2.slice(0);
       this.boneInverses = boneInverses;
       this.boneMatrices = null;
       this.boneTexture = null;
@@ -23677,13 +23751,13 @@ What should we put here ? `);
       this.init();
     }
     init() {
-      const bones = this.bones;
+      const bones2 = this.bones;
       const boneInverses = this.boneInverses;
-      this.boneMatrices = new Float32Array(bones.length * 16);
+      this.boneMatrices = new Float32Array(bones2.length * 16);
       if (boneInverses.length === 0) {
         this.calculateInverses();
       } else {
-        if (bones.length !== boneInverses.length) {
+        if (bones2.length !== boneInverses.length) {
           console.warn("THREE.Skeleton: Number of inverse bone matrices does not match amount of bones.");
           this.boneInverses = [];
           for (let i2 = 0, il = this.bones.length; i2 < il; i2++) {
@@ -23723,12 +23797,12 @@ What should we put here ? `);
       }
     }
     update() {
-      const bones = this.bones;
+      const bones2 = this.bones;
       const boneInverses = this.boneInverses;
       const boneMatrices = this.boneMatrices;
       const boneTexture = this.boneTexture;
-      for (let i2 = 0, il = bones.length; i2 < il; i2++) {
-        const matrix = bones[i2] ? bones[i2].matrixWorld : _identityMatrix;
+      for (let i2 = 0, il = bones2.length; i2 < il; i2++) {
+        const matrix = bones2[i2] ? bones2[i2].matrixWorld : _identityMatrix;
         _offsetMatrix.multiplyMatrices(matrix, boneInverses[i2]);
         _offsetMatrix.toArray(boneMatrices, i2 * 16);
       }
@@ -23767,11 +23841,11 @@ What should we put here ? `);
         this.boneTexture = null;
       }
     }
-    fromJSON(json, bones) {
+    fromJSON(json, bones2) {
       this.uuid = json.uuid;
       for (let i2 = 0, l2 = json.bones.length; i2 < l2; i2++) {
         const uuid = json.bones[i2];
-        let bone = bones[uuid];
+        let bone = bones2[uuid];
         if (bone === void 0) {
           console.warn("THREE.Skeleton: No bone found with UUID:", uuid);
           bone = new Bone();
@@ -23793,10 +23867,10 @@ What should we put here ? `);
         boneInverses: []
       };
       data.uuid = this.uuid;
-      const bones = this.bones;
+      const bones2 = this.bones;
       const boneInverses = this.boneInverses;
-      for (let i2 = 0, l2 = bones.length; i2 < l2; i2++) {
-        const bone = bones[i2];
+      for (let i2 = 0, l2 = bones2.length; i2 < l2; i2++) {
+        const bone = bones2[i2];
         data.bones.push(bone.uuid);
         const boneInverse = boneInverses[i2];
         data.boneInverses.push(boneInverse.toArray());
@@ -27478,7 +27552,7 @@ What should we put here ? `);
       }
       return clips;
     }
-    static parseAnimation(animation, bones) {
+    static parseAnimation(animation, bones2) {
       if (!animation) {
         console.error("THREE.AnimationClip: No animation in JSONLoader data.");
         return null;
@@ -27525,7 +27599,7 @@ What should we put here ? `);
           }
           duration = morphTargetNames.length * (fps || 1);
         } else {
-          const boneName = ".bones[" + bones[h2].name + "]";
+          const boneName = ".bones[" + bones2[h2].name + "]";
           addNonemptyTrack(VectorKeyframeTrack, boneName + ".position", animationKeys, "pos", tracks);
           addNonemptyTrack(QuaternionKeyframeTrack, boneName + ".quaternion", animationKeys, "rot", tracks);
           addNonemptyTrack(VectorKeyframeTrack, boneName + ".scale", animationKeys, "scl", tracks);
@@ -28043,8 +28117,8 @@ What should we put here ? `);
   var _lightPositionWorld$1 = /* @__PURE__ */ new Vector3();
   var _lookTarget$1 = /* @__PURE__ */ new Vector3();
   var LightShadow = class {
-    constructor(camera) {
-      this.camera = camera;
+    constructor(camera2) {
+      this.camera = camera2;
       this.bias = 0;
       this.normalBias = 0;
       this.radius = 1;
@@ -28127,15 +28201,15 @@ What should we put here ? `);
       this.focus = 1;
     }
     updateMatrices(light2) {
-      const camera = this.camera;
+      const camera2 = this.camera;
       const fov2 = RAD2DEG * 2 * light2.angle * this.focus;
       const aspect2 = this.mapSize.width / this.mapSize.height;
-      const far = light2.distance || camera.far;
-      if (fov2 !== camera.fov || aspect2 !== camera.aspect || far !== camera.far) {
-        camera.fov = fov2;
-        camera.aspect = aspect2;
-        camera.far = far;
-        camera.updateProjectionMatrix();
+      const far = light2.distance || camera2.far;
+      if (fov2 !== camera2.fov || aspect2 !== camera2.aspect || far !== camera2.far) {
+        camera2.fov = fov2;
+        camera2.aspect = aspect2;
+        camera2.far = far;
+        camera2.updateProjectionMatrix();
       }
       super.updateMatrices(light2);
     }
@@ -28214,22 +28288,22 @@ What should we put here ? `);
       ];
     }
     updateMatrices(light2, viewportIndex = 0) {
-      const camera = this.camera;
+      const camera2 = this.camera;
       const shadowMatrix = this.matrix;
-      const far = light2.distance || camera.far;
-      if (far !== camera.far) {
-        camera.far = far;
-        camera.updateProjectionMatrix();
+      const far = light2.distance || camera2.far;
+      if (far !== camera2.far) {
+        camera2.far = far;
+        camera2.updateProjectionMatrix();
       }
       _lightPositionWorld.setFromMatrixPosition(light2.matrixWorld);
-      camera.position.copy(_lightPositionWorld);
-      _lookTarget.copy(camera.position);
+      camera2.position.copy(_lightPositionWorld);
+      _lookTarget.copy(camera2.position);
       _lookTarget.add(this._cubeDirections[viewportIndex]);
-      camera.up.copy(this._cubeUps[viewportIndex]);
-      camera.lookAt(_lookTarget);
-      camera.updateMatrixWorld();
+      camera2.up.copy(this._cubeUps[viewportIndex]);
+      camera2.lookAt(_lookTarget);
+      camera2.updateMatrixWorld();
       shadowMatrix.makeTranslation(-_lightPositionWorld.x, -_lightPositionWorld.y, -_lightPositionWorld.z);
-      _projScreenMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+      _projScreenMatrix.multiplyMatrices(camera2.projectionMatrix, camera2.matrixWorldInverse);
       this._frustum.setFromProjectionMatrix(_projScreenMatrix);
     }
   };
@@ -30423,14 +30497,14 @@ What should we put here ? `);
   var _matrixWorldInv = /* @__PURE__ */ new Matrix4();
   var SkeletonHelper = class extends LineSegments {
     constructor(object) {
-      const bones = getBoneList(object);
+      const bones2 = getBoneList(object);
       const geometry = new BufferGeometry();
       const vertices = [];
       const colors = [];
       const color1 = new Color(0, 0, 1);
       const color2 = new Color(0, 1, 0);
-      for (let i2 = 0; i2 < bones.length; i2++) {
-        const bone = bones[i2];
+      for (let i2 = 0; i2 < bones2.length; i2++) {
+        const bone = bones2[i2];
         if (bone.parent && bone.parent.isBone) {
           vertices.push(0, 0, 0);
           vertices.push(0, 0, 0);
@@ -30445,17 +30519,17 @@ What should we put here ? `);
       this.type = "SkeletonHelper";
       this.isSkeletonHelper = true;
       this.root = object;
-      this.bones = bones;
+      this.bones = bones2;
       this.matrix = object.matrixWorld;
       this.matrixAutoUpdate = false;
     }
     updateMatrixWorld(force) {
-      const bones = this.bones;
+      const bones2 = this.bones;
       const geometry = this.geometry;
       const position = geometry.getAttribute("position");
       _matrixWorldInv.copy(this.root.matrixWorld).invert();
-      for (let i2 = 0, j2 = 0; i2 < bones.length; i2++) {
-        const bone = bones[i2];
+      for (let i2 = 0, j2 = 0; i2 < bones2.length; i2++) {
+        const bone = bones2[i2];
         if (bone.parent && bone.parent.isBone) {
           _boneMatrix.multiplyMatrices(_matrixWorldInv, bone.matrixWorld);
           _vector$2.setFromMatrixPosition(_boneMatrix);
@@ -32663,6 +32737,11 @@ What should we put here ? `);
   // src/component/vrm.ts
   var currentVRM = new Value();
   var mirrorVRM = new Value();
+  currentVRM.on(($vrm) => {
+    if (!$vrm || !open_loading.$)
+      return;
+    open_loading.set(false);
+  });
   function Load(url) {
     return new Promise((resolve, reject) => {
       const loader = new AFRAME.THREE.GLTFLoader();
@@ -32680,30 +32759,88 @@ What should we put here ? `);
       src: { type: "string", default: "" },
       fps: { type: "bool", default: false },
       current: { type: "bool" },
-      mirror: { type: "bool" }
+      doer: { type: "bool" }
     },
-    update() {
+    load() {
+      Load(this.data.src).then((vrm) => {
+        we.removeUnnecessaryVertices(vrm.scene);
+        we.removeUnnecessaryJoints(vrm.scene);
+        this.el.setObject3D("mesh", vrm.scene);
+        this.data.vrm = vrm;
+        if (this.data.current) {
+          vrm.firstPerson.setup();
+          currentVRM.set(vrm);
+        }
+        if (this.data.mirror) {
+          mirrorVRM.set(vrm);
+        }
+      });
+    },
+    init() {
+      this.cancel();
+      this.load();
       if (this.data.src !== "") {
-        Load(this.data.src).then((vrm) => {
-          we.removeUnnecessaryVertices(vrm.scene);
-          we.removeUnnecessaryJoints(vrm.scene);
-          this.el.setObject3D("mesh", vrm.scene);
-          this.data.vrm = vrm;
-          if (this.data.current) {
-            vrm.firstPerson.setup();
-            currentVRM.set(vrm);
-          }
-          if (this.data.mirror) {
-            mirrorVRM.set(vrm);
-          }
-        });
-      } else {
-        this.el.removeObject3D("mesh");
+        if (this.data.current) {
+          this.cancels.push(avatar_current.on(($av) => {
+            if ($av !== this.data.src) {
+              this.el.removeObject3D("mesh");
+              currentVRM.$?.dispose();
+              this.data.src = $av;
+              open_loading.set(true);
+              this.load();
+            }
+          }));
+        }
+        if (this.data.doer) {
+          this.cancels.push(avatar_doer.on(($av) => {
+            if ($av !== this.data.src) {
+              this.el.removeObject3D("mesh");
+              mirrorVRM.$?.dispose();
+              this.data.src = $av;
+              open_loading.set(true);
+              this.load();
+            }
+          }));
+        }
       }
     },
+    cancel() {
+      if (!this.cancels) {
+        this.cancels = [];
+        return;
+      }
+      this.cancels.forEach((c2) => c2());
+      this.cancels = [];
+    },
     remove() {
+      this.cancel();
       this.el.removeObject3D("mesh");
     }
+  });
+
+  // src/keyboard.ts
+  var key_down = new Value("");
+  var key_up = new Value("");
+  var key_map = new Value({});
+  function bounce(e) {
+    return e.target.tagName === "INPUT";
+  }
+  window.addEventListener("keydown", (e) => {
+    if (bounce(e))
+      return;
+    e.preventDefault();
+    const k2 = e.key.toLowerCase();
+    key_down.set(k2);
+    key_map.$[k2] = true;
+    key_map.poke();
+  });
+  window.addEventListener("keyup", (e) => {
+    if (bounce(e))
+      return;
+    const k2 = e.key.toLowerCase();
+    key_up.set(k2);
+    key_map.$[k2] = false;
+    key_map.poke();
   });
 
   // src/chat.ts
@@ -32722,21 +32859,137 @@ What should we put here ? `);
   };
   function findVoice(voiceName) {
     const voices = synth.getVoices();
-    return voices.find((voice) => voice.name.indexOf(voiceName) !== -1);
+    return voices.find((voice2) => voice2.name.indexOf(voiceName) !== -1);
   }
   var talk = new Value("");
-  var control = new Value("" /* Nothing */);
+  var voice = new Value("UK English");
+  var assist = new Value("");
   var findTilde = /~/g;
   function say(said) {
     if (!said)
       return;
+    said = said.replace(findTilde, "control");
+    if (doControl(said))
+      return;
+    const spli = said.split("|");
+    said = spli[Math.floor(Math.random() * spli.length)];
     const voices = synth.getVoices();
-    var utterThis = new SpeechSynthesisUtterance(said.replace(findTilde, "control"));
-    let voice = findVoice("Aus") || findVoice("UK English Female") || voices[0];
-    utterThis.voice = voice;
+    var utterThis = new SpeechSynthesisUtterance(said);
+    utterThis.voice = findVoice(voice.$) || findVoice("Aus") || findVoice("UK English Female") || voices[0];
     utterThis.pitch = 1;
     utterThis.rate = 0.8;
     synth.speak(utterThis);
+  }
+  function clone(target) {
+    return Object.fromEntries(Object.entries(target));
+  }
+  var binds = new Value(clone(state_default.binds)).save("binds");
+  var vars = new Value(clone(state_default.vars)).save("vars");
+  var controls = {
+    ["bind" /* Bind */]: (items) => {
+      binds.$[items[2]] = items.slice(3).join(" ");
+      binds.poke();
+    },
+    ["notbind" /* NotBind */]: (items) => {
+      delete binds.$[items[3]];
+      binds.poke();
+    },
+    ["clearbind" /* ClearBind */]: (items) => {
+      binds.set(clone(state_default.binds));
+    },
+    ["var" /* Var */]: (items) => {
+      vars.$[items[2]] = items.slice(3).join(" ");
+      vars.poke();
+    },
+    ["notvar" /* NotVar */]: (items) => {
+      delete vars.$[items[3]];
+      vars.poke();
+    },
+    ["clearvar" /* ClearVar */]: (items) => {
+      vars.set(clone(state_default.vars));
+    },
+    ["selfie" /* Selfie */]: (items) => {
+      toggle_selfie.set(true);
+    },
+    ["notselfie" /* NotSelfie */]: (items) => {
+      toggle_selfie.set(false);
+    },
+    ["save" /* Save */]: () => {
+      saveState();
+    },
+    ["swap" /* Swap */]: (items) => {
+      const cur = currentVRM.$;
+      const mir = mirrorVRM.$;
+      currentVRM.$ = mir;
+      mirrorVRM.$ = cur;
+      currentVRM.poke();
+      mirrorVRM.poke();
+    },
+    ["visible" /* Visible */]: (items) => {
+    },
+    ["notvisible" /* NotVisible */]: (items) => {
+    },
+    ["avatar" /* Avatar */]: (items) => {
+      avatar_current.set(items[2]);
+    },
+    ["clearavatar" /* ClearAvatar */]: (items) => {
+      avatar_current.set(state_default.avatar.current);
+    },
+    ["echo" /* Echo */]: (items) => {
+      do_echo.set(true);
+    },
+    ["notecho" /* NotEcho */]: (items) => {
+      do_echo.set(false);
+    },
+    ["help" /* Help */]: (items) => {
+      open_help.set(true);
+    },
+    ["nothelp" /* NotHelp */]: (items) => {
+      open_help.set(false);
+    },
+    ["stats" /* Stats */]: (items) => {
+      open_stats.set(true);
+    },
+    ["notstats" /* NotStats */]: (items) => {
+      open_stats.set(false);
+    },
+    ["heard" /* Heard */]: (items) => {
+      open_heard.set(true);
+    },
+    ["notheard" /* NotHeard */]: (items) => {
+      open_heard.set(false);
+    }
+  };
+  function saveState() {
+    console.log(JSON.stringify({
+      binds: binds.$,
+      vars: vars.$,
+      selfie: toggle_selfie.$
+    }, null, "	"));
+  }
+  function loadState(state) {
+    binds.set(state.binds);
+    vars.set(state.vars);
+    toggle_selfie.set(state.selfie);
+  }
+  window.loadState = loadState;
+  function doControl(said) {
+    const items = said.toLowerCase().trim().split(" ");
+    if (items[0] !== "control")
+      return false;
+    switch (items[1]) {
+      case "not":
+      case "clear":
+        items[1] += items[2];
+    }
+    if (controls[items[1]]) {
+      controls[items[1]](items);
+    } else if (vars.$[items[1]]) {
+      talk.set(vars.$[items[1]]);
+    } else {
+      return false;
+    }
+    return do_echo.$;
   }
   talk.on(say);
   recog.on((event) => {
@@ -32746,12 +32999,24 @@ What should we put here ? `);
     talk.set(said);
   });
   var start = () => recognition.start();
+  var cancels = [];
+  binds.on(($binds) => {
+    cancels.forEach((cancel) => cancel());
+    cancels = [];
+    Object.entries($binds).forEach(([key, value]) => {
+      const cancel = key_down.on(($k) => {
+        if ($k !== key)
+          return;
+        talk.set(value);
+      });
+      cancels.push(cancel);
+    });
+  });
 
   // src/component/webcam-vrm.ts
   var remap2 = helpers_exports.remap;
   var clamp3 = helpers_exports.clamp;
   var lerp2 = Vector.lerp;
-  var once = false;
   var euler = new AFRAME.THREE.Euler();
   var quat = new AFRAME.THREE.Quaternion();
   var rigRotation = (vrm, name, rotation = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
@@ -32790,11 +33055,11 @@ What should we put here ? `);
     oldLookTarget.copy(lookTarget);
     vrm.lookAt.applyer.lookAt(lookTarget);
   };
-  var animateVRM = (vrm, results) => {
+  var animateVRM = (vrm, results, riggedPose, riggedLeftHand, riggedRightHand) => {
     if (!vrm || !videoElement.$) {
       return;
     }
-    let riggedPose, riggedLeftHand, riggedRightHand, riggedFace;
+    let riggedFace;
     const faceLandmarks = results.faceLandmarks;
     const pose3DLandmarks = results.ea;
     const pose2DLandmarks = results.poseLandmarks;
@@ -32808,10 +33073,6 @@ What should we put here ? `);
       rigFace(vrm, riggedFace);
     }
     if (pose2DLandmarks && pose3DLandmarks) {
-      riggedPose = PoseSolver.solve(pose3DLandmarks, pose2DLandmarks, {
-        runtime: "mediapipe",
-        video: videoElement.$
-      });
       rigRotation(vrm, "Hips", riggedPose.Hips.rotation, 0.7);
       rigPosition(vrm, "Hips", {
         x: -riggedPose.Hips.position.x,
@@ -32830,7 +33091,6 @@ What should we put here ? `);
       rigRotation(vrm, "RightLowerLeg", riggedPose.RightLowerLeg, 1, 0.3);
     }
     if (leftHandLandmarks) {
-      riggedLeftHand = HandSolver.solve(leftHandLandmarks, "Left");
       rigRotation(vrm, "LeftHand", {
         z: riggedPose.LeftHand.z,
         y: riggedLeftHand.LeftWrist.y,
@@ -32853,7 +33113,6 @@ What should we put here ? `);
       rigRotation(vrm, "LeftLittleDistal", riggedLeftHand.LeftLittleDistal);
     }
     if (rightHandLandmarks) {
-      riggedRightHand = HandSolver.solve(rightHandLandmarks, "Right");
       rigRotation(vrm, "RightHand", {
         z: riggedPose.RightHand.z,
         y: riggedRightHand.RightWrist.y,
@@ -32875,16 +33134,31 @@ What should we put here ? `);
       rigRotation(vrm, "RightLittleIntermediate", riggedRightHand.RightLittleIntermediate);
       rigRotation(vrm, "RightLittleDistal", riggedRightHand.RightLittleDistal);
     }
-    if (!once) {
-      open_loading.set(false);
-      once = true;
-    }
   };
+  var bones = Object.keys(u.HumanoidBoneName);
   var videoElement = new Value();
   var canvasElement = new Value();
   var onResults = (results) => {
-    animateVRM(currentVRM.$, results);
-    animateVRM(mirrorVRM.$, results);
+    const faceLandmarks = results.faceLandmarks;
+    const pose3DLandmarks = results.ea;
+    const pose2DLandmarks = results.poseLandmarks;
+    const leftHandLandmarks = results.rightHandLandmarks;
+    const rightHandLandmarks = results.leftHandLandmarks;
+    let riggedFace, riggedPose, riggedLeftHand, riggedRightHand;
+    if (pose2DLandmarks && pose3DLandmarks) {
+      riggedPose = PoseSolver.solve(pose3DLandmarks, pose2DLandmarks, {
+        runtime: "mediapipe",
+        video: videoElement.$
+      });
+    }
+    if (leftHandLandmarks) {
+      riggedLeftHand = HandSolver.solve(leftHandLandmarks, "Left");
+    }
+    if (rightHandLandmarks) {
+      riggedRightHand = HandSolver.solve(rightHandLandmarks, "Right");
+    }
+    animateVRM(currentVRM.$, results, riggedPose, riggedLeftHand, riggedRightHand);
+    animateVRM(mirrorVRM.$, results, riggedPose, riggedLeftHand, riggedRightHand);
   };
   var holistic = new import_holistic.Holistic({
     locateFile: (file) => {
@@ -32909,20 +33183,15 @@ What should we put here ? `);
     const ctx = canvasElement.$.getContext("2d");
     ctx.translate(width, 0);
     ctx.scale(-1, 1);
-    let ready = false;
-    const camera = new import_camera_utils.Camera($ve, {
+    const camera2 = new import_camera_utils.Camera($ve, {
       onFrame: async () => {
         ctx.drawImage($ve, 0, 0, width, height);
         await holistic.send({ image: canvasElement.$ });
-        ready = false;
       },
       width,
       height
     });
-    setInterval(() => {
-      ready = true;
-    }, 1 / 60 * 1e3);
-    camera.start();
+    camera2.start();
   });
   tick.on(() => {
     if (currentVRM.$) {
@@ -33067,37 +33336,13 @@ What should we put here ? `);
   };
   var characters_assets_default = Characters_assets;
 
-  // src/keyboard.ts
-  var key_down = new Value("");
-  var key_up = new Value("");
-  var key_map = new Value({});
-  function bounce(e) {
-    return e.target.tagName === "INPUT";
-  }
-  window.addEventListener("keydown", (e) => {
-    if (bounce(e))
-      return;
-    e.preventDefault();
-    const k2 = e.key.toLowerCase();
-    key_down.set(k2);
-    key_map.$[k2] = true;
-    key_map.poke();
-  });
-  window.addEventListener("keyup", (e) => {
-    if (bounce(e))
-      return;
-    const k2 = e.key.toLowerCase();
-    key_up.set(k2);
-    key_map.$[k2] = false;
-    key_map.poke();
-  });
-
   // src/component/wasd-controller.ts
   var vec32 = new AFRAME.THREE.Vector3();
+  var quat2 = new AFRAME.THREE.Quaternion();
   AFRAME.registerComponent("wasd-controller", {
     schema: {
-      speed: { type: "number", default: 0.25 },
-      rot: { type: "number", default: 0.15 }
+      speed: { type: "number", default: 0.2 },
+      rot: { type: "number", default: 0.25 }
     },
     tick(_2, delta) {
       if (!this.el.body)
@@ -33140,8 +33385,10 @@ What should we put here ? `);
         this.el.body.applyTorque(torq);
         this.el.body.activate();
       }
-      if (vec32.length() > 0) {
-        vec32.applyQuaternion(o3d.quaternion);
+      if (Math.abs(vec32.length()) > 0 && camera.$) {
+        camera.$.updateMatrixWorld();
+        quat2.setFromRotationMatrix(camera.$.matrixWorld);
+        vec32.applyQuaternion(quat2);
         force = new Ammo.btVector3(vec32.x, vec32.y, vec32.z);
         this.el.body.applyForce(force);
         this.el.body.activate();
@@ -33155,29 +33402,39 @@ What should we put here ? `);
   // src/template/characters.svelte
   function create_fragment3(ctx) {
     let a_entity0;
+    let a_entity0_vrm_value;
     let t;
     let a_entity1;
+    let a_entity1_vrm_value;
     return {
       c() {
         a_entity0 = element("a-entity");
         t = space();
         a_entity1 = element("a-entity");
         set_custom_element_data(a_entity0, "mixin", "shadow character");
-        set_custom_element_data(a_entity0, "position", "0 0 -5");
-        set_custom_element_data(a_entity0, "vrm", "src: /vrm/goblin.vrm; current: true");
+        set_custom_element_data(a_entity0, "position", "0 0 15");
+        set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value = "src: " + ctx[0] + "; current: true");
+        set_custom_element_data(a_entity0, "look-controls", "");
         set_custom_element_data(a_entity0, "id", "focus");
         set_custom_element_data(a_entity0, "wasd-controller", "");
         set_custom_element_data(a_entity1, "mixin", "shadow character");
-        set_custom_element_data(a_entity1, "position", "0 0.25 -6");
+        set_custom_element_data(a_entity1, "position", "0 0.25 14");
         set_custom_element_data(a_entity1, "rotation", "0 180 0");
-        set_custom_element_data(a_entity1, "vrm", "src: /vrm/femgoblin.vrm; mirror: true");
+        set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[1] + "; doer: true; mirror: true");
       },
       m(target, anchor) {
         insert(target, a_entity0, anchor);
         insert(target, t, anchor);
         insert(target, a_entity1, anchor);
       },
-      p: noop,
+      p(ctx2, [dirty]) {
+        if (dirty & 1 && a_entity0_vrm_value !== (a_entity0_vrm_value = "src: " + ctx2[0] + "; current: true")) {
+          set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value);
+        }
+        if (dirty & 2 && a_entity1_vrm_value !== (a_entity1_vrm_value = "src: " + ctx2[1] + "; doer: true; mirror: true")) {
+          set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value);
+        }
+      },
       i: noop,
       o: noop,
       d(detaching) {
@@ -33190,28 +33447,30 @@ What should we put here ? `);
       }
     };
   }
+  function instance2($$self, $$props, $$invalidate) {
+    let $avatar_current;
+    let $avatar_doer;
+    component_subscribe($$self, avatar_current, ($$value) => $$invalidate(0, $avatar_current = $$value));
+    component_subscribe($$self, avatar_doer, ($$value) => $$invalidate(1, $avatar_doer = $$value));
+    return [$avatar_current, $avatar_doer];
+  }
   var Characters = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment3, safe_not_equal, {});
+      init(this, options, instance2, create_fragment3, safe_not_equal, {});
     }
   };
   var characters_default = Characters;
 
   // src/component/character-camera.ts
   AFRAME.registerComponent("character-camera", {
-    schema: {
-      zoom: { type: "number", default: 0 },
-      max_zoom: { type: "number", default: 5 },
-      head: { type: "boolean", default: false }
-    },
     init() {
+      camera.set(this.el.object3D);
       this.cancel = currentVRM.on(() => {
         const o3d = this.el.object3D;
         if (currentVRM.$) {
           o3d.position.set(0, 0, 0);
           currentVRM.$.firstPerson.firstPersonBone.add(o3d);
-          this.hideHead();
         }
       });
     },
@@ -33233,26 +33492,20 @@ What should we put here ? `);
       }
       this.cancel();
     },
-    update() {
-      if (!currentVRM.$)
-        return;
-      this.el.object3D.position.z = this.data.zoom;
-      this.el.object3D.position.y = this.data.zoom / 2;
-      if (this.data.zoom >= 0.2) {
-        this.showHead();
-      } else if (this.data.head) {
-        this.hideHead();
-      }
-    },
     tick(_2, dt) {
       if (!currentVRM.$)
         return;
-      if (key_map.$["pageup"]) {
-        this.data.zoom = Math.min(this.data.max_zoom, this.data.zoom + 1e-3 * dt);
-        this.update();
-      } else if (key_map.$["pagedown"]) {
-        this.data.zoom = Math.max(this.data.zoom - 1e-3 * dt, 0);
-        this.update();
+      if (toggle_selfie.$ !== this.selfie) {
+        if (toggle_selfie.$) {
+          this.showHead();
+          this.el.object3D.position.set(0, 0.1, -0.75);
+          this.el.object3D.lookAt(0, 5, 0);
+        } else {
+          this.el.object3D.position.set(0, 0, 0);
+          this.el.object3D.quaternion.identity();
+          this.hideHead();
+        }
+        this.selfie = toggle_selfie.$;
       }
     }
   });
@@ -33292,212 +33545,28 @@ What should we put here ? `);
   var camera_fps_default = Camera_fps;
 
   // src/template/flora.svelte
-  function create_fragment5(ctx) {
-    let a_entity0;
-    let t0;
-    let a_entity1;
-    let t1;
-    let a_entity2;
-    return {
-      c() {
-        a_entity0 = element("a-entity");
-        t0 = space();
-        a_entity1 = element("a-entity");
-        t1 = space();
-        a_entity2 = element("a-entity");
-        set_custom_element_data(a_entity0, "pool__mushroom", "mixin: mushroom; size: 100");
-        set_custom_element_data(a_entity0, "activate__mushroom", "");
-        set_custom_element_data(a_entity1, "pool__flowerslow", "mixin: flowersLow; size: 100");
-        set_custom_element_data(a_entity1, "activate__flowerslow", "");
-        set_custom_element_data(a_entity2, "pool__flowers", "mixin: flowers; size: 100");
-        set_custom_element_data(a_entity2, "activate__flowers", "");
-      },
-      m(target, anchor) {
-        insert(target, a_entity0, anchor);
-        insert(target, t0, anchor);
-        insert(target, a_entity1, anchor);
-        insert(target, t1, anchor);
-        insert(target, a_entity2, anchor);
-      },
-      p: noop,
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(a_entity0);
-        if (detaching)
-          detach(t0);
-        if (detaching)
-          detach(a_entity1);
-        if (detaching)
-          detach(t1);
-        if (detaching)
-          detach(a_entity2);
-      }
-    };
-  }
   var Flora = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment5, safe_not_equal, {});
+      init(this, options, null, null, safe_not_equal, {});
     }
   };
   var flora_default = Flora;
 
   // src/template/flora-assets.svelte
-  function create_fragment6(ctx) {
-    let a_asset_item;
-    let a_asset_item_src_value;
-    let t0;
-    let a_mixin0;
-    let t1;
-    let a_mixin1;
-    let t2;
-    let a_mixin2;
-    let t3;
-    let a_mixin3;
-    let t4;
-    let a_mixin4;
-    let t5;
-    let a_mixin5;
-    let t6;
-    let a_mixin6;
-    return {
-      c() {
-        a_asset_item = element("a-asset-item");
-        t0 = space();
-        a_mixin0 = element("a-mixin");
-        t1 = space();
-        a_mixin1 = element("a-mixin");
-        t2 = space();
-        a_mixin2 = element("a-mixin");
-        t3 = space();
-        a_mixin3 = element("a-mixin");
-        t4 = space();
-        a_mixin4 = element("a-mixin");
-        t5 = space();
-        a_mixin5 = element("a-mixin");
-        t6 = space();
-        a_mixin6 = element("a-mixin");
-        set_custom_element_data(a_asset_item, "id", "glb-tree");
-        if (!src_url_equal(a_asset_item.src, a_asset_item_src_value = "/glb/tree.glb"))
-          set_custom_element_data(a_asset_item, "src", a_asset_item_src_value);
-        set_custom_element_data(a_mixin0, "id", "flowers");
-        set_custom_element_data(a_mixin0, "shadow", "");
-        set_custom_element_data(a_mixin0, "gltf-model", "/glb/flowers.glb");
-        set_custom_element_data(a_mixin0, "scatter", ctx[0]);
-        set_custom_element_data(a_mixin0, "vary", vary);
-        set_custom_element_data(a_mixin0, "vary__rot", vary__rot);
-        set_custom_element_data(a_mixin1, "id", "mushroom");
-        set_custom_element_data(a_mixin1, "shadow", "");
-        set_custom_element_data(a_mixin1, "gltf-model", "/glb/mushrooms.glb");
-        set_custom_element_data(a_mixin1, "scatter", ctx[0]);
-        set_custom_element_data(a_mixin1, "vary", vary);
-        set_custom_element_data(a_mixin1, "vary__rot", vary__rot);
-        set_custom_element_data(a_mixin2, "id", "flowersLow");
-        set_custom_element_data(a_mixin2, "shadow", "");
-        set_custom_element_data(a_mixin2, "gltf-model", "/glb/flowersLow.glb");
-        set_custom_element_data(a_mixin2, "scatter", ctx[0]);
-        set_custom_element_data(a_mixin2, "vary", vary);
-        set_custom_element_data(a_mixin2, "vary__rot", vary__rot);
-        set_custom_element_data(a_mixin3, "id", "rock");
-        set_custom_element_data(a_mixin3, "shadow", "");
-        set_custom_element_data(a_mixin3, "gltf-model", "/glb/rockB.glb");
-        set_custom_element_data(a_mixin3, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
-        set_custom_element_data(a_mixin3, "scatter", ctx[0]);
-        set_custom_element_data(a_mixin3, "vary__rot", vary__rot);
-        set_custom_element_data(a_mixin3, "ammo-body", "type: static; mass: 0");
-        set_custom_element_data(a_mixin3, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
-        set_custom_element_data(a_mixin4, "id", "tree");
-        set_custom_element_data(a_mixin4, "shadow", "");
-        set_custom_element_data(a_mixin4, "gltf-model", "#glb-tree");
-        set_custom_element_data(a_mixin4, "scatter", ctx[0]);
-        set_custom_element_data(a_mixin4, "vary", "property: scale; range: 1 0.5 1 2 3 2");
-        set_custom_element_data(a_mixin4, "vary__rot", vary__rot);
-        set_custom_element_data(a_mixin4, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin4, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
-        set_custom_element_data(a_mixin5, "id", "grass");
-        set_custom_element_data(a_mixin5, "shadow", "");
-        set_custom_element_data(a_mixin5, "vary__rot", vary__rot);
-        set_custom_element_data(a_mixin5, "gltf-model", "/glb/grass.glb");
-        set_custom_element_data(a_mixin5, "scatter", ctx[0]);
-        set_custom_element_data(a_mixin5, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
-        set_custom_element_data(a_mixin6, "id", "grass2");
-        set_custom_element_data(a_mixin6, "shadow", "");
-        set_custom_element_data(a_mixin6, "gltf-model", "/glb/grassLarge.glb");
-        set_custom_element_data(a_mixin6, "scatter", ctx[0]);
-        set_custom_element_data(a_mixin6, "vary__rot", vary__rot);
-        set_custom_element_data(a_mixin6, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
-      },
-      m(target, anchor) {
-        insert(target, a_asset_item, anchor);
-        insert(target, t0, anchor);
-        insert(target, a_mixin0, anchor);
-        insert(target, t1, anchor);
-        insert(target, a_mixin1, anchor);
-        insert(target, t2, anchor);
-        insert(target, a_mixin2, anchor);
-        insert(target, t3, anchor);
-        insert(target, a_mixin3, anchor);
-        insert(target, t4, anchor);
-        insert(target, a_mixin4, anchor);
-        insert(target, t5, anchor);
-        insert(target, a_mixin5, anchor);
-        insert(target, t6, anchor);
-        insert(target, a_mixin6, anchor);
-      },
-      p: noop,
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(a_asset_item);
-        if (detaching)
-          detach(t0);
-        if (detaching)
-          detach(a_mixin0);
-        if (detaching)
-          detach(t1);
-        if (detaching)
-          detach(a_mixin1);
-        if (detaching)
-          detach(t2);
-        if (detaching)
-          detach(a_mixin2);
-        if (detaching)
-          detach(t3);
-        if (detaching)
-          detach(a_mixin3);
-        if (detaching)
-          detach(t4);
-        if (detaching)
-          detach(a_mixin4);
-        if (detaching)
-          detach(t5);
-        if (detaching)
-          detach(a_mixin5);
-        if (detaching)
-          detach(t6);
-        if (detaching)
-          detach(a_mixin6);
-      }
-    };
-  }
-  var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
-  var vary__rot = "property: rotation; range: 0 0 0 0 360 0";
-  function instance2($$self, $$props, $$invalidate) {
+  function instance3($$self, $$props, $$invalidate) {
     let { groundSize: groundSize2 } = $$props;
     const scatter = `-${groundSize2} 0 -${groundSize2} ${groundSize2} 0 ${groundSize2}`;
     $$self.$$set = ($$props2) => {
       if ("groundSize" in $$props2)
-        $$invalidate(1, groundSize2 = $$props2.groundSize);
+        $$invalidate(0, groundSize2 = $$props2.groundSize);
     };
-    return [scatter, groundSize2];
+    return [groundSize2];
   }
   var Flora_assets = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance2, create_fragment6, safe_not_equal, { groundSize: 1 });
+      init(this, options, instance3, null, safe_not_equal, { groundSize: 0 });
     }
   };
   var flora_assets_default = Flora_assets;
@@ -33544,7 +33613,7 @@ What should we put here ? `);
       }
     };
   }
-  function create_fragment7(ctx) {
+  function create_fragment5(ctx) {
     let if_block_anchor;
     let if_block = ctx[1] !== void 0 && create_if_block(ctx);
     return {
@@ -33582,7 +33651,7 @@ What should we put here ? `);
       }
     };
   }
-  function instance3($$self, $$props, $$invalidate) {
+  function instance4($$self, $$props, $$invalidate) {
     let $open_text;
     component_subscribe($$self, open_text, ($$value) => $$invalidate(1, $open_text = $$value));
     let ele;
@@ -33644,13 +33713,13 @@ What should we put here ? `);
   var Text = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance3, create_fragment7, safe_not_equal, {});
+      init(this, options, instance4, create_fragment5, safe_not_equal, {});
     }
   };
   var text_default = Text;
 
   // src/ui/heard.svelte
-  function create_fragment8(ctx) {
+  function create_if_block2(ctx) {
     let div;
     let input;
     return {
@@ -33665,19 +33734,57 @@ What should we put here ? `);
       m(target, anchor) {
         insert(target, div, anchor);
         append(div, input);
-        ctx[1](input);
+        ctx[2](input);
       },
       p: noop,
-      i: noop,
-      o: noop,
       d(detaching) {
         if (detaching)
           detach(div);
-        ctx[1](null);
+        ctx[2](null);
       }
     };
   }
-  function instance4($$self, $$props, $$invalidate) {
+  function create_fragment6(ctx) {
+    let if_block_anchor;
+    let if_block = ctx[1] && create_if_block2(ctx);
+    return {
+      c() {
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (ctx2[1]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block2(ctx2);
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(if_block_anchor);
+      }
+    };
+  }
+  function instance5($$self, $$props, $$invalidate) {
+    let $open_heard;
+    component_subscribe($$self, open_heard, ($$value) => $$invalidate(1, $open_heard = $$value));
     let text2;
     talk.on(() => {
       if (!text2 || !talk.$)
@@ -33690,18 +33797,18 @@ What should we put here ? `);
         $$invalidate(0, text2);
       });
     }
-    return [text2, input_binding];
+    return [text2, $open_heard, input_binding];
   }
   var Heard = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance4, create_fragment8, safe_not_equal, {});
+      init(this, options, instance5, create_fragment6, safe_not_equal, {});
     }
   };
   var heard_default = Heard;
 
   // src/template/volleyball.svelte
-  function create_fragment9(ctx) {
+  function create_fragment7(ctx) {
     let webcam;
     let t0;
     let text_1;
@@ -33724,73 +33831,78 @@ What should we put here ? `);
     let a_mixin1;
     let t7;
     let a_mixin2;
+    let a_mixin2_bounds_value;
     let t8;
     let a_mixin3;
+    let a_mixin3_ring_value;
     let t9;
     let a_mixin4;
     let t10;
     let a_mixin5;
+    let a_mixin5_animation_value;
     let t11;
-    let a_mixin6;
-    let a_mixin6_bounds_value;
-    let t12;
-    let a_mixin7;
-    let a_mixin7_ring_value;
-    let t13;
-    let a_mixin8;
-    let t14;
-    let a_mixin9;
-    let t15;
-    let a_mixin10;
-    let a_mixin10_animation_value;
-    let t16;
     let charactersmixins;
+    let t12;
+    let a_asset_item2;
+    let a_asset_item2_src_value;
+    let t13;
+    let a_mixin6;
+    let t14;
+    let a_mixin7;
+    let t15;
+    let a_mixin8;
+    let t16;
+    let a_mixin9;
     let t17;
-    let floraassets;
+    let a_mixin10;
     let t18;
-    let camerafps;
+    let a_mixin11;
     let t19;
-    let flora;
+    let a_mixin12;
     let t20;
+    let a_mixin13;
+    let t21;
+    let a_mixin14;
+    let t22;
+    let floraassets;
+    let t23;
+    let camerafps;
+    let t24;
     let a_sky;
     let a_sky_animate_value;
-    let t21;
-    let a_entity0;
-    let t22;
-    let a_entity1;
-    let t23;
-    let a_entity2;
-    let t24;
-    let a_entity3;
     let t25;
-    let a_entity4;
+    let a_entity0;
     let t26;
-    let a_entity5;
+    let flora;
     let t27;
-    let a_entity6;
+    let a_entity1;
     let t28;
-    let a_entity7;
+    let a_entity2;
     let t29;
-    let a_entity8;
-    let a_entity8_position_value;
-    let a_entity8_light_value;
+    let a_entity3;
     let t30;
-    let a_entity9;
-    let a_entity9_position_value;
-    let a_entity9_light_value;
+    let a_entity4;
     let t31;
-    let a_entity10;
+    let a_entity5;
+    let a_entity5_position_value;
+    let a_entity5_light_value;
     let t32;
-    let characters;
+    let a_entity6;
+    let a_entity6_position_value;
+    let a_entity6_light_value;
     let t33;
+    let a_entity7;
+    let t34;
+    let characters;
+    let t35;
     let a_plane;
     let a_plane_width_value;
     let a_plane_height_value;
-    let t34;
-    let a_entity11;
-    let a_entity11_position_value;
-    let t35;
-    let a_entity12;
+    let t36;
+    let a_entity8;
+    let a_entity8_position_value;
+    let t37;
+    let a_entity9;
     let current;
     webcam = new webcam_default({});
     text_1 = new text_default({});
@@ -33830,55 +33942,59 @@ What should we put here ? `);
         t10 = space();
         a_mixin5 = element("a-mixin");
         t11 = space();
-        a_mixin6 = element("a-mixin");
-        t12 = space();
-        a_mixin7 = element("a-mixin");
-        t13 = space();
-        a_mixin8 = element("a-mixin");
-        t14 = space();
-        a_mixin9 = element("a-mixin");
-        t15 = space();
-        a_mixin10 = element("a-mixin");
-        t16 = space();
         create_component(charactersmixins.$$.fragment);
+        t12 = space();
+        a_asset_item2 = element("a-asset-item");
+        t13 = space();
+        a_mixin6 = element("a-mixin");
+        t14 = space();
+        a_mixin7 = element("a-mixin");
+        t15 = space();
+        a_mixin8 = element("a-mixin");
+        t16 = space();
+        a_mixin9 = element("a-mixin");
         t17 = space();
-        create_component(floraassets.$$.fragment);
+        a_mixin10 = element("a-mixin");
         t18 = space();
-        create_component(camerafps.$$.fragment);
+        a_mixin11 = element("a-mixin");
         t19 = space();
-        create_component(flora.$$.fragment);
+        a_mixin12 = element("a-mixin");
         t20 = space();
-        a_sky = element("a-sky");
+        a_mixin13 = element("a-mixin");
         t21 = space();
-        a_entity0 = element("a-entity");
+        a_mixin14 = element("a-mixin");
         t22 = space();
-        a_entity1 = element("a-entity");
+        create_component(floraassets.$$.fragment);
         t23 = space();
-        a_entity2 = element("a-entity");
+        create_component(camerafps.$$.fragment);
         t24 = space();
-        a_entity3 = element("a-entity");
+        a_sky = element("a-sky");
         t25 = space();
-        a_entity4 = element("a-entity");
+        a_entity0 = element("a-entity");
         t26 = space();
-        a_entity5 = element("a-entity");
+        create_component(flora.$$.fragment);
         t27 = space();
-        a_entity6 = element("a-entity");
+        a_entity1 = element("a-entity");
         t28 = space();
-        a_entity7 = element("a-entity");
+        a_entity2 = element("a-entity");
         t29 = space();
-        a_entity8 = element("a-entity");
+        a_entity3 = element("a-entity");
         t30 = space();
-        a_entity9 = element("a-entity");
+        a_entity4 = element("a-entity");
         t31 = space();
-        a_entity10 = element("a-entity");
+        a_entity5 = element("a-entity");
         t32 = space();
-        create_component(characters.$$.fragment);
+        a_entity6 = element("a-entity");
         t33 = space();
-        a_plane = element("a-plane");
+        a_entity7 = element("a-entity");
         t34 = space();
-        a_entity11 = element("a-entity");
+        create_component(characters.$$.fragment);
         t35 = space();
-        a_entity12 = element("a-entity");
+        a_plane = element("a-plane");
+        t36 = space();
+        a_entity8 = element("a-entity");
+        t37 = space();
+        a_entity9 = element("a-entity");
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "/sound/bg-ocean.mp3"))
           attr(audio, "src", audio_src_value);
@@ -33892,87 +34008,104 @@ What should we put here ? `);
         set_custom_element_data(a_mixin0, "shadow", "cast: true");
         set_custom_element_data(a_mixin1, "id", "toon");
         set_custom_element_data(a_mixin1, "material", "roughness: 1;dithering: false;");
-        set_custom_element_data(a_mixin2, "id", "tree");
-        set_custom_element_data(a_mixin2, "shadow", "");
-        set_custom_element_data(a_mixin2, "gltf-model", "#glb-tree");
-        set_custom_element_data(a_mixin2, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin2, "vary", "property: scale; range: 1 0.5 1 2 3 2");
-        set_custom_element_data(a_mixin2, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin2, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
-        set_custom_element_data(a_mixin3, "id", "grass");
+        set_custom_element_data(a_mixin2, "id", "water");
+        set_custom_element_data(a_mixin2, "geometry", "");
+        set_custom_element_data(a_mixin2, "scale", "0.5 0.1 0.5");
+        set_custom_element_data(a_mixin2, "ammo-body", "mass:0.1");
+        set_custom_element_data(a_mixin2, "force", "0 0 -2");
+        set_custom_element_data(a_mixin2, "material", "color: blue; transparent: true; emissive: blue; opacity: 0.5");
+        set_custom_element_data(a_mixin2, "bounds", a_mixin2_bounds_value = "-" + ctx[0] + " -5 -" + ctx[0] + " " + ctx[0] + " 40 " + ctx[0]);
+        set_custom_element_data(a_mixin2, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 0.2; offset: 0 0.2 0");
+        set_custom_element_data(a_mixin2, "position", "0 5 0");
+        set_custom_element_data(a_mixin3, "id", "mountains");
         set_custom_element_data(a_mixin3, "shadow", "");
-        set_custom_element_data(a_mixin3, "gltf-model", "/glb/grass.glb");
-        set_custom_element_data(a_mixin3, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin3, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
-        set_custom_element_data(a_mixin4, "id", "grass2");
+        set_custom_element_data(a_mixin3, "gltf-model", "#glb-rockC");
+        set_custom_element_data(a_mixin3, "ring", a_mixin3_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 50");
+        set_custom_element_data(a_mixin3, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin3, "vary", "property: scale; range: 12 7.5 12 12 15 12");
+        set_custom_element_data(a_mixin3, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
+        set_custom_element_data(a_mixin4, "id", "rockwater");
         set_custom_element_data(a_mixin4, "shadow", "");
-        set_custom_element_data(a_mixin4, "gltf-model", "/glb/grassLarge.glb");
-        set_custom_element_data(a_mixin4, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin4, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
-        set_custom_element_data(a_mixin5, "id", "coinGold");
-        set_custom_element_data(a_mixin5, "shadow", "");
-        set_custom_element_data(a_mixin5, "gltf-model", "/glb/coinGold.glb");
-        set_custom_element_data(a_mixin5, "ammo-body", "mass:0.1");
-        set_custom_element_data(a_mixin5, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 0.35; offset: -1 0.25 0.5");
-        set_custom_element_data(a_mixin5, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin6, "id", "water");
-        set_custom_element_data(a_mixin6, "geometry", "");
-        set_custom_element_data(a_mixin6, "scale", "0.5 0.1 0.5");
-        set_custom_element_data(a_mixin6, "ammo-body", "mass:0.1");
-        set_custom_element_data(a_mixin6, "force", "0 0 -2");
-        set_custom_element_data(a_mixin6, "material", "color: blue; transparent: true; emissive: blue; opacity: 0.5");
-        set_custom_element_data(a_mixin6, "bounds", a_mixin6_bounds_value = "-" + ctx[0] + " -5 -" + ctx[0] + " " + ctx[0] + " 40 " + ctx[0]);
-        set_custom_element_data(a_mixin6, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 0.2; offset: 0 0.2 0");
-        set_custom_element_data(a_mixin6, "position", "0 5 0");
-        set_custom_element_data(a_mixin7, "id", "mountains");
+        set_custom_element_data(a_mixin4, "gltf-model", "#glb-rockC");
+        set_custom_element_data(a_mixin4, "vary", "property: scale; range: 1.5 0.1 1.5 2.5 0.5 2.5");
+        set_custom_element_data(a_mixin4, "ring", "radius: 5; count: 10");
+        set_custom_element_data(a_mixin4, "ammo-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin4, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
+        set_custom_element_data(a_mixin5, "id", "cloud");
+        set_custom_element_data(a_mixin5, "scatter", ctx[3]);
+        set_custom_element_data(a_mixin5, "animation", a_mixin5_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx[0] + "; easing: linear; loop: true;");
+        set_custom_element_data(a_mixin5, "material", "color: #ffffff; opacity: 0.75; transparent: true; emissive: white; ");
+        set_custom_element_data(a_mixin5, "geometry", "");
+        set_custom_element_data(a_mixin5, "scale", "25 5 15");
+        set_custom_element_data(a_asset_item2, "id", "glb-tree");
+        if (!src_url_equal(a_asset_item2.src, a_asset_item2_src_value = "/glb/tree.glb"))
+          set_custom_element_data(a_asset_item2, "src", a_asset_item2_src_value);
+        set_custom_element_data(a_mixin6, "id", "flowers");
+        set_custom_element_data(a_mixin6, "shadow", "");
+        set_custom_element_data(a_mixin6, "gltf-model", "/glb/flowers.glb");
+        set_custom_element_data(a_mixin6, "scatter", ctx[3]);
+        set_custom_element_data(a_mixin6, "vary", vary);
+        set_custom_element_data(a_mixin7, "id", "mushroom");
         set_custom_element_data(a_mixin7, "shadow", "");
-        set_custom_element_data(a_mixin7, "gltf-model", "#glb-rockC");
-        set_custom_element_data(a_mixin7, "ring", a_mixin7_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 100");
-        set_custom_element_data(a_mixin7, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin7, "vary", "property: scale; range: 12 7.5 12 12 15 12");
-        set_custom_element_data(a_mixin7, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
-        set_custom_element_data(a_mixin8, "id", "rock");
+        set_custom_element_data(a_mixin7, "gltf-model", "/glb/mushrooms.glb");
+        set_custom_element_data(a_mixin7, "scatter", ctx[3]);
+        set_custom_element_data(a_mixin7, "vary", vary);
+        set_custom_element_data(a_mixin8, "id", "flowersLow");
         set_custom_element_data(a_mixin8, "shadow", "");
-        set_custom_element_data(a_mixin8, "gltf-model", "/glb/rockB.glb");
-        set_custom_element_data(a_mixin8, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
-        set_custom_element_data(a_mixin8, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin8, "ammo-body", "type: static; mass: 0");
-        set_custom_element_data(a_mixin8, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
-        set_custom_element_data(a_mixin9, "id", "rockwater");
+        set_custom_element_data(a_mixin8, "gltf-model", "/glb/flowersLow.glb");
+        set_custom_element_data(a_mixin8, "scatter", ctx[3]);
+        set_custom_element_data(a_mixin8, "vary", vary);
+        set_custom_element_data(a_mixin9, "id", "rock");
         set_custom_element_data(a_mixin9, "shadow", "");
-        set_custom_element_data(a_mixin9, "gltf-model", "#glb-rockC");
-        set_custom_element_data(a_mixin9, "vary", "property: scale; range: 1.5 0.1 1.5 2.5 0.5 2.5");
-        set_custom_element_data(a_mixin9, "ring", "radius: 5; count: 10");
+        set_custom_element_data(a_mixin9, "gltf-model", "/glb/rockB.glb");
+        set_custom_element_data(a_mixin9, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
+        set_custom_element_data(a_mixin9, "scatter", ctx[3]);
         set_custom_element_data(a_mixin9, "ammo-body", "type: static; mass: 0");
         set_custom_element_data(a_mixin9, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
-        set_custom_element_data(a_mixin10, "id", "cloud");
-        set_custom_element_data(a_mixin10, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin10, "animation", a_mixin10_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx[0] + "; easing: linear; loop: true;");
-        set_custom_element_data(a_mixin10, "material", "color: #ffffff; opacity: 0.5; transparent: true; emissive: white; ");
-        set_custom_element_data(a_mixin10, "geometry", "");
-        set_custom_element_data(a_mixin10, "scale", "25 5 15");
+        set_custom_element_data(a_mixin10, "id", "tree");
+        set_custom_element_data(a_mixin10, "shadow", "");
+        set_custom_element_data(a_mixin10, "gltf-model", "#glb-tree");
+        set_custom_element_data(a_mixin10, "scatter", ctx[3]);
+        set_custom_element_data(a_mixin10, "vary", "property: scale; range: 1 0.5 1 2 3 2");
+        set_custom_element_data(a_mixin10, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin10, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
+        set_custom_element_data(a_mixin11, "id", "grass");
+        set_custom_element_data(a_mixin11, "shadow", "");
+        set_custom_element_data(a_mixin11, "gltf-model", "/glb/grass.glb");
+        set_custom_element_data(a_mixin11, "scatter", ctx[3]);
+        set_custom_element_data(a_mixin11, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
+        set_custom_element_data(a_mixin12, "id", "grass2");
+        set_custom_element_data(a_mixin12, "shadow", "");
+        set_custom_element_data(a_mixin12, "gltf-model", "/glb/grassLarge.glb");
+        set_custom_element_data(a_mixin12, "scatter", ctx[3]);
+        set_custom_element_data(a_mixin12, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
+        set_custom_element_data(a_mixin13, "id", "coinGold");
+        set_custom_element_data(a_mixin13, "shadow", "");
+        set_custom_element_data(a_mixin13, "gltf-model", "/glb/coinGold.glb");
+        set_custom_element_data(a_mixin13, "ammo-body", "mass:0.1");
+        set_custom_element_data(a_mixin13, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 0.35; offset: -1 0.25 0.5");
+        set_custom_element_data(a_mixin13, "scatter", ctx[3]);
+        set_custom_element_data(a_mixin14, "id", "rock");
+        set_custom_element_data(a_mixin14, "shadow", "");
+        set_custom_element_data(a_mixin14, "gltf-model", "/glb/rockB.glb");
+        set_custom_element_data(a_mixin14, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
+        set_custom_element_data(a_mixin14, "scatter", ctx[3]);
+        set_custom_element_data(a_mixin14, "ammo-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin14, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
         set_custom_element_data(a_sky, "color", sky);
         set_custom_element_data(a_sky, "animate", a_sky_animate_value = "property: color; to: " + sky_dark + "; easing: easeInOut; dur: 6000 ");
-        set_custom_element_data(a_entity0, "pool__tree", "mixin: tree; size: 50");
-        set_custom_element_data(a_entity0, "activate__tree", "");
-        set_custom_element_data(a_entity1, "pool__grass", "mixin: grass; size: 100");
-        set_custom_element_data(a_entity1, "activate__grass", "");
-        set_custom_element_data(a_entity2, "pool__grass2", "mixin: grass2; size: 100");
-        set_custom_element_data(a_entity2, "activate__grass2", "");
-        set_custom_element_data(a_entity3, "pool__rock", "mixin: rock; size: 50");
-        set_custom_element_data(a_entity3, "activate__rock", "");
-        set_custom_element_data(a_entity4, "pool__rockwater", "mixin: rockwater; size: 10");
-        set_custom_element_data(a_entity4, "activate__rockwater", "");
-        set_custom_element_data(a_entity5, "pool__mountains", "mixin: mountains; size: 100");
-        set_custom_element_data(a_entity5, "activate__mountains", "");
-        set_custom_element_data(a_entity6, "pool__water", "mixin: water; size: 500");
-        set_custom_element_data(a_entity6, "activate__water", "");
-        set_custom_element_data(a_entity7, "pool__coins", "mixin: coinGold; size: 20");
-        set_custom_element_data(a_entity7, "material", "shader: flat;");
-        set_custom_element_data(a_entity7, "position", "0 20 0");
-        set_custom_element_data(a_entity7, "activate__coins", "");
-        set_custom_element_data(a_entity8, "position", a_entity8_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
-        set_custom_element_data(a_entity8, "light", a_entity8_light_value = ctx[1]({
+        set_custom_element_data(a_entity0, "pool__mountains", "mixin: mountains; size: 50");
+        set_custom_element_data(a_entity0, "activate__mountains", "");
+        set_custom_element_data(a_entity1, "pool__mushroom", "mixin: mushroom; size: 20");
+        set_custom_element_data(a_entity1, "activate__mushroom", "");
+        set_custom_element_data(a_entity2, "pool__tree", "mixin: tree; size: 50");
+        set_custom_element_data(a_entity2, "activate__tree", "");
+        set_custom_element_data(a_entity3, "pool__grass", "mixin: grass; size: 50");
+        set_custom_element_data(a_entity3, "activate__grass", "");
+        set_custom_element_data(a_entity4, "pool__rock", "mixin: rock; size: 50");
+        set_custom_element_data(a_entity4, "activate__rock", "");
+        set_custom_element_data(a_entity5, "position", a_entity5_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
+        set_custom_element_data(a_entity5, "light", a_entity5_light_value = ctx[2]({
           type: "directional",
           castShadow: true,
           color: light,
@@ -33985,14 +34118,14 @@ What should we put here ? `);
           shadowMapWidth: 1024 * 4,
           intensity: 0.75
         }));
-        set_custom_element_data(a_entity9, "position", a_entity9_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
-        set_custom_element_data(a_entity9, "light", a_entity9_light_value = ctx[1]({
+        set_custom_element_data(a_entity6, "position", a_entity6_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
+        set_custom_element_data(a_entity6, "light", a_entity6_light_value = ctx[2]({
           type: "directional",
           color: light,
           intensity: 0.75
         }));
-        set_custom_element_data(a_entity10, "light", "type:ambient; color:white; intensity:0.1;");
-        set_custom_element_data(a_entity10, "position", "-1 1 1");
+        set_custom_element_data(a_entity7, "light", "type:ambient; color:white; intensity:0.1;");
+        set_custom_element_data(a_entity7, "position", "-1 1 1");
         set_custom_element_data(a_plane, "shadow", "");
         set_custom_element_data(a_plane, "position", "0 0 0");
         set_custom_element_data(a_plane, "rotation", "-90 0 0");
@@ -34002,10 +34135,11 @@ What should we put here ? `);
         set_custom_element_data(a_plane, "ammo-shape", "type:box");
         set_custom_element_data(a_plane, "material", "repeat: 10 10;");
         set_custom_element_data(a_plane, "color", "#334411");
-        set_custom_element_data(a_entity11, "pool__cloud", "mixin: shadow cloud; size: 15");
-        set_custom_element_data(a_entity11, "activate__cloud", "");
-        set_custom_element_data(a_entity11, "position", a_entity11_position_value = "0 25 " + ctx[0] / 4);
-        set_custom_element_data(a_entity12, "sound", "autoplay: true; loop: true; volume: 0.1; src:#sound-bg;positional:false");
+        set_custom_element_data(a_entity8, "pool__cloud", "mixin: shadow cloud; size: 5");
+        set_custom_element_data(a_entity8, "activate__cloud", "");
+        set_custom_element_data(a_entity8, "position", a_entity8_position_value = "0 25 " + ctx[0] / 4);
+        set_custom_element_data(a_entity9, "sound", "autoplay: true; loop: true; volume: 0.1; src:#sound-bg;positional:false");
+        set_custom_element_data(a_scene, "stats", ctx[1]);
         set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: medium;");
         set_custom_element_data(a_scene, "shadow", "type:pcfsoft;");
         set_custom_element_data(a_scene, "fog", "type: linear; color: #AAA");
@@ -34038,75 +34172,79 @@ What should we put here ? `);
         append(a_assets, t10);
         append(a_assets, a_mixin5);
         append(a_assets, t11);
-        append(a_assets, a_mixin6);
-        append(a_assets, t12);
-        append(a_assets, a_mixin7);
-        append(a_assets, t13);
-        append(a_assets, a_mixin8);
-        append(a_assets, t14);
-        append(a_assets, a_mixin9);
-        append(a_assets, t15);
-        append(a_assets, a_mixin10);
-        append(a_assets, t16);
         mount_component(charactersmixins, a_assets, null);
+        append(a_assets, t12);
+        append(a_assets, a_asset_item2);
+        append(a_assets, t13);
+        append(a_assets, a_mixin6);
+        append(a_assets, t14);
+        append(a_assets, a_mixin7);
+        append(a_assets, t15);
+        append(a_assets, a_mixin8);
+        append(a_assets, t16);
+        append(a_assets, a_mixin9);
         append(a_assets, t17);
+        append(a_assets, a_mixin10);
+        append(a_assets, t18);
+        append(a_assets, a_mixin11);
+        append(a_assets, t19);
+        append(a_assets, a_mixin12);
+        append(a_assets, t20);
+        append(a_assets, a_mixin13);
+        append(a_assets, t21);
+        append(a_assets, a_mixin14);
+        append(a_assets, t22);
         mount_component(floraassets, a_assets, null);
-        append(a_scene, t18);
-        mount_component(camerafps, a_scene, null);
-        append(a_scene, t19);
-        mount_component(flora, a_scene, null);
-        append(a_scene, t20);
-        append(a_scene, a_sky);
-        append(a_scene, t21);
-        append(a_scene, a_entity0);
-        append(a_scene, t22);
-        append(a_scene, a_entity1);
         append(a_scene, t23);
-        append(a_scene, a_entity2);
+        mount_component(camerafps, a_scene, null);
         append(a_scene, t24);
-        append(a_scene, a_entity3);
+        append(a_scene, a_sky);
         append(a_scene, t25);
-        append(a_scene, a_entity4);
+        append(a_scene, a_entity0);
         append(a_scene, t26);
-        append(a_scene, a_entity5);
+        mount_component(flora, a_scene, null);
         append(a_scene, t27);
-        append(a_scene, a_entity6);
+        append(a_scene, a_entity1);
         append(a_scene, t28);
-        append(a_scene, a_entity7);
+        append(a_scene, a_entity2);
         append(a_scene, t29);
-        append(a_scene, a_entity8);
+        append(a_scene, a_entity3);
         append(a_scene, t30);
-        append(a_scene, a_entity9);
+        append(a_scene, a_entity4);
         append(a_scene, t31);
-        append(a_scene, a_entity10);
+        append(a_scene, a_entity5);
         append(a_scene, t32);
-        mount_component(characters, a_scene, null);
+        append(a_scene, a_entity6);
         append(a_scene, t33);
-        append(a_scene, a_plane);
+        append(a_scene, a_entity7);
         append(a_scene, t34);
-        append(a_scene, a_entity11);
+        mount_component(characters, a_scene, null);
         append(a_scene, t35);
-        append(a_scene, a_entity12);
+        append(a_scene, a_plane);
+        append(a_scene, t36);
+        append(a_scene, a_entity8);
+        append(a_scene, t37);
+        append(a_scene, a_entity9);
         current = true;
       },
       p(ctx2, [dirty]) {
-        if (!current || dirty & 1 && a_mixin6_bounds_value !== (a_mixin6_bounds_value = "-" + ctx2[0] + " -5 -" + ctx2[0] + " " + ctx2[0] + " 40 " + ctx2[0])) {
-          set_custom_element_data(a_mixin6, "bounds", a_mixin6_bounds_value);
+        if (!current || dirty & 1 && a_mixin2_bounds_value !== (a_mixin2_bounds_value = "-" + ctx2[0] + " -5 -" + ctx2[0] + " " + ctx2[0] + " 40 " + ctx2[0])) {
+          set_custom_element_data(a_mixin2, "bounds", a_mixin2_bounds_value);
         }
-        if (!current || dirty & 1 && a_mixin7_ring_value !== (a_mixin7_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 100")) {
-          set_custom_element_data(a_mixin7, "ring", a_mixin7_ring_value);
+        if (!current || dirty & 1 && a_mixin3_ring_value !== (a_mixin3_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
+          set_custom_element_data(a_mixin3, "ring", a_mixin3_ring_value);
         }
-        if (!current || dirty & 1 && a_mixin10_animation_value !== (a_mixin10_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx2[0] + "; easing: linear; loop: true;")) {
-          set_custom_element_data(a_mixin10, "animation", a_mixin10_animation_value);
+        if (!current || dirty & 1 && a_mixin5_animation_value !== (a_mixin5_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx2[0] + "; easing: linear; loop: true;")) {
+          set_custom_element_data(a_mixin5, "animation", a_mixin5_animation_value);
         }
         const floraassets_changes = {};
         if (dirty & 1)
           floraassets_changes.groundSize = ctx2[0];
         floraassets.$set(floraassets_changes);
-        if (!current || dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity8, "position", a_entity8_position_value);
+        if (!current || dirty & 1 && a_entity5_position_value !== (a_entity5_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity5, "position", a_entity5_position_value);
         }
-        if (!current || dirty & 1 && a_entity8_light_value !== (a_entity8_light_value = ctx2[1]({
+        if (!current || dirty & 1 && a_entity5_light_value !== (a_entity5_light_value = ctx2[2]({
           type: "directional",
           castShadow: true,
           color: light,
@@ -34119,10 +34257,10 @@ What should we put here ? `);
           shadowMapWidth: 1024 * 4,
           intensity: 0.75
         }))) {
-          set_custom_element_data(a_entity8, "light", a_entity8_light_value);
+          set_custom_element_data(a_entity5, "light", a_entity5_light_value);
         }
-        if (!current || dirty & 1 && a_entity9_position_value !== (a_entity9_position_value = "-" + ctx2[0] / 4 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity9, "position", a_entity9_position_value);
+        if (!current || dirty & 1 && a_entity6_position_value !== (a_entity6_position_value = "-" + ctx2[0] / 4 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity6, "position", a_entity6_position_value);
         }
         if (!current || dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 1.5)) {
           set_custom_element_data(a_plane, "width", a_plane_width_value);
@@ -34130,8 +34268,11 @@ What should we put here ? `);
         if (!current || dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 1.5)) {
           set_custom_element_data(a_plane, "height", a_plane_height_value);
         }
-        if (!current || dirty & 1 && a_entity11_position_value !== (a_entity11_position_value = "0 25 " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity11, "position", a_entity11_position_value);
+        if (!current || dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = "0 25 " + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity8, "position", a_entity8_position_value);
+        }
+        if (!current || dirty & 2) {
+          set_custom_element_data(a_scene, "stats", ctx2[1]);
         }
       },
       i(local) {
@@ -34181,7 +34322,10 @@ What should we put here ? `);
   var light = "#FEE";
   var sky = "#336";
   var sky_dark = "#003";
-  function instance5($$self, $$props, $$invalidate) {
+  var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
+  function instance6($$self, $$props, $$invalidate) {
+    let $open_stats;
+    component_subscribe($$self, open_stats, ($$value) => $$invalidate(1, $open_stats = $$value));
     start();
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize: groundSize2 = 100 } = $$props;
@@ -34190,18 +34334,18 @@ What should we put here ? `);
       if ("groundSize" in $$props2)
         $$invalidate(0, groundSize2 = $$props2.groundSize);
     };
-    return [groundSize2, str, scatter];
+    return [groundSize2, $open_stats, str, scatter];
   }
   var Volleyball = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment9, safe_not_equal, { groundSize: 0 });
+      init(this, options, instance6, create_fragment7, safe_not_equal, { groundSize: 0 });
     }
   };
   var volleyball_default = Volleyball;
 
   // src/ui/title.svelte
-  function create_fragment10(ctx) {
+  function create_fragment8(ctx) {
     let div3;
     let t8;
     let center;
@@ -34239,13 +34383,13 @@ What should we put here ? `);
   var Title = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment10, safe_not_equal, {});
+      init(this, options, null, create_fragment8, safe_not_equal, {});
     }
   };
   var title_default = Title;
 
   // src/ui/home.svelte
-  function create_fragment11(ctx) {
+  function create_fragment9(ctx) {
     let div9;
     let div0;
     let t0;
@@ -34372,7 +34516,7 @@ What should we put here ? `);
   };
   var keydown_handler = (e) => {
   };
-  function instance6($$self, $$props, $$invalidate) {
+  function instance7($$self, $$props, $$invalidate) {
     let $motd;
     component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
     if (location.search === "?go") {
@@ -34388,13 +34532,13 @@ What should we put here ? `);
   var Home = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment11, safe_not_equal, {});
+      init(this, options, instance7, create_fragment9, safe_not_equal, {});
     }
   };
   var home_default = Home;
 
   // src/ui/loading.svelte
-  function create_fragment12(ctx) {
+  function create_fragment10(ctx) {
     let div5;
     let div0;
     let t0;
@@ -34489,7 +34633,7 @@ What should we put here ? `);
   };
   var keydown_handler2 = (e) => {
   };
-  function instance7($$self, $$props, $$invalidate) {
+  function instance8($$self, $$props, $$invalidate) {
     let $loading;
     component_subscribe($$self, loading, ($$value) => $$invalidate(0, $loading = $$value));
     const paste_handler2 = (e) => {
@@ -34501,40 +34645,128 @@ What should we put here ? `);
   var Loading = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance7, create_fragment12, safe_not_equal, {});
+      init(this, options, instance8, create_fragment10, safe_not_equal, {});
     }
   };
   var loading_default = Loading;
 
-  // src/main.svelte
-  function create_if_block_2(ctx) {
-    let loading4;
-    let current;
-    loading4 = new loading_default({});
+  // src/ui/help.svelte
+  function create_fragment11(ctx) {
+    let div5;
+    let div0;
+    let t0;
+    let div4;
+    let div3;
+    let div1;
+    let t1;
+    let textarea;
+    let t2;
+    let div2;
+    let mounted;
+    let dispose;
     return {
       c() {
-        create_component(loading4.$$.fragment);
+        div5 = element("div");
+        div0 = element("div");
+        t0 = space();
+        div4 = element("div");
+        div3 = element("div");
+        div1 = element("div");
+        t1 = space();
+        textarea = element("textarea");
+        t2 = space();
+        div2 = element("div");
+        attr(div0, "class", "sprites sprite svelte-1gdirzm");
+        attr(div1, "class", "flex svelte-1gdirzm");
+        attr(textarea, "type", "text");
+        attr(textarea, "class", "text button svelte-1gdirzm");
+        attr(textarea, "maxlength", "200");
+        textarea.value = ctx[0];
+        textarea.readOnly = true;
+        attr(div2, "class", "flex svelte-1gdirzm");
+        attr(div3, "class", "span2 full svelte-1gdirzm");
+        attr(div4, "class", "vbox svelte-1gdirzm");
+        attr(div5, "class", "menu svelte-1gdirzm");
       },
       m(target, anchor) {
-        mount_component(loading4, target, anchor);
+        insert(target, div5, anchor);
+        append(div5, div0);
+        append(div5, t0);
+        append(div5, div4);
+        append(div4, div3);
+        append(div3, div1);
+        append(div3, t1);
+        append(div3, textarea);
+        append(div3, t2);
+        append(div3, div2);
+        if (!mounted) {
+          dispose = [
+            listen(div1, "click", ctx[1]),
+            listen(div2, "click", ctx[1])
+          ];
+          mounted = true;
+        }
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 1) {
+          textarea.value = ctx2[0];
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div5);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function instance9($$self, $$props, $$invalidate) {
+    let $helptext;
+    component_subscribe($$self, helptext, ($$value) => $$invalidate(0, $helptext = $$value));
+    function close() {
+      open_help.set(false);
+    }
+    return [$helptext, close];
+  }
+  var Help = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance9, create_fragment11, safe_not_equal, {});
+    }
+  };
+  var help_default = Help;
+
+  // src/main.svelte
+  function create_if_block_3(ctx) {
+    let loading3;
+    let current;
+    loading3 = new loading_default({});
+    return {
+      c() {
+        create_component(loading3.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(loading3, target, anchor);
         current = true;
       },
       i(local) {
         if (current)
           return;
-        transition_in(loading4.$$.fragment, local);
+        transition_in(loading3.$$.fragment, local);
         current = true;
       },
       o(local) {
-        transition_out(loading4.$$.fragment, local);
+        transition_out(loading3.$$.fragment, local);
         current = false;
       },
       d(detaching) {
-        destroy_component(loading4, detaching);
+        destroy_component(loading3, detaching);
       }
     };
   }
-  function create_if_block_1(ctx) {
+  function create_if_block_2(ctx) {
     let home;
     let current;
     home = new home_default({});
@@ -34561,7 +34793,7 @@ What should we put here ? `);
       }
     };
   }
-  function create_if_block2(ctx) {
+  function create_if_block_1(ctx) {
     let volleyball;
     let current;
     volleyball = new volleyball_default({ props: { groundSize } });
@@ -34589,17 +34821,46 @@ What should we put here ? `);
       }
     };
   }
-  function create_fragment13(ctx) {
+  function create_if_block3(ctx) {
+    let help;
+    let current;
+    help = new help_default({});
+    return {
+      c() {
+        create_component(help.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(help, target, anchor);
+        current = true;
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(help.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(help.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(help, detaching);
+      }
+    };
+  }
+  function create_fragment12(ctx) {
     let text_1;
     let t0;
     let t1;
     let t2;
-    let if_block2_anchor;
+    let t3;
+    let if_block3_anchor;
     let current;
     text_1 = new text_default({});
-    let if_block0 = ctx[0] && create_if_block_2(ctx);
-    let if_block1 = ctx[1] && create_if_block_1(ctx);
-    let if_block2 = ctx[2] && create_if_block2(ctx);
+    let if_block0 = ctx[0] && create_if_block_3(ctx);
+    let if_block1 = ctx[1] && create_if_block_2(ctx);
+    let if_block2 = ctx[2] && create_if_block_1(ctx);
+    let if_block3 = ctx[3] && create_if_block3(ctx);
     return {
       c() {
         create_component(text_1.$$.fragment);
@@ -34612,7 +34873,10 @@ What should we put here ? `);
         t2 = space();
         if (if_block2)
           if_block2.c();
-        if_block2_anchor = empty();
+        t3 = space();
+        if (if_block3)
+          if_block3.c();
+        if_block3_anchor = empty();
       },
       m(target, anchor) {
         mount_component(text_1, target, anchor);
@@ -34625,7 +34889,10 @@ What should we put here ? `);
         insert(target, t2, anchor);
         if (if_block2)
           if_block2.m(target, anchor);
-        insert(target, if_block2_anchor, anchor);
+        insert(target, t3, anchor);
+        if (if_block3)
+          if_block3.m(target, anchor);
+        insert(target, if_block3_anchor, anchor);
         current = true;
       },
       p(ctx2, [dirty]) {
@@ -34635,7 +34902,7 @@ What should we put here ? `);
               transition_in(if_block0, 1);
             }
           } else {
-            if_block0 = create_if_block_2(ctx2);
+            if_block0 = create_if_block_3(ctx2);
             if_block0.c();
             transition_in(if_block0, 1);
             if_block0.m(t1.parentNode, t1);
@@ -34653,7 +34920,7 @@ What should we put here ? `);
               transition_in(if_block1, 1);
             }
           } else {
-            if_block1 = create_if_block_1(ctx2);
+            if_block1 = create_if_block_2(ctx2);
             if_block1.c();
             transition_in(if_block1, 1);
             if_block1.m(t2.parentNode, t2);
@@ -34672,15 +34939,33 @@ What should we put here ? `);
               transition_in(if_block2, 1);
             }
           } else {
-            if_block2 = create_if_block2(ctx2);
+            if_block2 = create_if_block_1(ctx2);
             if_block2.c();
             transition_in(if_block2, 1);
-            if_block2.m(if_block2_anchor.parentNode, if_block2_anchor);
+            if_block2.m(t3.parentNode, t3);
           }
         } else if (if_block2) {
           group_outros();
           transition_out(if_block2, 1, 1, () => {
             if_block2 = null;
+          });
+          check_outros();
+        }
+        if (ctx2[3]) {
+          if (if_block3) {
+            if (dirty & 8) {
+              transition_in(if_block3, 1);
+            }
+          } else {
+            if_block3 = create_if_block3(ctx2);
+            if_block3.c();
+            transition_in(if_block3, 1);
+            if_block3.m(if_block3_anchor.parentNode, if_block3_anchor);
+          }
+        } else if (if_block3) {
+          group_outros();
+          transition_out(if_block3, 1, 1, () => {
+            if_block3 = null;
           });
           check_outros();
         }
@@ -34692,6 +34977,7 @@ What should we put here ? `);
         transition_in(if_block0);
         transition_in(if_block1);
         transition_in(if_block2);
+        transition_in(if_block3);
         current = true;
       },
       o(local) {
@@ -34699,6 +34985,7 @@ What should we put here ? `);
         transition_out(if_block0);
         transition_out(if_block1);
         transition_out(if_block2);
+        transition_out(if_block3);
         current = false;
       },
       d(detaching) {
@@ -34716,24 +35003,30 @@ What should we put here ? `);
         if (if_block2)
           if_block2.d(detaching);
         if (detaching)
-          detach(if_block2_anchor);
+          detach(t3);
+        if (if_block3)
+          if_block3.d(detaching);
+        if (detaching)
+          detach(if_block3_anchor);
       }
     };
   }
   var groundSize = 100;
-  function instance8($$self, $$props, $$invalidate) {
+  function instance10($$self, $$props, $$invalidate) {
     let $open_loading;
     let $open_home;
     let $open_game;
+    let $open_help;
     component_subscribe($$self, open_loading, ($$value) => $$invalidate(0, $open_loading = $$value));
     component_subscribe($$self, open_home, ($$value) => $$invalidate(1, $open_home = $$value));
     component_subscribe($$self, open_game, ($$value) => $$invalidate(2, $open_game = $$value));
-    return [$open_loading, $open_home, $open_game];
+    component_subscribe($$self, open_help, ($$value) => $$invalidate(3, $open_help = $$value));
+    return [$open_loading, $open_home, $open_game, $open_help];
   }
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance8, create_fragment13, safe_not_equal, {});
+      init(this, options, instance10, create_fragment12, safe_not_equal, {});
     }
   };
   var main_default = Main;
