@@ -139,6 +139,6 @@ export const controls = {
         open_heard.set(false)
     },
     [EControl.Voice]: (items: string[]) => {
-        voice_current.set(items.slice(3).join(" "))
+        voice_current.set(items.slice(2).join(" "))
     }
 }

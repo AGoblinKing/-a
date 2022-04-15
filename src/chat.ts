@@ -27,7 +27,7 @@ recognition.onend = () => {
 
 function findVoice(voiceName: string) {
     const voices = synth.getVoices();
-    return voices.find(voice => voice.name.indexOf(voiceName) !== -1)
+    return voices.find(voice => voice.name.toLowerCase().indexOf(voiceName.toLowerCase()) !== -1)
 }
 
 

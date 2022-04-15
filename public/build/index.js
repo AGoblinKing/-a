@@ -6956,8 +6956,8 @@
     "vars": {},
     "selfie": false,
     avatar: {
-      current: "/vrm/goblin.vrm",
-      doer: "/vrm/doer.vrm"
+      doer: "/vrm/goblin.2.vrm",
+      current: "/vrm/doer.2.vrm"
     }
   };
 
@@ -32919,7 +32919,7 @@ unbinds variable name
       open_heard.set(false);
     },
     ["voice" /* Voice */]: (items) => {
-      voice_current.set(items.slice(3).join(" "));
+      voice_current.set(items.slice(2).join(" "));
     }
   };
 
@@ -32964,7 +32964,7 @@ unbinds variable name
   };
   function findVoice(voiceName) {
     const voices = synth.getVoices();
-    return voices.find((voice) => voice.name.indexOf(voiceName) !== -1);
+    return voices.find((voice) => voice.name.toLowerCase().indexOf(voiceName.toLowerCase()) !== -1);
   }
   var talk = new Value("");
   var assist = new Value("");

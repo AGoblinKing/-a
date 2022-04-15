@@ -12,7 +12,7 @@ export default {
     },
     "selfie": false,
     avatar: {
-        current: "/vrm/goblin.vrm",
-        doer: "/vrm/doer.vrm"
+        doer: "/vrm/goblin.2.vrm",
+        current: "/vrm/doer.2.vrm"
     }
 }
