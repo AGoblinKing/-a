@@ -28,7 +28,7 @@ open_game.on(($g) => {
 
 export const motd = new Value(`🎊v0.1.0🎊
 Controls + Persist
-✅ Controls ✅ Persist 
+✅ Controls ✅ Persist ✅ Help [f1]
 
 ❌ Performance Pass
 
