@@ -13,9 +13,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           lfs: true
-      - name: Build
-        # Replace with your own build process
-        run: make build
+
       - name: Set Version
         run: |
           echo "version=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
