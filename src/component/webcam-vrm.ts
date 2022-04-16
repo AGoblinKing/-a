@@ -263,7 +263,7 @@ const holistic = new Holistic({
 });
 
 holistic.setOptions({
-  modelComplexity: 1,
+  modelComplexity: 0.5,
   smoothLandmarks: true,
   minDetectionConfidence: 0.7,
   minTrackingConfidence: 0.7,
@@ -273,8 +273,8 @@ holistic.setOptions({
 holistic.onResults(onResults);
 
 
-const width = 320 / 2
-const height = 240 / 2
+const width = 320
+const height = 240
 
 videoElement.on(($ve) => {
   if (!$ve) return
@@ -292,7 +292,7 @@ videoElement.on(($ve) => {
       // if (!ready) return
       ctx.drawImage($ve, 0, 0, width, height)
       await holistic.send({ image: canvasElement.$ });
-   
+
     },
     width,
     height

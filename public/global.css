@@ -1,8 +1,7 @@
-
 @font-face {
 	font-family: 'cartoon';
-	src: url('/cartoon.woff2') format('woff2'),
-		url('/cartoon.woff') format('woff');
+	src: url('./cartoon.woff2') format('woff2'),
+		url('./cartoon.woff') format('woff');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -19,9 +18,9 @@ body {
 
 
 .sprite {
-	background-image: url('/sprites.png');
+	background-image: url('./sprites.png');
 }
 
 .favicon {
-	background-image: url('/favicon.png');
+	background-image: url('./favicon.png');
 }

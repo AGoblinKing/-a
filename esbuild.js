@@ -6,7 +6,7 @@ import runAll from "npm-run-all"
 
 esbuild
 	.build({
-		entryPoints: ['src/index.ts' ],
+		entryPoints: ['src/index.ts', 'src/guest.ts' ],
 		bundle: true,
 		watch: process.env.DEV == 1,
 		outdir: './public/build',

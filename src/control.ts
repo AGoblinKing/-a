@@ -1,6 +1,6 @@
 import { currentVRM, mirrorVRM } from "./component/vrm"
 import state from "./state"
-import { avatar_current, avatar_doer, camera, camera_el, do_echo, open_heard, open_help, open_stats, toggle_selfie, toggle_visible, voice_current } from "./timing"
+import { avatar_current, avatar_doer, camera, camera_el, do_echo, open_debug, open_heard, open_help, open_stats, open_targeting, toggle_selfie, toggle_visible, voice_current } from "./timing"
 import { Value } from "./value"
 
 export const binds = new Value<{ [key: string]: string }>(clone(state.binds)).save("binds")
@@ -57,14 +57,20 @@ export enum EControl {
     NotStats = "notstats",
     Heard = "heard",
     NotHeard = "notheard",
-    Join = "join",
-    NotJoin = "notjoin",
+
+    Guest = "guest",
+    NotGuest = "notguest",
 
     Host = "host",
     NotHost = "nothost",
 
-    Voice = "voice"
+    Voice = "voice",
 
+    Target = "target",
+    NotTarget = "nottarget",
+
+    Debug = "debug",
+    NotDebug = "notdebug"
 }
 
 
@@ -145,5 +151,29 @@ export const controls = {
     },
     [EControl.Voice]: (items: string[]) => {
         voice_current.set(items.slice(2).join(" "))
+    },
+    [EControl.Guest]: (items: string[]) => {
+
+    },
+    [EControl.NotGuest]: (items: string[]) => {
+
+    },
+    [EControl.Host]: (items: string[]) => {
+
+    },
+    [EControl.NotHost]: (items: string[]) => {
+
+    },
+    [EControl.Target]: (items: string[]) => {
+        open_targeting.set(true)
+    },
+    [EControl.NotTarget]: (items: string[]) => {
+        open_targeting.set(false)
+    },
+    [EControl.Debug]: (items: string[]) => {
+        open_debug.set(true)
+    },
+    [EControl.NotDebug]: (items: string[]) => {
+        open_debug.set(false)
     }
 }

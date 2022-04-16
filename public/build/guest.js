@@ -921,7 +921,7 @@
               a2.j = true, za(a2.h, a2.l);
           }
         }
-        function bb3(a2, b2, c2) {
+        function bb(a2, b2, c2) {
           a2.N || (a2 = Ra(a2.g.h, c2, a2.g.g), (c2 = b2.o) ? c2.push(a2) : b2.o = [a2]);
         }
         function cb(a2, b2, c2) {
@@ -1161,10 +1161,10 @@
                 e = a2;
                 var g2 = d2.l;
                 ab(d2);
-                bb3(d2, e, g2);
+                bb(d2, e, g2);
               }
             } else
-              d2 = b2, e = a2, g2 = d2.l, ab(d2), bb3(d2, e, g2);
+              d2 = b2, e = a2, g2 = d2.l, ab(d2), bb(d2, e, g2);
           }
           return a2;
         }
@@ -5340,1890 +5340,6 @@
     }
   });
 
-  // node_modules/svelte/internal/index.mjs
-  function noop() {
-  }
-  function run(fn) {
-    return fn();
-  }
-  function blank_object() {
-    return /* @__PURE__ */ Object.create(null);
-  }
-  function run_all(fns) {
-    fns.forEach(run);
-  }
-  function is_function(thing) {
-    return typeof thing === "function";
-  }
-  function safe_not_equal(a2, b2) {
-    return a2 != a2 ? b2 == b2 : a2 !== b2 || (a2 && typeof a2 === "object" || typeof a2 === "function");
-  }
-  var src_url_equal_anchor;
-  function src_url_equal(element_src, url) {
-    if (!src_url_equal_anchor) {
-      src_url_equal_anchor = document.createElement("a");
-    }
-    src_url_equal_anchor.href = url;
-    return element_src === src_url_equal_anchor.href;
-  }
-  function is_empty(obj) {
-    return Object.keys(obj).length === 0;
-  }
-  function subscribe(store, ...callbacks) {
-    if (store == null) {
-      return noop;
-    }
-    const unsub = store.subscribe(...callbacks);
-    return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
-  }
-  function component_subscribe(component, store, callback) {
-    component.$$.on_destroy.push(subscribe(store, callback));
-  }
-  var is_hydrating = false;
-  function start_hydrating() {
-    is_hydrating = true;
-  }
-  function end_hydrating() {
-    is_hydrating = false;
-  }
-  function append(target, node) {
-    target.appendChild(node);
-  }
-  function insert(target, node, anchor) {
-    target.insertBefore(node, anchor || null);
-  }
-  function detach(node) {
-    node.parentNode.removeChild(node);
-  }
-  function element(name) {
-    return document.createElement(name);
-  }
-  function text(data) {
-    return document.createTextNode(data);
-  }
-  function space() {
-    return text(" ");
-  }
-  function empty() {
-    return text("");
-  }
-  function listen(node, event, handler, options) {
-    node.addEventListener(event, handler, options);
-    return () => node.removeEventListener(event, handler, options);
-  }
-  function attr(node, attribute, value) {
-    if (value == null)
-      node.removeAttribute(attribute);
-    else if (node.getAttribute(attribute) !== value)
-      node.setAttribute(attribute, value);
-  }
-  function set_custom_element_data(node, prop, value) {
-    if (prop in node) {
-      node[prop] = typeof node[prop] === "boolean" && value === "" ? true : value;
-    } else {
-      attr(node, prop, value);
-    }
-  }
-  function children(element2) {
-    return Array.from(element2.childNodes);
-  }
-  function set_input_value(input, value) {
-    input.value = value == null ? "" : value;
-  }
-  var current_component;
-  function set_current_component(component) {
-    current_component = component;
-  }
-  var dirty_components = [];
-  var binding_callbacks = [];
-  var render_callbacks = [];
-  var flush_callbacks = [];
-  var resolved_promise = Promise.resolve();
-  var update_scheduled = false;
-  function schedule_update() {
-    if (!update_scheduled) {
-      update_scheduled = true;
-      resolved_promise.then(flush);
-    }
-  }
-  function add_render_callback(fn) {
-    render_callbacks.push(fn);
-  }
-  var seen_callbacks = /* @__PURE__ */ new Set();
-  var flushidx = 0;
-  function flush() {
-    const saved_component = current_component;
-    do {
-      while (flushidx < dirty_components.length) {
-        const component = dirty_components[flushidx];
-        flushidx++;
-        set_current_component(component);
-        update(component.$$);
-      }
-      set_current_component(null);
-      dirty_components.length = 0;
-      flushidx = 0;
-      while (binding_callbacks.length)
-        binding_callbacks.pop()();
-      for (let i2 = 0; i2 < render_callbacks.length; i2 += 1) {
-        const callback = render_callbacks[i2];
-        if (!seen_callbacks.has(callback)) {
-          seen_callbacks.add(callback);
-          callback();
-        }
-      }
-      render_callbacks.length = 0;
-    } while (dirty_components.length);
-    while (flush_callbacks.length) {
-      flush_callbacks.pop()();
-    }
-    update_scheduled = false;
-    seen_callbacks.clear();
-    set_current_component(saved_component);
-  }
-  function update($$) {
-    if ($$.fragment !== null) {
-      $$.update();
-      run_all($$.before_update);
-      const dirty = $$.dirty;
-      $$.dirty = [-1];
-      $$.fragment && $$.fragment.p($$.ctx, dirty);
-      $$.after_update.forEach(add_render_callback);
-    }
-  }
-  var outroing = /* @__PURE__ */ new Set();
-  var outros;
-  function group_outros() {
-    outros = {
-      r: 0,
-      c: [],
-      p: outros
-    };
-  }
-  function check_outros() {
-    if (!outros.r) {
-      run_all(outros.c);
-    }
-    outros = outros.p;
-  }
-  function transition_in(block, local) {
-    if (block && block.i) {
-      outroing.delete(block);
-      block.i(local);
-    }
-  }
-  function transition_out(block, local, detach2, callback) {
-    if (block && block.o) {
-      if (outroing.has(block))
-        return;
-      outroing.add(block);
-      outros.c.push(() => {
-        outroing.delete(block);
-        if (callback) {
-          if (detach2)
-            block.d(1);
-          callback();
-        }
-      });
-      block.o(local);
-    }
-  }
-  var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
-  function create_component(block) {
-    block && block.c();
-  }
-  function mount_component(component, target, anchor, customElement) {
-    const { fragment: fragment2, on_mount, on_destroy, after_update } = component.$$;
-    fragment2 && fragment2.m(target, anchor);
-    if (!customElement) {
-      add_render_callback(() => {
-        const new_on_destroy = on_mount.map(run).filter(is_function);
-        if (on_destroy) {
-          on_destroy.push(...new_on_destroy);
-        } else {
-          run_all(new_on_destroy);
-        }
-        component.$$.on_mount = [];
-      });
-    }
-    after_update.forEach(add_render_callback);
-  }
-  function destroy_component(component, detaching) {
-    const $$ = component.$$;
-    if ($$.fragment !== null) {
-      run_all($$.on_destroy);
-      $$.fragment && $$.fragment.d(detaching);
-      $$.on_destroy = $$.fragment = null;
-      $$.ctx = [];
-    }
-  }
-  function make_dirty(component, i2) {
-    if (component.$$.dirty[0] === -1) {
-      dirty_components.push(component);
-      schedule_update();
-      component.$$.dirty.fill(0);
-    }
-    component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
-  }
-  function init(component, options, instance11, create_fragment13, not_equal, props, append_styles, dirty = [-1]) {
-    const parent_component = current_component;
-    set_current_component(component);
-    const $$ = component.$$ = {
-      fragment: null,
-      ctx: null,
-      props,
-      update: noop,
-      not_equal,
-      bound: blank_object(),
-      on_mount: [],
-      on_destroy: [],
-      on_disconnect: [],
-      before_update: [],
-      after_update: [],
-      context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
-      callbacks: blank_object(),
-      dirty,
-      skip_bound: false,
-      root: options.target || parent_component.$$.root
-    };
-    append_styles && append_styles($$.root);
-    let ready = false;
-    $$.ctx = instance11 ? instance11(component, options.props || {}, (i2, ret, ...rest) => {
-      const value = rest.length ? rest[0] : ret;
-      if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
-        if (!$$.skip_bound && $$.bound[i2])
-          $$.bound[i2](value);
-        if (ready)
-          make_dirty(component, i2);
-      }
-      return ret;
-    }) : [];
-    $$.update();
-    ready = true;
-    run_all($$.before_update);
-    $$.fragment = create_fragment13 ? create_fragment13($$.ctx) : false;
-    if (options.target) {
-      if (options.hydrate) {
-        start_hydrating();
-        const nodes = children(options.target);
-        $$.fragment && $$.fragment.l(nodes);
-        nodes.forEach(detach);
-      } else {
-        $$.fragment && $$.fragment.c();
-      }
-      if (options.intro)
-        transition_in(component.$$.fragment);
-      mount_component(component, options.target, options.anchor, options.customElement);
-      end_hydrating();
-      flush();
-    }
-    set_current_component(parent_component);
-  }
-  var SvelteElement;
-  if (typeof HTMLElement === "function") {
-    SvelteElement = class extends HTMLElement {
-      constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
-      }
-      connectedCallback() {
-        const { on_mount } = this.$$;
-        this.$$.on_disconnect = on_mount.map(run).filter(is_function);
-        for (const key in this.$$.slotted) {
-          this.appendChild(this.$$.slotted[key]);
-        }
-      }
-      attributeChangedCallback(attr2, _oldValue, newValue) {
-        this[attr2] = newValue;
-      }
-      disconnectedCallback() {
-        run_all(this.$$.on_disconnect);
-      }
-      $destroy() {
-        destroy_component(this, 1);
-        this.$destroy = noop;
-      }
-      $on(type, callback) {
-        const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
-        callbacks.push(callback);
-        return () => {
-          const index = callbacks.indexOf(callback);
-          if (index !== -1)
-            callbacks.splice(index, 1);
-        };
-      }
-      $set($$props) {
-        if (this.$$set && !is_empty($$props)) {
-          this.$$.skip_bound = true;
-          this.$$set($$props);
-          this.$$.skip_bound = false;
-        }
-      }
-    };
-  }
-  var SvelteComponent = class {
-    $destroy() {
-      destroy_component(this, 1);
-      this.$destroy = noop;
-    }
-    $on(type, callback) {
-      const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
-      callbacks.push(callback);
-      return () => {
-        const index = callbacks.indexOf(callback);
-        if (index !== -1)
-          callbacks.splice(index, 1);
-      };
-    }
-    $set($$props) {
-      if (this.$$set && !is_empty($$props)) {
-        this.$$.skip_bound = true;
-        this.$$set($$props);
-        this.$$.skip_bound = false;
-      }
-    }
-  };
-
-  // src/component/scatter.ts
-  var bb = new AFRAME.THREE.Box3();
-  AFRAME.registerComponent("scatter", {
-    schema: {
-      type: "string",
-      default: "-0.5 -0.5 -0.5 0.5 0.5 0.5"
-    },
-    update() {
-      bb.setFromArray(this.data.split(" ").map(parseFloat));
-      this.el.object3D.position.x += bb.min.x + Math.random() * (bb.max.x - bb.min.x);
-      this.el.object3D.position.y += bb.min.y + Math.random() * (bb.max.y - bb.min.y);
-      this.el.object3D.position.z += bb.min.z + Math.random() * (bb.max.z - bb.min.z);
-    }
-  });
-
-  // src/component/activate.ts
-  AFRAME.registerComponent("activate", {
-    multiple: true,
-    update() {
-      const pool = this.el.components[`pool__${this.id}`];
-      if (!pool)
-        return;
-      let ent;
-      while (ent = pool.requestEntity()) {
-        ent.play();
-      }
-    }
-  });
-
-  // src/component/ring.ts
-  AFRAME.registerComponent("ring", {
-    schema: {
-      count: { type: "number", default: 10 },
-      radius: { type: "number", default: 5 }
-    },
-    update() {
-      const d2 = this.el.object3D.parent.userData;
-      const i2 = (d2.ringDex === void 0 ? d2.ringDex = 1 : d2.ringDex++) % this.data.count / this.data.count * Math.PI * 2;
-      this.el.object3D.position.set(Math.sin(i2), 0, Math.cos(i2)).multiplyScalar(this.data.radius);
-    }
-  });
-
-  // src/value.ts
-  var Value = class {
-    constructor(value = void 0) {
-      this.$ = value;
-    }
-    set(value) {
-      this.$ = value;
-      this.poke();
-      return this;
-    }
-    on(subscribe2) {
-      if (this.reactions === void 0) {
-        this.reactions = /* @__PURE__ */ new Set();
-      }
-      this.reactions.add(subscribe2);
-      subscribe2(this.$);
-      return () => this.reactions.delete(subscribe2);
-    }
-    subscribe(subscribe2) {
-      return this.on(subscribe2);
-    }
-    log(msg) {
-      this.on(() => console.log(msg, this.$));
-      return this;
-    }
-    poke() {
-      if (this.reactions === void 0)
-        return;
-      for (let callback of this.reactions) {
-        callback(this.$);
-      }
-      return this;
-    }
-    do(fn) {
-      fn();
-      return this;
-    }
-    re(fn) {
-      this.on(fn);
-      return this;
-    }
-    me() {
-      return new Value(this.$);
-    }
-    fa(v2, transform, filter) {
-      v2.on((state) => {
-        if (filter) {
-          if (!filter(state))
-            return;
-        }
-        if (transform) {
-          this.set(transform(state));
-        } else {
-          this.set(state);
-        }
-      });
-      return this;
-    }
-    la(timing, fn) {
-      let i2 = 0;
-      setInterval(() => {
-        fn(i2++);
-      }, timing);
-      return this;
-    }
-    save(where) {
-      try {
-        const v2 = JSON.parse(localStorage.getItem(where));
-        if (v2 !== void 0 && v2 !== null) {
-          this.set(v2);
-        }
-      } catch (ex) {
-      }
-      this.on((v2) => {
-        localStorage.setItem(where, JSON.stringify(v2));
-      });
-      return this;
-    }
-  };
-
-  // src/component/net.ts
-  var host = new Value(false);
-  var hostid = new Value("");
-  var guest = new Value(window.location.search.slice(1));
-  var message = new Value([]);
-  var remote = new Value({});
-  message.on(($mess) => {
-    if (!$mess)
-      return;
-    for (const [command, data] of $mess) {
-      Process(command, data);
-    }
-  });
-  function Process(command, data) {
-    switch (command) {
-      case 0 /* GLB */:
-        break;
-      case 1 /* VRM */:
-        break;
-      case 2 /* O3D */:
-        break;
-    }
-  }
-  AFRAME.registerComponent("guest", {
-    init() {
-    }
-  });
-  host.on(($h) => {
-    if (!$h)
-      return;
-  });
-  AFRAME.registerComponent("host", {
-    schema: {
-      dynamic: { type: "bool", default: false },
-      sync: { type: "string", default: "position;quaternion;geometry;material;" }
-    },
-    init() {
-      this.tick = AFRAME.utils.throttleTick(this.tick, 2e3, this);
-    },
-    sync() {
-    },
-    tick() {
-      if (!this.dynamic)
-        return;
-    }
-  });
-
-  // node_modules/kalidokit/dist/utils/helpers.js
-  var helpers_exports = {};
-  __export(helpers_exports, {
-    RestingDefault: () => RestingDefault,
-    clamp: () => clamp,
-    remap: () => remap
-  });
-  var clamp = (val, min, max) => {
-    return Math.max(Math.min(val, max), min);
-  };
-  var remap = (val, min, max) => {
-    return (clamp(val, min, max) - min) / (max - min);
-  };
-  var RestingDefault = {
-    Face: {
-      eye: {
-        l: 1,
-        r: 1
-      },
-      mouth: {
-        x: 0,
-        y: 0,
-        shape: {
-          A: 0,
-          E: 0,
-          I: 0,
-          O: 0,
-          U: 0
-        }
-      },
-      head: {
-        x: 0,
-        y: 0,
-        z: 0,
-        width: 0.3,
-        height: 0.6,
-        position: {
-          x: 0.5,
-          y: 0.5,
-          z: 0
-        }
-      },
-      brow: 0,
-      pupil: {
-        x: 0,
-        y: 0
-      }
-    },
-    Pose: {
-      RightUpperArm: {
-        x: 0,
-        y: 0,
-        z: -1.25
-      },
-      LeftUpperArm: {
-        x: 0,
-        y: 0,
-        z: 1.25
-      },
-      RightLowerArm: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      LeftLowerArm: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      LeftUpperLeg: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      RightUpperLeg: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      RightLowerLeg: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      LeftLowerLeg: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      LeftHand: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      RightHand: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      Spine: {
-        x: 0,
-        y: 0,
-        z: 0
-      },
-      Hips: {
-        position: {
-          x: 0,
-          y: 0,
-          z: 0
-        },
-        rotation: {
-          x: 0,
-          y: 0,
-          z: 0
-        }
-      }
-    },
-    RightHand: {
-      RightWrist: {
-        x: -0.13,
-        y: -0.07,
-        z: -1.04
-      },
-      RightRingProximal: {
-        x: 0,
-        y: 0,
-        z: -0.13
-      },
-      RightRingIntermediate: {
-        x: 0,
-        y: 0,
-        z: -0.4
-      },
-      RightRingDistal: {
-        x: 0,
-        y: 0,
-        z: -0.04
-      },
-      RightIndexProximal: {
-        x: 0,
-        y: 0,
-        z: -0.24
-      },
-      RightIndexIntermediate: {
-        x: 0,
-        y: 0,
-        z: -0.25
-      },
-      RightIndexDistal: {
-        x: 0,
-        y: 0,
-        z: -0.06
-      },
-      RightMiddleProximal: {
-        x: 0,
-        y: 0,
-        z: -0.09
-      },
-      RightMiddleIntermediate: {
-        x: 0,
-        y: 0,
-        z: -0.44
-      },
-      RightMiddleDistal: {
-        x: 0,
-        y: 0,
-        z: -0.06
-      },
-      RightThumbProximal: {
-        x: -0.23,
-        y: -0.33,
-        z: -0.12
-      },
-      RightThumbIntermediate: {
-        x: -0.2,
-        y: -0.199,
-        z: -0.0139
-      },
-      RightThumbDistal: {
-        x: -0.2,
-        y: 2e-3,
-        z: 0.15
-      },
-      RightLittleProximal: {
-        x: 0,
-        y: 0,
-        z: -0.09
-      },
-      RightLittleIntermediate: {
-        x: 0,
-        y: 0,
-        z: -0.225
-      },
-      RightLittleDistal: {
-        x: 0,
-        y: 0,
-        z: -0.1
-      }
-    },
-    LeftHand: {
-      LeftWrist: {
-        x: -0.13,
-        y: -0.07,
-        z: -1.04
-      },
-      LeftRingProximal: {
-        x: 0,
-        y: 0,
-        z: 0.13
-      },
-      LeftRingIntermediate: {
-        x: 0,
-        y: 0,
-        z: 0.4
-      },
-      LeftRingDistal: {
-        x: 0,
-        y: 0,
-        z: 0.049
-      },
-      LeftIndexProximal: {
-        x: 0,
-        y: 0,
-        z: 0.24
-      },
-      LeftIndexIntermediate: {
-        x: 0,
-        y: 0,
-        z: 0.25
-      },
-      LeftIndexDistal: {
-        x: 0,
-        y: 0,
-        z: 0.06
-      },
-      LeftMiddleProximal: {
-        x: 0,
-        y: 0,
-        z: 0.09
-      },
-      LeftMiddleIntermediate: {
-        x: 0,
-        y: 0,
-        z: 0.44
-      },
-      LeftMiddleDistal: {
-        x: 0,
-        y: 0,
-        z: 0.066
-      },
-      LeftThumbProximal: {
-        x: -0.23,
-        y: 0.33,
-        z: 0.12
-      },
-      LeftThumbIntermediate: {
-        x: -0.2,
-        y: 0.25,
-        z: 0.05
-      },
-      LeftThumbDistal: {
-        x: -0.2,
-        y: 0.17,
-        z: -0.06
-      },
-      LeftLittleProximal: {
-        x: 0,
-        y: 0,
-        z: 0.17
-      },
-      LeftLittleIntermediate: {
-        x: 0,
-        y: 0,
-        z: 0.4
-      },
-      LeftLittleDistal: {
-        x: 0,
-        y: 0,
-        z: 0.1
-      }
-    }
-  };
-
-  // node_modules/kalidokit/dist/constants.js
-  var RIGHT = "Right";
-  var LEFT = "Left";
-  var PI = Math.PI;
-  var TWO_PI = Math.PI * 2;
-
-  // node_modules/kalidokit/dist/utils/vector.js
-  var Vector = class {
-    constructor(a2, b2, c2) {
-      var _a, _b, _c, _d, _e2, _f;
-      if (Array.isArray(a2)) {
-        this.x = (_a = a2[0]) !== null && _a !== void 0 ? _a : 0;
-        this.y = (_b = a2[1]) !== null && _b !== void 0 ? _b : 0;
-        this.z = (_c = a2[2]) !== null && _c !== void 0 ? _c : 0;
-        return;
-      }
-      if (!!a2 && typeof a2 === "object") {
-        this.x = (_d = a2.x) !== null && _d !== void 0 ? _d : 0;
-        this.y = (_e2 = a2.y) !== null && _e2 !== void 0 ? _e2 : 0;
-        this.z = (_f = a2.z) !== null && _f !== void 0 ? _f : 0;
-        return;
-      }
-      this.x = a2 !== null && a2 !== void 0 ? a2 : 0;
-      this.y = b2 !== null && b2 !== void 0 ? b2 : 0;
-      this.z = c2 !== null && c2 !== void 0 ? c2 : 0;
-    }
-    negative() {
-      return new Vector(-this.x, -this.y, -this.z);
-    }
-    add(v2) {
-      if (v2 instanceof Vector)
-        return new Vector(this.x + v2.x, this.y + v2.y, this.z + v2.z);
-      else
-        return new Vector(this.x + v2, this.y + v2, this.z + v2);
-    }
-    subtract(v2) {
-      if (v2 instanceof Vector)
-        return new Vector(this.x - v2.x, this.y - v2.y, this.z - v2.z);
-      else
-        return new Vector(this.x - v2, this.y - v2, this.z - v2);
-    }
-    multiply(v2) {
-      if (v2 instanceof Vector)
-        return new Vector(this.x * v2.x, this.y * v2.y, this.z * v2.z);
-      else
-        return new Vector(this.x * v2, this.y * v2, this.z * v2);
-    }
-    divide(v2) {
-      if (v2 instanceof Vector)
-        return new Vector(this.x / v2.x, this.y / v2.y, this.z / v2.z);
-      else
-        return new Vector(this.x / v2, this.y / v2, this.z / v2);
-    }
-    equals(v2) {
-      return this.x == v2.x && this.y == v2.y && this.z == v2.z;
-    }
-    dot(v2) {
-      return this.x * v2.x + this.y * v2.y + this.z * v2.z;
-    }
-    cross(v2) {
-      return new Vector(this.y * v2.z - this.z * v2.y, this.z * v2.x - this.x * v2.z, this.x * v2.y - this.y * v2.x);
-    }
-    length() {
-      return Math.sqrt(this.dot(this));
-    }
-    distance(v2, d2 = 3) {
-      if (d2 === 2)
-        return Math.sqrt(Math.pow(this.x - v2.x, 2) + Math.pow(this.y - v2.y, 2));
-      else
-        return Math.sqrt(Math.pow(this.x - v2.x, 2) + Math.pow(this.y - v2.y, 2) + Math.pow(this.z - v2.z, 2));
-    }
-    lerp(v2, fraction) {
-      return v2.subtract(this).multiply(fraction).add(this);
-    }
-    unit() {
-      return this.divide(this.length());
-    }
-    min() {
-      return Math.min(Math.min(this.x, this.y), this.z);
-    }
-    max() {
-      return Math.max(Math.max(this.x, this.y), this.z);
-    }
-    toSphericalCoords(axisMap = { x: "x", y: "y", z: "z" }) {
-      return {
-        theta: Math.atan2(this[axisMap.y], this[axisMap.x]),
-        phi: Math.acos(this[axisMap.z] / this.length())
-      };
-    }
-    angleTo(a2) {
-      return Math.acos(this.dot(a2) / (this.length() * a2.length()));
-    }
-    toArray(n2) {
-      return [this.x, this.y, this.z].slice(0, n2 || 3);
-    }
-    clone() {
-      return new Vector(this.x, this.y, this.z);
-    }
-    init(x2, y2, z2) {
-      this.x = x2;
-      this.y = y2;
-      this.z = z2;
-      return this;
-    }
-    static negative(a2, b2 = new Vector()) {
-      b2.x = -a2.x;
-      b2.y = -a2.y;
-      b2.z = -a2.z;
-      return b2;
-    }
-    static add(a2, b2, c2 = new Vector()) {
-      if (b2 instanceof Vector) {
-        c2.x = a2.x + b2.x;
-        c2.y = a2.y + b2.y;
-        c2.z = a2.z + b2.z;
-      } else {
-        c2.x = a2.x + b2;
-        c2.y = a2.y + b2;
-        c2.z = a2.z + b2;
-      }
-      return c2;
-    }
-    static subtract(a2, b2, c2 = new Vector()) {
-      if (b2 instanceof Vector) {
-        c2.x = a2.x - b2.x;
-        c2.y = a2.y - b2.y;
-        c2.z = a2.z - b2.z;
-      } else {
-        c2.x = a2.x - b2;
-        c2.y = a2.y - b2;
-        c2.z = a2.z - b2;
-      }
-      return c2;
-    }
-    static multiply(a2, b2, c2 = new Vector()) {
-      if (b2 instanceof Vector) {
-        c2.x = a2.x * b2.x;
-        c2.y = a2.y * b2.y;
-        c2.z = a2.z * b2.z;
-      } else {
-        c2.x = a2.x * b2;
-        c2.y = a2.y * b2;
-        c2.z = a2.z * b2;
-      }
-      return c2;
-    }
-    static divide(a2, b2, c2 = new Vector()) {
-      if (b2 instanceof Vector) {
-        c2.x = a2.x / b2.x;
-        c2.y = a2.y / b2.y;
-        c2.z = a2.z / b2.z;
-      } else {
-        c2.x = a2.x / b2;
-        c2.y = a2.y / b2;
-        c2.z = a2.z / b2;
-      }
-      return c2;
-    }
-    static cross(a2, b2, c2 = new Vector()) {
-      c2.x = a2.y * b2.z - a2.z * b2.y;
-      c2.y = a2.z * b2.x - a2.x * b2.z;
-      c2.z = a2.x * b2.y - a2.y * b2.x;
-      return c2;
-    }
-    static unit(a2, b2) {
-      const length = a2.length();
-      b2.x = a2.x / length;
-      b2.y = a2.y / length;
-      b2.z = a2.z / length;
-      return b2;
-    }
-    static fromAngles(theta, phi) {
-      return new Vector(Math.cos(theta) * Math.cos(phi), Math.sin(phi), Math.sin(theta) * Math.cos(phi));
-    }
-    static randomDirection() {
-      return Vector.fromAngles(Math.random() * TWO_PI, Math.asin(Math.random() * 2 - 1));
-    }
-    static min(a2, b2) {
-      return new Vector(Math.min(a2.x, b2.x), Math.min(a2.y, b2.y), Math.min(a2.z, b2.z));
-    }
-    static max(a2, b2) {
-      return new Vector(Math.max(a2.x, b2.x), Math.max(a2.y, b2.y), Math.max(a2.z, b2.z));
-    }
-    static lerp(a2, b2, fraction) {
-      if (b2 instanceof Vector) {
-        return b2.subtract(a2).multiply(fraction).add(a2);
-      } else {
-        return (b2 - a2) * fraction + a2;
-      }
-    }
-    static fromArray(a2) {
-      if (Array.isArray(a2)) {
-        return new Vector(a2[0], a2[1], a2[2]);
-      }
-      return new Vector(a2.x, a2.y, a2.z);
-    }
-    static angleBetween(a2, b2) {
-      return a2.angleTo(b2);
-    }
-    static distance(a2, b2, d2) {
-      if (d2 === 2)
-        return Math.sqrt(Math.pow(a2.x - b2.x, 2) + Math.pow(a2.y - b2.y, 2));
-      else
-        return Math.sqrt(Math.pow(a2.x - b2.x, 2) + Math.pow(a2.y - b2.y, 2) + Math.pow(a2.z - b2.z, 2));
-    }
-    static toDegrees(a2) {
-      return a2 * (180 / PI);
-    }
-    static normalizeAngle(radians) {
-      let angle = radians % TWO_PI;
-      angle = angle > PI ? angle - TWO_PI : angle < -PI ? TWO_PI + angle : angle;
-      return angle / PI;
-    }
-    static normalizeRadians(radians) {
-      if (radians >= PI / 2) {
-        radians -= TWO_PI;
-      }
-      if (radians <= -PI / 2) {
-        radians += TWO_PI;
-        radians = PI - radians;
-      }
-      return radians / PI;
-    }
-    static find2DAngle(cx, cy, ex, ey) {
-      const dy = ey - cy;
-      const dx = ex - cx;
-      const theta = Math.atan2(dy, dx);
-      return theta;
-    }
-    static findRotation(a2, b2, normalize = true) {
-      if (normalize) {
-        return new Vector(Vector.normalizeRadians(Vector.find2DAngle(a2.z, a2.x, b2.z, b2.x)), Vector.normalizeRadians(Vector.find2DAngle(a2.z, a2.y, b2.z, b2.y)), Vector.normalizeRadians(Vector.find2DAngle(a2.x, a2.y, b2.x, b2.y)));
-      } else {
-        return new Vector(Vector.find2DAngle(a2.z, a2.x, b2.z, b2.x), Vector.find2DAngle(a2.z, a2.y, b2.z, b2.y), Vector.find2DAngle(a2.x, a2.y, b2.x, b2.y));
-      }
-    }
-    static rollPitchYaw(a2, b2, c2) {
-      if (!c2) {
-        return new Vector(Vector.normalizeAngle(Vector.find2DAngle(a2.z, a2.y, b2.z, b2.y)), Vector.normalizeAngle(Vector.find2DAngle(a2.z, a2.x, b2.z, b2.x)), Vector.normalizeAngle(Vector.find2DAngle(a2.x, a2.y, b2.x, b2.y)));
-      }
-      const qb = b2.subtract(a2);
-      const qc = c2.subtract(a2);
-      const n2 = qb.cross(qc);
-      const unitZ = n2.unit();
-      const unitX = qb.unit();
-      const unitY = unitZ.cross(unitX);
-      const beta = Math.asin(unitZ.x) || 0;
-      const alpha = Math.atan2(-unitZ.y, unitZ.z) || 0;
-      const gamma = Math.atan2(-unitY.x, unitX.x) || 0;
-      return new Vector(Vector.normalizeAngle(alpha), Vector.normalizeAngle(beta), Vector.normalizeAngle(gamma));
-    }
-    static angleBetween3DCoords(a2, b2, c2) {
-      if (!(a2 instanceof Vector)) {
-        a2 = new Vector(a2);
-        b2 = new Vector(b2);
-        c2 = new Vector(c2);
-      }
-      const v1 = a2.subtract(b2);
-      const v2 = c2.subtract(b2);
-      const v1norm = v1.unit();
-      const v2norm = v2.unit();
-      const dotProducts = v1norm.dot(v2norm);
-      const angle = Math.acos(dotProducts);
-      return Vector.normalizeRadians(angle);
-    }
-    static getRelativeSphericalCoords(a2, b2, c2, axisMap) {
-      if (!(a2 instanceof Vector)) {
-        a2 = new Vector(a2);
-        b2 = new Vector(b2);
-        c2 = new Vector(c2);
-      }
-      const v1 = b2.subtract(a2);
-      const v2 = c2.subtract(b2);
-      const v1norm = v1.unit();
-      const v2norm = v2.unit();
-      const { theta: theta1, phi: phi1 } = v1norm.toSphericalCoords(axisMap);
-      const { theta: theta2, phi: phi2 } = v2norm.toSphericalCoords(axisMap);
-      const theta = theta1 - theta2;
-      const phi = phi1 - phi2;
-      return {
-        theta: Vector.normalizeAngle(theta),
-        phi: Vector.normalizeAngle(phi)
-      };
-    }
-    static getSphericalCoords(a2, b2, axisMap = { x: "x", y: "y", z: "z" }) {
-      if (!(a2 instanceof Vector)) {
-        a2 = new Vector(a2);
-        b2 = new Vector(b2);
-      }
-      const v1 = b2.subtract(a2);
-      const v1norm = v1.unit();
-      const { theta, phi } = v1norm.toSphericalCoords(axisMap);
-      return {
-        theta: Vector.normalizeAngle(-theta),
-        phi: Vector.normalizeAngle(PI / 2 - phi)
-      };
-    }
-  };
-
-  // node_modules/kalidokit/dist/PoseSolver/calcArms.js
-  var calcArms = (lm) => {
-    const UpperArm = {
-      r: Vector.findRotation(lm[11], lm[13]),
-      l: Vector.findRotation(lm[12], lm[14])
-    };
-    UpperArm.r.y = Vector.angleBetween3DCoords(lm[12], lm[11], lm[13]);
-    UpperArm.l.y = Vector.angleBetween3DCoords(lm[11], lm[12], lm[14]);
-    const LowerArm = {
-      r: Vector.findRotation(lm[13], lm[15]),
-      l: Vector.findRotation(lm[14], lm[16])
-    };
-    LowerArm.r.y = Vector.angleBetween3DCoords(lm[11], lm[13], lm[15]);
-    LowerArm.l.y = Vector.angleBetween3DCoords(lm[12], lm[14], lm[16]);
-    LowerArm.r.z = clamp(LowerArm.r.z, -2.14, 0);
-    LowerArm.l.z = clamp(LowerArm.l.z, -2.14, 0);
-    const Hand = {
-      r: Vector.findRotation(Vector.fromArray(lm[15]), Vector.lerp(Vector.fromArray(lm[17]), Vector.fromArray(lm[19]), 0.5)),
-      l: Vector.findRotation(Vector.fromArray(lm[16]), Vector.lerp(Vector.fromArray(lm[18]), Vector.fromArray(lm[20]), 0.5))
-    };
-    const rightArmRig = rigArm(UpperArm.r, LowerArm.r, Hand.r, RIGHT);
-    const leftArmRig = rigArm(UpperArm.l, LowerArm.l, Hand.l, LEFT);
-    return {
-      UpperArm: {
-        r: rightArmRig.UpperArm,
-        l: leftArmRig.UpperArm
-      },
-      LowerArm: {
-        r: rightArmRig.LowerArm,
-        l: leftArmRig.LowerArm
-      },
-      Hand: {
-        r: rightArmRig.Hand,
-        l: leftArmRig.Hand
-      },
-      Unscaled: {
-        UpperArm,
-        LowerArm,
-        Hand
-      }
-    };
-  };
-  var rigArm = (UpperArm, LowerArm, Hand, side = RIGHT) => {
-    const invert = side === RIGHT ? 1 : -1;
-    UpperArm.z *= -2.3 * invert;
-    UpperArm.y *= PI * invert;
-    UpperArm.y -= Math.max(LowerArm.x);
-    UpperArm.y -= -invert * Math.max(LowerArm.z, 0);
-    UpperArm.x -= 0.3 * invert;
-    LowerArm.z *= -2.14 * invert;
-    LowerArm.y *= 2.14 * invert;
-    LowerArm.x *= 2.14 * invert;
-    UpperArm.x = clamp(UpperArm.x, -0.5, PI);
-    LowerArm.x = clamp(LowerArm.x, -0.3, 0.3);
-    Hand.y = clamp(Hand.z * 2, -0.6, 0.6);
-    Hand.z = Hand.z * -2.3 * invert;
-    return {
-      UpperArm,
-      LowerArm,
-      Hand
-    };
-  };
-
-  // node_modules/kalidokit/dist/PoseSolver/calcHips.js
-  var calcHips = (lm3d, lm2d) => {
-    const hipLeft2d = Vector.fromArray(lm2d[23]);
-    const hipRight2d = Vector.fromArray(lm2d[24]);
-    const shoulderLeft2d = Vector.fromArray(lm2d[11]);
-    const shoulderRight2d = Vector.fromArray(lm2d[12]);
-    const hipCenter2d = hipLeft2d.lerp(hipRight2d, 1);
-    const shoulderCenter2d = shoulderLeft2d.lerp(shoulderRight2d, 1);
-    const spineLength = hipCenter2d.distance(shoulderCenter2d);
-    const hips = {
-      position: {
-        x: clamp(hipCenter2d.x - 0.4, -1, 1),
-        y: 0,
-        z: clamp(spineLength - 1, -2, 0)
-      }
-    };
-    hips.worldPosition = {
-      x: hips.position.x,
-      y: 0,
-      z: hips.position.z * Math.pow(hips.position.z * -2, 2)
-    };
-    hips.worldPosition.x *= hips.worldPosition.z;
-    hips.rotation = Vector.rollPitchYaw(lm3d[23], lm3d[24]);
-    if (hips.rotation.y > 0.5) {
-      hips.rotation.y -= 2;
-    }
-    hips.rotation.y += 0.5;
-    if (hips.rotation.z > 0) {
-      hips.rotation.z = 1 - hips.rotation.z;
-    }
-    if (hips.rotation.z < 0) {
-      hips.rotation.z = -1 - hips.rotation.z;
-    }
-    const turnAroundAmountHips = remap(Math.abs(hips.rotation.y), 0.2, 0.4);
-    hips.rotation.z *= 1 - turnAroundAmountHips;
-    hips.rotation.x = 0;
-    const spine = Vector.rollPitchYaw(lm3d[11], lm3d[12]);
-    if (spine.y > 0.5) {
-      spine.y -= 2;
-    }
-    spine.y += 0.5;
-    if (spine.z > 0) {
-      spine.z = 1 - spine.z;
-    }
-    if (spine.z < 0) {
-      spine.z = -1 - spine.z;
-    }
-    const turnAroundAmount = remap(Math.abs(spine.y), 0.2, 0.4);
-    spine.z *= 1 - turnAroundAmount;
-    spine.x = 0;
-    return rigHips(hips, spine);
-  };
-  var rigHips = (hips, spine) => {
-    if (hips.rotation) {
-      hips.rotation.x *= Math.PI;
-      hips.rotation.y *= Math.PI;
-      hips.rotation.z *= Math.PI;
-    }
-    spine.x *= PI;
-    spine.y *= PI;
-    spine.z *= PI;
-    return {
-      Hips: hips,
-      Spine: spine
-    };
-  };
-
-  // node_modules/kalidokit/dist/utils/euler.js
-  var Euler = class {
-    constructor(a2, b2, c2, rotationOrder) {
-      var _a, _b, _c, _d;
-      if (!!a2 && typeof a2 === "object") {
-        this.x = (_a = a2.x) !== null && _a !== void 0 ? _a : 0;
-        this.y = (_b = a2.y) !== null && _b !== void 0 ? _b : 0;
-        this.z = (_c = a2.z) !== null && _c !== void 0 ? _c : 0;
-        this.rotationOrder = (_d = a2.rotationOrder) !== null && _d !== void 0 ? _d : "XYZ";
-        return;
-      }
-      this.x = a2 !== null && a2 !== void 0 ? a2 : 0;
-      this.y = b2 !== null && b2 !== void 0 ? b2 : 0;
-      this.z = c2 !== null && c2 !== void 0 ? c2 : 0;
-      this.rotationOrder = rotationOrder !== null && rotationOrder !== void 0 ? rotationOrder : "XYZ";
-    }
-    multiply(v2) {
-      return new Euler(this.x * v2, this.y * v2, this.z * v2, this.rotationOrder);
-    }
-  };
-
-  // node_modules/kalidokit/dist/PoseSolver/calcLegs.js
-  var offsets = {
-    upperLeg: {
-      z: 0.1
-    }
-  };
-  var calcLegs = (lm) => {
-    const rightUpperLegSphericalCoords = Vector.getSphericalCoords(lm[23], lm[25], { x: "y", y: "z", z: "x" });
-    const leftUpperLegSphericalCoords = Vector.getSphericalCoords(lm[24], lm[26], { x: "y", y: "z", z: "x" });
-    const rightLowerLegSphericalCoords = Vector.getRelativeSphericalCoords(lm[23], lm[25], lm[27], {
-      x: "y",
-      y: "z",
-      z: "x"
-    });
-    const leftLowerLegSphericalCoords = Vector.getRelativeSphericalCoords(lm[24], lm[26], lm[28], {
-      x: "y",
-      y: "z",
-      z: "x"
-    });
-    const hipRotation = Vector.findRotation(lm[23], lm[24]);
-    const UpperLeg = {
-      r: new Vector({
-        x: rightUpperLegSphericalCoords.theta,
-        y: rightLowerLegSphericalCoords.phi,
-        z: rightUpperLegSphericalCoords.phi - hipRotation.z
-      }),
-      l: new Vector({
-        x: leftUpperLegSphericalCoords.theta,
-        y: leftLowerLegSphericalCoords.phi,
-        z: leftUpperLegSphericalCoords.phi - hipRotation.z
-      })
-    };
-    const LowerLeg = {
-      r: new Vector({
-        x: -Math.abs(rightLowerLegSphericalCoords.theta),
-        y: 0,
-        z: 0
-      }),
-      l: new Vector({
-        x: -Math.abs(leftLowerLegSphericalCoords.theta),
-        y: 0,
-        z: 0
-      })
-    };
-    const rightLegRig = rigLeg(UpperLeg.r, LowerLeg.r, RIGHT);
-    const leftLegRig = rigLeg(UpperLeg.l, LowerLeg.l, LEFT);
-    return {
-      UpperLeg: {
-        r: rightLegRig.UpperLeg,
-        l: leftLegRig.UpperLeg
-      },
-      LowerLeg: {
-        r: rightLegRig.LowerLeg,
-        l: leftLegRig.LowerLeg
-      },
-      Unscaled: {
-        UpperLeg,
-        LowerLeg
-      }
-    };
-  };
-  var rigLeg = (UpperLeg, LowerLeg, side = RIGHT) => {
-    const invert = side === RIGHT ? 1 : -1;
-    const rigedUpperLeg = new Euler({
-      x: clamp(UpperLeg.x, 0, 0.5) * PI,
-      y: clamp(UpperLeg.y, -0.25, 0.25) * PI,
-      z: clamp(UpperLeg.z, -0.5, 0.5) * PI + invert * offsets.upperLeg.z,
-      rotationOrder: "XYZ"
-    });
-    const rigedLowerLeg = new Euler({
-      x: LowerLeg.x * PI,
-      y: LowerLeg.y * PI,
-      z: LowerLeg.z * PI
-    });
-    return {
-      UpperLeg: rigedUpperLeg,
-      LowerLeg: rigedLowerLeg
-    };
-  };
-
-  // node_modules/kalidokit/dist/PoseSolver/index.js
-  var PoseSolver = class {
-    static solve(lm3d, lm2d, { runtime = "mediapipe", video = null, imageSize = null, enableLegs = true } = {}) {
-      var _a, _b, _c, _d;
-      if (!lm3d && !lm2d) {
-        console.error("Need both World Pose and Pose Landmarks");
-        return;
-      }
-      if (video) {
-        const videoEl = typeof video === "string" ? document.querySelector(video) : video;
-        imageSize = {
-          width: videoEl.videoWidth,
-          height: videoEl.videoHeight
-        };
-      }
-      if (runtime === "tfjs" && imageSize) {
-        for (const e of lm3d) {
-          e.visibility = e.score;
-        }
-        for (const e of lm2d) {
-          e.x /= imageSize.width;
-          e.y /= imageSize.height;
-          e.z = 0;
-          e.visibility = e.score;
-        }
-      }
-      const Arms = calcArms(lm3d);
-      const Hips = calcHips(lm3d, lm2d);
-      const Legs = enableLegs ? calcLegs(lm3d) : null;
-      const rightHandOffscreen = lm3d[15].y > 0.1 || ((_a = lm3d[15].visibility) !== null && _a !== void 0 ? _a : 0) < 0.23 || 0.995 < lm2d[15].y;
-      const leftHandOffscreen = lm3d[16].y > 0.1 || ((_b = lm3d[16].visibility) !== null && _b !== void 0 ? _b : 0) < 0.23 || 0.995 < lm2d[16].y;
-      const leftFootOffscreen = lm3d[23].y > 0.1 || ((_c = lm3d[23].visibility) !== null && _c !== void 0 ? _c : 0) < 0.63 || Hips.Hips.position.z > -0.4;
-      const rightFootOffscreen = lm3d[24].y > 0.1 || ((_d = lm3d[24].visibility) !== null && _d !== void 0 ? _d : 0) < 0.63 || Hips.Hips.position.z > -0.4;
-      Arms.UpperArm.l = Arms.UpperArm.l.multiply(leftHandOffscreen ? 0 : 1);
-      Arms.UpperArm.l.z = leftHandOffscreen ? RestingDefault.Pose.LeftUpperArm.z : Arms.UpperArm.l.z;
-      Arms.UpperArm.r = Arms.UpperArm.r.multiply(rightHandOffscreen ? 0 : 1);
-      Arms.UpperArm.r.z = rightHandOffscreen ? RestingDefault.Pose.RightUpperArm.z : Arms.UpperArm.r.z;
-      Arms.LowerArm.l = Arms.LowerArm.l.multiply(leftHandOffscreen ? 0 : 1);
-      Arms.LowerArm.r = Arms.LowerArm.r.multiply(rightHandOffscreen ? 0 : 1);
-      Arms.Hand.l = Arms.Hand.l.multiply(leftHandOffscreen ? 0 : 1);
-      Arms.Hand.r = Arms.Hand.r.multiply(rightHandOffscreen ? 0 : 1);
-      if (Legs) {
-        Legs.UpperLeg.l = Legs.UpperLeg.l.multiply(rightFootOffscreen ? 0 : 1);
-        Legs.UpperLeg.r = Legs.UpperLeg.r.multiply(leftFootOffscreen ? 0 : 1);
-        Legs.LowerLeg.l = Legs.LowerLeg.l.multiply(rightFootOffscreen ? 0 : 1);
-        Legs.LowerLeg.r = Legs.LowerLeg.r.multiply(leftFootOffscreen ? 0 : 1);
-      }
-      return {
-        RightUpperArm: Arms.UpperArm.r,
-        RightLowerArm: Arms.LowerArm.r,
-        LeftUpperArm: Arms.UpperArm.l,
-        LeftLowerArm: Arms.LowerArm.l,
-        RightHand: Arms.Hand.r,
-        LeftHand: Arms.Hand.l,
-        RightUpperLeg: Legs ? Legs.UpperLeg.r : RestingDefault.Pose.RightUpperLeg,
-        RightLowerLeg: Legs ? Legs.LowerLeg.r : RestingDefault.Pose.RightLowerLeg,
-        LeftUpperLeg: Legs ? Legs.UpperLeg.l : RestingDefault.Pose.LeftUpperLeg,
-        LeftLowerLeg: Legs ? Legs.LowerLeg.l : RestingDefault.Pose.LeftLowerLeg,
-        Hips: Hips.Hips,
-        Spine: Hips.Spine
-      };
-    }
-  };
-  PoseSolver.calcArms = calcArms;
-  PoseSolver.calcHips = calcHips;
-  PoseSolver.calcLegs = calcLegs;
-
-  // node_modules/kalidokit/dist/HandSolver/index.js
-  var HandSolver = class {
-    static solve(lm, side = RIGHT) {
-      if (!lm) {
-        console.error("Need Hand Landmarks");
-        return;
-      }
-      const palm = [
-        new Vector(lm[0]),
-        new Vector(lm[side === RIGHT ? 17 : 5]),
-        new Vector(lm[side === RIGHT ? 5 : 17])
-      ];
-      const handRotation = Vector.rollPitchYaw(palm[0], palm[1], palm[2]);
-      handRotation.y = handRotation.z;
-      handRotation.y -= side === LEFT ? 0.4 : 0.4;
-      let hand = {};
-      hand[side + "Wrist"] = { x: handRotation.x, y: handRotation.y, z: handRotation.z };
-      hand[side + "RingProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[13], lm[14]) };
-      hand[side + "RingIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[13], lm[14], lm[15]) };
-      hand[side + "RingDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[14], lm[15], lm[16]) };
-      hand[side + "IndexProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[5], lm[6]) };
-      hand[side + "IndexIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[5], lm[6], lm[7]) };
-      hand[side + "IndexDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[6], lm[7], lm[8]) };
-      hand[side + "MiddleProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[9], lm[10]) };
-      hand[side + "MiddleIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[9], lm[10], lm[11]) };
-      hand[side + "MiddleDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[10], lm[11], lm[12]) };
-      hand[side + "ThumbProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[1], lm[2]) };
-      hand[side + "ThumbIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[1], lm[2], lm[3]) };
-      hand[side + "ThumbDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[2], lm[3], lm[4]) };
-      hand[side + "LittleProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[17], lm[18]) };
-      hand[side + "LittleIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[17], lm[18], lm[19]) };
-      hand[side + "LittleDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[18], lm[19], lm[20]) };
-      hand = rigFingers(hand, side);
-      return hand;
-    }
-  };
-  var rigFingers = (hand, side = RIGHT) => {
-    const invert = side === RIGHT ? 1 : -1;
-    const digits = ["Ring", "Index", "Little", "Thumb", "Middle"];
-    const segments = ["Proximal", "Intermediate", "Distal"];
-    hand[side + "Wrist"].x = clamp(hand[side + "Wrist"].x * 2 * invert, -0.3, 0.3);
-    hand[side + "Wrist"].y = clamp(hand[side + "Wrist"].y * 2.3, side === RIGHT ? -1.2 : -0.6, side === RIGHT ? 0.6 : 1.6);
-    hand[side + "Wrist"].z = hand[side + "Wrist"].z * -2.3 * invert;
-    digits.forEach((e) => {
-      segments.forEach((j2) => {
-        const trackedFinger = hand[side + e + j2];
-        if (e === "Thumb") {
-          const dampener = {
-            x: j2 === "Proximal" ? 2.2 : j2 === "Intermediate" ? 0 : 0,
-            y: j2 === "Proximal" ? 2.2 : j2 === "Intermediate" ? 0.7 : 1,
-            z: j2 === "Proximal" ? 0.5 : j2 === "Intermediate" ? 0.5 : 0.5
-          };
-          const startPos = {
-            x: j2 === "Proximal" ? 1.2 : j2 === "Distal" ? -0.2 : -0.2,
-            y: j2 === "Proximal" ? 1.1 * invert : j2 === "Distal" ? 0.1 * invert : 0.1 * invert,
-            z: j2 === "Proximal" ? 0.2 * invert : j2 === "Distal" ? 0.2 * invert : 0.2 * invert
-          };
-          const newThumb = { x: 0, y: 0, z: 0 };
-          if (j2 === "Proximal") {
-            newThumb.z = clamp(startPos.z + trackedFinger.z * -PI * dampener.z * invert, side === RIGHT ? -0.6 : -0.3, side === RIGHT ? 0.3 : 0.6);
-            newThumb.x = clamp(startPos.x + trackedFinger.z * -PI * dampener.x, -0.6, 0.3);
-            newThumb.y = clamp(startPos.y + trackedFinger.z * -PI * dampener.y * invert, side === RIGHT ? -1 : -0.3, side === RIGHT ? 0.3 : 1);
-          } else {
-            newThumb.z = clamp(startPos.z + trackedFinger.z * -PI * dampener.z * invert, -2, 2);
-            newThumb.x = clamp(startPos.x + trackedFinger.z * -PI * dampener.x, -2, 2);
-            newThumb.y = clamp(startPos.y + trackedFinger.z * -PI * dampener.y * invert, -2, 2);
-          }
-          trackedFinger.x = newThumb.x;
-          trackedFinger.y = newThumb.y;
-          trackedFinger.z = newThumb.z;
-        } else {
-          trackedFinger.z = clamp(trackedFinger.z * -PI * invert, side === RIGHT ? -PI : 0, side === RIGHT ? 0 : PI);
-        }
-      });
-    });
-    return hand;
-  };
-
-  // node_modules/kalidokit/dist/FaceSolver/calcHead.js
-  var createEulerPlane = (lm) => {
-    const p1 = new Vector(lm[21]);
-    const p2 = new Vector(lm[251]);
-    const p3 = new Vector(lm[397]);
-    const p4 = new Vector(lm[172]);
-    const p3mid = p3.lerp(p4, 0.5);
-    return {
-      vector: [p1, p2, p3mid],
-      points: [p1, p2, p3, p4]
-    };
-  };
-  var calcHead = (lm) => {
-    const plane = createEulerPlane(lm).vector;
-    const rotate = Vector.rollPitchYaw(plane[0], plane[1], plane[2]);
-    const midPoint = plane[0].lerp(plane[1], 0.5);
-    const width2 = plane[0].distance(plane[1]);
-    const height2 = midPoint.distance(plane[2]);
-    rotate.x *= -1;
-    rotate.z *= -1;
-    return {
-      y: rotate.y * PI,
-      x: rotate.x * PI,
-      z: rotate.z * PI,
-      width: width2,
-      height: height2,
-      position: midPoint.lerp(plane[2], 0.5),
-      normalized: {
-        y: rotate.y,
-        x: rotate.x,
-        z: rotate.z
-      },
-      degrees: {
-        y: rotate.y * 180,
-        x: rotate.x * 180,
-        z: rotate.z * 180
-      }
-    };
-  };
-
-  // node_modules/kalidokit/dist/FaceSolver/calcEyes.js
-  var points = {
-    eye: {
-      [LEFT]: [130, 133, 160, 159, 158, 144, 145, 153],
-      [RIGHT]: [263, 362, 387, 386, 385, 373, 374, 380]
-    },
-    brow: {
-      [LEFT]: [35, 244, 63, 105, 66, 229, 230, 231],
-      [RIGHT]: [265, 464, 293, 334, 296, 449, 450, 451]
-    },
-    pupil: {
-      [LEFT]: [468, 469, 470, 471, 472],
-      [RIGHT]: [473, 474, 475, 476, 477]
-    }
-  };
-  var getEyeOpen = (lm, side = LEFT, { high = 0.85, low = 0.55 } = {}) => {
-    const eyePoints = points.eye[side];
-    const eyeDistance = eyeLidRatio(lm[eyePoints[0]], lm[eyePoints[1]], lm[eyePoints[2]], lm[eyePoints[3]], lm[eyePoints[4]], lm[eyePoints[5]], lm[eyePoints[6]], lm[eyePoints[7]]);
-    const maxRatio = 0.285;
-    const ratio = clamp(eyeDistance / maxRatio, 0, 2);
-    const eyeOpenRatio = remap(ratio, low, high);
-    return {
-      norm: eyeOpenRatio,
-      raw: ratio
-    };
-  };
-  var eyeLidRatio = (eyeOuterCorner, eyeInnerCorner, eyeOuterUpperLid, eyeMidUpperLid, eyeInnerUpperLid, eyeOuterLowerLid, eyeMidLowerLid, eyeInnerLowerLid) => {
-    eyeOuterCorner = new Vector(eyeOuterCorner);
-    eyeInnerCorner = new Vector(eyeInnerCorner);
-    eyeOuterUpperLid = new Vector(eyeOuterUpperLid);
-    eyeMidUpperLid = new Vector(eyeMidUpperLid);
-    eyeInnerUpperLid = new Vector(eyeInnerUpperLid);
-    eyeOuterLowerLid = new Vector(eyeOuterLowerLid);
-    eyeMidLowerLid = new Vector(eyeMidLowerLid);
-    eyeInnerLowerLid = new Vector(eyeInnerLowerLid);
-    const eyeWidth = eyeOuterCorner.distance(eyeInnerCorner, 2);
-    const eyeOuterLidDistance = eyeOuterUpperLid.distance(eyeOuterLowerLid, 2);
-    const eyeMidLidDistance = eyeMidUpperLid.distance(eyeMidLowerLid, 2);
-    const eyeInnerLidDistance = eyeInnerUpperLid.distance(eyeInnerLowerLid, 2);
-    const eyeLidAvg = (eyeOuterLidDistance + eyeMidLidDistance + eyeInnerLidDistance) / 3;
-    const ratio = eyeLidAvg / eyeWidth;
-    return ratio;
-  };
-  var pupilPos = (lm, side = LEFT) => {
-    const eyeOuterCorner = new Vector(lm[points.eye[side][0]]);
-    const eyeInnerCorner = new Vector(lm[points.eye[side][1]]);
-    const eyeWidth = eyeOuterCorner.distance(eyeInnerCorner, 2);
-    const midPoint = eyeOuterCorner.lerp(eyeInnerCorner, 0.5);
-    const pupil = new Vector(lm[points.pupil[side][0]]);
-    const dx = midPoint.x - pupil.x;
-    const dy = midPoint.y - eyeWidth * 0.075 - pupil.y;
-    let ratioX = dx / (eyeWidth / 2);
-    let ratioY = dy / (eyeWidth / 4);
-    ratioX *= 4;
-    ratioY *= 4;
-    return { x: ratioX, y: ratioY };
-  };
-  var stabilizeBlink = (eye, headY, { enableWink = true, maxRot = 0.5 } = {}) => {
-    eye.r = clamp(eye.r, 0, 1);
-    eye.l = clamp(eye.l, 0, 1);
-    const blinkDiff = Math.abs(eye.l - eye.r);
-    const blinkThresh = enableWink ? 0.8 : 1.2;
-    const isClosing = eye.l < 0.3 && eye.r < 0.3;
-    const isOpen = eye.l > 0.6 && eye.r > 0.6;
-    if (headY > maxRot) {
-      return { l: eye.r, r: eye.r };
-    }
-    if (headY < -maxRot) {
-      return { l: eye.l, r: eye.l };
-    }
-    return {
-      l: blinkDiff >= blinkThresh && !isClosing && !isOpen ? eye.l : eye.r > eye.l ? Vector.lerp(eye.r, eye.l, 0.95) : Vector.lerp(eye.r, eye.l, 0.05),
-      r: blinkDiff >= blinkThresh && !isClosing && !isOpen ? eye.r : eye.r > eye.l ? Vector.lerp(eye.r, eye.l, 0.95) : Vector.lerp(eye.r, eye.l, 0.05)
-    };
-  };
-  var calcEyes = (lm, { high = 0.85, low = 0.55 } = {}) => {
-    if (lm.length !== 478) {
-      return {
-        l: 1,
-        r: 1
-      };
-    }
-    const leftEyeLid = getEyeOpen(lm, LEFT, { high, low });
-    const rightEyeLid = getEyeOpen(lm, RIGHT, { high, low });
-    return {
-      l: leftEyeLid.norm || 0,
-      r: rightEyeLid.norm || 0
-    };
-  };
-  var calcPupils = (lm) => {
-    if (lm.length !== 478) {
-      return { x: 0, y: 0 };
-    } else {
-      const pupilL = pupilPos(lm, LEFT);
-      const pupilR = pupilPos(lm, RIGHT);
-      return {
-        x: (pupilL.x + pupilR.x) * 0.5 || 0,
-        y: (pupilL.y + pupilR.y) * 0.5 || 0
-      };
-    }
-  };
-  var getBrowRaise = (lm, side = LEFT) => {
-    const browPoints = points.brow[side];
-    const browDistance = eyeLidRatio(lm[browPoints[0]], lm[browPoints[1]], lm[browPoints[2]], lm[browPoints[3]], lm[browPoints[4]], lm[browPoints[5]], lm[browPoints[6]], lm[browPoints[7]]);
-    const maxBrowRatio = 1.15;
-    const browHigh = 0.125;
-    const browLow = 0.07;
-    const browRatio = browDistance / maxBrowRatio - 1;
-    const browRaiseRatio = (clamp(browRatio, browLow, browHigh) - browLow) / (browHigh - browLow);
-    return browRaiseRatio;
-  };
-  var calcBrow = (lm) => {
-    if (lm.length !== 478) {
-      return 0;
-    } else {
-      const leftBrow = getBrowRaise(lm, LEFT);
-      const rightBrow = getBrowRaise(lm, RIGHT);
-      return (leftBrow + rightBrow) / 2 || 0;
-    }
-  };
-
-  // node_modules/kalidokit/dist/FaceSolver/calcMouth.js
-  var calcMouth = (lm) => {
-    const eyeInnerCornerL = new Vector(lm[133]);
-    const eyeInnerCornerR = new Vector(lm[362]);
-    const eyeOuterCornerL = new Vector(lm[130]);
-    const eyeOuterCornerR = new Vector(lm[263]);
-    const eyeInnerDistance = eyeInnerCornerL.distance(eyeInnerCornerR);
-    const eyeOuterDistance = eyeOuterCornerL.distance(eyeOuterCornerR);
-    const upperInnerLip = new Vector(lm[13]);
-    const lowerInnerLip = new Vector(lm[14]);
-    const mouthCornerLeft = new Vector(lm[61]);
-    const mouthCornerRight = new Vector(lm[291]);
-    const mouthOpen = upperInnerLip.distance(lowerInnerLip);
-    const mouthWidth = mouthCornerLeft.distance(mouthCornerRight);
-    let ratioY = mouthOpen / eyeInnerDistance;
-    let ratioX = mouthWidth / eyeOuterDistance;
-    ratioY = remap(ratioY, 0.15, 0.7);
-    ratioX = remap(ratioX, 0.45, 0.9);
-    ratioX = (ratioX - 0.3) * 2;
-    const mouthX = ratioX;
-    const mouthY = remap(mouthOpen / eyeInnerDistance, 0.17, 0.5);
-    const ratioI = clamp(remap(mouthX, 0, 1) * 2 * remap(mouthY, 0.2, 0.7), 0, 1);
-    const ratioA = mouthY * 0.4 + mouthY * (1 - ratioI) * 0.6;
-    const ratioU = mouthY * remap(1 - ratioI, 0, 0.3) * 0.1;
-    const ratioE = remap(ratioU, 0.2, 1) * (1 - ratioI) * 0.3;
-    const ratioO = (1 - ratioI) * remap(mouthY, 0.3, 1) * 0.4;
-    return {
-      x: ratioX || 0,
-      y: ratioY || 0,
-      shape: {
-        A: ratioA || 0,
-        E: ratioE || 0,
-        I: ratioI || 0,
-        O: ratioO || 0,
-        U: ratioU || 0
-      }
-    };
-  };
-
-  // node_modules/kalidokit/dist/FaceSolver/index.js
-  var FaceSolver = class {
-    static solve(lm, { runtime = "tfjs", video = null, imageSize = null, smoothBlink = false, blinkSettings = [] } = {}) {
-      if (!lm) {
-        console.error("Need Face Landmarks");
-        return;
-      }
-      if (video) {
-        const videoEl = typeof video === "string" ? document.querySelector(video) : video;
-        imageSize = {
-          width: videoEl.videoWidth,
-          height: videoEl.videoHeight
-        };
-      }
-      if (runtime === "mediapipe" && imageSize) {
-        for (const e of lm) {
-          e.x *= imageSize.width;
-          e.y *= imageSize.height;
-          e.z *= imageSize.width;
-        }
-      }
-      const getHead = calcHead(lm);
-      const getMouth = calcMouth(lm);
-      blinkSettings = blinkSettings.length > 0 ? blinkSettings : runtime === "tfjs" ? [0.55, 0.85] : [0.35, 0.5];
-      let getEye = calcEyes(lm, {
-        high: blinkSettings[1],
-        low: blinkSettings[0]
-      });
-      if (smoothBlink) {
-        getEye = stabilizeBlink(getEye, getHead.y);
-      }
-      const getPupils = calcPupils(lm);
-      const getBrow = calcBrow(lm);
-      return {
-        head: getHead,
-        eye: getEye,
-        brow: getBrow,
-        pupil: getPupils,
-        mouth: getMouth
-      };
-    }
-  };
-  FaceSolver.stabilizeBlink = stabilizeBlink;
-
-  // src/component/webcam-vrm.ts
-  var import_holistic = __toESM(require_holistic(), 1);
-  var import_camera_utils = __toESM(require_camera_utils(), 1);
-
-  // src/state.ts
-  var state_default = {
-    "binds": {
-      "n": "control selfie",
-      "m": "control not selfie",
-      "h": "hi! | hey ! | hey you! | hello...",
-      "i": "it's doer 1 | it's me, doer 1 | doer 1 that's me",
-      "f1": "control help",
-      "f2": "control not help"
-    },
-    "vars": {},
-    "selfie": false,
-    avatar: {
-      doer: "./vrm/goblin.2.vrm",
-      current: "./vrm/doer.2.vrm"
-    },
-    visible: true
-  };
-
-  // src/timing.ts
-  var tick = new Value(0);
-  var avatar_current = new Value(state_default.avatar.current).save("avatar_current_2");
-  var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
-  var voice_current = new Value("Guy | UK English").save("voice_current");
-  var voice_doer = new Value("Aus | UK English").save("voice_doer");
-  var open_home = new Value(true);
-  var open_game = new Value(false);
-  var open_text = new Value(void 0);
-  var open_loading = new Value(false);
-  var open_help = new Value(false);
-  var open_stats = new Value(false).save("stats");
-  var open_heard = new Value(true).save("heard");
-  var open_debug = new Value(false).save("debugger");
-  var open_targeting = new Value(false).save("targeting_2");
-  var camera = new Value();
-  var camera_el = new Value();
-  var toggle_selfie = new Value(state_default.selfie).save("selfie");
-  var toggle_visible = new Value(state_default.visible).save("visible");
-  var do_echo = new Value(true).save("do_echo");
-  open_game.on(($g) => {
-    if (open_game.$) {
-      open_loading.set(true);
-    }
-  });
-  var motd = new Value(`\u{1F38A}v0.1.2\u{1F38A}
-
-\u2705 Controls \u2705 Persist 
-\u2705 Help [f1]
-\u2705 Performance Pass
-
-\u274C AI DOER \u274C Gameplay 
-
-\u274C WebRTC Multiplayer 
-6 player, 5 clients to 1 host
-
-\u274C 1 MediaStream 
-music / video / camera source / picture
-
-\u274C Factions \u274C Rules 
-
-The web is a scary place. 
-\u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
-
-WebRTC connection details stored in central DB to allow connection by alias. 
-
-WebRTC data is sent to peers only. 
-
-Camera data is processed by mediapipe via tensorflow locally.
-
-Microphone data is handled by the browser provider, ie: Chrome / Edge / etc.
-
-Cookies for localStorage only. 
-If that's a problem then reject the cookie use policy by closing your browser.
-
-Accountless. 
-
-Age 18+ only.
-
-`);
-  var ticker = () => {
-    requestAnimationFrame(ticker);
-    tick.set(tick.$ + 1);
-  };
-  var loading = new Value(`Loading...
-
- WASD Move > Q+E Rotate
- Enter > Chat
-     ~ > Command
- Space > Jump
- 
- Default Binds:
-
- N: Selfie
- M: NotSelfie
- H: Hi | Hi! | Hello | Heya | Yo
- F1: Help
- F2: NotHelp
-`);
-  ticker();
-  var helptext = new Value(`\u{1F916}Commands\u{1F916}
-
-~ echo 
-echo on, persisted
-
-~ not echo 
-echo off, persisted
-
-~ avatar ...url 
-set avatar to URL, persisted
-
-~ clear avatar 
-set avatar to default
-
-~ bind key ...commands 
-bind key to commands, persisted
-
-~ not bind key
-unbinds key, persisted
-
-~ var name ...commands 
-binds variable name to commands
-
-~ not var name 
-unbinds variable name
-
-~ stats 
-show fps stats
-
-~ not stats
-hide fps stats
-
-~ heard
-show top heard messages
-
-~ not heard
-hide top heard messages
-
-~ help
-show this help
-
-~ not help
-hide this help
-
-~ voice ...nameToSearch
-set voice to nameToSearch ie: aus would find an Australian voice or UK for British, persisted
-per browser
-
-~ swap
-swap places with your doer
-
-~ visible
-show your avatar
-
-~ not visible
-hide your avatar
-
-~ selfie
-selfie camera mode
-
-~ not selfie
-not selfie camera mode
-
-
-`);
-
   // node_modules/three/build/three.module.js
   var REVISION = "137";
   var CullFaceNone = 0;
@@ -7423,7 +5539,7 @@ not selfie camera mode
     const uuid = _lut[d0 & 255] + _lut[d0 >> 8 & 255] + _lut[d0 >> 16 & 255] + _lut[d0 >> 24 & 255] + "-" + _lut[d1 & 255] + _lut[d1 >> 8 & 255] + "-" + _lut[d1 >> 16 & 15 | 64] + _lut[d1 >> 24 & 255] + "-" + _lut[d2 & 63 | 128] + _lut[d2 >> 8 & 255] + "-" + _lut[d2 >> 16 & 255] + _lut[d2 >> 24 & 255] + _lut[d3 & 255] + _lut[d3 >> 8 & 255] + _lut[d3 >> 16 & 255] + _lut[d3 >> 24 & 255];
     return uuid.toUpperCase();
   }
-  function clamp2(value, min, max) {
+  function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
   }
   function euclideanModulo(n2, m2) {
@@ -8151,8 +6267,8 @@ not selfie camera mode
     }
     setHSL(h2, s2, l2) {
       h2 = euclideanModulo(h2, 1);
-      s2 = clamp2(s2, 0, 1);
-      l2 = clamp2(l2, 0, 1);
+      s2 = clamp(s2, 0, 1);
+      l2 = clamp(l2, 0, 1);
       if (s2 === 0) {
         this.r = this.g = this.b = l2;
       } else {
@@ -9414,7 +7530,7 @@ not selfie camera mode
       return this.normalize();
     }
     angleTo(q2) {
-      return 2 * Math.acos(Math.abs(clamp2(this.dot(q2), -1, 1)));
+      return 2 * Math.acos(Math.abs(clamp(this.dot(q2), -1, 1)));
     }
     rotateTowards(q2, step) {
       const angle = this.angleTo(q2);
@@ -9898,7 +8014,7 @@ not selfie camera mode
       if (denominator === 0)
         return Math.PI / 2;
       const theta = this.dot(v2) / denominator;
-      return Math.acos(clamp2(theta, -1, 1));
+      return Math.acos(clamp(theta, -1, 1));
     }
     distanceTo(v2) {
       return Math.sqrt(this.distanceToSquared(v2));
@@ -11106,14 +9222,14 @@ not selfie camera mode
       this.set(1, yx, zx, 0, xy, 1, zy, 0, xz, yz, 1, 0, 0, 0, 0, 1);
       return this;
     }
-    compose(position, quaternion, scale2) {
+    compose(position, quaternion, scale) {
       const te2 = this.elements;
       const x2 = quaternion._x, y2 = quaternion._y, z2 = quaternion._z, w2 = quaternion._w;
       const x22 = x2 + x2, y22 = y2 + y2, z22 = z2 + z2;
       const xx = x2 * x22, xy = x2 * y22, xz = x2 * z22;
       const yy = y2 * y22, yz = y2 * z22, zz = z2 * z22;
       const wx = w2 * x22, wy = w2 * y22, wz = w2 * z22;
-      const sx = scale2.x, sy = scale2.y, sz = scale2.z;
+      const sx = scale.x, sy = scale.y, sz = scale.z;
       te2[0] = (1 - (yy + zz)) * sx;
       te2[1] = (xy + wz) * sx;
       te2[2] = (xz - wy) * sx;
@@ -11132,7 +9248,7 @@ not selfie camera mode
       te2[15] = 1;
       return this;
     }
-    decompose(position, quaternion, scale2) {
+    decompose(position, quaternion, scale) {
       const te2 = this.elements;
       let sx = _v1$5.set(te2[0], te2[1], te2[2]).length();
       const sy = _v1$5.set(te2[4], te2[5], te2[6]).length();
@@ -11157,9 +9273,9 @@ not selfie camera mode
       _m1$2.elements[9] *= invSZ;
       _m1$2.elements[10] *= invSZ;
       quaternion.setFromRotationMatrix(_m1$2);
-      scale2.x = sx;
-      scale2.y = sy;
-      scale2.z = sz;
+      scale.x = sx;
+      scale.y = sy;
+      scale.z = sz;
       return this;
     }
     makePerspective(left, right, top, bottom, near, far) {
@@ -11263,8 +9379,8 @@ not selfie camera mode
   var _z = /* @__PURE__ */ new Vector3();
   var _matrix$1 = /* @__PURE__ */ new Matrix4();
   var _quaternion$3 = /* @__PURE__ */ new Quaternion();
-  var Euler2 = class {
-    constructor(x2 = 0, y2 = 0, z2 = 0, order = Euler2.DefaultOrder) {
+  var Euler = class {
+    constructor(x2 = 0, y2 = 0, z2 = 0, order = Euler.DefaultOrder) {
       this._x = x2;
       this._y = y2;
       this._z = z2;
@@ -11324,7 +9440,7 @@ not selfie camera mode
       const m31 = te2[2], m32 = te2[6], m33 = te2[10];
       switch (order) {
         case "XYZ":
-          this._y = Math.asin(clamp2(m13, -1, 1));
+          this._y = Math.asin(clamp(m13, -1, 1));
           if (Math.abs(m13) < 0.9999999) {
             this._x = Math.atan2(-m23, m33);
             this._z = Math.atan2(-m12, m11);
@@ -11334,7 +9450,7 @@ not selfie camera mode
           }
           break;
         case "YXZ":
-          this._x = Math.asin(-clamp2(m23, -1, 1));
+          this._x = Math.asin(-clamp(m23, -1, 1));
           if (Math.abs(m23) < 0.9999999) {
             this._y = Math.atan2(m13, m33);
             this._z = Math.atan2(m21, m22);
@@ -11344,7 +9460,7 @@ not selfie camera mode
           }
           break;
         case "ZXY":
-          this._x = Math.asin(clamp2(m32, -1, 1));
+          this._x = Math.asin(clamp(m32, -1, 1));
           if (Math.abs(m32) < 0.9999999) {
             this._y = Math.atan2(-m31, m33);
             this._z = Math.atan2(-m12, m22);
@@ -11354,7 +9470,7 @@ not selfie camera mode
           }
           break;
         case "ZYX":
-          this._y = Math.asin(-clamp2(m31, -1, 1));
+          this._y = Math.asin(-clamp(m31, -1, 1));
           if (Math.abs(m31) < 0.9999999) {
             this._x = Math.atan2(m32, m33);
             this._z = Math.atan2(m21, m11);
@@ -11364,7 +9480,7 @@ not selfie camera mode
           }
           break;
         case "YZX":
-          this._z = Math.asin(clamp2(m21, -1, 1));
+          this._z = Math.asin(clamp(m21, -1, 1));
           if (Math.abs(m21) < 0.9999999) {
             this._x = Math.atan2(-m23, m22);
             this._y = Math.atan2(-m31, m11);
@@ -11374,7 +9490,7 @@ not selfie camera mode
           }
           break;
         case "XZY":
-          this._z = Math.asin(-clamp2(m12, -1, 1));
+          this._z = Math.asin(-clamp(m12, -1, 1));
           if (Math.abs(m12) < 0.9999999) {
             this._x = Math.atan2(m32, m22);
             this._y = Math.atan2(m13, m11);
@@ -11435,9 +9551,9 @@ not selfie camera mode
     _onChangeCallback() {
     }
   };
-  Euler2.prototype.isEuler = true;
-  Euler2.DefaultOrder = "XYZ";
-  Euler2.RotationOrders = ["XYZ", "YZX", "ZXY", "XZY", "YXZ", "ZYX"];
+  Euler.prototype.isEuler = true;
+  Euler.DefaultOrder = "XYZ";
+  Euler.RotationOrders = ["XYZ", "YZX", "ZXY", "XZY", "YXZ", "ZYX"];
   var Layers = class {
     constructor() {
       this.mask = 1 | 0;
@@ -11491,9 +9607,9 @@ not selfie camera mode
       this.children = [];
       this.up = Object3D.DefaultUp.clone();
       const position = new Vector3();
-      const rotation = new Euler2();
+      const rotation = new Euler();
       const quaternion = new Quaternion();
-      const scale2 = new Vector3(1, 1, 1);
+      const scale = new Vector3(1, 1, 1);
       function onRotationChange() {
         quaternion.setFromEuler(rotation, false);
       }
@@ -11521,7 +9637,7 @@ not selfie camera mode
         scale: {
           configurable: true,
           enumerable: true,
-          value: scale2
+          value: scale
         },
         modelViewMatrix: {
           value: new Matrix4()
@@ -12854,9 +10970,9 @@ not selfie camera mode
     hasAttribute(name) {
       return this.attributes[name] !== void 0;
     }
-    addGroup(start2, count, materialIndex = 0) {
+    addGroup(start, count, materialIndex = 0) {
       this.groups.push({
-        start: start2,
+        start,
         count,
         materialIndex
       });
@@ -12864,8 +10980,8 @@ not selfie camera mode
     clearGroups() {
       this.groups = [];
     }
-    setDrawRange(start2, count) {
-      this.drawRange.start = start2;
+    setDrawRange(start, count) {
+      this.drawRange.start = start;
       this.drawRange.count = count;
     }
     applyMatrix4(matrix) {
@@ -13088,9 +11204,9 @@ not selfie camera mode
       }
       for (let i2 = 0, il = groups.length; i2 < il; ++i2) {
         const group = groups[i2];
-        const start2 = group.start;
+        const start = group.start;
         const count = group.count;
-        for (let j2 = start2, jl = start2 + count; j2 < jl; j2 += 3) {
+        for (let j2 = start, jl = start + count; j2 < jl; j2 += 3) {
           handleTriangle(indices[j2 + 0], indices[j2 + 1], indices[j2 + 2]);
         }
       }
@@ -13112,9 +11228,9 @@ not selfie camera mode
       }
       for (let i2 = 0, il = groups.length; i2 < il; ++i2) {
         const group = groups[i2];
-        const start2 = group.start;
+        const start = group.start;
         const count = group.count;
-        for (let j2 = start2, jl = start2 + count; j2 < jl; j2 += 3) {
+        for (let j2 = start, jl = start + count; j2 < jl; j2 += 3) {
           handleVertex(indices[j2 + 0]);
           handleVertex(indices[j2 + 1]);
           handleVertex(indices[j2 + 2]);
@@ -13474,9 +11590,9 @@ not selfie camera mode
             for (let i2 = 0, il = groups.length; i2 < il; i2++) {
               const group = groups[i2];
               const groupMaterial = material[group.materialIndex];
-              const start2 = Math.max(group.start, drawRange.start);
+              const start = Math.max(group.start, drawRange.start);
               const end = Math.min(index.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
-              for (let j2 = start2, jl = end; j2 < jl; j2 += 3) {
+              for (let j2 = start, jl = end; j2 < jl; j2 += 3) {
                 const a2 = index.getX(j2);
                 const b2 = index.getX(j2 + 1);
                 const c2 = index.getX(j2 + 2);
@@ -13489,9 +11605,9 @@ not selfie camera mode
               }
             }
           } else {
-            const start2 = Math.max(0, drawRange.start);
+            const start = Math.max(0, drawRange.start);
             const end = Math.min(index.count, drawRange.start + drawRange.count);
-            for (let i2 = start2, il = end; i2 < il; i2 += 3) {
+            for (let i2 = start, il = end; i2 < il; i2 += 3) {
               const a2 = index.getX(i2);
               const b2 = index.getX(i2 + 1);
               const c2 = index.getX(i2 + 2);
@@ -13507,9 +11623,9 @@ not selfie camera mode
             for (let i2 = 0, il = groups.length; i2 < il; i2++) {
               const group = groups[i2];
               const groupMaterial = material[group.materialIndex];
-              const start2 = Math.max(group.start, drawRange.start);
+              const start = Math.max(group.start, drawRange.start);
               const end = Math.min(position.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
-              for (let j2 = start2, jl = end; j2 < jl; j2 += 3) {
+              for (let j2 = start, jl = end; j2 < jl; j2 += 3) {
                 const a2 = j2;
                 const b2 = j2 + 1;
                 const c2 = j2 + 2;
@@ -13522,9 +11638,9 @@ not selfie camera mode
               }
             }
           } else {
-            const start2 = Math.max(0, drawRange.start);
+            const start = Math.max(0, drawRange.start);
             const end = Math.min(position.count, drawRange.start + drawRange.count);
-            for (let i2 = start2, il = end; i2 < il; i2 += 3) {
+            for (let i2 = start, il = end; i2 < il; i2 += 3) {
               const a2 = i2;
               const b2 = i2 + 1;
               const c2 = i2 + 2;
@@ -15647,11 +13763,11 @@ not selfie camera mode
     function setMode(value) {
       mode = value;
     }
-    function render(start2, count) {
-      gl.drawArrays(mode, start2, count);
+    function render(start, count) {
+      gl.drawArrays(mode, start, count);
       info.update(count, mode, 1);
     }
-    function renderInstances(start2, count, primcount) {
+    function renderInstances(start, count, primcount) {
       if (primcount === 0)
         return;
       let extension, methodName;
@@ -15666,7 +13782,7 @@ not selfie camera mode
           return;
         }
       }
-      extension[methodName](mode, start2, count, primcount);
+      extension[methodName](mode, start, count, primcount);
       info.update(count, mode, primcount);
     }
     this.setMode = setMode;
@@ -16748,11 +14864,11 @@ not selfie camera mode
       type = value.type;
       bytesPerElement = value.bytesPerElement;
     }
-    function render(start2, count) {
-      gl.drawElements(mode, count, type, start2 * bytesPerElement);
+    function render(start, count) {
+      gl.drawElements(mode, count, type, start * bytesPerElement);
       info.update(count, mode, 1);
     }
-    function renderInstances(start2, count, primcount) {
+    function renderInstances(start, count, primcount) {
       if (primcount === 0)
         return;
       let extension, methodName;
@@ -16767,7 +14883,7 @@ not selfie camera mode
           return;
         }
       }
-      extension[methodName](mode, count, type, start2 * bytesPerElement, primcount);
+      extension[methodName](mode, count, type, start * bytesPerElement, primcount);
       info.update(count, mode, primcount);
     }
     this.setMode = setMode;
@@ -17723,13 +15839,13 @@ not selfie camera mode
   function unrollLoops(string) {
     return string.replace(unrollLoopPattern, loopReplacer).replace(deprecatedUnrollLoopPattern, deprecatedLoopReplacer);
   }
-  function deprecatedLoopReplacer(match, start2, end, snippet) {
+  function deprecatedLoopReplacer(match, start, end, snippet) {
     console.warn("WebGLProgram: #pragma unroll_loop shader syntax is deprecated. Please use #pragma unroll_loop_start syntax instead.");
-    return loopReplacer(match, start2, end, snippet);
+    return loopReplacer(match, start, end, snippet);
   }
-  function loopReplacer(match, start2, end, snippet) {
+  function loopReplacer(match, start, end, snippet) {
     let string = "";
-    for (let i2 = parseInt(start2); i2 < parseInt(end); i2++) {
+    for (let i2 = parseInt(start); i2 < parseInt(end); i2++) {
       string += snippet.replace(/\[\s*i\s*\]/g, "[ " + i2 + " ]").replace(/UNROLLED_LOOP_INDEX/g, i2);
     }
     return string;
@@ -18720,12 +16836,12 @@ not selfie camera mode
   function UniformsCache() {
     const lights = {};
     return {
-      get: function(light2) {
-        if (lights[light2.id] !== void 0) {
-          return lights[light2.id];
+      get: function(light) {
+        if (lights[light.id] !== void 0) {
+          return lights[light.id];
         }
         let uniforms;
-        switch (light2.type) {
+        switch (light.type) {
           case "DirectionalLight":
             uniforms = {
               direction: new Vector3(),
@@ -18767,7 +16883,7 @@ not selfie camera mode
             };
             break;
         }
-        lights[light2.id] = uniforms;
+        lights[light.id] = uniforms;
         return uniforms;
       }
     };
@@ -18775,12 +16891,12 @@ not selfie camera mode
   function ShadowUniformsCache() {
     const lights = {};
     return {
-      get: function(light2) {
-        if (lights[light2.id] !== void 0) {
-          return lights[light2.id];
+      get: function(light) {
+        if (lights[light.id] !== void 0) {
+          return lights[light.id];
         }
         let uniforms;
-        switch (light2.type) {
+        switch (light.type) {
           case "DirectionalLight":
             uniforms = {
               shadowBias: 0,
@@ -18808,7 +16924,7 @@ not selfie camera mode
             };
             break;
         }
-        lights[light2.id] = uniforms;
+        lights[light.id] = uniforms;
         return uniforms;
       }
     };
@@ -18871,73 +16987,73 @@ not selfie camera mode
       lights.sort(shadowCastingLightsFirst);
       const scaleFactor = physicallyCorrectLights !== true ? Math.PI : 1;
       for (let i2 = 0, l2 = lights.length; i2 < l2; i2++) {
-        const light2 = lights[i2];
-        const color = light2.color;
-        const intensity = light2.intensity;
-        const distance = light2.distance;
-        const shadowMap = light2.shadow && light2.shadow.map ? light2.shadow.map.texture : null;
-        if (light2.isAmbientLight) {
+        const light = lights[i2];
+        const color = light.color;
+        const intensity = light.intensity;
+        const distance = light.distance;
+        const shadowMap = light.shadow && light.shadow.map ? light.shadow.map.texture : null;
+        if (light.isAmbientLight) {
           r2 += color.r * intensity * scaleFactor;
           g2 += color.g * intensity * scaleFactor;
           b2 += color.b * intensity * scaleFactor;
-        } else if (light2.isLightProbe) {
+        } else if (light.isLightProbe) {
           for (let j2 = 0; j2 < 9; j2++) {
-            state.probe[j2].addScaledVector(light2.sh.coefficients[j2], intensity);
+            state.probe[j2].addScaledVector(light.sh.coefficients[j2], intensity);
           }
-        } else if (light2.isDirectionalLight) {
-          const uniforms = cache.get(light2);
-          uniforms.color.copy(light2.color).multiplyScalar(light2.intensity * scaleFactor);
-          if (light2.castShadow) {
-            const shadow = light2.shadow;
-            const shadowUniforms = shadowCache.get(light2);
+        } else if (light.isDirectionalLight) {
+          const uniforms = cache.get(light);
+          uniforms.color.copy(light.color).multiplyScalar(light.intensity * scaleFactor);
+          if (light.castShadow) {
+            const shadow = light.shadow;
+            const shadowUniforms = shadowCache.get(light);
             shadowUniforms.shadowBias = shadow.bias;
             shadowUniforms.shadowNormalBias = shadow.normalBias;
             shadowUniforms.shadowRadius = shadow.radius;
             shadowUniforms.shadowMapSize = shadow.mapSize;
             state.directionalShadow[directionalLength] = shadowUniforms;
             state.directionalShadowMap[directionalLength] = shadowMap;
-            state.directionalShadowMatrix[directionalLength] = light2.shadow.matrix;
+            state.directionalShadowMatrix[directionalLength] = light.shadow.matrix;
             numDirectionalShadows++;
           }
           state.directional[directionalLength] = uniforms;
           directionalLength++;
-        } else if (light2.isSpotLight) {
-          const uniforms = cache.get(light2);
-          uniforms.position.setFromMatrixPosition(light2.matrixWorld);
+        } else if (light.isSpotLight) {
+          const uniforms = cache.get(light);
+          uniforms.position.setFromMatrixPosition(light.matrixWorld);
           uniforms.color.copy(color).multiplyScalar(intensity * scaleFactor);
           uniforms.distance = distance;
-          uniforms.coneCos = Math.cos(light2.angle);
-          uniforms.penumbraCos = Math.cos(light2.angle * (1 - light2.penumbra));
-          uniforms.decay = light2.decay;
-          if (light2.castShadow) {
-            const shadow = light2.shadow;
-            const shadowUniforms = shadowCache.get(light2);
+          uniforms.coneCos = Math.cos(light.angle);
+          uniforms.penumbraCos = Math.cos(light.angle * (1 - light.penumbra));
+          uniforms.decay = light.decay;
+          if (light.castShadow) {
+            const shadow = light.shadow;
+            const shadowUniforms = shadowCache.get(light);
             shadowUniforms.shadowBias = shadow.bias;
             shadowUniforms.shadowNormalBias = shadow.normalBias;
             shadowUniforms.shadowRadius = shadow.radius;
             shadowUniforms.shadowMapSize = shadow.mapSize;
             state.spotShadow[spotLength] = shadowUniforms;
             state.spotShadowMap[spotLength] = shadowMap;
-            state.spotShadowMatrix[spotLength] = light2.shadow.matrix;
+            state.spotShadowMatrix[spotLength] = light.shadow.matrix;
             numSpotShadows++;
           }
           state.spot[spotLength] = uniforms;
           spotLength++;
-        } else if (light2.isRectAreaLight) {
-          const uniforms = cache.get(light2);
+        } else if (light.isRectAreaLight) {
+          const uniforms = cache.get(light);
           uniforms.color.copy(color).multiplyScalar(intensity);
-          uniforms.halfWidth.set(light2.width * 0.5, 0, 0);
-          uniforms.halfHeight.set(0, light2.height * 0.5, 0);
+          uniforms.halfWidth.set(light.width * 0.5, 0, 0);
+          uniforms.halfHeight.set(0, light.height * 0.5, 0);
           state.rectArea[rectAreaLength] = uniforms;
           rectAreaLength++;
-        } else if (light2.isPointLight) {
-          const uniforms = cache.get(light2);
-          uniforms.color.copy(light2.color).multiplyScalar(light2.intensity * scaleFactor);
-          uniforms.distance = light2.distance;
-          uniforms.decay = light2.decay;
-          if (light2.castShadow) {
-            const shadow = light2.shadow;
-            const shadowUniforms = shadowCache.get(light2);
+        } else if (light.isPointLight) {
+          const uniforms = cache.get(light);
+          uniforms.color.copy(light.color).multiplyScalar(light.intensity * scaleFactor);
+          uniforms.distance = light.distance;
+          uniforms.decay = light.decay;
+          if (light.castShadow) {
+            const shadow = light.shadow;
+            const shadowUniforms = shadowCache.get(light);
             shadowUniforms.shadowBias = shadow.bias;
             shadowUniforms.shadowNormalBias = shadow.normalBias;
             shadowUniforms.shadowRadius = shadow.radius;
@@ -18946,15 +17062,15 @@ not selfie camera mode
             shadowUniforms.shadowCameraFar = shadow.camera.far;
             state.pointShadow[pointLength] = shadowUniforms;
             state.pointShadowMap[pointLength] = shadowMap;
-            state.pointShadowMatrix[pointLength] = light2.shadow.matrix;
+            state.pointShadowMatrix[pointLength] = light.shadow.matrix;
             numPointShadows++;
           }
           state.point[pointLength] = uniforms;
           pointLength++;
-        } else if (light2.isHemisphereLight) {
-          const uniforms = cache.get(light2);
-          uniforms.skyColor.copy(light2.color).multiplyScalar(intensity * scaleFactor);
-          uniforms.groundColor.copy(light2.groundColor).multiplyScalar(intensity * scaleFactor);
+        } else if (light.isHemisphereLight) {
+          const uniforms = cache.get(light);
+          uniforms.skyColor.copy(light.color).multiplyScalar(intensity * scaleFactor);
+          uniforms.groundColor.copy(light.groundColor).multiplyScalar(intensity * scaleFactor);
           state.hemi[hemiLength] = uniforms;
           hemiLength++;
         }
@@ -19013,44 +17129,44 @@ not selfie camera mode
       let hemiLength = 0;
       const viewMatrix = camera4.matrixWorldInverse;
       for (let i2 = 0, l2 = lights.length; i2 < l2; i2++) {
-        const light2 = lights[i2];
-        if (light2.isDirectionalLight) {
+        const light = lights[i2];
+        if (light.isDirectionalLight) {
           const uniforms = state.directional[directionalLength];
-          uniforms.direction.setFromMatrixPosition(light2.matrixWorld);
-          vector3.setFromMatrixPosition(light2.target.matrixWorld);
+          uniforms.direction.setFromMatrixPosition(light.matrixWorld);
+          vector3.setFromMatrixPosition(light.target.matrixWorld);
           uniforms.direction.sub(vector3);
           uniforms.direction.transformDirection(viewMatrix);
           directionalLength++;
-        } else if (light2.isSpotLight) {
+        } else if (light.isSpotLight) {
           const uniforms = state.spot[spotLength];
-          uniforms.position.setFromMatrixPosition(light2.matrixWorld);
+          uniforms.position.setFromMatrixPosition(light.matrixWorld);
           uniforms.position.applyMatrix4(viewMatrix);
-          uniforms.direction.setFromMatrixPosition(light2.matrixWorld);
-          vector3.setFromMatrixPosition(light2.target.matrixWorld);
+          uniforms.direction.setFromMatrixPosition(light.matrixWorld);
+          vector3.setFromMatrixPosition(light.target.matrixWorld);
           uniforms.direction.sub(vector3);
           uniforms.direction.transformDirection(viewMatrix);
           spotLength++;
-        } else if (light2.isRectAreaLight) {
+        } else if (light.isRectAreaLight) {
           const uniforms = state.rectArea[rectAreaLength];
-          uniforms.position.setFromMatrixPosition(light2.matrixWorld);
+          uniforms.position.setFromMatrixPosition(light.matrixWorld);
           uniforms.position.applyMatrix4(viewMatrix);
           matrix42.identity();
-          matrix4.copy(light2.matrixWorld);
+          matrix4.copy(light.matrixWorld);
           matrix4.premultiply(viewMatrix);
           matrix42.extractRotation(matrix4);
-          uniforms.halfWidth.set(light2.width * 0.5, 0, 0);
-          uniforms.halfHeight.set(0, light2.height * 0.5, 0);
+          uniforms.halfWidth.set(light.width * 0.5, 0, 0);
+          uniforms.halfHeight.set(0, light.height * 0.5, 0);
           uniforms.halfWidth.applyMatrix4(matrix42);
           uniforms.halfHeight.applyMatrix4(matrix42);
           rectAreaLength++;
-        } else if (light2.isPointLight) {
+        } else if (light.isPointLight) {
           const uniforms = state.point[pointLength];
-          uniforms.position.setFromMatrixPosition(light2.matrixWorld);
+          uniforms.position.setFromMatrixPosition(light.matrixWorld);
           uniforms.position.applyMatrix4(viewMatrix);
           pointLength++;
-        } else if (light2.isHemisphereLight) {
+        } else if (light.isHemisphereLight) {
           const uniforms = state.hemi[hemiLength];
-          uniforms.direction.setFromMatrixPosition(light2.matrixWorld);
+          uniforms.direction.setFromMatrixPosition(light.matrixWorld);
           uniforms.direction.transformDirection(viewMatrix);
           uniforms.direction.normalize();
           hemiLength++;
@@ -19071,8 +17187,8 @@ not selfie camera mode
       lightsArray.length = 0;
       shadowsArray.length = 0;
     }
-    function pushLight(light2) {
-      lightsArray.push(light2);
+    function pushLight(light) {
+      lightsArray.push(light);
     }
     function pushShadow(shadowLight) {
       shadowsArray.push(shadowLight);
@@ -19224,10 +17340,10 @@ not selfie camera mode
       _state.buffers.depth.setTest(true);
       _state.setScissorTest(false);
       for (let i2 = 0, il = lights.length; i2 < il; i2++) {
-        const light2 = lights[i2];
-        const shadow = light2.shadow;
+        const light = lights[i2];
+        const shadow = light.shadow;
         if (shadow === void 0) {
-          console.warn("THREE.WebGLShadowMap:", light2, "has no shadow.");
+          console.warn("THREE.WebGLShadowMap:", light, "has no shadow.");
           continue;
         }
         if (shadow.autoUpdate === false && shadow.needsUpdate === false)
@@ -19251,14 +17367,14 @@ not selfie camera mode
         if (shadow.map === null && !shadow.isPointLightShadow && this.type === VSMShadowMap) {
           const pars = { minFilter: LinearFilter, magFilter: LinearFilter, format: RGBAFormat };
           shadow.map = new WebGLRenderTarget(_shadowMapSize.x, _shadowMapSize.y, pars);
-          shadow.map.texture.name = light2.name + ".shadowMap";
+          shadow.map.texture.name = light.name + ".shadowMap";
           shadow.mapPass = new WebGLRenderTarget(_shadowMapSize.x, _shadowMapSize.y, pars);
           shadow.camera.updateProjectionMatrix();
         }
         if (shadow.map === null) {
           const pars = { minFilter: NearestFilter, magFilter: NearestFilter, format: RGBAFormat };
           shadow.map = new WebGLRenderTarget(_shadowMapSize.x, _shadowMapSize.y, pars);
-          shadow.map.texture.name = light2.name + ".shadowMap";
+          shadow.map.texture.name = light.name + ".shadowMap";
           shadow.camera.updateProjectionMatrix();
         }
         _renderer.setRenderTarget(shadow.map);
@@ -19268,9 +17384,9 @@ not selfie camera mode
           const viewport = shadow.getViewport(vp);
           _viewport.set(_viewportSize.x * viewport.x, _viewportSize.y * viewport.y, _viewportSize.x * viewport.z, _viewportSize.y * viewport.w);
           _state.viewport(_viewport);
-          shadow.updateMatrices(light2, vp);
+          shadow.updateMatrices(light, vp);
           _frustum = shadow.getFrustum();
-          renderObject(scene, camera4, shadow.camera, light2, this.type);
+          renderObject(scene, camera4, shadow.camera, light, this.type);
         }
         if (!shadow.isPointLightShadow && this.type === VSMShadowMap) {
           VSMPass(shadow, camera4);
@@ -19301,13 +17417,13 @@ not selfie camera mode
       _renderer.clear();
       _renderer.renderBufferDirect(camera4, null, geometry, shadowMaterialHorizontal, fullScreenMesh, null);
     }
-    function getDepthMaterial(object, geometry, material, light2, shadowCameraNear, shadowCameraFar, type) {
+    function getDepthMaterial(object, geometry, material, light, shadowCameraNear, shadowCameraFar, type) {
       let result = null;
-      const customMaterial = light2.isPointLight === true ? object.customDistanceMaterial : object.customDepthMaterial;
+      const customMaterial = light.isPointLight === true ? object.customDistanceMaterial : object.customDepthMaterial;
       if (customMaterial !== void 0) {
         result = customMaterial;
       } else {
-        result = light2.isPointLight === true ? _distanceMaterial : _depthMaterial;
+        result = light.isPointLight === true ? _distanceMaterial : _depthMaterial;
       }
       if (_renderer.localClippingEnabled && material.clipShadows === true && material.clippingPlanes.length !== 0 || material.displacementMap && material.displacementScale !== 0 || material.alphaMap && material.alphaTest > 0) {
         const keyA = result.uuid, keyB = material.uuid;
@@ -19340,14 +17456,14 @@ not selfie camera mode
       result.displacementBias = material.displacementBias;
       result.wireframeLinewidth = material.wireframeLinewidth;
       result.linewidth = material.linewidth;
-      if (light2.isPointLight === true && result.isMeshDistanceMaterial === true) {
-        result.referencePosition.setFromMatrixPosition(light2.matrixWorld);
+      if (light.isPointLight === true && result.isMeshDistanceMaterial === true) {
+        result.referencePosition.setFromMatrixPosition(light.matrixWorld);
         result.nearDistance = shadowCameraNear;
         result.farDistance = shadowCameraFar;
       }
       return result;
     }
-    function renderObject(object, camera4, shadowCamera, light2, type) {
+    function renderObject(object, camera4, shadowCamera, light, type) {
       if (object.visible === false)
         return;
       const visible = object.layers.test(camera4.layers);
@@ -19362,19 +17478,19 @@ not selfie camera mode
               const group = groups[k2];
               const groupMaterial = material[group.materialIndex];
               if (groupMaterial && groupMaterial.visible) {
-                const depthMaterial = getDepthMaterial(object, geometry, groupMaterial, light2, shadowCamera.near, shadowCamera.far, type);
+                const depthMaterial = getDepthMaterial(object, geometry, groupMaterial, light, shadowCamera.near, shadowCamera.far, type);
                 _renderer.renderBufferDirect(shadowCamera, null, geometry, depthMaterial, object, group);
               }
             }
           } else if (material.visible) {
-            const depthMaterial = getDepthMaterial(object, geometry, material, light2, shadowCamera.near, shadowCamera.far, type);
+            const depthMaterial = getDepthMaterial(object, geometry, material, light, shadowCamera.near, shadowCamera.far, type);
             _renderer.renderBufferDirect(shadowCamera, null, geometry, depthMaterial, object, null);
           }
         }
       }
       const children2 = object.children;
       for (let i2 = 0, l2 = children2.length; i2 < l2; i2++) {
-        renderObject(children2[i2], camera4, shadowCamera, light2, type);
+        renderObject(children2[i2], camera4, shadowCamera, light, type);
       }
     }
   }
@@ -20084,15 +18200,15 @@ not selfie camera mode
       return useOffscreenCanvas ? new OffscreenCanvas(width2, height2) : createElementNS("canvas");
     }
     function resizeImage(image, needsPowerOfTwo, needsNewCanvas, maxSize) {
-      let scale2 = 1;
+      let scale = 1;
       if (image.width > maxSize || image.height > maxSize) {
-        scale2 = maxSize / Math.max(image.width, image.height);
+        scale = maxSize / Math.max(image.width, image.height);
       }
-      if (scale2 < 1 || needsPowerOfTwo === true) {
+      if (scale < 1 || needsPowerOfTwo === true) {
         if (typeof HTMLImageElement !== "undefined" && image instanceof HTMLImageElement || typeof HTMLCanvasElement !== "undefined" && image instanceof HTMLCanvasElement || typeof ImageBitmap !== "undefined" && image instanceof ImageBitmap) {
           const floor = needsPowerOfTwo ? floorPowerOfTwo : Math.floor;
-          const width2 = floor(scale2 * image.width);
-          const height2 = floor(scale2 * image.height);
+          const width2 = floor(scale * image.width);
+          const height2 = floor(scale * image.height);
           if (_canvas2 === void 0)
             _canvas2 = createCanvas(width2, height2);
           const canvas = needsNewCanvas ? createCanvas(width2, height2) : _canvas2;
@@ -23711,8 +21827,8 @@ not selfie camera mode
     }
   };
   Sprite.prototype.isSprite = true;
-  function transformVertex(vertexPosition, mvPosition, center, scale2, sin, cos) {
-    _alignedPosition.subVectors(vertexPosition, center).addScalar(0.5).multiply(scale2);
+  function transformVertex(vertexPosition, mvPosition, center, scale, sin, cos) {
+    _alignedPosition.subVectors(vertexPosition, center).addScalar(0.5).multiply(scale);
     if (sin !== void 0) {
       _rotatedPosition.x = cos * _alignedPosition.x - sin * _alignedPosition.y;
       _rotatedPosition.y = sin * _alignedPosition.x + cos * _alignedPosition.y;
@@ -23766,9 +21882,9 @@ not selfie camera mode
         vector.y = skinWeight.getY(i2);
         vector.z = skinWeight.getZ(i2);
         vector.w = skinWeight.getW(i2);
-        const scale2 = 1 / vector.manhattanLength();
-        if (scale2 !== Infinity) {
-          vector.multiplyScalar(scale2);
+        const scale = 1 / vector.manhattanLength();
+        if (scale !== Infinity) {
+          vector.multiplyScalar(scale);
         } else {
           vector.set(1, 0, 0, 0);
         }
@@ -24136,9 +22252,9 @@ not selfie camera mode
         const attributes = geometry.attributes;
         const positionAttribute = attributes.position;
         if (index !== null) {
-          const start2 = Math.max(0, drawRange.start);
+          const start = Math.max(0, drawRange.start);
           const end = Math.min(index.count, drawRange.start + drawRange.count);
-          for (let i2 = start2, l2 = end - 1; i2 < l2; i2 += step) {
+          for (let i2 = start, l2 = end - 1; i2 < l2; i2 += step) {
             const a2 = index.getX(i2);
             const b2 = index.getX(i2 + 1);
             vStart.fromBufferAttribute(positionAttribute, a2);
@@ -24160,9 +22276,9 @@ not selfie camera mode
             });
           }
         } else {
-          const start2 = Math.max(0, drawRange.start);
+          const start = Math.max(0, drawRange.start);
           const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
-          for (let i2 = start2, l2 = end - 1; i2 < l2; i2 += step) {
+          for (let i2 = start, l2 = end - 1; i2 < l2; i2 += step) {
             vStart.fromBufferAttribute(positionAttribute, i2);
             vEnd.fromBufferAttribute(positionAttribute, i2 + 1);
             const distSq = _ray$1.distanceSqToSegment(vStart, vEnd, interRay, interSegment);
@@ -24310,17 +22426,17 @@ not selfie camera mode
         const attributes = geometry.attributes;
         const positionAttribute = attributes.position;
         if (index !== null) {
-          const start2 = Math.max(0, drawRange.start);
+          const start = Math.max(0, drawRange.start);
           const end = Math.min(index.count, drawRange.start + drawRange.count);
-          for (let i2 = start2, il = end; i2 < il; i2++) {
+          for (let i2 = start, il = end; i2 < il; i2++) {
             const a2 = index.getX(i2);
             _position$2.fromBufferAttribute(positionAttribute, a2);
             testPoint(_position$2, a2, localThresholdSq, matrixWorld, raycaster, intersects2, this);
           }
         } else {
-          const start2 = Math.max(0, drawRange.start);
+          const start = Math.max(0, drawRange.start);
           const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
-          for (let i2 = start2, l2 = end; i2 < l2; i2++) {
+          for (let i2 = start, l2 = end; i2 < l2; i2++) {
             _position$2.fromBufferAttribute(positionAttribute, i2);
             testPoint(_position$2, i2, localThresholdSq, matrixWorld, raycaster, intersects2, this);
           }
@@ -24575,13 +22691,13 @@ not selfie camera mode
         vec.crossVectors(tangents[i2 - 1], tangents[i2]);
         if (vec.length() > Number.EPSILON) {
           vec.normalize();
-          const theta = Math.acos(clamp2(tangents[i2 - 1].dot(tangents[i2]), -1, 1));
+          const theta = Math.acos(clamp(tangents[i2 - 1].dot(tangents[i2]), -1, 1));
           normals[i2].applyMatrix4(mat.makeRotationAxis(vec, theta));
         }
         binormals[i2].crossVectors(tangents[i2], normals[i2]);
       }
       if (closed === true) {
-        let theta = Math.acos(clamp2(normals[0].dot(normals[segments]), -1, 1));
+        let theta = Math.acos(clamp(normals[0].dot(normals[segments]), -1, 1));
         theta /= segments;
         if (tangents[0].dot(vec.crossVectors(normals[0], normals[segments])) > 0) {
           theta = -theta;
@@ -25470,13 +23586,13 @@ not selfie camera mode
       return triangles;
     }
   };
-  function linkedList(data, start2, end, dim, clockwise) {
+  function linkedList(data, start, end, dim, clockwise) {
     let i2, last;
-    if (clockwise === signedArea(data, start2, end, dim) > 0) {
-      for (i2 = start2; i2 < end; i2 += dim)
+    if (clockwise === signedArea(data, start, end, dim) > 0) {
+      for (i2 = start; i2 < end; i2 += dim)
         last = insertNode(i2, data[i2], data[i2 + 1], last);
     } else {
-      for (i2 = end - dim; i2 >= start2; i2 -= dim)
+      for (i2 = end - dim; i2 >= start; i2 -= dim)
         last = insertNode(i2, data[i2], data[i2 + 1], last);
     }
     if (last && equals(last, last.next)) {
@@ -25485,12 +23601,12 @@ not selfie camera mode
     }
     return last;
   }
-  function filterPoints(start2, end) {
-    if (!start2)
-      return start2;
+  function filterPoints(start, end) {
+    if (!start)
+      return start;
     if (!end)
-      end = start2;
-    let p2 = start2, again;
+      end = start;
+    let p2 = start, again;
     do {
       again = false;
       if (!p2.steiner && (equals(p2, p2.next) || area(p2.prev, p2, p2.next) === 0)) {
@@ -25576,8 +23692,8 @@ not selfie camera mode
     }
     return true;
   }
-  function cureLocalIntersections(start2, triangles, dim) {
-    let p2 = start2;
+  function cureLocalIntersections(start, triangles, dim) {
+    let p2 = start;
     do {
       const a2 = p2.prev, b2 = p2.next.next;
       if (!equals(a2, b2) && intersects(a2, p2, p2.next, b2) && locallyInside(a2, b2) && locallyInside(b2, a2)) {
@@ -25586,14 +23702,14 @@ not selfie camera mode
         triangles.push(b2.i / dim);
         removeNode(p2);
         removeNode(p2.next);
-        p2 = start2 = b2;
+        p2 = start = b2;
       }
       p2 = p2.next;
-    } while (p2 !== start2);
+    } while (p2 !== start);
     return filterPoints(p2);
   }
-  function splitEarcut(start2, triangles, dim, minX, minY, invSize) {
-    let a2 = start2;
+  function splitEarcut(start, triangles, dim, minX, minY, invSize) {
+    let a2 = start;
     do {
       let b2 = a2.next.next;
       while (b2 !== a2.prev) {
@@ -25608,15 +23724,15 @@ not selfie camera mode
         b2 = b2.next;
       }
       a2 = a2.next;
-    } while (a2 !== start2);
+    } while (a2 !== start);
   }
   function eliminateHoles(data, holeIndices, outerNode, dim) {
     const queue = [];
-    let i2, len, start2, end, list;
+    let i2, len, start, end, list;
     for (i2 = 0, len = holeIndices.length; i2 < len; i2++) {
-      start2 = holeIndices[i2] * dim;
+      start = holeIndices[i2] * dim;
       end = i2 < len - 1 ? holeIndices[i2 + 1] * dim : data.length;
-      list = linkedList(data, start2, end, dim, false);
+      list = linkedList(data, start, end, dim, false);
       if (list === list.next)
         list.steiner = true;
       queue.push(getLeftmost(list));
@@ -25682,15 +23798,15 @@ not selfie camera mode
   function sectorContainsSector(m2, p2) {
     return area(m2.prev, m2, p2.prev) < 0 && area(p2.next, m2, m2.next) < 0;
   }
-  function indexCurve(start2, minX, minY, invSize) {
-    let p2 = start2;
+  function indexCurve(start, minX, minY, invSize) {
+    let p2 = start;
     do {
       if (p2.z === null)
         p2.z = zOrder(p2.x, p2.y, minX, minY, invSize);
       p2.prevZ = p2.prev;
       p2.nextZ = p2.next;
       p2 = p2.next;
-    } while (p2 !== start2);
+    } while (p2 !== start);
     p2.prevZ.nextZ = null;
     p2.prevZ = null;
     sortLinked(p2);
@@ -25750,13 +23866,13 @@ not selfie camera mode
     y2 = (y2 | y2 << 1) & 1431655765;
     return x2 | y2 << 1;
   }
-  function getLeftmost(start2) {
-    let p2 = start2, leftmost = start2;
+  function getLeftmost(start) {
+    let p2 = start, leftmost = start;
     do {
       if (p2.x < leftmost.x || p2.x === leftmost.x && p2.y < leftmost.y)
         leftmost = p2;
       p2 = p2.next;
-    } while (p2 !== start2);
+    } while (p2 !== start);
     return leftmost;
   }
   function pointInTriangle(ax, ay, bx, by, cx, cy, px2, py2) {
@@ -25860,9 +23976,9 @@ not selfie camera mode
     this.nextZ = null;
     this.steiner = false;
   }
-  function signedArea(data, start2, end, dim) {
+  function signedArea(data, start, end, dim) {
     let sum = 0;
-    for (let i2 = start2, j2 = end - dim; i2 < end; i2 += dim) {
+    for (let i2 = start, j2 = end - dim; i2 < end; i2 += dim) {
       sum += (data[j2] - data[i2]) * (data[i2 + 1] + data[j2 + 1]);
       j2 = i2;
     }
@@ -26129,7 +24245,7 @@ not selfie camera mode
         buildLidFaces();
         buildSideFaces();
         function buildLidFaces() {
-          const start2 = verticesArray.length / 3;
+          const start = verticesArray.length / 3;
           if (bevelEnabled) {
             let layer = 0;
             let offset = vlen * layer;
@@ -26153,10 +24269,10 @@ not selfie camera mode
               f3(face[0] + vlen * steps, face[1] + vlen * steps, face[2] + vlen * steps);
             }
           }
-          scope.addGroup(start2, verticesArray.length / 3 - start2, 0);
+          scope.addGroup(start, verticesArray.length / 3 - start, 0);
         }
         function buildSideFaces() {
-          const start2 = verticesArray.length / 3;
+          const start = verticesArray.length / 3;
           let layeroffset = 0;
           sidewalls(contour, layeroffset);
           layeroffset += contour.length;
@@ -26165,7 +24281,7 @@ not selfie camera mode
             sidewalls(ahole, layeroffset);
             layeroffset += ahole.length;
           }
-          scope.addGroup(start2, verticesArray.length / 3 - start2, 1);
+          scope.addGroup(start, verticesArray.length / 3 - start, 1);
         }
         function sidewalls(contour2, layeroffset) {
           let i2 = contour2.length;
@@ -26562,7 +24678,7 @@ not selfie camera mode
       this.ior = 1.5;
       Object.defineProperty(this, "reflectivity", {
         get: function() {
-          return clamp2(2.5 * (this.ior - 1) / (this.ior + 1), 0, 1);
+          return clamp(2.5 * (this.ior - 1) / (this.ior + 1), 0, 1);
         },
         set: function(reflectivity) {
           this.ior = (1 + 0.4 * reflectivity) / (1 - 0.4 * reflectivity);
@@ -27913,7 +26029,7 @@ not selfie camera mode
       return this;
     }
   };
-  var loading2 = {};
+  var loading = {};
   var FileLoader = class extends Loader {
     constructor(manager) {
       super(manager);
@@ -27934,16 +26050,16 @@ not selfie camera mode
         }, 0);
         return cached;
       }
-      if (loading2[url] !== void 0) {
-        loading2[url].push({
+      if (loading[url] !== void 0) {
+        loading[url].push({
           onLoad,
           onProgress,
           onError
         });
         return;
       }
-      loading2[url] = [];
-      loading2[url].push({
+      loading[url] = [];
+      loading[url].push({
         onLoad,
         onProgress,
         onError
@@ -27962,7 +26078,7 @@ not selfie camera mode
           if (typeof ReadableStream === "undefined" || response.body.getReader === void 0) {
             return response;
           }
-          const callbacks = loading2[url];
+          const callbacks = loading[url];
           const reader = response.body.getReader();
           const contentLength = response.headers.get("Content-Length");
           const total = contentLength ? parseInt(contentLength) : 0;
@@ -28020,20 +26136,20 @@ not selfie camera mode
         }
       }).then((data) => {
         Cache.add(url, data);
-        const callbacks = loading2[url];
-        delete loading2[url];
+        const callbacks = loading[url];
+        delete loading[url];
         for (let i2 = 0, il = callbacks.length; i2 < il; i2++) {
           const callback = callbacks[i2];
           if (callback.onLoad)
             callback.onLoad(data);
         }
       }).catch((err) => {
-        const callbacks = loading2[url];
+        const callbacks = loading[url];
         if (callbacks === void 0) {
           this.manager.itemError(url);
           throw err;
         }
-        delete loading2[url];
+        delete loading[url];
         for (let i2 = 0, il = callbacks.length; i2 < il; i2++) {
           const callback = callbacks[i2];
           if (callback.onError)
@@ -28228,12 +26344,12 @@ not selfie camera mode
     getFrustum() {
       return this._frustum;
     }
-    updateMatrices(light2) {
+    updateMatrices(light) {
       const shadowCamera = this.camera;
       const shadowMatrix = this.matrix;
-      _lightPositionWorld$1.setFromMatrixPosition(light2.matrixWorld);
+      _lightPositionWorld$1.setFromMatrixPosition(light.matrixWorld);
       shadowCamera.position.copy(_lightPositionWorld$1);
-      _lookTarget$1.setFromMatrixPosition(light2.target.matrixWorld);
+      _lookTarget$1.setFromMatrixPosition(light.target.matrixWorld);
       shadowCamera.lookAt(_lookTarget$1);
       shadowCamera.updateMatrixWorld();
       _projScreenMatrix$1.multiplyMatrices(shadowCamera.projectionMatrix, shadowCamera.matrixWorldInverse);
@@ -28286,18 +26402,18 @@ not selfie camera mode
       super(new PerspectiveCamera(50, 1, 0.5, 500));
       this.focus = 1;
     }
-    updateMatrices(light2) {
+    updateMatrices(light) {
       const camera4 = this.camera;
-      const fov2 = RAD2DEG * 2 * light2.angle * this.focus;
+      const fov2 = RAD2DEG * 2 * light.angle * this.focus;
       const aspect2 = this.mapSize.width / this.mapSize.height;
-      const far = light2.distance || camera4.far;
+      const far = light.distance || camera4.far;
       if (fov2 !== camera4.fov || aspect2 !== camera4.aspect || far !== camera4.far) {
         camera4.fov = fov2;
         camera4.aspect = aspect2;
         camera4.far = far;
         camera4.updateProjectionMatrix();
       }
-      super.updateMatrices(light2);
+      super.updateMatrices(light);
     }
     copy(source) {
       super.copy(source);
@@ -28373,15 +26489,15 @@ not selfie camera mode
         new Vector3(0, 0, -1)
       ];
     }
-    updateMatrices(light2, viewportIndex = 0) {
+    updateMatrices(light, viewportIndex = 0) {
       const camera4 = this.camera;
       const shadowMatrix = this.matrix;
-      const far = light2.distance || camera4.far;
+      const far = light.distance || camera4.far;
       if (far !== camera4.far) {
         camera4.far = far;
         camera4.updateProjectionMatrix();
       }
-      _lightPositionWorld.setFromMatrixPosition(light2.matrixWorld);
+      _lightPositionWorld.setFromMatrixPosition(light.matrixWorld);
       camera4.position.copy(_lightPositionWorld);
       _lookTarget.copy(camera4.position);
       _lookTarget.add(this._cubeDirections[viewportIndex]);
@@ -28773,12 +26889,12 @@ not selfie camera mode
       super(void 0, intensity);
       const color1 = new Color().set(skyColor);
       const color2 = new Color().set(groundColor);
-      const sky2 = new Vector3(color1.r, color1.g, color1.b);
+      const sky = new Vector3(color1.r, color1.g, color1.b);
       const ground = new Vector3(color2.r, color2.g, color2.b);
       const c0 = Math.sqrt(Math.PI);
       const c1 = c0 * Math.sqrt(0.75);
-      this.sh.coefficients[0].copy(sky2).add(ground).multiplyScalar(c0);
-      this.sh.coefficients[1].copy(sky2).sub(ground).multiplyScalar(c1);
+      this.sh.coefficients[0].copy(sky).add(ground).multiplyScalar(c0);
+      this.sh.coefficients[1].copy(sky).sub(ground).multiplyScalar(c1);
     }
   };
   HemisphereLightProbe.prototype.isHemisphereLightProbe = true;
@@ -30522,12 +28638,12 @@ not selfie camera mode
   var _startP = /* @__PURE__ */ new Vector3();
   var _startEnd = /* @__PURE__ */ new Vector3();
   var Line3 = class {
-    constructor(start2 = new Vector3(), end = new Vector3()) {
-      this.start = start2;
+    constructor(start = new Vector3(), end = new Vector3()) {
+      this.start = start;
       this.end = end;
     }
-    set(start2, end) {
-      this.start.copy(start2);
+    set(start, end) {
+      this.start.copy(start);
       this.end.copy(end);
       return this;
     }
@@ -30558,7 +28674,7 @@ not selfie camera mode
       const startEnd_startP = _startEnd.dot(_startP);
       let t = startEnd_startP / startEnd2;
       if (clampToLine) {
-        t = clamp2(t, 0, 1);
+        t = clamp(t, 0, 1);
       }
       return t;
     }
@@ -31139,12 +29255,12 @@ not selfie camera mode
     }
     return this.setAttribute(name, attribute);
   };
-  BufferGeometry.prototype.addDrawCall = function(start2, count, indexOffset) {
+  BufferGeometry.prototype.addDrawCall = function(start, count, indexOffset) {
     if (indexOffset !== void 0) {
       console.warn("THREE.BufferGeometry: .addDrawCall() no longer supports indexOffset.");
     }
     console.warn("THREE.BufferGeometry: .addDrawCall() is now .addGroup().");
-    this.addGroup(start2, count);
+    this.addGroup(start, count);
   };
   BufferGeometry.prototype.clearDrawCalls = function() {
     console.warn("THREE.BufferGeometry: .clearDrawCalls() is now .clearGroups().");
@@ -32158,7 +30274,7 @@ not selfie camera mode
   var G = new Quaternion();
   var H = class {
     constructor(t, n2) {
-      this.autoUpdate = true, this._euler = new Euler2(0, 0, 0, H.EULER_ORDER), this.firstPerson = t, this.applyer = n2;
+      this.autoUpdate = true, this._euler = new Euler(0, 0, 0, H.EULER_ORDER), this.firstPerson = t, this.applyer = n2;
     }
     getLookAtWorldDirection(e) {
       const t = _(this.firstPerson.firstPersonBone, G);
@@ -32176,7 +30292,7 @@ not selfie camera mode
     }
   };
   H.EULER_ORDER = "YXZ";
-  var F = new Euler2(0, 0, 0, H.EULER_ORDER);
+  var F = new Euler(0, 0, 0, H.EULER_ORDER);
   var k = class extends C {
     constructor(e, t, n2, i2, r2) {
       super(), this.type = u.FirstPersonLookAtTypeName.Bone, this._curveHorizontalInner = t, this._curveHorizontalOuter = n2, this._curveVerticalDown = i2, this._curveVerticalUp = r2, this._leftEye = e.getBoneNode(u.HumanoidBoneName.LeftEye), this._rightEye = e.getBoneNode(u.HumanoidBoneName.RightEye);
@@ -32820,6 +30936,251 @@ not selfie camera mode
   var Ie = new MeshBasicMaterial({ color: 16711935, wireframe: true, transparent: true, depthTest: false });
   var Ce = new Vector3();
 
+  // src/state.ts
+  var state_default = {
+    "binds": {
+      "n": "control selfie",
+      "m": "control not selfie",
+      "h": "hi! | hey ! | hey you! | hello...",
+      "i": "it's doer 1 | it's me, doer 1 | doer 1 that's me",
+      "f1": "control help",
+      "f2": "control not help"
+    },
+    "vars": {},
+    "selfie": false,
+    avatar: {
+      doer: "./vrm/goblin.2.vrm",
+      current: "./vrm/doer.2.vrm"
+    },
+    visible: true
+  };
+
+  // src/value.ts
+  var Value = class {
+    constructor(value = void 0) {
+      this.$ = value;
+    }
+    set(value) {
+      this.$ = value;
+      this.poke();
+      return this;
+    }
+    on(subscribe2) {
+      if (this.reactions === void 0) {
+        this.reactions = /* @__PURE__ */ new Set();
+      }
+      this.reactions.add(subscribe2);
+      subscribe2(this.$);
+      return () => this.reactions.delete(subscribe2);
+    }
+    subscribe(subscribe2) {
+      return this.on(subscribe2);
+    }
+    log(msg) {
+      this.on(() => console.log(msg, this.$));
+      return this;
+    }
+    poke() {
+      if (this.reactions === void 0)
+        return;
+      for (let callback of this.reactions) {
+        callback(this.$);
+      }
+      return this;
+    }
+    do(fn) {
+      fn();
+      return this;
+    }
+    re(fn) {
+      this.on(fn);
+      return this;
+    }
+    me() {
+      return new Value(this.$);
+    }
+    fa(v2, transform, filter) {
+      v2.on((state) => {
+        if (filter) {
+          if (!filter(state))
+            return;
+        }
+        if (transform) {
+          this.set(transform(state));
+        } else {
+          this.set(state);
+        }
+      });
+      return this;
+    }
+    la(timing, fn) {
+      let i2 = 0;
+      setInterval(() => {
+        fn(i2++);
+      }, timing);
+      return this;
+    }
+    save(where) {
+      try {
+        const v2 = JSON.parse(localStorage.getItem(where));
+        if (v2 !== void 0 && v2 !== null) {
+          this.set(v2);
+        }
+      } catch (ex) {
+      }
+      this.on((v2) => {
+        localStorage.setItem(where, JSON.stringify(v2));
+      });
+      return this;
+    }
+  };
+
+  // src/timing.ts
+  var tick = new Value(0);
+  var avatar_current = new Value(state_default.avatar.current).save("avatar_current_2");
+  var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
+  var voice_current = new Value("Guy | UK English").save("voice_current");
+  var voice_doer = new Value("Aus | UK English").save("voice_doer");
+  var open_home = new Value(true);
+  var open_game = new Value(false);
+  var open_text = new Value(void 0);
+  var open_loading = new Value(false);
+  var open_help = new Value(false);
+  var open_stats = new Value(false).save("stats");
+  var open_heard = new Value(true).save("heard");
+  var open_debug = new Value(false).save("debugger");
+  var open_targeting = new Value(false).save("targeting_2");
+  var camera = new Value();
+  var camera_el = new Value();
+  var toggle_selfie = new Value(state_default.selfie).save("selfie");
+  var toggle_visible = new Value(state_default.visible).save("visible");
+  var do_echo = new Value(true).save("do_echo");
+  open_game.on(($g) => {
+    if (open_game.$) {
+      open_loading.set(true);
+    }
+  });
+  var motd = new Value(`\u{1F38A}v0.1.2\u{1F38A}
+
+\u2705 Controls \u2705 Persist 
+\u2705 Help [f1]
+\u2705 Performance Pass
+
+\u274C AI DOER \u274C Gameplay 
+
+\u274C WebRTC Multiplayer 
+6 player, 5 clients to 1 host
+
+\u274C 1 MediaStream 
+music / video / camera source / picture
+
+\u274C Factions \u274C Rules 
+
+The web is a scary place. 
+\u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
+
+WebRTC connection details stored in central DB to allow connection by alias. 
+
+WebRTC data is sent to peers only. 
+
+Camera data is processed by mediapipe via tensorflow locally.
+
+Microphone data is handled by the browser provider, ie: Chrome / Edge / etc.
+
+Cookies for localStorage only. 
+If that's a problem then reject the cookie use policy by closing your browser.
+
+Accountless. 
+
+Age 18+ only.
+
+`);
+  var ticker = () => {
+    requestAnimationFrame(ticker);
+    tick.set(tick.$ + 1);
+  };
+  var loading2 = new Value(`Loading...
+
+ WASD Move > Q+E Rotate
+ Enter > Chat
+     ~ > Command
+ Space > Jump
+ 
+ Default Binds:
+
+ N: Selfie
+ M: NotSelfie
+ H: Hi | Hi! | Hello | Heya | Yo
+ F1: Help
+ F2: NotHelp
+`);
+  ticker();
+  var helptext = new Value(`\u{1F916}Commands\u{1F916}
+
+~ echo 
+echo on, persisted
+
+~ not echo 
+echo off, persisted
+
+~ avatar ...url 
+set avatar to URL, persisted
+
+~ clear avatar 
+set avatar to default
+
+~ bind key ...commands 
+bind key to commands, persisted
+
+~ not bind key
+unbinds key, persisted
+
+~ var name ...commands 
+binds variable name to commands
+
+~ not var name 
+unbinds variable name
+
+~ stats 
+show fps stats
+
+~ not stats
+hide fps stats
+
+~ heard
+show top heard messages
+
+~ not heard
+hide top heard messages
+
+~ help
+show this help
+
+~ not help
+hide this help
+
+~ voice ...nameToSearch
+set voice to nameToSearch ie: aus would find an Australian voice or UK for British, persisted
+per browser
+
+~ swap
+swap places with your doer
+
+~ visible
+show your avatar
+
+~ not visible
+hide your avatar
+
+~ selfie
+selfie camera mode
+
+~ not selfie
+not selfie camera mode
+
+
+`);
+
   // src/component/vrm.ts
   var currentVRM = new Value();
   var mirrorVRM = new Value();
@@ -33113,7 +31474,6 @@ not selfie camera mode
     var said = event.results[event.results.length - 1][0].transcript.trim();
     talk.set(said);
   });
-  var start = () => recognition.start();
   var cancels = [];
   binds.on(($binds) => {
     cancels.forEach((cancel) => cancel());
@@ -33128,19 +31488,2112 @@ not selfie camera mode
     });
   });
 
+  // node_modules/svelte/internal/index.mjs
+  function noop() {
+  }
+  function run(fn) {
+    return fn();
+  }
+  function blank_object() {
+    return /* @__PURE__ */ Object.create(null);
+  }
+  function run_all(fns) {
+    fns.forEach(run);
+  }
+  function is_function(thing) {
+    return typeof thing === "function";
+  }
+  function safe_not_equal(a2, b2) {
+    return a2 != a2 ? b2 == b2 : a2 !== b2 || (a2 && typeof a2 === "object" || typeof a2 === "function");
+  }
+  function is_empty(obj) {
+    return Object.keys(obj).length === 0;
+  }
+  function subscribe(store, ...callbacks) {
+    if (store == null) {
+      return noop;
+    }
+    const unsub = store.subscribe(...callbacks);
+    return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
+  }
+  function component_subscribe(component, store, callback) {
+    component.$$.on_destroy.push(subscribe(store, callback));
+  }
+  var is_hydrating = false;
+  function start_hydrating() {
+    is_hydrating = true;
+  }
+  function end_hydrating() {
+    is_hydrating = false;
+  }
+  function append(target, node) {
+    target.appendChild(node);
+  }
+  function insert(target, node, anchor) {
+    target.insertBefore(node, anchor || null);
+  }
+  function detach(node) {
+    node.parentNode.removeChild(node);
+  }
+  function element(name) {
+    return document.createElement(name);
+  }
+  function text(data) {
+    return document.createTextNode(data);
+  }
+  function space() {
+    return text(" ");
+  }
+  function empty() {
+    return text("");
+  }
+  function listen(node, event, handler, options) {
+    node.addEventListener(event, handler, options);
+    return () => node.removeEventListener(event, handler, options);
+  }
+  function attr(node, attribute, value) {
+    if (value == null)
+      node.removeAttribute(attribute);
+    else if (node.getAttribute(attribute) !== value)
+      node.setAttribute(attribute, value);
+  }
+  function set_custom_element_data(node, prop, value) {
+    if (prop in node) {
+      node[prop] = typeof node[prop] === "boolean" && value === "" ? true : value;
+    } else {
+      attr(node, prop, value);
+    }
+  }
+  function children(element2) {
+    return Array.from(element2.childNodes);
+  }
+  function set_input_value(input, value) {
+    input.value = value == null ? "" : value;
+  }
+  var current_component;
+  function set_current_component(component) {
+    current_component = component;
+  }
+  var dirty_components = [];
+  var binding_callbacks = [];
+  var render_callbacks = [];
+  var flush_callbacks = [];
+  var resolved_promise = Promise.resolve();
+  var update_scheduled = false;
+  function schedule_update() {
+    if (!update_scheduled) {
+      update_scheduled = true;
+      resolved_promise.then(flush);
+    }
+  }
+  function add_render_callback(fn) {
+    render_callbacks.push(fn);
+  }
+  var seen_callbacks = /* @__PURE__ */ new Set();
+  var flushidx = 0;
+  function flush() {
+    const saved_component = current_component;
+    do {
+      while (flushidx < dirty_components.length) {
+        const component = dirty_components[flushidx];
+        flushidx++;
+        set_current_component(component);
+        update(component.$$);
+      }
+      set_current_component(null);
+      dirty_components.length = 0;
+      flushidx = 0;
+      while (binding_callbacks.length)
+        binding_callbacks.pop()();
+      for (let i2 = 0; i2 < render_callbacks.length; i2 += 1) {
+        const callback = render_callbacks[i2];
+        if (!seen_callbacks.has(callback)) {
+          seen_callbacks.add(callback);
+          callback();
+        }
+      }
+      render_callbacks.length = 0;
+    } while (dirty_components.length);
+    while (flush_callbacks.length) {
+      flush_callbacks.pop()();
+    }
+    update_scheduled = false;
+    seen_callbacks.clear();
+    set_current_component(saved_component);
+  }
+  function update($$) {
+    if ($$.fragment !== null) {
+      $$.update();
+      run_all($$.before_update);
+      const dirty = $$.dirty;
+      $$.dirty = [-1];
+      $$.fragment && $$.fragment.p($$.ctx, dirty);
+      $$.after_update.forEach(add_render_callback);
+    }
+  }
+  var outroing = /* @__PURE__ */ new Set();
+  var outros;
+  function group_outros() {
+    outros = {
+      r: 0,
+      c: [],
+      p: outros
+    };
+  }
+  function check_outros() {
+    if (!outros.r) {
+      run_all(outros.c);
+    }
+    outros = outros.p;
+  }
+  function transition_in(block, local) {
+    if (block && block.i) {
+      outroing.delete(block);
+      block.i(local);
+    }
+  }
+  function transition_out(block, local, detach2, callback) {
+    if (block && block.o) {
+      if (outroing.has(block))
+        return;
+      outroing.add(block);
+      outros.c.push(() => {
+        outroing.delete(block);
+        if (callback) {
+          if (detach2)
+            block.d(1);
+          callback();
+        }
+      });
+      block.o(local);
+    }
+  }
+  var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
+  function create_component(block) {
+    block && block.c();
+  }
+  function mount_component(component, target, anchor, customElement) {
+    const { fragment: fragment2, on_mount, on_destroy, after_update } = component.$$;
+    fragment2 && fragment2.m(target, anchor);
+    if (!customElement) {
+      add_render_callback(() => {
+        const new_on_destroy = on_mount.map(run).filter(is_function);
+        if (on_destroy) {
+          on_destroy.push(...new_on_destroy);
+        } else {
+          run_all(new_on_destroy);
+        }
+        component.$$.on_mount = [];
+      });
+    }
+    after_update.forEach(add_render_callback);
+  }
+  function destroy_component(component, detaching) {
+    const $$ = component.$$;
+    if ($$.fragment !== null) {
+      run_all($$.on_destroy);
+      $$.fragment && $$.fragment.d(detaching);
+      $$.on_destroy = $$.fragment = null;
+      $$.ctx = [];
+    }
+  }
+  function make_dirty(component, i2) {
+    if (component.$$.dirty[0] === -1) {
+      dirty_components.push(component);
+      schedule_update();
+      component.$$.dirty.fill(0);
+    }
+    component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
+  }
+  function init(component, options, instance8, create_fragment10, not_equal, props, append_styles, dirty = [-1]) {
+    const parent_component = current_component;
+    set_current_component(component);
+    const $$ = component.$$ = {
+      fragment: null,
+      ctx: null,
+      props,
+      update: noop,
+      not_equal,
+      bound: blank_object(),
+      on_mount: [],
+      on_destroy: [],
+      on_disconnect: [],
+      before_update: [],
+      after_update: [],
+      context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
+      callbacks: blank_object(),
+      dirty,
+      skip_bound: false,
+      root: options.target || parent_component.$$.root
+    };
+    append_styles && append_styles($$.root);
+    let ready = false;
+    $$.ctx = instance8 ? instance8(component, options.props || {}, (i2, ret, ...rest) => {
+      const value = rest.length ? rest[0] : ret;
+      if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
+        if (!$$.skip_bound && $$.bound[i2])
+          $$.bound[i2](value);
+        if (ready)
+          make_dirty(component, i2);
+      }
+      return ret;
+    }) : [];
+    $$.update();
+    ready = true;
+    run_all($$.before_update);
+    $$.fragment = create_fragment10 ? create_fragment10($$.ctx) : false;
+    if (options.target) {
+      if (options.hydrate) {
+        start_hydrating();
+        const nodes = children(options.target);
+        $$.fragment && $$.fragment.l(nodes);
+        nodes.forEach(detach);
+      } else {
+        $$.fragment && $$.fragment.c();
+      }
+      if (options.intro)
+        transition_in(component.$$.fragment);
+      mount_component(component, options.target, options.anchor, options.customElement);
+      end_hydrating();
+      flush();
+    }
+    set_current_component(parent_component);
+  }
+  var SvelteElement;
+  if (typeof HTMLElement === "function") {
+    SvelteElement = class extends HTMLElement {
+      constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+      }
+      connectedCallback() {
+        const { on_mount } = this.$$;
+        this.$$.on_disconnect = on_mount.map(run).filter(is_function);
+        for (const key in this.$$.slotted) {
+          this.appendChild(this.$$.slotted[key]);
+        }
+      }
+      attributeChangedCallback(attr2, _oldValue, newValue) {
+        this[attr2] = newValue;
+      }
+      disconnectedCallback() {
+        run_all(this.$$.on_disconnect);
+      }
+      $destroy() {
+        destroy_component(this, 1);
+        this.$destroy = noop;
+      }
+      $on(type, callback) {
+        const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
+        callbacks.push(callback);
+        return () => {
+          const index = callbacks.indexOf(callback);
+          if (index !== -1)
+            callbacks.splice(index, 1);
+        };
+      }
+      $set($$props) {
+        if (this.$$set && !is_empty($$props)) {
+          this.$$.skip_bound = true;
+          this.$$set($$props);
+          this.$$.skip_bound = false;
+        }
+      }
+    };
+  }
+  var SvelteComponent = class {
+    $destroy() {
+      destroy_component(this, 1);
+      this.$destroy = noop;
+    }
+    $on(type, callback) {
+      const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
+      callbacks.push(callback);
+      return () => {
+        const index = callbacks.indexOf(callback);
+        if (index !== -1)
+          callbacks.splice(index, 1);
+      };
+    }
+    $set($$props) {
+      if (this.$$set && !is_empty($$props)) {
+        this.$$.skip_bound = true;
+        this.$$set($$props);
+        this.$$.skip_bound = false;
+      }
+    }
+  };
+
+  // src/ui/heard.svelte
+  function create_if_block(ctx) {
+    let div;
+    let input;
+    return {
+      c() {
+        div = element("div");
+        input = element("input");
+        attr(input, "type", "text");
+        attr(input, "class", "entry svelte-pqe1v5");
+        input.readOnly = true;
+        attr(div, "class", "lofi svelte-pqe1v5");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, input);
+        ctx[2](input);
+      },
+      p: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        ctx[2](null);
+      }
+    };
+  }
+  function create_fragment(ctx) {
+    let if_block_anchor;
+    let if_block = ctx[1] && create_if_block(ctx);
+    return {
+      c() {
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (ctx2[1]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block(ctx2);
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(if_block_anchor);
+      }
+    };
+  }
+  function instance($$self, $$props, $$invalidate) {
+    let $open_heard;
+    component_subscribe($$self, open_heard, ($$value) => $$invalidate(1, $open_heard = $$value));
+    let text2;
+    talk.on(() => {
+      if (!text2 || !talk.$)
+        return;
+      $$invalidate(0, text2.value = talk.$, text2);
+    });
+    function input_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        text2 = $$value;
+        $$invalidate(0, text2);
+      });
+    }
+    return [text2, $open_heard, input_binding];
+  }
+  var Heard = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance, create_fragment, safe_not_equal, {});
+    }
+  };
+  var heard_default = Heard;
+
+  // src/ui/help.svelte
+  function create_fragment2(ctx) {
+    let div5;
+    let div0;
+    let t0;
+    let div4;
+    let div3;
+    let div1;
+    let t1;
+    let textarea;
+    let t2;
+    let div2;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        div5 = element("div");
+        div0 = element("div");
+        t0 = space();
+        div4 = element("div");
+        div3 = element("div");
+        div1 = element("div");
+        t1 = space();
+        textarea = element("textarea");
+        t2 = space();
+        div2 = element("div");
+        attr(div0, "class", "sprites sprite svelte-1gdirzm");
+        attr(div1, "class", "flex svelte-1gdirzm");
+        attr(textarea, "type", "text");
+        attr(textarea, "class", "text button svelte-1gdirzm");
+        attr(textarea, "maxlength", "200");
+        textarea.value = ctx[0];
+        textarea.readOnly = true;
+        attr(div2, "class", "flex svelte-1gdirzm");
+        attr(div3, "class", "span2 full svelte-1gdirzm");
+        attr(div4, "class", "vbox svelte-1gdirzm");
+        attr(div5, "class", "menu svelte-1gdirzm");
+      },
+      m(target, anchor) {
+        insert(target, div5, anchor);
+        append(div5, div0);
+        append(div5, t0);
+        append(div5, div4);
+        append(div4, div3);
+        append(div3, div1);
+        append(div3, t1);
+        append(div3, textarea);
+        append(div3, t2);
+        append(div3, div2);
+        if (!mounted) {
+          dispose = [
+            listen(div1, "click", ctx[1]),
+            listen(div2, "click", ctx[1])
+          ];
+          mounted = true;
+        }
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 1) {
+          textarea.value = ctx2[0];
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div5);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function instance2($$self, $$props, $$invalidate) {
+    let $helptext;
+    component_subscribe($$self, helptext, ($$value) => $$invalidate(0, $helptext = $$value));
+    function close() {
+      open_help.set(false);
+    }
+    return [$helptext, close];
+  }
+  var Help = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance2, create_fragment2, safe_not_equal, {});
+    }
+  };
+  var help_default = Help;
+
+  // src/ui/title.svelte
+  function create_fragment3(ctx) {
+    let div3;
+    let t8;
+    let center;
+    return {
+      c() {
+        div3 = element("div");
+        div3.innerHTML = `<div class="favicon svelte-1uatlh0"></div> 
+	<div class="full svelte-1uatlh0"><div class="title svelte-1uatlh0"><offset class="svelte-1uatlh0"><b class="svelte-1uatlh0">a</b>  <br/></offset> 
+			<b class="svelte-1uatlh0">G</b>oblin
+			<offset class="svelte-1uatlh0"><b class="svelte-1uatlh0">L</b>ife</offset></div></div>`;
+        t8 = space();
+        center = element("center");
+        center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-1uatlh0"><img style="border:0px;height:4vh;" src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" border="0" alt="Buy Me a Coffee at ko-fi.com"/></a> 
+	<a href="https://discord.gg/8tkEQwsmwM" target="_blank" class="svelte-1uatlh0">\u{1F4AC}</a>`;
+        attr(div3, "class", "intro svelte-1uatlh0");
+      },
+      m(target, anchor) {
+        insert(target, div3, anchor);
+        insert(target, t8, anchor);
+        insert(target, center, anchor);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div3);
+        if (detaching)
+          detach(t8);
+        if (detaching)
+          detach(center);
+      }
+    };
+  }
+  var Title = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, create_fragment3, safe_not_equal, {});
+    }
+  };
+  var title_default = Title;
+
+  // src/ui/loading.svelte
+  function create_fragment4(ctx) {
+    let div5;
+    let div0;
+    let t0;
+    let title;
+    let t1;
+    let div4;
+    let div3;
+    let div1;
+    let t2;
+    let textarea;
+    let t3;
+    let div2;
+    let current;
+    title = new title_default({});
+    return {
+      c() {
+        div5 = element("div");
+        div0 = element("div");
+        t0 = space();
+        create_component(title.$$.fragment);
+        t1 = space();
+        div4 = element("div");
+        div3 = element("div");
+        div1 = element("div");
+        t2 = space();
+        textarea = element("textarea");
+        t3 = space();
+        div2 = element("div");
+        attr(div0, "class", "sprites sprite svelte-qfprcl");
+        attr(div1, "class", "flex svelte-qfprcl");
+        attr(textarea, "type", "text");
+        attr(textarea, "class", "text button svelte-qfprcl");
+        attr(textarea, "maxlength", "200");
+        textarea.value = ctx[0];
+        textarea.readOnly = true;
+        attr(div2, "class", "flex svelte-qfprcl");
+        attr(div3, "class", "span2 full svelte-qfprcl");
+        attr(div4, "class", "vbox svelte-qfprcl");
+        attr(div5, "class", "menu svelte-qfprcl");
+      },
+      m(target, anchor) {
+        insert(target, div5, anchor);
+        append(div5, div0);
+        append(div5, t0);
+        mount_component(title, div5, null);
+        append(div5, t1);
+        append(div5, div4);
+        append(div4, div3);
+        append(div3, div1);
+        append(div3, t2);
+        append(div3, textarea);
+        append(div3, t3);
+        append(div3, div2);
+        current = true;
+      },
+      p(ctx2, [dirty]) {
+        if (!current || dirty & 1) {
+          textarea.value = ctx2[0];
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(title.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(title.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div5);
+        destroy_component(title);
+      }
+    };
+  }
+  function instance3($$self, $$props, $$invalidate) {
+    let $loading;
+    component_subscribe($$self, loading2, ($$value) => $$invalidate(0, $loading = $$value));
+    return [$loading];
+  }
+  var Loading = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance3, create_fragment4, safe_not_equal, {});
+    }
+  };
+  var loading_default = Loading;
+
+  // src/ui/text.svelte
+  function create_if_block2(ctx) {
+    let div;
+    let input;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        div = element("div");
+        input = element("input");
+        attr(input, "type", "text");
+        attr(input, "class", "entry svelte-e0lgn5");
+        attr(div, "class", "lofi svelte-e0lgn5");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, input);
+        set_input_value(input, ctx[1]);
+        ctx[5](input);
+        if (!mounted) {
+          dispose = [
+            listen(input, "input", ctx[4]),
+            listen(input, "blur", ctx[3]),
+            listen(input, "keydown", ctx[6])
+          ];
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 2 && input.value !== ctx2[1]) {
+          set_input_value(input, ctx2[1]);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        ctx[5](null);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function create_fragment5(ctx) {
+    let if_block_anchor;
+    let if_block = ctx[1] !== void 0 && create_if_block2(ctx);
+    return {
+      c() {
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (ctx2[1] !== void 0) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block2(ctx2);
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(if_block_anchor);
+      }
+    };
+  }
+  function instance4($$self, $$props, $$invalidate) {
+    let $open_text;
+    component_subscribe($$self, open_text, ($$value) => $$invalidate(1, $open_text = $$value));
+    let ele;
+    function send() {
+      talk.set(open_text.$);
+      open_text.set(void 0);
+    }
+    function escape2() {
+      open_text.set(void 0);
+    }
+    key_down.on(() => {
+      switch (key_down.$) {
+        case "`":
+          if (open_text.$ === void 0) {
+            open_text.set("~ ");
+            requestAnimationFrame(() => ele?.focus());
+          }
+          break;
+        case "enter":
+          if (open_text.$ === void 0) {
+            open_text.set("");
+            requestAnimationFrame(() => ele?.focus());
+          }
+      }
+    });
+    function input_input_handler() {
+      $open_text = this.value;
+      open_text.set($open_text);
+    }
+    function input_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        ele = $$value;
+        $$invalidate(0, ele);
+      });
+    }
+    const keydown_handler = (e) => {
+      if (e.key === "Enter") {
+        send();
+      }
+      switch (e.key) {
+        case "Enter":
+          send();
+          break;
+        case "Escape":
+          escape2();
+          break;
+      }
+    };
+    return [
+      ele,
+      $open_text,
+      send,
+      escape2,
+      input_input_handler,
+      input_binding,
+      keydown_handler
+    ];
+  }
+  var Text = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance4, create_fragment5, safe_not_equal, {});
+    }
+  };
+  var text_default = Text;
+
+  // src/template/characters-assets.svelte
+  function create_fragment6(ctx) {
+    let a_mixin;
+    return {
+      c() {
+        a_mixin = element("a-mixin");
+        set_custom_element_data(a_mixin, "id", "character");
+        set_custom_element_data(a_mixin, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 1;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.2 0.6 0.2; offset: 0 0.75 0");
+      },
+      m(target, anchor) {
+        insert(target, a_mixin, anchor);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_mixin);
+      }
+    };
+  }
+  var Characters_assets = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, create_fragment6, safe_not_equal, {});
+    }
+  };
+  var characters_assets_default = Characters_assets;
+
+  // src/component/wasd-controller.ts
+  var vec3 = new AFRAME.THREE.Vector3();
+  var quat = new AFRAME.THREE.Quaternion();
+  AFRAME.registerComponent("wasd-controller", {
+    schema: {
+      speed: { type: "number", default: 0.2 },
+      rot: { type: "number", default: 0.25 }
+    },
+    tick(_2, delta) {
+      if (!this.el.body)
+        return;
+      const o3d = this.el.object3D;
+      let force;
+      let torq;
+      vec3.set(0, 0, 0);
+      let intensity = 1;
+      let hop = 2;
+      if (key_map.$["shift"]) {
+        intensity = 1.5;
+      }
+      if (key_map.$[" "] && o3d.position.y < 1) {
+        hop = 15;
+      }
+      if (key_map.$["w"]) {
+        vec3.y = hop;
+        vec3.z += -this.data.speed * delta * intensity;
+      }
+      if (key_map.$["s"]) {
+        vec3.y = hop;
+        vec3.z += this.data.speed * delta * intensity;
+      }
+      if (key_map.$["a"]) {
+        vec3.y = hop;
+        vec3.x += -this.data.speed * delta * intensity;
+      }
+      if (key_map.$["d"]) {
+        vec3.y = hop;
+        vec3.x += this.data.speed * delta * intensity;
+      }
+      if (key_map.$["q"]) {
+        torq = new Ammo.btVector3(0, delta * this.data.rot, 0);
+        this.el.body.applyTorque(torq);
+        this.el.body.activate();
+      }
+      if (key_map.$["e"]) {
+        torq = new Ammo.btVector3(0, -delta * this.data.rot, 0);
+        this.el.body.applyTorque(torq);
+        this.el.body.activate();
+      }
+      if (Math.abs(vec3.length()) > 0 && camera.$) {
+        camera.$.updateMatrixWorld();
+        quat.setFromRotationMatrix(camera.$.matrixWorld);
+        vec3.applyQuaternion(quat);
+        force = new Ammo.btVector3(vec3.x, vec3.y, vec3.z);
+        this.el.body.applyForce(force);
+        this.el.body.activate();
+        Ammo.destroy(force);
+      }
+      if (torq)
+        Ammo.destroy(torq);
+    }
+  });
+
+  // node_modules/kalidokit/dist/utils/helpers.js
+  var helpers_exports = {};
+  __export(helpers_exports, {
+    RestingDefault: () => RestingDefault,
+    clamp: () => clamp2,
+    remap: () => remap
+  });
+  var clamp2 = (val, min, max) => {
+    return Math.max(Math.min(val, max), min);
+  };
+  var remap = (val, min, max) => {
+    return (clamp2(val, min, max) - min) / (max - min);
+  };
+  var RestingDefault = {
+    Face: {
+      eye: {
+        l: 1,
+        r: 1
+      },
+      mouth: {
+        x: 0,
+        y: 0,
+        shape: {
+          A: 0,
+          E: 0,
+          I: 0,
+          O: 0,
+          U: 0
+        }
+      },
+      head: {
+        x: 0,
+        y: 0,
+        z: 0,
+        width: 0.3,
+        height: 0.6,
+        position: {
+          x: 0.5,
+          y: 0.5,
+          z: 0
+        }
+      },
+      brow: 0,
+      pupil: {
+        x: 0,
+        y: 0
+      }
+    },
+    Pose: {
+      RightUpperArm: {
+        x: 0,
+        y: 0,
+        z: -1.25
+      },
+      LeftUpperArm: {
+        x: 0,
+        y: 0,
+        z: 1.25
+      },
+      RightLowerArm: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      LeftLowerArm: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      LeftUpperLeg: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      RightUpperLeg: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      RightLowerLeg: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      LeftLowerLeg: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      LeftHand: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      RightHand: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      Spine: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      Hips: {
+        position: {
+          x: 0,
+          y: 0,
+          z: 0
+        },
+        rotation: {
+          x: 0,
+          y: 0,
+          z: 0
+        }
+      }
+    },
+    RightHand: {
+      RightWrist: {
+        x: -0.13,
+        y: -0.07,
+        z: -1.04
+      },
+      RightRingProximal: {
+        x: 0,
+        y: 0,
+        z: -0.13
+      },
+      RightRingIntermediate: {
+        x: 0,
+        y: 0,
+        z: -0.4
+      },
+      RightRingDistal: {
+        x: 0,
+        y: 0,
+        z: -0.04
+      },
+      RightIndexProximal: {
+        x: 0,
+        y: 0,
+        z: -0.24
+      },
+      RightIndexIntermediate: {
+        x: 0,
+        y: 0,
+        z: -0.25
+      },
+      RightIndexDistal: {
+        x: 0,
+        y: 0,
+        z: -0.06
+      },
+      RightMiddleProximal: {
+        x: 0,
+        y: 0,
+        z: -0.09
+      },
+      RightMiddleIntermediate: {
+        x: 0,
+        y: 0,
+        z: -0.44
+      },
+      RightMiddleDistal: {
+        x: 0,
+        y: 0,
+        z: -0.06
+      },
+      RightThumbProximal: {
+        x: -0.23,
+        y: -0.33,
+        z: -0.12
+      },
+      RightThumbIntermediate: {
+        x: -0.2,
+        y: -0.199,
+        z: -0.0139
+      },
+      RightThumbDistal: {
+        x: -0.2,
+        y: 2e-3,
+        z: 0.15
+      },
+      RightLittleProximal: {
+        x: 0,
+        y: 0,
+        z: -0.09
+      },
+      RightLittleIntermediate: {
+        x: 0,
+        y: 0,
+        z: -0.225
+      },
+      RightLittleDistal: {
+        x: 0,
+        y: 0,
+        z: -0.1
+      }
+    },
+    LeftHand: {
+      LeftWrist: {
+        x: -0.13,
+        y: -0.07,
+        z: -1.04
+      },
+      LeftRingProximal: {
+        x: 0,
+        y: 0,
+        z: 0.13
+      },
+      LeftRingIntermediate: {
+        x: 0,
+        y: 0,
+        z: 0.4
+      },
+      LeftRingDistal: {
+        x: 0,
+        y: 0,
+        z: 0.049
+      },
+      LeftIndexProximal: {
+        x: 0,
+        y: 0,
+        z: 0.24
+      },
+      LeftIndexIntermediate: {
+        x: 0,
+        y: 0,
+        z: 0.25
+      },
+      LeftIndexDistal: {
+        x: 0,
+        y: 0,
+        z: 0.06
+      },
+      LeftMiddleProximal: {
+        x: 0,
+        y: 0,
+        z: 0.09
+      },
+      LeftMiddleIntermediate: {
+        x: 0,
+        y: 0,
+        z: 0.44
+      },
+      LeftMiddleDistal: {
+        x: 0,
+        y: 0,
+        z: 0.066
+      },
+      LeftThumbProximal: {
+        x: -0.23,
+        y: 0.33,
+        z: 0.12
+      },
+      LeftThumbIntermediate: {
+        x: -0.2,
+        y: 0.25,
+        z: 0.05
+      },
+      LeftThumbDistal: {
+        x: -0.2,
+        y: 0.17,
+        z: -0.06
+      },
+      LeftLittleProximal: {
+        x: 0,
+        y: 0,
+        z: 0.17
+      },
+      LeftLittleIntermediate: {
+        x: 0,
+        y: 0,
+        z: 0.4
+      },
+      LeftLittleDistal: {
+        x: 0,
+        y: 0,
+        z: 0.1
+      }
+    }
+  };
+
+  // node_modules/kalidokit/dist/constants.js
+  var RIGHT = "Right";
+  var LEFT = "Left";
+  var PI = Math.PI;
+  var TWO_PI = Math.PI * 2;
+
+  // node_modules/kalidokit/dist/utils/vector.js
+  var Vector = class {
+    constructor(a2, b2, c2) {
+      var _a, _b, _c, _d, _e2, _f;
+      if (Array.isArray(a2)) {
+        this.x = (_a = a2[0]) !== null && _a !== void 0 ? _a : 0;
+        this.y = (_b = a2[1]) !== null && _b !== void 0 ? _b : 0;
+        this.z = (_c = a2[2]) !== null && _c !== void 0 ? _c : 0;
+        return;
+      }
+      if (!!a2 && typeof a2 === "object") {
+        this.x = (_d = a2.x) !== null && _d !== void 0 ? _d : 0;
+        this.y = (_e2 = a2.y) !== null && _e2 !== void 0 ? _e2 : 0;
+        this.z = (_f = a2.z) !== null && _f !== void 0 ? _f : 0;
+        return;
+      }
+      this.x = a2 !== null && a2 !== void 0 ? a2 : 0;
+      this.y = b2 !== null && b2 !== void 0 ? b2 : 0;
+      this.z = c2 !== null && c2 !== void 0 ? c2 : 0;
+    }
+    negative() {
+      return new Vector(-this.x, -this.y, -this.z);
+    }
+    add(v2) {
+      if (v2 instanceof Vector)
+        return new Vector(this.x + v2.x, this.y + v2.y, this.z + v2.z);
+      else
+        return new Vector(this.x + v2, this.y + v2, this.z + v2);
+    }
+    subtract(v2) {
+      if (v2 instanceof Vector)
+        return new Vector(this.x - v2.x, this.y - v2.y, this.z - v2.z);
+      else
+        return new Vector(this.x - v2, this.y - v2, this.z - v2);
+    }
+    multiply(v2) {
+      if (v2 instanceof Vector)
+        return new Vector(this.x * v2.x, this.y * v2.y, this.z * v2.z);
+      else
+        return new Vector(this.x * v2, this.y * v2, this.z * v2);
+    }
+    divide(v2) {
+      if (v2 instanceof Vector)
+        return new Vector(this.x / v2.x, this.y / v2.y, this.z / v2.z);
+      else
+        return new Vector(this.x / v2, this.y / v2, this.z / v2);
+    }
+    equals(v2) {
+      return this.x == v2.x && this.y == v2.y && this.z == v2.z;
+    }
+    dot(v2) {
+      return this.x * v2.x + this.y * v2.y + this.z * v2.z;
+    }
+    cross(v2) {
+      return new Vector(this.y * v2.z - this.z * v2.y, this.z * v2.x - this.x * v2.z, this.x * v2.y - this.y * v2.x);
+    }
+    length() {
+      return Math.sqrt(this.dot(this));
+    }
+    distance(v2, d2 = 3) {
+      if (d2 === 2)
+        return Math.sqrt(Math.pow(this.x - v2.x, 2) + Math.pow(this.y - v2.y, 2));
+      else
+        return Math.sqrt(Math.pow(this.x - v2.x, 2) + Math.pow(this.y - v2.y, 2) + Math.pow(this.z - v2.z, 2));
+    }
+    lerp(v2, fraction) {
+      return v2.subtract(this).multiply(fraction).add(this);
+    }
+    unit() {
+      return this.divide(this.length());
+    }
+    min() {
+      return Math.min(Math.min(this.x, this.y), this.z);
+    }
+    max() {
+      return Math.max(Math.max(this.x, this.y), this.z);
+    }
+    toSphericalCoords(axisMap = { x: "x", y: "y", z: "z" }) {
+      return {
+        theta: Math.atan2(this[axisMap.y], this[axisMap.x]),
+        phi: Math.acos(this[axisMap.z] / this.length())
+      };
+    }
+    angleTo(a2) {
+      return Math.acos(this.dot(a2) / (this.length() * a2.length()));
+    }
+    toArray(n2) {
+      return [this.x, this.y, this.z].slice(0, n2 || 3);
+    }
+    clone() {
+      return new Vector(this.x, this.y, this.z);
+    }
+    init(x2, y2, z2) {
+      this.x = x2;
+      this.y = y2;
+      this.z = z2;
+      return this;
+    }
+    static negative(a2, b2 = new Vector()) {
+      b2.x = -a2.x;
+      b2.y = -a2.y;
+      b2.z = -a2.z;
+      return b2;
+    }
+    static add(a2, b2, c2 = new Vector()) {
+      if (b2 instanceof Vector) {
+        c2.x = a2.x + b2.x;
+        c2.y = a2.y + b2.y;
+        c2.z = a2.z + b2.z;
+      } else {
+        c2.x = a2.x + b2;
+        c2.y = a2.y + b2;
+        c2.z = a2.z + b2;
+      }
+      return c2;
+    }
+    static subtract(a2, b2, c2 = new Vector()) {
+      if (b2 instanceof Vector) {
+        c2.x = a2.x - b2.x;
+        c2.y = a2.y - b2.y;
+        c2.z = a2.z - b2.z;
+      } else {
+        c2.x = a2.x - b2;
+        c2.y = a2.y - b2;
+        c2.z = a2.z - b2;
+      }
+      return c2;
+    }
+    static multiply(a2, b2, c2 = new Vector()) {
+      if (b2 instanceof Vector) {
+        c2.x = a2.x * b2.x;
+        c2.y = a2.y * b2.y;
+        c2.z = a2.z * b2.z;
+      } else {
+        c2.x = a2.x * b2;
+        c2.y = a2.y * b2;
+        c2.z = a2.z * b2;
+      }
+      return c2;
+    }
+    static divide(a2, b2, c2 = new Vector()) {
+      if (b2 instanceof Vector) {
+        c2.x = a2.x / b2.x;
+        c2.y = a2.y / b2.y;
+        c2.z = a2.z / b2.z;
+      } else {
+        c2.x = a2.x / b2;
+        c2.y = a2.y / b2;
+        c2.z = a2.z / b2;
+      }
+      return c2;
+    }
+    static cross(a2, b2, c2 = new Vector()) {
+      c2.x = a2.y * b2.z - a2.z * b2.y;
+      c2.y = a2.z * b2.x - a2.x * b2.z;
+      c2.z = a2.x * b2.y - a2.y * b2.x;
+      return c2;
+    }
+    static unit(a2, b2) {
+      const length = a2.length();
+      b2.x = a2.x / length;
+      b2.y = a2.y / length;
+      b2.z = a2.z / length;
+      return b2;
+    }
+    static fromAngles(theta, phi) {
+      return new Vector(Math.cos(theta) * Math.cos(phi), Math.sin(phi), Math.sin(theta) * Math.cos(phi));
+    }
+    static randomDirection() {
+      return Vector.fromAngles(Math.random() * TWO_PI, Math.asin(Math.random() * 2 - 1));
+    }
+    static min(a2, b2) {
+      return new Vector(Math.min(a2.x, b2.x), Math.min(a2.y, b2.y), Math.min(a2.z, b2.z));
+    }
+    static max(a2, b2) {
+      return new Vector(Math.max(a2.x, b2.x), Math.max(a2.y, b2.y), Math.max(a2.z, b2.z));
+    }
+    static lerp(a2, b2, fraction) {
+      if (b2 instanceof Vector) {
+        return b2.subtract(a2).multiply(fraction).add(a2);
+      } else {
+        return (b2 - a2) * fraction + a2;
+      }
+    }
+    static fromArray(a2) {
+      if (Array.isArray(a2)) {
+        return new Vector(a2[0], a2[1], a2[2]);
+      }
+      return new Vector(a2.x, a2.y, a2.z);
+    }
+    static angleBetween(a2, b2) {
+      return a2.angleTo(b2);
+    }
+    static distance(a2, b2, d2) {
+      if (d2 === 2)
+        return Math.sqrt(Math.pow(a2.x - b2.x, 2) + Math.pow(a2.y - b2.y, 2));
+      else
+        return Math.sqrt(Math.pow(a2.x - b2.x, 2) + Math.pow(a2.y - b2.y, 2) + Math.pow(a2.z - b2.z, 2));
+    }
+    static toDegrees(a2) {
+      return a2 * (180 / PI);
+    }
+    static normalizeAngle(radians) {
+      let angle = radians % TWO_PI;
+      angle = angle > PI ? angle - TWO_PI : angle < -PI ? TWO_PI + angle : angle;
+      return angle / PI;
+    }
+    static normalizeRadians(radians) {
+      if (radians >= PI / 2) {
+        radians -= TWO_PI;
+      }
+      if (radians <= -PI / 2) {
+        radians += TWO_PI;
+        radians = PI - radians;
+      }
+      return radians / PI;
+    }
+    static find2DAngle(cx, cy, ex, ey) {
+      const dy = ey - cy;
+      const dx = ex - cx;
+      const theta = Math.atan2(dy, dx);
+      return theta;
+    }
+    static findRotation(a2, b2, normalize = true) {
+      if (normalize) {
+        return new Vector(Vector.normalizeRadians(Vector.find2DAngle(a2.z, a2.x, b2.z, b2.x)), Vector.normalizeRadians(Vector.find2DAngle(a2.z, a2.y, b2.z, b2.y)), Vector.normalizeRadians(Vector.find2DAngle(a2.x, a2.y, b2.x, b2.y)));
+      } else {
+        return new Vector(Vector.find2DAngle(a2.z, a2.x, b2.z, b2.x), Vector.find2DAngle(a2.z, a2.y, b2.z, b2.y), Vector.find2DAngle(a2.x, a2.y, b2.x, b2.y));
+      }
+    }
+    static rollPitchYaw(a2, b2, c2) {
+      if (!c2) {
+        return new Vector(Vector.normalizeAngle(Vector.find2DAngle(a2.z, a2.y, b2.z, b2.y)), Vector.normalizeAngle(Vector.find2DAngle(a2.z, a2.x, b2.z, b2.x)), Vector.normalizeAngle(Vector.find2DAngle(a2.x, a2.y, b2.x, b2.y)));
+      }
+      const qb = b2.subtract(a2);
+      const qc = c2.subtract(a2);
+      const n2 = qb.cross(qc);
+      const unitZ = n2.unit();
+      const unitX = qb.unit();
+      const unitY = unitZ.cross(unitX);
+      const beta = Math.asin(unitZ.x) || 0;
+      const alpha = Math.atan2(-unitZ.y, unitZ.z) || 0;
+      const gamma = Math.atan2(-unitY.x, unitX.x) || 0;
+      return new Vector(Vector.normalizeAngle(alpha), Vector.normalizeAngle(beta), Vector.normalizeAngle(gamma));
+    }
+    static angleBetween3DCoords(a2, b2, c2) {
+      if (!(a2 instanceof Vector)) {
+        a2 = new Vector(a2);
+        b2 = new Vector(b2);
+        c2 = new Vector(c2);
+      }
+      const v1 = a2.subtract(b2);
+      const v2 = c2.subtract(b2);
+      const v1norm = v1.unit();
+      const v2norm = v2.unit();
+      const dotProducts = v1norm.dot(v2norm);
+      const angle = Math.acos(dotProducts);
+      return Vector.normalizeRadians(angle);
+    }
+    static getRelativeSphericalCoords(a2, b2, c2, axisMap) {
+      if (!(a2 instanceof Vector)) {
+        a2 = new Vector(a2);
+        b2 = new Vector(b2);
+        c2 = new Vector(c2);
+      }
+      const v1 = b2.subtract(a2);
+      const v2 = c2.subtract(b2);
+      const v1norm = v1.unit();
+      const v2norm = v2.unit();
+      const { theta: theta1, phi: phi1 } = v1norm.toSphericalCoords(axisMap);
+      const { theta: theta2, phi: phi2 } = v2norm.toSphericalCoords(axisMap);
+      const theta = theta1 - theta2;
+      const phi = phi1 - phi2;
+      return {
+        theta: Vector.normalizeAngle(theta),
+        phi: Vector.normalizeAngle(phi)
+      };
+    }
+    static getSphericalCoords(a2, b2, axisMap = { x: "x", y: "y", z: "z" }) {
+      if (!(a2 instanceof Vector)) {
+        a2 = new Vector(a2);
+        b2 = new Vector(b2);
+      }
+      const v1 = b2.subtract(a2);
+      const v1norm = v1.unit();
+      const { theta, phi } = v1norm.toSphericalCoords(axisMap);
+      return {
+        theta: Vector.normalizeAngle(-theta),
+        phi: Vector.normalizeAngle(PI / 2 - phi)
+      };
+    }
+  };
+
+  // node_modules/kalidokit/dist/PoseSolver/calcArms.js
+  var calcArms = (lm) => {
+    const UpperArm = {
+      r: Vector.findRotation(lm[11], lm[13]),
+      l: Vector.findRotation(lm[12], lm[14])
+    };
+    UpperArm.r.y = Vector.angleBetween3DCoords(lm[12], lm[11], lm[13]);
+    UpperArm.l.y = Vector.angleBetween3DCoords(lm[11], lm[12], lm[14]);
+    const LowerArm = {
+      r: Vector.findRotation(lm[13], lm[15]),
+      l: Vector.findRotation(lm[14], lm[16])
+    };
+    LowerArm.r.y = Vector.angleBetween3DCoords(lm[11], lm[13], lm[15]);
+    LowerArm.l.y = Vector.angleBetween3DCoords(lm[12], lm[14], lm[16]);
+    LowerArm.r.z = clamp2(LowerArm.r.z, -2.14, 0);
+    LowerArm.l.z = clamp2(LowerArm.l.z, -2.14, 0);
+    const Hand = {
+      r: Vector.findRotation(Vector.fromArray(lm[15]), Vector.lerp(Vector.fromArray(lm[17]), Vector.fromArray(lm[19]), 0.5)),
+      l: Vector.findRotation(Vector.fromArray(lm[16]), Vector.lerp(Vector.fromArray(lm[18]), Vector.fromArray(lm[20]), 0.5))
+    };
+    const rightArmRig = rigArm(UpperArm.r, LowerArm.r, Hand.r, RIGHT);
+    const leftArmRig = rigArm(UpperArm.l, LowerArm.l, Hand.l, LEFT);
+    return {
+      UpperArm: {
+        r: rightArmRig.UpperArm,
+        l: leftArmRig.UpperArm
+      },
+      LowerArm: {
+        r: rightArmRig.LowerArm,
+        l: leftArmRig.LowerArm
+      },
+      Hand: {
+        r: rightArmRig.Hand,
+        l: leftArmRig.Hand
+      },
+      Unscaled: {
+        UpperArm,
+        LowerArm,
+        Hand
+      }
+    };
+  };
+  var rigArm = (UpperArm, LowerArm, Hand, side = RIGHT) => {
+    const invert = side === RIGHT ? 1 : -1;
+    UpperArm.z *= -2.3 * invert;
+    UpperArm.y *= PI * invert;
+    UpperArm.y -= Math.max(LowerArm.x);
+    UpperArm.y -= -invert * Math.max(LowerArm.z, 0);
+    UpperArm.x -= 0.3 * invert;
+    LowerArm.z *= -2.14 * invert;
+    LowerArm.y *= 2.14 * invert;
+    LowerArm.x *= 2.14 * invert;
+    UpperArm.x = clamp2(UpperArm.x, -0.5, PI);
+    LowerArm.x = clamp2(LowerArm.x, -0.3, 0.3);
+    Hand.y = clamp2(Hand.z * 2, -0.6, 0.6);
+    Hand.z = Hand.z * -2.3 * invert;
+    return {
+      UpperArm,
+      LowerArm,
+      Hand
+    };
+  };
+
+  // node_modules/kalidokit/dist/PoseSolver/calcHips.js
+  var calcHips = (lm3d, lm2d) => {
+    const hipLeft2d = Vector.fromArray(lm2d[23]);
+    const hipRight2d = Vector.fromArray(lm2d[24]);
+    const shoulderLeft2d = Vector.fromArray(lm2d[11]);
+    const shoulderRight2d = Vector.fromArray(lm2d[12]);
+    const hipCenter2d = hipLeft2d.lerp(hipRight2d, 1);
+    const shoulderCenter2d = shoulderLeft2d.lerp(shoulderRight2d, 1);
+    const spineLength = hipCenter2d.distance(shoulderCenter2d);
+    const hips = {
+      position: {
+        x: clamp2(hipCenter2d.x - 0.4, -1, 1),
+        y: 0,
+        z: clamp2(spineLength - 1, -2, 0)
+      }
+    };
+    hips.worldPosition = {
+      x: hips.position.x,
+      y: 0,
+      z: hips.position.z * Math.pow(hips.position.z * -2, 2)
+    };
+    hips.worldPosition.x *= hips.worldPosition.z;
+    hips.rotation = Vector.rollPitchYaw(lm3d[23], lm3d[24]);
+    if (hips.rotation.y > 0.5) {
+      hips.rotation.y -= 2;
+    }
+    hips.rotation.y += 0.5;
+    if (hips.rotation.z > 0) {
+      hips.rotation.z = 1 - hips.rotation.z;
+    }
+    if (hips.rotation.z < 0) {
+      hips.rotation.z = -1 - hips.rotation.z;
+    }
+    const turnAroundAmountHips = remap(Math.abs(hips.rotation.y), 0.2, 0.4);
+    hips.rotation.z *= 1 - turnAroundAmountHips;
+    hips.rotation.x = 0;
+    const spine = Vector.rollPitchYaw(lm3d[11], lm3d[12]);
+    if (spine.y > 0.5) {
+      spine.y -= 2;
+    }
+    spine.y += 0.5;
+    if (spine.z > 0) {
+      spine.z = 1 - spine.z;
+    }
+    if (spine.z < 0) {
+      spine.z = -1 - spine.z;
+    }
+    const turnAroundAmount = remap(Math.abs(spine.y), 0.2, 0.4);
+    spine.z *= 1 - turnAroundAmount;
+    spine.x = 0;
+    return rigHips(hips, spine);
+  };
+  var rigHips = (hips, spine) => {
+    if (hips.rotation) {
+      hips.rotation.x *= Math.PI;
+      hips.rotation.y *= Math.PI;
+      hips.rotation.z *= Math.PI;
+    }
+    spine.x *= PI;
+    spine.y *= PI;
+    spine.z *= PI;
+    return {
+      Hips: hips,
+      Spine: spine
+    };
+  };
+
+  // node_modules/kalidokit/dist/utils/euler.js
+  var Euler2 = class {
+    constructor(a2, b2, c2, rotationOrder) {
+      var _a, _b, _c, _d;
+      if (!!a2 && typeof a2 === "object") {
+        this.x = (_a = a2.x) !== null && _a !== void 0 ? _a : 0;
+        this.y = (_b = a2.y) !== null && _b !== void 0 ? _b : 0;
+        this.z = (_c = a2.z) !== null && _c !== void 0 ? _c : 0;
+        this.rotationOrder = (_d = a2.rotationOrder) !== null && _d !== void 0 ? _d : "XYZ";
+        return;
+      }
+      this.x = a2 !== null && a2 !== void 0 ? a2 : 0;
+      this.y = b2 !== null && b2 !== void 0 ? b2 : 0;
+      this.z = c2 !== null && c2 !== void 0 ? c2 : 0;
+      this.rotationOrder = rotationOrder !== null && rotationOrder !== void 0 ? rotationOrder : "XYZ";
+    }
+    multiply(v2) {
+      return new Euler2(this.x * v2, this.y * v2, this.z * v2, this.rotationOrder);
+    }
+  };
+
+  // node_modules/kalidokit/dist/PoseSolver/calcLegs.js
+  var offsets = {
+    upperLeg: {
+      z: 0.1
+    }
+  };
+  var calcLegs = (lm) => {
+    const rightUpperLegSphericalCoords = Vector.getSphericalCoords(lm[23], lm[25], { x: "y", y: "z", z: "x" });
+    const leftUpperLegSphericalCoords = Vector.getSphericalCoords(lm[24], lm[26], { x: "y", y: "z", z: "x" });
+    const rightLowerLegSphericalCoords = Vector.getRelativeSphericalCoords(lm[23], lm[25], lm[27], {
+      x: "y",
+      y: "z",
+      z: "x"
+    });
+    const leftLowerLegSphericalCoords = Vector.getRelativeSphericalCoords(lm[24], lm[26], lm[28], {
+      x: "y",
+      y: "z",
+      z: "x"
+    });
+    const hipRotation = Vector.findRotation(lm[23], lm[24]);
+    const UpperLeg = {
+      r: new Vector({
+        x: rightUpperLegSphericalCoords.theta,
+        y: rightLowerLegSphericalCoords.phi,
+        z: rightUpperLegSphericalCoords.phi - hipRotation.z
+      }),
+      l: new Vector({
+        x: leftUpperLegSphericalCoords.theta,
+        y: leftLowerLegSphericalCoords.phi,
+        z: leftUpperLegSphericalCoords.phi - hipRotation.z
+      })
+    };
+    const LowerLeg = {
+      r: new Vector({
+        x: -Math.abs(rightLowerLegSphericalCoords.theta),
+        y: 0,
+        z: 0
+      }),
+      l: new Vector({
+        x: -Math.abs(leftLowerLegSphericalCoords.theta),
+        y: 0,
+        z: 0
+      })
+    };
+    const rightLegRig = rigLeg(UpperLeg.r, LowerLeg.r, RIGHT);
+    const leftLegRig = rigLeg(UpperLeg.l, LowerLeg.l, LEFT);
+    return {
+      UpperLeg: {
+        r: rightLegRig.UpperLeg,
+        l: leftLegRig.UpperLeg
+      },
+      LowerLeg: {
+        r: rightLegRig.LowerLeg,
+        l: leftLegRig.LowerLeg
+      },
+      Unscaled: {
+        UpperLeg,
+        LowerLeg
+      }
+    };
+  };
+  var rigLeg = (UpperLeg, LowerLeg, side = RIGHT) => {
+    const invert = side === RIGHT ? 1 : -1;
+    const rigedUpperLeg = new Euler2({
+      x: clamp2(UpperLeg.x, 0, 0.5) * PI,
+      y: clamp2(UpperLeg.y, -0.25, 0.25) * PI,
+      z: clamp2(UpperLeg.z, -0.5, 0.5) * PI + invert * offsets.upperLeg.z,
+      rotationOrder: "XYZ"
+    });
+    const rigedLowerLeg = new Euler2({
+      x: LowerLeg.x * PI,
+      y: LowerLeg.y * PI,
+      z: LowerLeg.z * PI
+    });
+    return {
+      UpperLeg: rigedUpperLeg,
+      LowerLeg: rigedLowerLeg
+    };
+  };
+
+  // node_modules/kalidokit/dist/PoseSolver/index.js
+  var PoseSolver = class {
+    static solve(lm3d, lm2d, { runtime = "mediapipe", video = null, imageSize = null, enableLegs = true } = {}) {
+      var _a, _b, _c, _d;
+      if (!lm3d && !lm2d) {
+        console.error("Need both World Pose and Pose Landmarks");
+        return;
+      }
+      if (video) {
+        const videoEl = typeof video === "string" ? document.querySelector(video) : video;
+        imageSize = {
+          width: videoEl.videoWidth,
+          height: videoEl.videoHeight
+        };
+      }
+      if (runtime === "tfjs" && imageSize) {
+        for (const e of lm3d) {
+          e.visibility = e.score;
+        }
+        for (const e of lm2d) {
+          e.x /= imageSize.width;
+          e.y /= imageSize.height;
+          e.z = 0;
+          e.visibility = e.score;
+        }
+      }
+      const Arms = calcArms(lm3d);
+      const Hips = calcHips(lm3d, lm2d);
+      const Legs = enableLegs ? calcLegs(lm3d) : null;
+      const rightHandOffscreen = lm3d[15].y > 0.1 || ((_a = lm3d[15].visibility) !== null && _a !== void 0 ? _a : 0) < 0.23 || 0.995 < lm2d[15].y;
+      const leftHandOffscreen = lm3d[16].y > 0.1 || ((_b = lm3d[16].visibility) !== null && _b !== void 0 ? _b : 0) < 0.23 || 0.995 < lm2d[16].y;
+      const leftFootOffscreen = lm3d[23].y > 0.1 || ((_c = lm3d[23].visibility) !== null && _c !== void 0 ? _c : 0) < 0.63 || Hips.Hips.position.z > -0.4;
+      const rightFootOffscreen = lm3d[24].y > 0.1 || ((_d = lm3d[24].visibility) !== null && _d !== void 0 ? _d : 0) < 0.63 || Hips.Hips.position.z > -0.4;
+      Arms.UpperArm.l = Arms.UpperArm.l.multiply(leftHandOffscreen ? 0 : 1);
+      Arms.UpperArm.l.z = leftHandOffscreen ? RestingDefault.Pose.LeftUpperArm.z : Arms.UpperArm.l.z;
+      Arms.UpperArm.r = Arms.UpperArm.r.multiply(rightHandOffscreen ? 0 : 1);
+      Arms.UpperArm.r.z = rightHandOffscreen ? RestingDefault.Pose.RightUpperArm.z : Arms.UpperArm.r.z;
+      Arms.LowerArm.l = Arms.LowerArm.l.multiply(leftHandOffscreen ? 0 : 1);
+      Arms.LowerArm.r = Arms.LowerArm.r.multiply(rightHandOffscreen ? 0 : 1);
+      Arms.Hand.l = Arms.Hand.l.multiply(leftHandOffscreen ? 0 : 1);
+      Arms.Hand.r = Arms.Hand.r.multiply(rightHandOffscreen ? 0 : 1);
+      if (Legs) {
+        Legs.UpperLeg.l = Legs.UpperLeg.l.multiply(rightFootOffscreen ? 0 : 1);
+        Legs.UpperLeg.r = Legs.UpperLeg.r.multiply(leftFootOffscreen ? 0 : 1);
+        Legs.LowerLeg.l = Legs.LowerLeg.l.multiply(rightFootOffscreen ? 0 : 1);
+        Legs.LowerLeg.r = Legs.LowerLeg.r.multiply(leftFootOffscreen ? 0 : 1);
+      }
+      return {
+        RightUpperArm: Arms.UpperArm.r,
+        RightLowerArm: Arms.LowerArm.r,
+        LeftUpperArm: Arms.UpperArm.l,
+        LeftLowerArm: Arms.LowerArm.l,
+        RightHand: Arms.Hand.r,
+        LeftHand: Arms.Hand.l,
+        RightUpperLeg: Legs ? Legs.UpperLeg.r : RestingDefault.Pose.RightUpperLeg,
+        RightLowerLeg: Legs ? Legs.LowerLeg.r : RestingDefault.Pose.RightLowerLeg,
+        LeftUpperLeg: Legs ? Legs.UpperLeg.l : RestingDefault.Pose.LeftUpperLeg,
+        LeftLowerLeg: Legs ? Legs.LowerLeg.l : RestingDefault.Pose.LeftLowerLeg,
+        Hips: Hips.Hips,
+        Spine: Hips.Spine
+      };
+    }
+  };
+  PoseSolver.calcArms = calcArms;
+  PoseSolver.calcHips = calcHips;
+  PoseSolver.calcLegs = calcLegs;
+
+  // node_modules/kalidokit/dist/HandSolver/index.js
+  var HandSolver = class {
+    static solve(lm, side = RIGHT) {
+      if (!lm) {
+        console.error("Need Hand Landmarks");
+        return;
+      }
+      const palm = [
+        new Vector(lm[0]),
+        new Vector(lm[side === RIGHT ? 17 : 5]),
+        new Vector(lm[side === RIGHT ? 5 : 17])
+      ];
+      const handRotation = Vector.rollPitchYaw(palm[0], palm[1], palm[2]);
+      handRotation.y = handRotation.z;
+      handRotation.y -= side === LEFT ? 0.4 : 0.4;
+      let hand = {};
+      hand[side + "Wrist"] = { x: handRotation.x, y: handRotation.y, z: handRotation.z };
+      hand[side + "RingProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[13], lm[14]) };
+      hand[side + "RingIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[13], lm[14], lm[15]) };
+      hand[side + "RingDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[14], lm[15], lm[16]) };
+      hand[side + "IndexProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[5], lm[6]) };
+      hand[side + "IndexIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[5], lm[6], lm[7]) };
+      hand[side + "IndexDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[6], lm[7], lm[8]) };
+      hand[side + "MiddleProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[9], lm[10]) };
+      hand[side + "MiddleIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[9], lm[10], lm[11]) };
+      hand[side + "MiddleDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[10], lm[11], lm[12]) };
+      hand[side + "ThumbProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[1], lm[2]) };
+      hand[side + "ThumbIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[1], lm[2], lm[3]) };
+      hand[side + "ThumbDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[2], lm[3], lm[4]) };
+      hand[side + "LittleProximal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[0], lm[17], lm[18]) };
+      hand[side + "LittleIntermediate"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[17], lm[18], lm[19]) };
+      hand[side + "LittleDistal"] = { x: 0, y: 0, z: Vector.angleBetween3DCoords(lm[18], lm[19], lm[20]) };
+      hand = rigFingers(hand, side);
+      return hand;
+    }
+  };
+  var rigFingers = (hand, side = RIGHT) => {
+    const invert = side === RIGHT ? 1 : -1;
+    const digits = ["Ring", "Index", "Little", "Thumb", "Middle"];
+    const segments = ["Proximal", "Intermediate", "Distal"];
+    hand[side + "Wrist"].x = clamp2(hand[side + "Wrist"].x * 2 * invert, -0.3, 0.3);
+    hand[side + "Wrist"].y = clamp2(hand[side + "Wrist"].y * 2.3, side === RIGHT ? -1.2 : -0.6, side === RIGHT ? 0.6 : 1.6);
+    hand[side + "Wrist"].z = hand[side + "Wrist"].z * -2.3 * invert;
+    digits.forEach((e) => {
+      segments.forEach((j2) => {
+        const trackedFinger = hand[side + e + j2];
+        if (e === "Thumb") {
+          const dampener = {
+            x: j2 === "Proximal" ? 2.2 : j2 === "Intermediate" ? 0 : 0,
+            y: j2 === "Proximal" ? 2.2 : j2 === "Intermediate" ? 0.7 : 1,
+            z: j2 === "Proximal" ? 0.5 : j2 === "Intermediate" ? 0.5 : 0.5
+          };
+          const startPos = {
+            x: j2 === "Proximal" ? 1.2 : j2 === "Distal" ? -0.2 : -0.2,
+            y: j2 === "Proximal" ? 1.1 * invert : j2 === "Distal" ? 0.1 * invert : 0.1 * invert,
+            z: j2 === "Proximal" ? 0.2 * invert : j2 === "Distal" ? 0.2 * invert : 0.2 * invert
+          };
+          const newThumb = { x: 0, y: 0, z: 0 };
+          if (j2 === "Proximal") {
+            newThumb.z = clamp2(startPos.z + trackedFinger.z * -PI * dampener.z * invert, side === RIGHT ? -0.6 : -0.3, side === RIGHT ? 0.3 : 0.6);
+            newThumb.x = clamp2(startPos.x + trackedFinger.z * -PI * dampener.x, -0.6, 0.3);
+            newThumb.y = clamp2(startPos.y + trackedFinger.z * -PI * dampener.y * invert, side === RIGHT ? -1 : -0.3, side === RIGHT ? 0.3 : 1);
+          } else {
+            newThumb.z = clamp2(startPos.z + trackedFinger.z * -PI * dampener.z * invert, -2, 2);
+            newThumb.x = clamp2(startPos.x + trackedFinger.z * -PI * dampener.x, -2, 2);
+            newThumb.y = clamp2(startPos.y + trackedFinger.z * -PI * dampener.y * invert, -2, 2);
+          }
+          trackedFinger.x = newThumb.x;
+          trackedFinger.y = newThumb.y;
+          trackedFinger.z = newThumb.z;
+        } else {
+          trackedFinger.z = clamp2(trackedFinger.z * -PI * invert, side === RIGHT ? -PI : 0, side === RIGHT ? 0 : PI);
+        }
+      });
+    });
+    return hand;
+  };
+
+  // node_modules/kalidokit/dist/FaceSolver/calcHead.js
+  var createEulerPlane = (lm) => {
+    const p1 = new Vector(lm[21]);
+    const p2 = new Vector(lm[251]);
+    const p3 = new Vector(lm[397]);
+    const p4 = new Vector(lm[172]);
+    const p3mid = p3.lerp(p4, 0.5);
+    return {
+      vector: [p1, p2, p3mid],
+      points: [p1, p2, p3, p4]
+    };
+  };
+  var calcHead = (lm) => {
+    const plane = createEulerPlane(lm).vector;
+    const rotate = Vector.rollPitchYaw(plane[0], plane[1], plane[2]);
+    const midPoint = plane[0].lerp(plane[1], 0.5);
+    const width2 = plane[0].distance(plane[1]);
+    const height2 = midPoint.distance(plane[2]);
+    rotate.x *= -1;
+    rotate.z *= -1;
+    return {
+      y: rotate.y * PI,
+      x: rotate.x * PI,
+      z: rotate.z * PI,
+      width: width2,
+      height: height2,
+      position: midPoint.lerp(plane[2], 0.5),
+      normalized: {
+        y: rotate.y,
+        x: rotate.x,
+        z: rotate.z
+      },
+      degrees: {
+        y: rotate.y * 180,
+        x: rotate.x * 180,
+        z: rotate.z * 180
+      }
+    };
+  };
+
+  // node_modules/kalidokit/dist/FaceSolver/calcEyes.js
+  var points = {
+    eye: {
+      [LEFT]: [130, 133, 160, 159, 158, 144, 145, 153],
+      [RIGHT]: [263, 362, 387, 386, 385, 373, 374, 380]
+    },
+    brow: {
+      [LEFT]: [35, 244, 63, 105, 66, 229, 230, 231],
+      [RIGHT]: [265, 464, 293, 334, 296, 449, 450, 451]
+    },
+    pupil: {
+      [LEFT]: [468, 469, 470, 471, 472],
+      [RIGHT]: [473, 474, 475, 476, 477]
+    }
+  };
+  var getEyeOpen = (lm, side = LEFT, { high = 0.85, low = 0.55 } = {}) => {
+    const eyePoints = points.eye[side];
+    const eyeDistance = eyeLidRatio(lm[eyePoints[0]], lm[eyePoints[1]], lm[eyePoints[2]], lm[eyePoints[3]], lm[eyePoints[4]], lm[eyePoints[5]], lm[eyePoints[6]], lm[eyePoints[7]]);
+    const maxRatio = 0.285;
+    const ratio = clamp2(eyeDistance / maxRatio, 0, 2);
+    const eyeOpenRatio = remap(ratio, low, high);
+    return {
+      norm: eyeOpenRatio,
+      raw: ratio
+    };
+  };
+  var eyeLidRatio = (eyeOuterCorner, eyeInnerCorner, eyeOuterUpperLid, eyeMidUpperLid, eyeInnerUpperLid, eyeOuterLowerLid, eyeMidLowerLid, eyeInnerLowerLid) => {
+    eyeOuterCorner = new Vector(eyeOuterCorner);
+    eyeInnerCorner = new Vector(eyeInnerCorner);
+    eyeOuterUpperLid = new Vector(eyeOuterUpperLid);
+    eyeMidUpperLid = new Vector(eyeMidUpperLid);
+    eyeInnerUpperLid = new Vector(eyeInnerUpperLid);
+    eyeOuterLowerLid = new Vector(eyeOuterLowerLid);
+    eyeMidLowerLid = new Vector(eyeMidLowerLid);
+    eyeInnerLowerLid = new Vector(eyeInnerLowerLid);
+    const eyeWidth = eyeOuterCorner.distance(eyeInnerCorner, 2);
+    const eyeOuterLidDistance = eyeOuterUpperLid.distance(eyeOuterLowerLid, 2);
+    const eyeMidLidDistance = eyeMidUpperLid.distance(eyeMidLowerLid, 2);
+    const eyeInnerLidDistance = eyeInnerUpperLid.distance(eyeInnerLowerLid, 2);
+    const eyeLidAvg = (eyeOuterLidDistance + eyeMidLidDistance + eyeInnerLidDistance) / 3;
+    const ratio = eyeLidAvg / eyeWidth;
+    return ratio;
+  };
+  var pupilPos = (lm, side = LEFT) => {
+    const eyeOuterCorner = new Vector(lm[points.eye[side][0]]);
+    const eyeInnerCorner = new Vector(lm[points.eye[side][1]]);
+    const eyeWidth = eyeOuterCorner.distance(eyeInnerCorner, 2);
+    const midPoint = eyeOuterCorner.lerp(eyeInnerCorner, 0.5);
+    const pupil = new Vector(lm[points.pupil[side][0]]);
+    const dx = midPoint.x - pupil.x;
+    const dy = midPoint.y - eyeWidth * 0.075 - pupil.y;
+    let ratioX = dx / (eyeWidth / 2);
+    let ratioY = dy / (eyeWidth / 4);
+    ratioX *= 4;
+    ratioY *= 4;
+    return { x: ratioX, y: ratioY };
+  };
+  var stabilizeBlink = (eye, headY, { enableWink = true, maxRot = 0.5 } = {}) => {
+    eye.r = clamp2(eye.r, 0, 1);
+    eye.l = clamp2(eye.l, 0, 1);
+    const blinkDiff = Math.abs(eye.l - eye.r);
+    const blinkThresh = enableWink ? 0.8 : 1.2;
+    const isClosing = eye.l < 0.3 && eye.r < 0.3;
+    const isOpen = eye.l > 0.6 && eye.r > 0.6;
+    if (headY > maxRot) {
+      return { l: eye.r, r: eye.r };
+    }
+    if (headY < -maxRot) {
+      return { l: eye.l, r: eye.l };
+    }
+    return {
+      l: blinkDiff >= blinkThresh && !isClosing && !isOpen ? eye.l : eye.r > eye.l ? Vector.lerp(eye.r, eye.l, 0.95) : Vector.lerp(eye.r, eye.l, 0.05),
+      r: blinkDiff >= blinkThresh && !isClosing && !isOpen ? eye.r : eye.r > eye.l ? Vector.lerp(eye.r, eye.l, 0.95) : Vector.lerp(eye.r, eye.l, 0.05)
+    };
+  };
+  var calcEyes = (lm, { high = 0.85, low = 0.55 } = {}) => {
+    if (lm.length !== 478) {
+      return {
+        l: 1,
+        r: 1
+      };
+    }
+    const leftEyeLid = getEyeOpen(lm, LEFT, { high, low });
+    const rightEyeLid = getEyeOpen(lm, RIGHT, { high, low });
+    return {
+      l: leftEyeLid.norm || 0,
+      r: rightEyeLid.norm || 0
+    };
+  };
+  var calcPupils = (lm) => {
+    if (lm.length !== 478) {
+      return { x: 0, y: 0 };
+    } else {
+      const pupilL = pupilPos(lm, LEFT);
+      const pupilR = pupilPos(lm, RIGHT);
+      return {
+        x: (pupilL.x + pupilR.x) * 0.5 || 0,
+        y: (pupilL.y + pupilR.y) * 0.5 || 0
+      };
+    }
+  };
+  var getBrowRaise = (lm, side = LEFT) => {
+    const browPoints = points.brow[side];
+    const browDistance = eyeLidRatio(lm[browPoints[0]], lm[browPoints[1]], lm[browPoints[2]], lm[browPoints[3]], lm[browPoints[4]], lm[browPoints[5]], lm[browPoints[6]], lm[browPoints[7]]);
+    const maxBrowRatio = 1.15;
+    const browHigh = 0.125;
+    const browLow = 0.07;
+    const browRatio = browDistance / maxBrowRatio - 1;
+    const browRaiseRatio = (clamp2(browRatio, browLow, browHigh) - browLow) / (browHigh - browLow);
+    return browRaiseRatio;
+  };
+  var calcBrow = (lm) => {
+    if (lm.length !== 478) {
+      return 0;
+    } else {
+      const leftBrow = getBrowRaise(lm, LEFT);
+      const rightBrow = getBrowRaise(lm, RIGHT);
+      return (leftBrow + rightBrow) / 2 || 0;
+    }
+  };
+
+  // node_modules/kalidokit/dist/FaceSolver/calcMouth.js
+  var calcMouth = (lm) => {
+    const eyeInnerCornerL = new Vector(lm[133]);
+    const eyeInnerCornerR = new Vector(lm[362]);
+    const eyeOuterCornerL = new Vector(lm[130]);
+    const eyeOuterCornerR = new Vector(lm[263]);
+    const eyeInnerDistance = eyeInnerCornerL.distance(eyeInnerCornerR);
+    const eyeOuterDistance = eyeOuterCornerL.distance(eyeOuterCornerR);
+    const upperInnerLip = new Vector(lm[13]);
+    const lowerInnerLip = new Vector(lm[14]);
+    const mouthCornerLeft = new Vector(lm[61]);
+    const mouthCornerRight = new Vector(lm[291]);
+    const mouthOpen = upperInnerLip.distance(lowerInnerLip);
+    const mouthWidth = mouthCornerLeft.distance(mouthCornerRight);
+    let ratioY = mouthOpen / eyeInnerDistance;
+    let ratioX = mouthWidth / eyeOuterDistance;
+    ratioY = remap(ratioY, 0.15, 0.7);
+    ratioX = remap(ratioX, 0.45, 0.9);
+    ratioX = (ratioX - 0.3) * 2;
+    const mouthX = ratioX;
+    const mouthY = remap(mouthOpen / eyeInnerDistance, 0.17, 0.5);
+    const ratioI = clamp2(remap(mouthX, 0, 1) * 2 * remap(mouthY, 0.2, 0.7), 0, 1);
+    const ratioA = mouthY * 0.4 + mouthY * (1 - ratioI) * 0.6;
+    const ratioU = mouthY * remap(1 - ratioI, 0, 0.3) * 0.1;
+    const ratioE = remap(ratioU, 0.2, 1) * (1 - ratioI) * 0.3;
+    const ratioO = (1 - ratioI) * remap(mouthY, 0.3, 1) * 0.4;
+    return {
+      x: ratioX || 0,
+      y: ratioY || 0,
+      shape: {
+        A: ratioA || 0,
+        E: ratioE || 0,
+        I: ratioI || 0,
+        O: ratioO || 0,
+        U: ratioU || 0
+      }
+    };
+  };
+
+  // node_modules/kalidokit/dist/FaceSolver/index.js
+  var FaceSolver = class {
+    static solve(lm, { runtime = "tfjs", video = null, imageSize = null, smoothBlink = false, blinkSettings = [] } = {}) {
+      if (!lm) {
+        console.error("Need Face Landmarks");
+        return;
+      }
+      if (video) {
+        const videoEl = typeof video === "string" ? document.querySelector(video) : video;
+        imageSize = {
+          width: videoEl.videoWidth,
+          height: videoEl.videoHeight
+        };
+      }
+      if (runtime === "mediapipe" && imageSize) {
+        for (const e of lm) {
+          e.x *= imageSize.width;
+          e.y *= imageSize.height;
+          e.z *= imageSize.width;
+        }
+      }
+      const getHead = calcHead(lm);
+      const getMouth = calcMouth(lm);
+      blinkSettings = blinkSettings.length > 0 ? blinkSettings : runtime === "tfjs" ? [0.55, 0.85] : [0.35, 0.5];
+      let getEye = calcEyes(lm, {
+        high: blinkSettings[1],
+        low: blinkSettings[0]
+      });
+      if (smoothBlink) {
+        getEye = stabilizeBlink(getEye, getHead.y);
+      }
+      const getPupils = calcPupils(lm);
+      const getBrow = calcBrow(lm);
+      return {
+        head: getHead,
+        eye: getEye,
+        brow: getBrow,
+        pupil: getPupils,
+        mouth: getMouth
+      };
+    }
+  };
+  FaceSolver.stabilizeBlink = stabilizeBlink;
+
   // src/component/webcam-vrm.ts
+  var import_holistic = __toESM(require_holistic(), 1);
+  var import_camera_utils = __toESM(require_camera_utils(), 1);
   var remap2 = helpers_exports.remap;
   var clamp3 = helpers_exports.clamp;
   var lerp2 = Vector.lerp;
   var euler = new AFRAME.THREE.Euler();
-  var quat = new AFRAME.THREE.Quaternion();
+  var quat2 = new AFRAME.THREE.Quaternion();
   var rigRotation = (vrm, name, rotation = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
     const Part = vrm.humanoid.getBoneNode(u.HumanoidBoneName[name]);
     if (!Part) {
       return;
     }
     euler.set(rotation.x * dampener, rotation.y * dampener, rotation.z * dampener);
-    let quaternion = quat.setFromEuler(euler);
+    let quaternion = quat2.setFromEuler(euler);
     Part.quaternion.slerp(quaternion, lerpAmount);
   };
   var v3 = new AFRAME.THREE.Vector3();
@@ -33335,200 +33788,8 @@ not selfie camera mode
     }, 1 / 3.5 * 1e3);
   });
 
-  // src/component/vary.ts
-  var vec3 = new AFRAME.THREE.Vector3();
-  var bb2 = new AFRAME.THREE.Box3();
-  AFRAME.registerComponent("vary", {
-    multiple: true,
-    schema: {
-      property: { type: "string", default: "position" },
-      range: { type: "string", default: "-1 -1 -1 1 1 1" }
-    },
-    update() {
-      const o3d = this.el.object3D;
-      bb2.setFromArray(this.data.range.split(" ").map((v2) => parseFloat(v2)));
-      o3d[this.data.property]?.set(bb2.min.x + Math.random() * (bb2.max.x - bb2.min.x), bb2.min.y + Math.random() * (bb2.max.y - bb2.min.y), bb2.min.z + Math.random() * (bb2.max.z - bb2.min.z));
-    }
-  });
-
-  // src/component/follow.ts
-  AFRAME.registerComponent("follow", {
-    schema: { target: { type: "selector" } },
-    init() {
-      console.log("follow", this.data);
-    },
-    tick() {
-      if (!this.data.target)
-        return;
-      console.log(this.data);
-    }
-  });
-
-  // src/template/webcam.svelte
-  function create_fragment(ctx) {
-    let div;
-    let video;
-    let t;
-    let canvas;
-    return {
-      c() {
-        div = element("div");
-        video = element("video");
-        t = space();
-        canvas = element("canvas");
-        attr(div, "class", "hidden svelte-oofj5h");
-      },
-      m(target, anchor) {
-        insert(target, div, anchor);
-        append(div, video);
-        ctx[2](video);
-        append(div, t);
-        append(div, canvas);
-        ctx[3](canvas);
-      },
-      p: noop,
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(div);
-        ctx[2](null);
-        ctx[3](null);
-      }
-    };
-  }
-  function instance($$self, $$props, $$invalidate) {
-    let videoElementSource;
-    let canvasElementSource;
-    function video_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        videoElementSource = $$value;
-        $$invalidate(0, videoElementSource);
-      });
-    }
-    function canvas_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        canvasElementSource = $$value;
-        $$invalidate(1, canvasElementSource);
-      });
-    }
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & 3) {
-        $: {
-          if (canvasElementSource && !canvasElement.$) {
-            canvasElement.set(canvasElementSource);
-          }
-          if (videoElementSource && !videoElement.$) {
-            videoElement.set(videoElementSource);
-          }
-        }
-      }
-    };
-    return [videoElementSource, canvasElementSource, video_binding, canvas_binding];
-  }
-  var Webcam = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance, create_fragment, safe_not_equal, {});
-    }
-  };
-  var webcam_default = Webcam;
-
-  // src/template/characters-assets.svelte
-  function create_fragment2(ctx) {
-    let a_mixin;
-    return {
-      c() {
-        a_mixin = element("a-mixin");
-        set_custom_element_data(a_mixin, "id", "character");
-        set_custom_element_data(a_mixin, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 1;angularFactor: 0 1 0;");
-        set_custom_element_data(a_mixin, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.2 0.6 0.2; offset: 0 0.75 0");
-      },
-      m(target, anchor) {
-        insert(target, a_mixin, anchor);
-      },
-      p: noop,
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(a_mixin);
-      }
-    };
-  }
-  var Characters_assets = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, null, create_fragment2, safe_not_equal, {});
-    }
-  };
-  var characters_assets_default = Characters_assets;
-
-  // src/component/wasd-controller.ts
-  var vec32 = new AFRAME.THREE.Vector3();
-  var quat2 = new AFRAME.THREE.Quaternion();
-  AFRAME.registerComponent("wasd-controller", {
-    schema: {
-      speed: { type: "number", default: 0.2 },
-      rot: { type: "number", default: 0.25 }
-    },
-    tick(_2, delta) {
-      if (!this.el.body)
-        return;
-      const o3d = this.el.object3D;
-      let force;
-      let torq;
-      vec32.set(0, 0, 0);
-      let intensity = 1;
-      let hop = 2;
-      if (key_map.$["shift"]) {
-        intensity = 1.5;
-      }
-      if (key_map.$[" "] && o3d.position.y < 1) {
-        hop = 15;
-      }
-      if (key_map.$["w"]) {
-        vec32.y = hop;
-        vec32.z += -this.data.speed * delta * intensity;
-      }
-      if (key_map.$["s"]) {
-        vec32.y = hop;
-        vec32.z += this.data.speed * delta * intensity;
-      }
-      if (key_map.$["a"]) {
-        vec32.y = hop;
-        vec32.x += -this.data.speed * delta * intensity;
-      }
-      if (key_map.$["d"]) {
-        vec32.y = hop;
-        vec32.x += this.data.speed * delta * intensity;
-      }
-      if (key_map.$["q"]) {
-        torq = new Ammo.btVector3(0, delta * this.data.rot, 0);
-        this.el.body.applyTorque(torq);
-        this.el.body.activate();
-      }
-      if (key_map.$["e"]) {
-        torq = new Ammo.btVector3(0, -delta * this.data.rot, 0);
-        this.el.body.applyTorque(torq);
-        this.el.body.activate();
-      }
-      if (Math.abs(vec32.length()) > 0 && camera.$) {
-        camera.$.updateMatrixWorld();
-        quat2.setFromRotationMatrix(camera.$.matrixWorld);
-        vec32.applyQuaternion(quat2);
-        force = new Ammo.btVector3(vec32.x, vec32.y, vec32.z);
-        this.el.body.applyForce(force);
-        this.el.body.activate();
-        Ammo.destroy(force);
-      }
-      if (torq)
-        Ammo.destroy(torq);
-    }
-  });
-
   // src/template/characters.svelte
-  function create_fragment3(ctx) {
+  function create_fragment7(ctx) {
     let a_entity0;
     let a_entity0_vrm_value;
     let t;
@@ -33576,7 +33837,7 @@ not selfie camera mode
       }
     };
   }
-  function instance2($$self, $$props, $$invalidate) {
+  function instance5($$self, $$props, $$invalidate) {
     let $avatar_current;
     let $avatar_doer;
     component_subscribe($$self, avatar_current, ($$value) => $$invalidate(0, $avatar_current = $$value));
@@ -33586,1206 +33847,130 @@ not selfie camera mode
   var Characters = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance2, create_fragment3, safe_not_equal, {});
+      init(this, options, instance5, create_fragment7, safe_not_equal, {});
     }
   };
   var characters_default = Characters;
 
-  // src/component/character-camera.ts
-  var pos = new Vector3();
-  var quat3 = new Quaternion();
-  var scale = new Vector3();
-  AFRAME.registerComponent("character-camera", {
-    init() {
-      camera.set(this.el.object3D);
-      camera_el.set(this);
-      currentVRM.on(($vrm) => {
-        if (!$vrm)
-          return;
-        $vrm.firstPerson.firstPersonBone.add(this.el.object3D);
-      });
-    },
-    showHead() {
-      const { layers } = this.el.object3D.children[0];
-      this.data.head = true;
-      layers.disable(currentVRM.$.firstPerson.firstPersonOnlyLayer);
-      layers.enable(currentVRM.$.firstPerson.thirdPersonOnlyLayer);
-    },
-    hideHead() {
-      const { layers } = this.el.object3D.children[0];
-      this.data.head = false;
-      layers.enable(currentVRM.$.firstPerson.firstPersonOnlyLayer);
-      layers.disable(currentVRM.$.firstPerson.thirdPersonOnlyLayer);
-    },
-    remove() {
-      if (currentVRM.$) {
-        currentVRM.$?.firstPerson.firstPersonBone.remove(this.el.object3D);
-      }
-      this.cancel();
-    },
-    tick(_2, dt) {
-      if (!currentVRM.$)
-        return;
-      if (toggle_selfie.$ !== this.selfie) {
-        if (toggle_selfie.$) {
-          this.showHead();
-          this.el.object3D.position.set(0, 0.1, -0.75);
-          this.el.object3D.lookAt(0, 5, 0);
-        } else {
-          this.el.object3D.position.set(0, 0, 0);
-          this.el.object3D.quaternion.identity();
-          this.hideHead();
-        }
-        this.selfie = toggle_selfie.$;
-      }
-    }
-  });
-
-  // src/template/camera-fps.svelte
-  function create_fragment4(ctx) {
-    let a_camera;
+  // src/template/webcam.svelte
+  function create_fragment8(ctx) {
+    let div;
+    let video;
+    let t;
+    let canvas;
     return {
       c() {
-        a_camera = element("a-camera");
-        set_custom_element_data(a_camera, "active", "");
-        set_custom_element_data(a_camera, "fov", "75");
-        set_custom_element_data(a_camera, "id", "#camera");
-        set_custom_element_data(a_camera, "character-camera", "");
-        set_custom_element_data(a_camera, "position", "0 4 0");
-        set_custom_element_data(a_camera, "wasd-controls", "enabled: false;");
-        set_custom_element_data(a_camera, "look-controls", "enabled: false;");
+        div = element("div");
+        video = element("video");
+        t = space();
+        canvas = element("canvas");
+        attr(div, "class", "hidden svelte-oofj5h");
       },
       m(target, anchor) {
-        insert(target, a_camera, anchor);
+        insert(target, div, anchor);
+        append(div, video);
+        ctx[2](video);
+        append(div, t);
+        append(div, canvas);
+        ctx[3](canvas);
       },
       p: noop,
       i: noop,
       o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(a_camera);
-      }
-    };
-  }
-  function instance3($$self) {
-    let el;
-    open_targeting.on(($t) => {
-      if (!$t)
-        return;
-    });
-    const ents = {};
-    const box = new AFRAME.THREE.Box3();
-    function collidestart(e) {
-      const who = e.detail.targetEl;
-      if (ents[who.id])
-        return;
-      const keys = Object.keys(ents);
-      if (keys.length >= 5) {
-        const key = keys[Math.floor(Math.random() * keys.length)];
-        el.components.pool__targeting.returnEntity(ents[key]);
-        delete ents[key];
-      }
-      const ent = el.components.pool__targeting.requestEntity();
-      ent.play();
-      ents[who.id] = ent;
-      box.setFromObject(who.object3D, true);
-      box.getSize(ent.object3D.scale);
-      box.getCenter(ent.object3D.position);
-    }
-    function collideend(e) {
-      const who = e.detail.targetEl;
-      el.components.pool__targeting.returnEntity(ents[who.id]);
-      delete ents[who.id];
-    }
-    return [];
-  }
-  var Camera_fps = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance3, create_fragment4, safe_not_equal, {});
-    }
-  };
-  var camera_fps_default = Camera_fps;
-
-  // src/ui/heard.svelte
-  function create_if_block(ctx) {
-    let div;
-    let input;
-    return {
-      c() {
-        div = element("div");
-        input = element("input");
-        attr(input, "type", "text");
-        attr(input, "class", "entry svelte-pqe1v5");
-        input.readOnly = true;
-        attr(div, "class", "lofi svelte-pqe1v5");
-      },
-      m(target, anchor) {
-        insert(target, div, anchor);
-        append(div, input);
-        ctx[2](input);
-      },
-      p: noop,
       d(detaching) {
         if (detaching)
           detach(div);
         ctx[2](null);
+        ctx[3](null);
       }
     };
   }
-  function create_fragment5(ctx) {
-    let if_block_anchor;
-    let if_block = ctx[1] && create_if_block(ctx);
-    return {
-      c() {
-        if (if_block)
-          if_block.c();
-        if_block_anchor = empty();
-      },
-      m(target, anchor) {
-        if (if_block)
-          if_block.m(target, anchor);
-        insert(target, if_block_anchor, anchor);
-      },
-      p(ctx2, [dirty]) {
-        if (ctx2[1]) {
-          if (if_block) {
-            if_block.p(ctx2, dirty);
-          } else {
-            if_block = create_if_block(ctx2);
-            if_block.c();
-            if_block.m(if_block_anchor.parentNode, if_block_anchor);
-          }
-        } else if (if_block) {
-          if_block.d(1);
-          if_block = null;
-        }
-      },
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (if_block)
-          if_block.d(detaching);
-        if (detaching)
-          detach(if_block_anchor);
-      }
-    };
-  }
-  function instance4($$self, $$props, $$invalidate) {
-    let $open_heard;
-    component_subscribe($$self, open_heard, ($$value) => $$invalidate(1, $open_heard = $$value));
-    let text2;
-    talk.on(() => {
-      if (!text2 || !talk.$)
-        return;
-      $$invalidate(0, text2.value = talk.$, text2);
-    });
-    function input_binding($$value) {
+  function instance6($$self, $$props, $$invalidate) {
+    let videoElementSource;
+    let canvasElementSource;
+    function video_binding($$value) {
       binding_callbacks[$$value ? "unshift" : "push"](() => {
-        text2 = $$value;
-        $$invalidate(0, text2);
+        videoElementSource = $$value;
+        $$invalidate(0, videoElementSource);
       });
     }
-    return [text2, $open_heard, input_binding];
-  }
-  var Heard = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance4, create_fragment5, safe_not_equal, {});
+    function canvas_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        canvasElementSource = $$value;
+        $$invalidate(1, canvasElementSource);
+      });
     }
-  };
-  var heard_default = Heard;
-
-  // src/template/host.svelte
-  function create_fragment6(ctx) {
-    let webcam;
-    let t0;
-    let heard;
-    let t1;
-    let a_scene;
-    let a_assets;
-    let audio;
-    let audio_src_value;
-    let t2;
-    let a_mixin0;
-    let t3;
-    let a_mixin1;
-    let t4;
-    let a_mixin2;
-    let a_mixin2_animation_value;
-    let t5;
-    let charactersmixins;
-    let t6;
-    let camerafps;
-    let t7;
-    let a_entity0;
-    let t8;
-    let a_mixin3;
-    let t9;
-    let a_mixin4;
-    let t10;
-    let a_mixin5;
-    let t11;
-    let a_mixin6;
-    let t12;
-    let a_mixin7;
-    let t13;
-    let a_mixin8;
-    let t14;
-    let a_mixin9;
-    let t15;
-    let a_mixin10;
-    let t16;
-    let a_mixin11;
-    let a_mixin11_ring_value;
-    let t17;
-    let a_sky;
-    let a_sky_animate_value;
-    let t18;
-    let a_entity1;
-    let t19;
-    let a_entity2;
-    let t20;
-    let a_entity3;
-    let t21;
-    let a_entity4;
-    let t22;
-    let a_entity5;
-    let t23;
-    let a_entity6;
-    let t24;
-    let a_entity7;
-    let t25;
-    let a_entity8;
-    let a_entity8_position_value;
-    let a_entity8_light_value;
-    let t26;
-    let a_entity9;
-    let a_entity9_position_value;
-    let a_entity9_light_value;
-    let t27;
-    let a_entity10;
-    let t28;
-    let characters;
-    let t29;
-    let a_plane;
-    let a_plane_width_value;
-    let a_plane_height_value;
-    let t30;
-    let a_entity11;
-    let a_entity11_position_value;
-    let t31;
-    let a_entity12;
-    let a_scene_physics_value;
-    let current;
-    webcam = new webcam_default({});
-    heard = new heard_default({});
-    charactersmixins = new characters_assets_default({});
-    camerafps = new camera_fps_default({});
-    characters = new characters_default({});
-    return {
-      c() {
-        create_component(webcam.$$.fragment);
-        t0 = space();
-        create_component(heard.$$.fragment);
-        t1 = space();
-        a_scene = element("a-scene");
-        a_assets = element("a-assets");
-        audio = element("audio");
-        t2 = space();
-        a_mixin0 = element("a-mixin");
-        t3 = space();
-        a_mixin1 = element("a-mixin");
-        t4 = space();
-        a_mixin2 = element("a-mixin");
-        t5 = space();
-        create_component(charactersmixins.$$.fragment);
-        t6 = space();
-        create_component(camerafps.$$.fragment);
-        t7 = space();
-        a_entity0 = element("a-entity");
-        t8 = space();
-        a_mixin3 = element("a-mixin");
-        t9 = space();
-        a_mixin4 = element("a-mixin");
-        t10 = space();
-        a_mixin5 = element("a-mixin");
-        t11 = space();
-        a_mixin6 = element("a-mixin");
-        t12 = space();
-        a_mixin7 = element("a-mixin");
-        t13 = space();
-        a_mixin8 = element("a-mixin");
-        t14 = space();
-        a_mixin9 = element("a-mixin");
-        t15 = space();
-        a_mixin10 = element("a-mixin");
-        t16 = space();
-        a_mixin11 = element("a-mixin");
-        t17 = space();
-        a_sky = element("a-sky");
-        t18 = space();
-        a_entity1 = element("a-entity");
-        t19 = space();
-        a_entity2 = element("a-entity");
-        t20 = space();
-        a_entity3 = element("a-entity");
-        t21 = space();
-        a_entity4 = element("a-entity");
-        t22 = space();
-        a_entity5 = element("a-entity");
-        t23 = space();
-        a_entity6 = element("a-entity");
-        t24 = space();
-        a_entity7 = element("a-entity");
-        t25 = space();
-        a_entity8 = element("a-entity");
-        t26 = space();
-        a_entity9 = element("a-entity");
-        t27 = space();
-        a_entity10 = element("a-entity");
-        t28 = space();
-        create_component(characters.$$.fragment);
-        t29 = space();
-        a_plane = element("a-plane");
-        t30 = space();
-        a_entity11 = element("a-entity");
-        t31 = space();
-        a_entity12 = element("a-entity");
-        attr(audio, "id", "sound-bg");
-        if (!src_url_equal(audio.src, audio_src_value = "./sound/bg-ocean.mp3"))
-          attr(audio, "src", audio_src_value);
-        set_custom_element_data(a_mixin0, "id", "shadow");
-        set_custom_element_data(a_mixin0, "shadow", "cast: true");
-        set_custom_element_data(a_mixin1, "id", "toon");
-        set_custom_element_data(a_mixin1, "material", "roughness: 1;dithering: false;");
-        set_custom_element_data(a_mixin2, "id", "cloud");
-        set_custom_element_data(a_mixin2, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin2, "animation", a_mixin2_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx[0] + "; easing: linear; loop: true;");
-        set_custom_element_data(a_mixin2, "material", "color: #ffffff; opacity: 0.75; transparent: true; emissive: white; ");
-        set_custom_element_data(a_mixin2, "geometry", "");
-        set_custom_element_data(a_mixin2, "host", "");
-        set_custom_element_data(a_mixin2, "scale", "25 5 15");
-        set_custom_element_data(a_entity0, "id", "mountain-model");
-        set_custom_element_data(a_entity0, "gltf-model", "./glb/rockC.glb");
-        set_custom_element_data(a_entity0, "instanced-mesh", "capacity: 50");
-        set_custom_element_data(a_mixin3, "id", "smolitem");
-        set_custom_element_data(a_mixin3, "ammo-body", "type: static; mass: 0;collisionFilterGroup: 2;");
-        set_custom_element_data(a_mixin3, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
-        set_custom_element_data(a_mixin4, "id", "smolfix");
-        set_custom_element_data(a_mixin4, "ammo-shape", "offset: -1.85 0 0.85;");
-        set_custom_element_data(a_mixin5, "id", "flowers");
-        set_custom_element_data(a_mixin5, "mixin", "smolitem smolfix");
-        set_custom_element_data(a_mixin5, "shadow", "");
-        set_custom_element_data(a_mixin5, "gltf-model", "./glb/flowers.glb");
-        set_custom_element_data(a_mixin5, "host", "");
-        set_custom_element_data(a_mixin5, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin5, "vary", vary);
-        set_custom_element_data(a_mixin6, "id", "mushroom");
-        set_custom_element_data(a_mixin6, "mixin", "smolitem smolfix");
-        set_custom_element_data(a_mixin6, "shadow", "");
-        set_custom_element_data(a_mixin6, "gltf-model", "./glb/mushrooms.glb");
-        set_custom_element_data(a_mixin6, "host", "");
-        set_custom_element_data(a_mixin6, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin6, "vary", vary);
-        set_custom_element_data(a_mixin7, "id", "flowersLow");
-        set_custom_element_data(a_mixin7, "mixin", "smolitem smolfix");
-        set_custom_element_data(a_mixin7, "shadow", "");
-        set_custom_element_data(a_mixin7, "gltf-model", "./glb/flowersLow.glb");
-        set_custom_element_data(a_mixin7, "host", "");
-        set_custom_element_data(a_mixin7, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin7, "vary", vary);
-        set_custom_element_data(a_mixin8, "id", "tree");
-        set_custom_element_data(a_mixin8, "class", "climbable");
-        set_custom_element_data(a_mixin8, "shadow", "");
-        set_custom_element_data(a_mixin8, "host", "");
-        set_custom_element_data(a_mixin8, "gltf-model", "./glb/tree.glb");
-        set_custom_element_data(a_mixin8, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin8, "vary", "property: scale; range: 1 0.5 1 2 3 2");
-        set_custom_element_data(a_mixin8, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin8, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
-        set_custom_element_data(a_mixin9, "id", "grass");
-        set_custom_element_data(a_mixin9, "host", "");
-        set_custom_element_data(a_mixin9, "mixin", "smolitem");
-        set_custom_element_data(a_mixin9, "gltf-model", "./glb/grass.glb");
-        set_custom_element_data(a_mixin9, "shadow", "");
-        set_custom_element_data(a_mixin9, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin9, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
-        set_custom_element_data(a_mixin10, "id", "rock");
-        set_custom_element_data(a_mixin10, "shadow", "");
-        set_custom_element_data(a_mixin10, "host", "");
-        set_custom_element_data(a_mixin10, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
-        set_custom_element_data(a_mixin10, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin10, "gltf-model", "./glb/rockB.glb");
-        set_custom_element_data(a_mixin10, "ammo-body", "type: static; mass: 0");
-        set_custom_element_data(a_mixin10, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
-        set_custom_element_data(a_mixin11, "id", "mountains");
-        set_custom_element_data(a_mixin11, "shadow", "");
-        set_custom_element_data(a_mixin11, "host", "");
-        set_custom_element_data(a_mixin11, "instanced-mesh-member", "mesh:#mountain-model");
-        set_custom_element_data(a_mixin11, "ring", a_mixin11_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 50");
-        set_custom_element_data(a_mixin11, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin11, "vary", "property: scale; range: 12 7.5 12 12 15 12");
-        set_custom_element_data(a_mixin11, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
-        set_custom_element_data(a_sky, "color", sky);
-        set_custom_element_data(a_sky, "host", "");
-        set_custom_element_data(a_sky, "animate", a_sky_animate_value = "property: color; to: " + sky_dark + "; easing: easeInOut; dur: 6000 ");
-        set_custom_element_data(a_entity1, "pool__tree", "mixin: tree; size: 50");
-        set_custom_element_data(a_entity1, "activate__tree", "");
-        set_custom_element_data(a_entity2, "pool__mountains", "mixin: mountains; size: 50");
-        set_custom_element_data(a_entity2, "activate__mountains", "");
-        set_custom_element_data(a_entity3, "pool__mushroom", "mixin: mushroom; size: 20");
-        set_custom_element_data(a_entity3, "activate__mushroom", "");
-        set_custom_element_data(a_entity4, "pool__grass", "mixin: grass; size: 50");
-        set_custom_element_data(a_entity4, "activate__grass", "");
-        set_custom_element_data(a_entity5, "pool__rock", "mixin: rock; size: 50");
-        set_custom_element_data(a_entity5, "activate__rock", "");
-        set_custom_element_data(a_entity6, "pool__flowers", "mixin: flowers; size: 50");
-        set_custom_element_data(a_entity6, "activate__flowers", "");
-        set_custom_element_data(a_entity7, "pool__flowerslow", "mixin: flowersLow; size: 50");
-        set_custom_element_data(a_entity7, "activate__flowerslow", "");
-        set_custom_element_data(a_entity8, "host", "");
-        set_custom_element_data(a_entity8, "position", a_entity8_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
-        set_custom_element_data(a_entity8, "light", a_entity8_light_value = ctx[3]({
-          type: "directional",
-          color: light,
-          castShadow: true,
-          shadowCameraTop: ctx[0],
-          shadowCameraLeft: -ctx[0],
-          shadowCameraRight: ctx[0],
-          shadowCameraBottom: -ctx[0],
-          shadowBias: -1e-4,
-          shadowMapHeight: 1024 * 4,
-          shadowMapWidth: 1024 * 4,
-          intensity: 0.75
-        }));
-        set_custom_element_data(a_entity9, "host", "");
-        set_custom_element_data(a_entity9, "position", a_entity9_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
-        set_custom_element_data(a_entity9, "light", a_entity9_light_value = ctx[3]({
-          type: "directional",
-          color: light,
-          intensity: 0.75
-        }));
-        set_custom_element_data(a_entity10, "host", "");
-        set_custom_element_data(a_entity10, "light", "type:ambient; color:white; intensity:0.1;");
-        set_custom_element_data(a_entity10, "position", "-1 1 1");
-        set_custom_element_data(a_plane, "shadow", "");
-        set_custom_element_data(a_plane, "host", "");
-        set_custom_element_data(a_plane, "position", "0 0 0");
-        set_custom_element_data(a_plane, "rotation", "-90 0 0");
-        set_custom_element_data(a_plane, "width", a_plane_width_value = ctx[0] * 1.5);
-        set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 1.5);
-        set_custom_element_data(a_plane, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_plane, "ammo-shape", "type:box");
-        set_custom_element_data(a_plane, "material", "repeat: 10 10;");
-        set_custom_element_data(a_plane, "color", "#334411");
-        set_custom_element_data(a_entity11, "pool__cloud", "mixin: shadow cloud; size: 5");
-        set_custom_element_data(a_entity11, "activate__cloud", "");
-        set_custom_element_data(a_entity11, "position", a_entity11_position_value = "0 25 " + ctx[0] / 4);
-        set_custom_element_data(a_entity12, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
-        set_custom_element_data(a_scene, "keyboard-shortcuts", "enterVR: false");
-        set_custom_element_data(a_scene, "stats", ctx[1]);
-        set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: low;");
-        set_custom_element_data(a_scene, "shadow", "type:basic;");
-        set_custom_element_data(a_scene, "fog", "type: exponential; color: #555");
-        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2]);
-      },
-      m(target, anchor) {
-        mount_component(webcam, target, anchor);
-        insert(target, t0, anchor);
-        mount_component(heard, target, anchor);
-        insert(target, t1, anchor);
-        insert(target, a_scene, anchor);
-        append(a_scene, a_assets);
-        append(a_assets, audio);
-        append(a_assets, t2);
-        append(a_assets, a_mixin0);
-        append(a_assets, t3);
-        append(a_assets, a_mixin1);
-        append(a_assets, t4);
-        append(a_assets, a_mixin2);
-        append(a_assets, t5);
-        mount_component(charactersmixins, a_assets, null);
-        append(a_scene, t6);
-        mount_component(camerafps, a_scene, null);
-        append(a_scene, t7);
-        append(a_scene, a_entity0);
-        append(a_scene, t8);
-        append(a_scene, a_mixin3);
-        append(a_scene, t9);
-        append(a_scene, a_mixin4);
-        append(a_scene, t10);
-        append(a_scene, a_mixin5);
-        append(a_scene, t11);
-        append(a_scene, a_mixin6);
-        append(a_scene, t12);
-        append(a_scene, a_mixin7);
-        append(a_scene, t13);
-        append(a_scene, a_mixin8);
-        append(a_scene, t14);
-        append(a_scene, a_mixin9);
-        append(a_scene, t15);
-        append(a_scene, a_mixin10);
-        append(a_scene, t16);
-        append(a_scene, a_mixin11);
-        append(a_scene, t17);
-        append(a_scene, a_sky);
-        append(a_scene, t18);
-        append(a_scene, a_entity1);
-        append(a_scene, t19);
-        append(a_scene, a_entity2);
-        append(a_scene, t20);
-        append(a_scene, a_entity3);
-        append(a_scene, t21);
-        append(a_scene, a_entity4);
-        append(a_scene, t22);
-        append(a_scene, a_entity5);
-        append(a_scene, t23);
-        append(a_scene, a_entity6);
-        append(a_scene, t24);
-        append(a_scene, a_entity7);
-        append(a_scene, t25);
-        append(a_scene, a_entity8);
-        append(a_scene, t26);
-        append(a_scene, a_entity9);
-        append(a_scene, t27);
-        append(a_scene, a_entity10);
-        append(a_scene, t28);
-        mount_component(characters, a_scene, null);
-        append(a_scene, t29);
-        append(a_scene, a_plane);
-        append(a_scene, t30);
-        append(a_scene, a_entity11);
-        append(a_scene, t31);
-        append(a_scene, a_entity12);
-        current = true;
-      },
-      p(ctx2, [dirty]) {
-        if (!current || dirty & 1 && a_mixin2_animation_value !== (a_mixin2_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx2[0] + "; easing: linear; loop: true;")) {
-          set_custom_element_data(a_mixin2, "animation", a_mixin2_animation_value);
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 3) {
+        $: {
+          if (canvasElementSource && !canvasElement.$) {
+            canvasElement.set(canvasElementSource);
+          }
+          if (videoElementSource && !videoElement.$) {
+            videoElement.set(videoElementSource);
+          }
         }
-        if (!current || dirty & 1 && a_mixin11_ring_value !== (a_mixin11_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
-          set_custom_element_data(a_mixin11, "ring", a_mixin11_ring_value);
-        }
-        if (!current || dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity8, "position", a_entity8_position_value);
-        }
-        if (!current || dirty & 1 && a_entity8_light_value !== (a_entity8_light_value = ctx2[3]({
-          type: "directional",
-          color: light,
-          castShadow: true,
-          shadowCameraTop: ctx2[0],
-          shadowCameraLeft: -ctx2[0],
-          shadowCameraRight: ctx2[0],
-          shadowCameraBottom: -ctx2[0],
-          shadowBias: -1e-4,
-          shadowMapHeight: 1024 * 4,
-          shadowMapWidth: 1024 * 4,
-          intensity: 0.75
-        }))) {
-          set_custom_element_data(a_entity8, "light", a_entity8_light_value);
-        }
-        if (!current || dirty & 1 && a_entity9_position_value !== (a_entity9_position_value = "-" + ctx2[0] / 4 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity9, "position", a_entity9_position_value);
-        }
-        if (!current || dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 1.5)) {
-          set_custom_element_data(a_plane, "width", a_plane_width_value);
-        }
-        if (!current || dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 1.5)) {
-          set_custom_element_data(a_plane, "height", a_plane_height_value);
-        }
-        if (!current || dirty & 1 && a_entity11_position_value !== (a_entity11_position_value = "0 25 " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity11, "position", a_entity11_position_value);
-        }
-        if (!current || dirty & 2) {
-          set_custom_element_data(a_scene, "stats", ctx2[1]);
-        }
-        if (!current || dirty & 4 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[2])) {
-          set_custom_element_data(a_scene, "physics", a_scene_physics_value);
-        }
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(webcam.$$.fragment, local);
-        transition_in(heard.$$.fragment, local);
-        transition_in(charactersmixins.$$.fragment, local);
-        transition_in(camerafps.$$.fragment, local);
-        transition_in(characters.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(webcam.$$.fragment, local);
-        transition_out(heard.$$.fragment, local);
-        transition_out(charactersmixins.$$.fragment, local);
-        transition_out(camerafps.$$.fragment, local);
-        transition_out(characters.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(webcam, detaching);
-        if (detaching)
-          detach(t0);
-        destroy_component(heard, detaching);
-        if (detaching)
-          detach(t1);
-        if (detaching)
-          detach(a_scene);
-        destroy_component(charactersmixins);
-        destroy_component(camerafps);
-        destroy_component(characters);
       }
     };
+    return [videoElementSource, canvasElementSource, video_binding, canvas_binding];
   }
-  var light = "#FEE";
-  var sky = "#336";
-  var sky_dark = "#003";
-  var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
-  function instance5($$self, $$props, $$invalidate) {
-    let $open_stats;
-    let $open_debug;
-    component_subscribe($$self, open_stats, ($$value) => $$invalidate(1, $open_stats = $$value));
-    component_subscribe($$self, open_debug, ($$value) => $$invalidate(2, $open_debug = $$value));
-    start();
-    const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
-    let { groundSize: groundSize2 = 100 } = $$props;
-    const scatter = [-groundSize2 / 2, 0, -groundSize2 / 2, groundSize2 / 2, 0, groundSize2 / 2].join(" ");
-    $$self.$$set = ($$props2) => {
-      if ("groundSize" in $$props2)
-        $$invalidate(0, groundSize2 = $$props2.groundSize);
-    };
-    return [groundSize2, $open_stats, $open_debug, str, scatter];
-  }
-  var Host = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance5, create_fragment6, safe_not_equal, { groundSize: 0 });
-    }
-  };
-  var host_default = Host;
-
-  // src/ui/title.svelte
-  function create_fragment7(ctx) {
-    let div3;
-    let t8;
-    let center;
-    return {
-      c() {
-        div3 = element("div");
-        div3.innerHTML = `<div class="favicon svelte-1uatlh0"></div> 
-	<div class="full svelte-1uatlh0"><div class="title svelte-1uatlh0"><offset class="svelte-1uatlh0"><b class="svelte-1uatlh0">a</b>  <br/></offset> 
-			<b class="svelte-1uatlh0">G</b>oblin
-			<offset class="svelte-1uatlh0"><b class="svelte-1uatlh0">L</b>ife</offset></div></div>`;
-        t8 = space();
-        center = element("center");
-        center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-1uatlh0"><img style="border:0px;height:4vh;" src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" border="0" alt="Buy Me a Coffee at ko-fi.com"/></a> 
-	<a href="https://discord.gg/8tkEQwsmwM" target="_blank" class="svelte-1uatlh0">\u{1F4AC}</a>`;
-        attr(div3, "class", "intro svelte-1uatlh0");
-      },
-      m(target, anchor) {
-        insert(target, div3, anchor);
-        insert(target, t8, anchor);
-        insert(target, center, anchor);
-      },
-      p: noop,
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(div3);
-        if (detaching)
-          detach(t8);
-        if (detaching)
-          detach(center);
-      }
-    };
-  }
-  var Title = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, null, create_fragment7, safe_not_equal, {});
-    }
-  };
-  var title_default = Title;
-
-  // src/ui/home.svelte
-  function create_fragment8(ctx) {
-    let div9;
-    let div0;
-    let t0;
-    let title;
-    let t1;
-    let div8;
-    let div3;
-    let div1;
-    let t2;
-    let textarea;
-    let t3;
-    let div2;
-    let t4;
-    let div7;
-    let div4;
-    let t5;
-    let div5;
-    let t7;
-    let div6;
-    let current;
-    let mounted;
-    let dispose;
-    title = new title_default({});
-    return {
-      c() {
-        div9 = element("div");
-        div0 = element("div");
-        t0 = space();
-        create_component(title.$$.fragment);
-        t1 = space();
-        div8 = element("div");
-        div3 = element("div");
-        div1 = element("div");
-        t2 = space();
-        textarea = element("textarea");
-        t3 = space();
-        div2 = element("div");
-        t4 = space();
-        div7 = element("div");
-        div4 = element("div");
-        t5 = space();
-        div5 = element("div");
-        div5.textContent = "\u{1F340}";
-        t7 = space();
-        div6 = element("div");
-        attr(div0, "class", "sprites sprite svelte-1uo4d6t");
-        attr(div1, "class", "flex svelte-1uo4d6t");
-        attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-1uo4d6t");
-        attr(textarea, "maxlength", "200");
-        textarea.value = ctx[0];
-        textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-1uo4d6t");
-        attr(div3, "class", "span2 full svelte-1uo4d6t");
-        attr(div4, "class", "flex svelte-1uo4d6t");
-        attr(div5, "type", "button");
-        attr(div5, "class", "button icon svelte-1uo4d6t");
-        attr(div5, "value", "GO");
-        attr(div6, "class", "flex svelte-1uo4d6t");
-        attr(div7, "class", "span2 full svelte-1uo4d6t");
-        attr(div8, "class", "vbox svelte-1uo4d6t");
-        attr(div9, "class", "menu svelte-1uo4d6t");
-      },
-      m(target, anchor) {
-        insert(target, div9, anchor);
-        append(div9, div0);
-        append(div9, t0);
-        mount_component(title, div9, null);
-        append(div9, t1);
-        append(div9, div8);
-        append(div8, div3);
-        append(div3, div1);
-        append(div3, t2);
-        append(div3, textarea);
-        append(div3, t3);
-        append(div3, div2);
-        append(div8, t4);
-        append(div8, div7);
-        append(div7, div4);
-        append(div7, t5);
-        append(div7, div5);
-        append(div7, t7);
-        append(div7, div6);
-        current = true;
-        if (!mounted) {
-          dispose = [
-            listen(textarea, "copy", copy_handler),
-            listen(textarea, "paste", paste_handler),
-            listen(textarea, "keydown", keydown_handler),
-            listen(div5, "click", ctx[1])
-          ];
-          mounted = true;
-        }
-      },
-      p(ctx2, [dirty]) {
-        if (!current || dirty & 1) {
-          textarea.value = ctx2[0];
-        }
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(title.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(title.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div9);
-        destroy_component(title);
-        mounted = false;
-        run_all(dispose);
-      }
-    };
-  }
-  var copy_handler = (e) => {
-    e.preventDefault();
-  };
-  var paste_handler = (e) => {
-    e.preventDefault();
-  };
-  var keydown_handler = (e) => {
-  };
-  function instance6($$self, $$props, $$invalidate) {
-    let $motd;
-    component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
-    if (location.search === "?go") {
-      open_game.set(true);
-      open_home.set(false);
-    }
-    const click_handler = () => {
-      open_home.set(false);
-      open_game.set(true);
-    };
-    return [$motd, click_handler];
-  }
-  var Home = class extends SvelteComponent {
+  var Webcam = class extends SvelteComponent {
     constructor(options) {
       super();
       init(this, options, instance6, create_fragment8, safe_not_equal, {});
     }
   };
-  var home_default = Home;
+  var webcam_default = Webcam;
 
-  // src/ui/text.svelte
-  function create_if_block2(ctx) {
-    let div;
-    let input;
-    let mounted;
-    let dispose;
-    return {
-      c() {
-        div = element("div");
-        input = element("input");
-        attr(input, "type", "text");
-        attr(input, "class", "entry svelte-e0lgn5");
-        attr(div, "class", "lofi svelte-e0lgn5");
-      },
-      m(target, anchor) {
-        insert(target, div, anchor);
-        append(div, input);
-        set_input_value(input, ctx[1]);
-        ctx[5](input);
-        if (!mounted) {
-          dispose = [
-            listen(input, "input", ctx[4]),
-            listen(input, "blur", ctx[3]),
-            listen(input, "keydown", ctx[6])
-          ];
-          mounted = true;
-        }
-      },
-      p(ctx2, dirty) {
-        if (dirty & 2 && input.value !== ctx2[1]) {
-          set_input_value(input, ctx2[1]);
-        }
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div);
-        ctx[5](null);
-        mounted = false;
-        run_all(dispose);
-      }
-    };
+  // src/component/net.ts
+  var host = new Value(false);
+  var hostid = new Value("");
+  var guest = new Value(window.location.search.slice(1));
+  var message = new Value([]);
+  var remote = new Value({});
+  message.on(($mess) => {
+    if (!$mess)
+      return;
+    for (const [command, data] of $mess) {
+      Process(command, data);
+    }
+  });
+  function Process(command, data) {
+    switch (command) {
+      case 0 /* GLB */:
+        break;
+      case 1 /* VRM */:
+        break;
+      case 2 /* O3D */:
+        break;
+    }
   }
-  function create_fragment9(ctx) {
-    let if_block_anchor;
-    let if_block = ctx[1] !== void 0 && create_if_block2(ctx);
-    return {
-      c() {
-        if (if_block)
-          if_block.c();
-        if_block_anchor = empty();
-      },
-      m(target, anchor) {
-        if (if_block)
-          if_block.m(target, anchor);
-        insert(target, if_block_anchor, anchor);
-      },
-      p(ctx2, [dirty]) {
-        if (ctx2[1] !== void 0) {
-          if (if_block) {
-            if_block.p(ctx2, dirty);
-          } else {
-            if_block = create_if_block2(ctx2);
-            if_block.c();
-            if_block.m(if_block_anchor.parentNode, if_block_anchor);
-          }
-        } else if (if_block) {
-          if_block.d(1);
-          if_block = null;
-        }
-      },
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (if_block)
-          if_block.d(detaching);
-        if (detaching)
-          detach(if_block_anchor);
-      }
-    };
-  }
-  function instance7($$self, $$props, $$invalidate) {
-    let $open_text;
-    component_subscribe($$self, open_text, ($$value) => $$invalidate(1, $open_text = $$value));
-    let ele;
-    function send() {
-      talk.set(open_text.$);
-      open_text.set(void 0);
+  AFRAME.registerComponent("guest", {
+    init() {
     }
-    function escape2() {
-      open_text.set(void 0);
+  });
+  host.on(($h) => {
+    if (!$h)
+      return;
+  });
+  AFRAME.registerComponent("host", {
+    schema: {
+      dynamic: { type: "bool", default: false },
+      sync: { type: "string", default: "position;quaternion;geometry;material;" }
+    },
+    init() {
+      this.tick = AFRAME.utils.throttleTick(this.tick, 2e3, this);
+    },
+    sync() {
+    },
+    tick() {
+      if (!this.dynamic)
+        return;
     }
-    key_down.on(() => {
-      switch (key_down.$) {
-        case "`":
-          if (open_text.$ === void 0) {
-            open_text.set("~ ");
-            requestAnimationFrame(() => ele?.focus());
-          }
-          break;
-        case "enter":
-          if (open_text.$ === void 0) {
-            open_text.set("");
-            requestAnimationFrame(() => ele?.focus());
-          }
-      }
-    });
-    function input_input_handler() {
-      $open_text = this.value;
-      open_text.set($open_text);
-    }
-    function input_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        ele = $$value;
-        $$invalidate(0, ele);
-      });
-    }
-    const keydown_handler2 = (e) => {
-      if (e.key === "Enter") {
-        send();
-      }
-      switch (e.key) {
-        case "Enter":
-          send();
-          break;
-        case "Escape":
-          escape2();
-          break;
-      }
-    };
-    return [
-      ele,
-      $open_text,
-      send,
-      escape2,
-      input_input_handler,
-      input_binding,
-      keydown_handler2
-    ];
-  }
-  var Text = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance7, create_fragment9, safe_not_equal, {});
-    }
-  };
-  var text_default = Text;
+  });
 
-  // src/ui/loading.svelte
-  function create_fragment10(ctx) {
-    let div5;
-    let div0;
-    let t0;
-    let title;
-    let t1;
-    let div4;
-    let div3;
-    let div1;
-    let t2;
-    let textarea;
-    let t3;
-    let div2;
-    let current;
-    title = new title_default({});
-    return {
-      c() {
-        div5 = element("div");
-        div0 = element("div");
-        t0 = space();
-        create_component(title.$$.fragment);
-        t1 = space();
-        div4 = element("div");
-        div3 = element("div");
-        div1 = element("div");
-        t2 = space();
-        textarea = element("textarea");
-        t3 = space();
-        div2 = element("div");
-        attr(div0, "class", "sprites sprite svelte-qfprcl");
-        attr(div1, "class", "flex svelte-qfprcl");
-        attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-qfprcl");
-        attr(textarea, "maxlength", "200");
-        textarea.value = ctx[0];
-        textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-qfprcl");
-        attr(div3, "class", "span2 full svelte-qfprcl");
-        attr(div4, "class", "vbox svelte-qfprcl");
-        attr(div5, "class", "menu svelte-qfprcl");
-      },
-      m(target, anchor) {
-        insert(target, div5, anchor);
-        append(div5, div0);
-        append(div5, t0);
-        mount_component(title, div5, null);
-        append(div5, t1);
-        append(div5, div4);
-        append(div4, div3);
-        append(div3, div1);
-        append(div3, t2);
-        append(div3, textarea);
-        append(div3, t3);
-        append(div3, div2);
-        current = true;
-      },
-      p(ctx2, [dirty]) {
-        if (!current || dirty & 1) {
-          textarea.value = ctx2[0];
-        }
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(title.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(title.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div5);
-        destroy_component(title);
-      }
-    };
-  }
-  function instance8($$self, $$props, $$invalidate) {
-    let $loading;
-    component_subscribe($$self, loading, ($$value) => $$invalidate(0, $loading = $$value));
-    return [$loading];
-  }
-  var Loading = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance8, create_fragment10, safe_not_equal, {});
-    }
-  };
-  var loading_default = Loading;
-
-  // src/ui/help.svelte
-  function create_fragment11(ctx) {
-    let div5;
-    let div0;
-    let t0;
-    let div4;
-    let div3;
-    let div1;
-    let t1;
-    let textarea;
-    let t2;
-    let div2;
-    let mounted;
-    let dispose;
-    return {
-      c() {
-        div5 = element("div");
-        div0 = element("div");
-        t0 = space();
-        div4 = element("div");
-        div3 = element("div");
-        div1 = element("div");
-        t1 = space();
-        textarea = element("textarea");
-        t2 = space();
-        div2 = element("div");
-        attr(div0, "class", "sprites sprite svelte-1gdirzm");
-        attr(div1, "class", "flex svelte-1gdirzm");
-        attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-1gdirzm");
-        attr(textarea, "maxlength", "200");
-        textarea.value = ctx[0];
-        textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-1gdirzm");
-        attr(div3, "class", "span2 full svelte-1gdirzm");
-        attr(div4, "class", "vbox svelte-1gdirzm");
-        attr(div5, "class", "menu svelte-1gdirzm");
-      },
-      m(target, anchor) {
-        insert(target, div5, anchor);
-        append(div5, div0);
-        append(div5, t0);
-        append(div5, div4);
-        append(div4, div3);
-        append(div3, div1);
-        append(div3, t1);
-        append(div3, textarea);
-        append(div3, t2);
-        append(div3, div2);
-        if (!mounted) {
-          dispose = [
-            listen(div1, "click", ctx[1]),
-            listen(div2, "click", ctx[1])
-          ];
-          mounted = true;
-        }
-      },
-      p(ctx2, [dirty]) {
-        if (dirty & 1) {
-          textarea.value = ctx2[0];
-        }
-      },
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(div5);
-        mounted = false;
-        run_all(dispose);
-      }
-    };
-  }
-  function instance9($$self, $$props, $$invalidate) {
-    let $helptext;
-    component_subscribe($$self, helptext, ($$value) => $$invalidate(0, $helptext = $$value));
-    function close() {
-      open_help.set(false);
-    }
-    return [$helptext, close];
-  }
-  var Help = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance9, create_fragment11, safe_not_equal, {});
-    }
-  };
-  var help_default = Help;
-
-  // src/main.svelte
-  function create_if_block_3(ctx) {
+  // src/template/guest.svelte
+  function create_if_block_1(ctx) {
     let help;
     let current;
     help = new help_default({});
@@ -34812,7 +33997,7 @@ not selfie camera mode
       }
     };
   }
-  function create_if_block_2(ctx) {
+  function create_if_block3(ctx) {
     let loading3;
     let current;
     loading3 = new loading_default({});
@@ -34839,74 +34024,28 @@ not selfie camera mode
       }
     };
   }
-  function create_if_block_1(ctx) {
-    let home;
-    let current;
-    home = new home_default({});
-    return {
-      c() {
-        create_component(home.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(home, target, anchor);
-        current = true;
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(home.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(home.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(home, detaching);
-      }
-    };
-  }
-  function create_if_block3(ctx) {
-    let host2;
-    let current;
-    host2 = new host_default({ props: { groundSize } });
-    return {
-      c() {
-        create_component(host2.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(host2, target, anchor);
-        current = true;
-      },
-      p: noop,
-      i(local) {
-        if (current)
-          return;
-        transition_in(host2.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(host2.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(host2, detaching);
-      }
-    };
-  }
-  function create_fragment12(ctx) {
+  function create_fragment9(ctx) {
     let text_1;
     let t0;
     let t1;
     let t2;
+    let webcam;
     let t3;
-    let if_block3_anchor;
+    let heard;
+    let t4;
+    let a_scene;
+    let a_assets;
+    let charactersassets;
+    let t5;
+    let characters;
     let current;
     text_1 = new text_default({});
-    let if_block0 = ctx[0] && create_if_block_3(ctx);
-    let if_block1 = ctx[1] && create_if_block_2(ctx);
-    let if_block2 = ctx[2] && create_if_block_1(ctx);
-    let if_block3 = ctx[3] && create_if_block3(ctx);
+    let if_block0 = ctx[0] && create_if_block_1(ctx);
+    let if_block1 = ctx[1] && create_if_block3(ctx);
+    webcam = new webcam_default({});
+    heard = new heard_default({});
+    charactersassets = new characters_assets_default({});
+    characters = new characters_default({});
     return {
       c() {
         create_component(text_1.$$.fragment);
@@ -34917,12 +34056,21 @@ not selfie camera mode
         if (if_block1)
           if_block1.c();
         t2 = space();
-        if (if_block2)
-          if_block2.c();
+        create_component(webcam.$$.fragment);
         t3 = space();
-        if (if_block3)
-          if_block3.c();
-        if_block3_anchor = empty();
+        create_component(heard.$$.fragment);
+        t4 = space();
+        a_scene = element("a-scene");
+        a_assets = element("a-assets");
+        create_component(charactersassets.$$.fragment);
+        t5 = space();
+        create_component(characters.$$.fragment);
+        set_custom_element_data(a_scene, "keyboard-shortcuts", "enterVR: false");
+        set_custom_element_data(a_scene, "stats", ctx[2]);
+        set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: medium;");
+        set_custom_element_data(a_scene, "shadow", "type:basic;");
+        set_custom_element_data(a_scene, "fog", "type: exponential; color: #555");
+        set_custom_element_data(a_scene, "guest", "");
       },
       m(target, anchor) {
         mount_component(text_1, target, anchor);
@@ -34933,12 +34081,15 @@ not selfie camera mode
         if (if_block1)
           if_block1.m(target, anchor);
         insert(target, t2, anchor);
-        if (if_block2)
-          if_block2.m(target, anchor);
+        mount_component(webcam, target, anchor);
         insert(target, t3, anchor);
-        if (if_block3)
-          if_block3.m(target, anchor);
-        insert(target, if_block3_anchor, anchor);
+        mount_component(heard, target, anchor);
+        insert(target, t4, anchor);
+        insert(target, a_scene, anchor);
+        append(a_scene, a_assets);
+        mount_component(charactersassets, a_assets, null);
+        append(a_scene, t5);
+        mount_component(characters, a_scene, null);
         current = true;
       },
       p(ctx2, [dirty]) {
@@ -34948,7 +34099,7 @@ not selfie camera mode
               transition_in(if_block0, 1);
             }
           } else {
-            if_block0 = create_if_block_3(ctx2);
+            if_block0 = create_if_block_1(ctx2);
             if_block0.c();
             transition_in(if_block0, 1);
             if_block0.m(t1.parentNode, t1);
@@ -34966,7 +34117,7 @@ not selfie camera mode
               transition_in(if_block1, 1);
             }
           } else {
-            if_block1 = create_if_block_2(ctx2);
+            if_block1 = create_if_block3(ctx2);
             if_block1.c();
             transition_in(if_block1, 1);
             if_block1.m(t2.parentNode, t2);
@@ -34978,42 +34129,8 @@ not selfie camera mode
           });
           check_outros();
         }
-        if (ctx2[2]) {
-          if (if_block2) {
-            if (dirty & 4) {
-              transition_in(if_block2, 1);
-            }
-          } else {
-            if_block2 = create_if_block_1(ctx2);
-            if_block2.c();
-            transition_in(if_block2, 1);
-            if_block2.m(t3.parentNode, t3);
-          }
-        } else if (if_block2) {
-          group_outros();
-          transition_out(if_block2, 1, 1, () => {
-            if_block2 = null;
-          });
-          check_outros();
-        }
-        if (ctx2[3]) {
-          if (if_block3) {
-            if_block3.p(ctx2, dirty);
-            if (dirty & 8) {
-              transition_in(if_block3, 1);
-            }
-          } else {
-            if_block3 = create_if_block3(ctx2);
-            if_block3.c();
-            transition_in(if_block3, 1);
-            if_block3.m(if_block3_anchor.parentNode, if_block3_anchor);
-          }
-        } else if (if_block3) {
-          group_outros();
-          transition_out(if_block3, 1, 1, () => {
-            if_block3 = null;
-          });
-          check_outros();
+        if (!current || dirty & 4) {
+          set_custom_element_data(a_scene, "stats", ctx2[2]);
         }
       },
       i(local) {
@@ -35022,16 +34139,20 @@ not selfie camera mode
         transition_in(text_1.$$.fragment, local);
         transition_in(if_block0);
         transition_in(if_block1);
-        transition_in(if_block2);
-        transition_in(if_block3);
+        transition_in(webcam.$$.fragment, local);
+        transition_in(heard.$$.fragment, local);
+        transition_in(charactersassets.$$.fragment, local);
+        transition_in(characters.$$.fragment, local);
         current = true;
       },
       o(local) {
         transition_out(text_1.$$.fragment, local);
         transition_out(if_block0);
         transition_out(if_block1);
-        transition_out(if_block2);
-        transition_out(if_block3);
+        transition_out(webcam.$$.fragment, local);
+        transition_out(heard.$$.fragment, local);
+        transition_out(charactersassets.$$.fragment, local);
+        transition_out(characters.$$.fragment, local);
         current = false;
       },
       d(detaching) {
@@ -35046,39 +34167,38 @@ not selfie camera mode
           if_block1.d(detaching);
         if (detaching)
           detach(t2);
-        if (if_block2)
-          if_block2.d(detaching);
+        destroy_component(webcam, detaching);
         if (detaching)
           detach(t3);
-        if (if_block3)
-          if_block3.d(detaching);
+        destroy_component(heard, detaching);
         if (detaching)
-          detach(if_block3_anchor);
+          detach(t4);
+        if (detaching)
+          detach(a_scene);
+        destroy_component(charactersassets);
+        destroy_component(characters);
       }
     };
   }
-  var groundSize = 100;
-  function instance10($$self, $$props, $$invalidate) {
+  function instance7($$self, $$props, $$invalidate) {
     let $open_help;
     let $open_loading;
-    let $open_home;
-    let $open_game;
+    let $open_stats;
     component_subscribe($$self, open_help, ($$value) => $$invalidate(0, $open_help = $$value));
     component_subscribe($$self, open_loading, ($$value) => $$invalidate(1, $open_loading = $$value));
-    component_subscribe($$self, open_home, ($$value) => $$invalidate(2, $open_home = $$value));
-    component_subscribe($$self, open_game, ($$value) => $$invalidate(3, $open_game = $$value));
-    return [$open_help, $open_loading, $open_home, $open_game];
+    component_subscribe($$self, open_stats, ($$value) => $$invalidate(2, $open_stats = $$value));
+    return [$open_help, $open_loading, $open_stats];
   }
-  var Main = class extends SvelteComponent {
+  var Guest = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance10, create_fragment12, safe_not_equal, {});
+      init(this, options, instance7, create_fragment9, safe_not_equal, {});
     }
   };
-  var main_default = Main;
+  var guest_default = Guest;
 
-  // src/index.ts
-  var app = new main_default({
+  // src/guest.ts
+  var app = new guest_default({
     target: document.getElementById("svelte"),
     props: {}
   });

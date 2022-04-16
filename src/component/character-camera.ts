@@ -1,19 +1,22 @@
 
 import { camera, camera_el, toggle_selfie } from "src/timing"
+import { Object3D, Quaternion, Vector3 } from "three"
 import { currentVRM } from "./vrm"
+
+const pos = new Vector3()
+const quat = new Quaternion()
+const scale = new Vector3()
 
 AFRAME.registerComponent("character-camera", {
     init() {
 
         camera.set(this.el.object3D)
         camera_el.set(this)
-        this.cancel = currentVRM.on(() => {
-            // stay attached
-            const o3d = this.el.object3D
-            if (currentVRM.$) {
-                o3d.position.set(0, 0, 0)
-                currentVRM.$.firstPerson.firstPersonBone.add(o3d)
-            }
+
+        currentVRM.on(($vrm) => {
+            if (!$vrm) return
+
+            $vrm.firstPerson.firstPersonBone.add(this.el.object3D)
         })
     },
     showHead() {

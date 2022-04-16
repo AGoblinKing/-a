@@ -2,21 +2,23 @@
 	import { avatar_current, avatar_doer } from 'src/timing'
 
 	import '../component/wasd-controller'
+	import '../component/vrm'
+	import '../component/webcam-vrm'
 </script>
 
 <a-entity
 	mixin="shadow character"
-	position="0 0 15"
 	vrm="src: {$avatar_current}; current: true"
 	look-controls
 	id="focus"
+	host="sync: position quaternion vrm; dynamic: true;"
 	wasd-controller
 />
 
-<!-- <a-entity mixin="shadow" position="0 0 -5"  rotation="0 180 0" vrm="src: /vrm/femgoblin.vrm; mirror: true" scatter="-5 0 -5 5 0 5"  /> -->
 <a-entity
 	mixin="shadow character"
-	position="0 0.25 14"
 	rotation="0 180 0"
+	position="0 0 -1"
+	host="sync: position quaternion vrm; dynamic: true;"
 	vrm="src: {$avatar_doer}; doer: true; mirror: true"
 />
