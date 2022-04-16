@@ -2,11 +2,8 @@ env:
   itchio_project: goblinlife/agoblinlife
   itchio_channel: web
 
-on:
-  push:
-    tags:
-      - v*
-
+on: [push]
+     
 jobs:
   exports:
     name: Build, Release, and Upload
