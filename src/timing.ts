@@ -16,7 +16,7 @@ export const open_help = new Value(false)
 export const open_stats = new Value(false).save("stats")
 export const open_heard = new Value(true).save("heard")
 export const open_debug = new Value(false).save("debugger")
-export const open_targeting = new Value(false).save("targeting_2")
+export const open_targeting = new Value(true).save("targeting_3")
 
 export const camera = new Value<Object3D>()
 export const camera_el = new Value<any>()
@@ -37,6 +37,7 @@ export const motd = new Value(`🎊v0.1.2🎊
 ✅ Controls ✅ Persist 
 ✅ Help [f1]
 ✅ Performance Pass
+✅ Targeting
 
 ❌ AI DOER ❌ Gameplay 
 

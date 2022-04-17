@@ -30,7 +30,7 @@
 		if (who.id === 'ground') return
 
 		const keys = Object.keys(ents)
-		if (keys.length >= 1) {
+		if (keys.length >= 10) {
 			const key = keys[Math.floor(Math.random() * keys.length)]
 			el.components.pool__targeting.returnEntity(ents[key])
 			delete ents[key]
@@ -74,7 +74,7 @@
 	{#if $open_targeting}
 		<a-entity
 			geometry
-			material="wireframe: true; opacity: 0.2; transparent: true; visible: {$open_targeting} };"
+			material="wireframe: true; opacity: 0.05s;color: #0F0; shader: flat;transparent: true; visible: {$open_targeting} };"
 			scale="0.1 0.1 20"
 			position="0 0 -1"
 			on:collidestart={collidestart}
@@ -90,5 +90,5 @@
 	bind:this={el}
 	material="color: blue; opacity: 0.15; shader: flat; visible: false;"
 	position="0 0 -1"
-	pool__targeting="mixin: bbs; size: 1"
+	pool__targeting="mixin: bbs; size: 10"
 />

@@ -7092,7 +7092,7 @@
   var open_stats = new Value(false).save("stats");
   var open_heard = new Value(true).save("heard");
   var open_debug = new Value(false).save("debugger");
-  var open_targeting = new Value(false).save("targeting_2");
+  var open_targeting = new Value(true).save("targeting_3");
   var camera = new Value();
   var camera_el = new Value();
   var toggle_selfie = new Value(state_default.selfie).save("selfie");
@@ -7109,6 +7109,7 @@
 \u2705 Controls \u2705 Persist 
 \u2705 Help [f1]
 \u2705 Performance Pass
+\u2705 Targeting
 
 \u274C AI DOER \u274C Gameplay 
 
@@ -33671,7 +33672,7 @@ not selfie camera mode
       c() {
         a_entity = element("a-entity");
         set_custom_element_data(a_entity, "geometry", "");
-        set_custom_element_data(a_entity, "material", a_entity_material_value = "wireframe: true; opacity: 0.2; transparent: true; visible: " + ctx[1] + " };");
+        set_custom_element_data(a_entity, "material", a_entity_material_value = "wireframe: true; opacity: 0.05s;color: #0F0; shader: flat;transparent: true; visible: " + ctx[1] + " };");
         set_custom_element_data(a_entity, "scale", "0.1 0.1 20");
         set_custom_element_data(a_entity, "position", "0 0 -1");
         set_custom_element_data(a_entity, "ammo-body", "type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;");
@@ -33688,7 +33689,7 @@ not selfie camera mode
         }
       },
       p(ctx2, dirty) {
-        if (dirty & 2 && a_entity_material_value !== (a_entity_material_value = "wireframe: true; opacity: 0.2; transparent: true; visible: " + ctx2[1] + " };")) {
+        if (dirty & 2 && a_entity_material_value !== (a_entity_material_value = "wireframe: true; opacity: 0.05s;color: #0F0; shader: flat;transparent: true; visible: " + ctx2[1] + " };")) {
           set_custom_element_data(a_entity, "material", a_entity_material_value);
         }
       },
@@ -33729,7 +33730,7 @@ not selfie camera mode
         set_custom_element_data(a_entity, "geometry", "");
         set_custom_element_data(a_entity, "material", "color: blue; opacity: 0.15; shader: flat; visible: false;");
         set_custom_element_data(a_entity, "position", "0 0 -1");
-        set_custom_element_data(a_entity, "pool__targeting", "mixin: bbs; size: 1");
+        set_custom_element_data(a_entity, "pool__targeting", "mixin: bbs; size: 10");
       },
       m(target, anchor) {
         insert(target, a_mixin, anchor);
@@ -33797,7 +33798,7 @@ not selfie camera mode
       if (who.id === "ground")
         return;
       const keys = Object.keys(ents);
-      if (keys.length >= 1) {
+      if (keys.length >= 10) {
         const key = keys[Math.floor(Math.random() * keys.length)];
         el.components.pool__targeting.returnEntity(ents[key]);
         delete ents[key];

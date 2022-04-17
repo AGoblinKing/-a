@@ -31049,7 +31049,7 @@
   var open_stats = new Value(false).save("stats");
   var open_heard = new Value(true).save("heard");
   var open_debug = new Value(false).save("debugger");
-  var open_targeting = new Value(false).save("targeting_2");
+  var open_targeting = new Value(true).save("targeting_3");
   var camera = new Value();
   var camera_el = new Value();
   var toggle_selfie = new Value(state_default.selfie).save("selfie");
@@ -31066,6 +31066,7 @@
 \u2705 Controls \u2705 Persist 
 \u2705 Help [f1]
 \u2705 Performance Pass
+\u2705 Targeting
 
 \u274C AI DOER \u274C Gameplay 
 
