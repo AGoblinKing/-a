@@ -6,7 +6,7 @@ const quat = new AFRAME.THREE.Quaternion()
 
 AFRAME.registerComponent("wasd-controller", {
     schema: {
-        speed: { type: "number", default: 0.4 },
+        speed: { type: "number", default: 0.3 },
         rot: { type: "number", default: 0.0025 },
     },
     tick(_, delta) {
@@ -26,7 +26,7 @@ AFRAME.registerComponent("wasd-controller", {
 
         // TODO: or if colliding with a climbable
         if (key_map.$[" "] && o3d.position.y < 0.5) {
-            hop = 2.5 * delta
+            hop = 4 * delta
         }
         if (key_map.$["w"]) {
             vec3.y = hop

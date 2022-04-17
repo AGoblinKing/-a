@@ -346,7 +346,7 @@ talk.on(async ($talk) => {
       return
     }
 
-    mirrorVRM.$?.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName[Random("O")], 0.5 + 2 * s)
+    mirrorVRM.$?.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName[Random("OEIAU")], 0.5 + 2 * s)
 
   }, 1 / 3.5 * 1000)
 })

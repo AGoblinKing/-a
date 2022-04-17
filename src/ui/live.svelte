@@ -21,6 +21,7 @@
 		height: 3vh;
 		border-radius: 3vh;
 		border: 1vh solid #222;
+		opacity: 0.75;
 		z-index: 5;
 	}
 

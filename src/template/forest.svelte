@@ -38,6 +38,7 @@
 	shadow
 	gltf-model="./glb/flowers.glb"
 	host
+	wind
 	{scatter}
 	{vary}
 />
@@ -47,6 +48,7 @@
 	shadow
 	gltf-model="./glb/mushrooms.glb"
 	host
+	wind
 	{scatter}
 	{vary}
 />
@@ -56,6 +58,7 @@
 	shadow
 	gltf-model="./glb/flowersLow.glb"
 	host
+	wind
 	{scatter}
 	{vary}
 />
@@ -65,21 +68,12 @@
 	class="climbable"
 	shadow
 	host
+	wind
 	gltf-model="./glb/tree.glb"
 	{scatter}
 	vary="property: scale; range: 1 0.5 1 2 3 2"
 	ammo-body="type: static; mass: 0;"
 	ammo-shape="type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0"
-/>
-
-<a-mixin
-	id="grass"
-	host
-	mixin="smolitem"
-	gltf-model="./glb/grass.glb"
-	shadow
-	{scatter}
-	vary="property: scale; range: 1 0.5 1 1.5 1.5 1.5"
 />
 
 <a-mixin
@@ -108,7 +102,19 @@
 <a-entity pool__tree="mixin: tree; size: 50" activate__tree />
 <a-entity pool__mountains="mixin: mountains; size: 50" activate__mountains />
 <a-entity pool__mushroom="mixin: mushroom; size: 20" activate__mushroom />
+
+<a-mixin
+	id="grass"
+	host
+	wind
+	mixin="smolitem"
+	gltf-model="./glb/grass.glb"
+	shadow
+	{scatter}
+	vary="property: scale; range: 1 0.5 1 1.5 1.5 1.5"
+/>
 <a-entity pool__grass="mixin: grass; size: 50" activate__grass />
+
 <a-entity pool__rock="mixin: rock; size: 50" activate__rock />
 <a-entity pool__flowers="mixin: flowers; size: 50" activate__flowers />
 <a-entity pool__flowersLow="mixin: flowersLow; size: 50" activate__flowersLow />
@@ -158,10 +164,43 @@
 	color="#334411"
 />
 
+<a-mixin
+	id="cloud"
+	{scatter}
+	material="color: #ffffff; opacity: 0.75; transparent: true; emissive: white; "
+	geometry
+	host
+	scale="15 5 10"
+	vary="property: scale; range: 1 1 1 1.5 1.5 1.5"
+/>
+
 <a-entity
-	pool__cloud="mixin: shadow cloud; size: 5"
+	pool__cloud="mixin: shadow cloud; size: 15"
 	activate__cloud
-	position="0 25 {groundSize / 4}"
+	position="0 35 {groundSize}"
+	animation="property:object3D.position.z; to:-{groundSize}; dur: {400 * 300}; loop: true;"
 />
 
 <a-entity sound="autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false" />
+
+<a-mixin
+	id="floof"
+	geometry
+	scale="0.05 0.05 0.05"
+	material="color: white; shader: flat;"
+	vary="property: position; range: -{groundSize} 0.5 -{groundSize} {groundSize} 4 {groundSize}"
+	spiral
+/>
+
+<a-entity pool__floof="mixin: floof; size: 300;" activate__floof />
+
+<a-mixin
+	id="birds"
+	geometry
+	scale="0.05 0.05 0.05"
+	material="color: yellow; shader: flat;"
+	vary="property: position; range: -{groundSize} 10.5 -{groundSize} {groundSize} 40 {groundSize}"
+	spiral
+/>
+
+<a-entity pool__birds="mixin: birds; size: 50;" activate__birds />

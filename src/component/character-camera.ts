@@ -16,6 +16,7 @@ AFRAME.registerComponent("character-camera", {
         currentVRM.on(($vrm) => {
             if (!$vrm) return
 
+            this.hideHead()
             $vrm.firstPerson.firstPersonBone.add(this.el.object3D)
         })
     },

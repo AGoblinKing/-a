@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { motd, open_game, open_home } from 'src/timing'
+	import { motd, open_game, open_home, videos } from 'src/timing'
 
 	import Title from './title.svelte'
+	import Video from './video.svelte'
 
 	if (location.search === '?go') {
 		open_game.set(true)
@@ -58,9 +59,17 @@
 			<div class="flex" />
 		</div>
 	</div>
+
+	<div class="flex span2 case">
+		{#each $videos as src}
+			<Video {src} />
+		{/each}
+	</div>
 </div>
 
 <style>
+	.case {
+	}
 	.full {
 		width: 90vw;
 	}
@@ -99,6 +108,26 @@
 		max-width: 60vh;
 	}
 
+	.case {
+		border: 0.5vh solid rgb(0, 106, 206);
+
+		color: white;
+
+		font-size: 3vh;
+		outline: none;
+		background-color: rgb(0, 110, 255);
+		text-align: center;
+		border-bottom: none;
+		font-weight: 500;
+		align-self: center;
+		border-radius: 1vh 1vh 0 0;
+
+		box-shadow: 0 0 5vh rgb(0, 65, 150);
+
+		text-shadow: -0.15rem -0.15rem 0 #000, 0.15rem -0.15rem 0 #000, -0.15rem 0.15rem 0 #000,
+			0.15rem 0.15rem 0 #000;
+		transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
+	}
 	.button {
 		border: 0.5vh solid rgb(0, 106, 206);
 		border-radius: 1vh;
@@ -177,6 +206,7 @@
 	.flex {
 		flex: 1;
 	}
+
 	textarea {
 		-webkit-appearance: none;
 		outline: none !important;

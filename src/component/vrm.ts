@@ -61,6 +61,8 @@ AFRAME.registerComponent('vrm', {
 
       if (this.data.current) {
         vrm.firstPerson.setup();
+        camera.$.layers.enable(vrm.firstPerson.firstPersonOnlyLayer);
+        camera.$.layers.disable(vrm.firstPerson.thirdPersonOnlyLayer);
 
         currentVRM.set(vrm)
       }

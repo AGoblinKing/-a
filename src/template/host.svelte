@@ -19,10 +19,6 @@
 	import Live from 'src/ui/live.svelte'
 
 	export let groundSize = 100
-
-	const scatter = [-groundSize / 2, 0, -groundSize / 2, groundSize / 2, 0, groundSize / 2].join(' ')
-
-	let scene
 </script>
 
 <Webcam />
@@ -42,16 +38,6 @@
 		<a-mixin id="shadow" shadow="cast: true" />
 		<a-mixin id="toon" material="roughness: 1;dithering: false;" />
 
-		<a-mixin
-			id="cloud"
-			{scatter}
-			animation="property:position.z; dur: {3000 *
-				60}; to-{groundSize}; easing: linear; loop: true;"
-			material="color: #ffffff; opacity: 0.75; transparent: true; emissive: white; "
-			geometry
-			host
-			scale="25 5 15"
-		/>
 		<CharactersMixins />
 	</a-assets>
 

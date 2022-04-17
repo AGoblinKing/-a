@@ -1,6 +1,4 @@
 <script lang="ts">
-	import type { AFrame } from 'aframe'
-
 	import { open_targeting } from 'src/timing'
 
 	import '../component/character-camera'
@@ -70,7 +68,7 @@
 	character-camera
 	position="0 4 0"
 	wasd-controls="enabled: false;"
-	look-control="pointerLockEnabled: true;"
+	look-controls="enabled: true;pointerLockEnabled: true;"
 >
 	{#if $open_targeting}
 		<a-entity

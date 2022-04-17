@@ -8,6 +8,7 @@ export const avatar_doer = new Value<string>(state.avatar.doer).save("avatar_doe
 export const voice_current = new Value("Guy | UK English").save("voice_current")
 export const voice_doer = new Value("Aus | UK English").save("voice_doer")
 export const scouter = new Value("green").save("scouter")
+export const videos = new Value(["MePBW53Rtpw", "lyDJOPuanO0", "sDsZZiiSwG8"])
 
 export const open_home = new Value(true)
 export const open_game = new Value(false)
@@ -62,8 +63,10 @@ Camera data is processed by mediapipe via tensorflow locally.
 
 Microphone data is handled by the browser provider, ie: Chrome / Edge / etc.
 
-Cookies for localStorage only. 
-If that's a problem then reject the cookie use policy by closing your browser.
+Cookies are not used to track your personal data by us. localStorage is used for persistance. 
+There are iframes to 3rd parties that may attempt to track you, like youtube. 
+Users can load assets remotely using HTTP to other websites. We're not responsible for their content, contact the host directly.
+If that's a problem then reject this terms of use by closing your browser.
 
 Accountless. 
 
