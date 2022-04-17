@@ -40,10 +40,11 @@
 }
 
 /* fakecss:/workspaces/-a/src/ui/help.esbuild-svelte-fake-css */
-.full.svelte-1gdirzm {
+.full.svelte-1qmwcry {
   width: 90vw;
 }
-.menu.svelte-1gdirzm {
+.menu.svelte-1qmwcry {
+  cursor: auto;
   display: flex;
   opacity: 0.9;
   flex-direction: column;
@@ -64,13 +65,13 @@
     inset 40vw 0 5rem rgba(0, 140, 255, 0.2),
     inset -40vw 0 5rem rgba(0, 140, 255, 0.2) !important;
 }
-.button.text.svelte-1gdirzm {
+.button.text.svelte-1qmwcry {
   background-color: rgb(0, 58, 130);
   padding: 0.5vh 2.5vh;
   width: 100%;
   max-width: 60vh;
 }
-.button.svelte-1gdirzm {
+.button.svelte-1qmwcry {
   border: 0.5vh solid rgb(0, 106, 206);
   border-radius: 1vh;
   color: white;
@@ -91,16 +92,16 @@
     0.15rem 0.15rem 0 #000;
   transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 }
-.button.svelte-1gdirzm:active {
+.button.svelte-1qmwcry:active {
   background-color: rgb(0, 32, 53) !important;
 }
-.button.svelte-1gdirzm:hover {
+.button.svelte-1qmwcry:hover {
   background-color: rgb(0, 106, 206) !important;
   color: rgb(0, 225, 255);
   cursor: pointer;
-  animation: svelte-1gdirzm-beep 250ms alternate infinite;
+  animation: svelte-1qmwcry-beep 250ms alternate infinite;
 }
-@keyframes svelte-1gdirzm-beep {
+@keyframes svelte-1qmwcry-beep {
   0% {
     opacity: 95%;
   }
@@ -108,7 +109,7 @@
     opacity: 100%;
   }
 }
-@keyframes svelte-1gdirzm-scroll {
+@keyframes svelte-1qmwcry-scroll {
   0% {
     background-position: 0% 0%;
     opacity: 20%;
@@ -123,11 +124,11 @@
     transform: scale(0.25, 5);
   }
 }
-.span2.svelte-1gdirzm {
+.span2.svelte-1qmwcry {
   display: flex;
   align-self: center;
 }
-.sprites.svelte-1gdirzm {
+.sprites.svelte-1qmwcry {
   position: absolute;
   background-size: 100% auto;
   image-rendering: pixelated;
@@ -138,17 +139,17 @@
   pointer-events: none;
   width: 100%;
   height: 100%;
-  animation: svelte-1gdirzm-scroll 15s infinite linear;
+  animation: svelte-1qmwcry-scroll 15s infinite linear;
 }
-.vbox.svelte-1gdirzm {
+.vbox.svelte-1qmwcry {
   display: flex;
   flex: 1;
   flex-direction: column;
 }
-.flex.svelte-1gdirzm {
+.flex.svelte-1qmwcry {
   flex: 1;
 }
-textarea.svelte-1gdirzm {
+textarea.svelte-1qmwcry {
   -webkit-appearance: none;
   outline: none !important;
   font-family: monospace;
@@ -237,11 +238,12 @@ b.svelte-1uatlh0 {
 }
 
 /* fakecss:/workspaces/-a/src/ui/loading.esbuild-svelte-fake-css */
-.full.svelte-qfprcl {
+.full.svelte-1tqvjp5 {
   width: 90vw;
 }
-.menu.svelte-qfprcl {
+.menu.svelte-1tqvjp5 {
   display: flex;
+  cursor: auto;
   opacity: 0.9;
   flex-direction: column;
   position: absolute;
@@ -260,13 +262,13 @@ b.svelte-1uatlh0 {
     inset 40vw 0 5rem rgba(0, 140, 255, 0.2),
     inset -40vw 0 5rem rgba(0, 140, 255, 0.2) !important;
 }
-.button.text.svelte-qfprcl {
+.button.text.svelte-1tqvjp5 {
   background-color: rgb(0, 58, 130);
   padding: 0.5vh 2.5vh;
   width: 100%;
   max-width: 60vh;
 }
-.button.svelte-qfprcl {
+.button.svelte-1tqvjp5 {
   border: 0.5vh solid rgb(0, 106, 206);
   border-radius: 1vh;
   color: white;
@@ -287,16 +289,16 @@ b.svelte-1uatlh0 {
     0.15rem 0.15rem 0 #000;
   transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 }
-.button.svelte-qfprcl:active {
+.button.svelte-1tqvjp5:active {
   background-color: rgb(0, 32, 53) !important;
 }
-.button.svelte-qfprcl:hover {
+.button.svelte-1tqvjp5:hover {
   background-color: rgb(0, 106, 206) !important;
   color: rgb(0, 225, 255);
   cursor: pointer;
-  animation: svelte-qfprcl-beep 250ms alternate infinite;
+  animation: svelte-1tqvjp5-beep 250ms alternate infinite;
 }
-@keyframes svelte-qfprcl-beep {
+@keyframes svelte-1tqvjp5-beep {
   0% {
     opacity: 95%;
   }
@@ -304,7 +306,7 @@ b.svelte-1uatlh0 {
     opacity: 100%;
   }
 }
-@keyframes svelte-qfprcl-scroll {
+@keyframes svelte-1tqvjp5-scroll {
   0% {
     background-position: 0% 0%;
     opacity: 20%;
@@ -319,11 +321,11 @@ b.svelte-1uatlh0 {
     transform: scale(0.25, 5);
   }
 }
-.span2.svelte-qfprcl {
+.span2.svelte-1tqvjp5 {
   display: flex;
   align-self: center;
 }
-.sprites.svelte-qfprcl {
+.sprites.svelte-1tqvjp5 {
   position: absolute;
   background-size: 100% auto;
   image-rendering: pixelated;
@@ -334,17 +336,17 @@ b.svelte-1uatlh0 {
   pointer-events: none;
   width: 100%;
   height: 100%;
-  animation: svelte-qfprcl-scroll 15s infinite linear;
+  animation: svelte-1tqvjp5-scroll 15s infinite linear;
 }
-.vbox.svelte-qfprcl {
+.vbox.svelte-1tqvjp5 {
   display: flex;
   flex: 1;
   flex-direction: column;
 }
-.flex.svelte-qfprcl {
+.flex.svelte-1tqvjp5 {
   flex: 1;
 }
-textarea.svelte-qfprcl {
+textarea.svelte-1tqvjp5 {
   -webkit-appearance: none;
   outline: none !important;
   font-family: monospace;
@@ -362,7 +364,8 @@ textarea.svelte-qfprcl {
 }
 
 /* fakecss:/workspaces/-a/src/ui/text.esbuild-svelte-fake-css */
-.entry.svelte-e0lgn5 {
+.entry.svelte-1qlzmvl {
+  cursor: auto;
   flex: 1;
   background: rgba(12, 8, 240, 0.15);
   border: 0.6vh solid rgba(0, 0, 0, 0.5);
@@ -391,7 +394,7 @@ textarea.svelte-qfprcl {
     0.15rem 0.15rem 0 #000;
   transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 }
-.lofi.svelte-e0lgn5 {
+.lofi.svelte-1qlzmvl {
   display: flex;
   position: absolute;
   bottom: 2.5vh;

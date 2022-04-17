@@ -2,27 +2,27 @@
 import { binds, controls, vars } from "./control";
 import { key_down } from "./keyboard";
 
-import { do_echo, voice_current } from "./timing";
+import { do_echo, open_live, voice_current } from "./timing";
 import { Value } from "./value";
 
 
-var recognition = new webkitSpeechRecognition();
-
-var synth = window.speechSynthesis;
-
 const recog = new Value<any>()
+var recognition
+var synth = window.speechSynthesis;
+function init() {
+    recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
-recognition.continuous = false;
-recognition.lang = 'en-US';
-recognition.interimResults = false;
-recognition.maxAlternatives = 1;
+    recognition.onresult = (event) => {
+        recog.set(event)
+    }
 
-recognition.onresult = (event) => {
-    recog.set(event)
-}
-
-recognition.onend = () => {
-    recognition.start()
+    recognition.onend = () => {
+        if (open_live.$) recognition.start()
+    }
 }
 
 function findVoice(voiceName: string) {
@@ -92,9 +92,24 @@ recog.on((event) => {
     talk.set(said)
 })
 
-export const start = () => recognition.start()
+export const start = () => {
+    if (!recognition) init()
 
+    recognition.start()
+}
+
+function end() {
+    recognition?.stop()
+}
 let cancels = []
+
+open_live.on(($l) => {
+    if ($l) {
+        start()
+    } else {
+        end()
+    }
+})
 
 binds.on(($binds) => {
     cancels.forEach((cancel) => cancel())

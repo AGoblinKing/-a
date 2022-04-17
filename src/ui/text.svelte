@@ -59,6 +59,7 @@
 
 <style>
 	.entry {
+		cursor: auto;
 		flex: 1;
 		background: rgba(12, 8, 240, 0.15);
 		border: 0.6vh solid rgba(0, 0, 0, 0.5);

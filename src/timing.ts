@@ -7,6 +7,7 @@ export const avatar_current = new Value<string>(state.avatar.current).save("avat
 export const avatar_doer = new Value<string>(state.avatar.doer).save("avatar_doer_1")
 export const voice_current = new Value("Guy | UK English").save("voice_current")
 export const voice_doer = new Value("Aus | UK English").save("voice_doer")
+export const scouter = new Value("green").save("scouter")
 
 export const open_home = new Value(true)
 export const open_game = new Value(false)
@@ -17,6 +18,7 @@ export const open_stats = new Value(false).save("stats")
 export const open_heard = new Value(true).save("heard")
 export const open_debug = new Value(false).save("debugger")
 export const open_targeting = new Value(true).save("targeting_3")
+export const open_live = new Value(false)
 
 export const camera = new Value<Object3D>()
 export const camera_el = new Value<any>()
@@ -156,6 +158,16 @@ selfie camera mode
 ~ not selfie
 not selfie camera mode
 
+~ target
+show targeting UI, persists
 
+~ not target
+hide targeting UI, persists
+
+~ scouter ...color
+set your targeting UI to be that color, persists
+
+~ not scouter
+reset scout color to green, persists
 `
 )

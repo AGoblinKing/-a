@@ -6,8 +6,8 @@ const quat = new AFRAME.THREE.Quaternion()
 
 AFRAME.registerComponent("wasd-controller", {
     schema: {
-        speed: { type: "number", default: 0.2 },
-        rot: { type: "number", default: 0.01 },
+        speed: { type: "number", default: 0.4 },
+        rot: { type: "number", default: 0.0025 },
     },
     tick(_, delta) {
         if (!this.el.body) return
@@ -19,14 +19,14 @@ AFRAME.registerComponent("wasd-controller", {
         let torq
         vec3.set(0, 0, 0)
         let intensity = 1
-        let hop = 2
+        let hop = 5
         if (key_map.$["shift"]) {
             intensity = 1.5
         }
 
         // TODO: or if colliding with a climbable
-        if (key_map.$[" "] && o3d.position.y < 1) {
-            hop = 15
+        if (key_map.$[" "] && o3d.position.y < 0.5) {
+            hop = 2.5 * delta
         }
         if (key_map.$["w"]) {
             vec3.y = hop

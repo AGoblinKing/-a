@@ -10970,9 +10970,9 @@
     hasAttribute(name) {
       return this.attributes[name] !== void 0;
     }
-    addGroup(start, count, materialIndex = 0) {
+    addGroup(start2, count, materialIndex = 0) {
       this.groups.push({
-        start,
+        start: start2,
         count,
         materialIndex
       });
@@ -10980,8 +10980,8 @@
     clearGroups() {
       this.groups = [];
     }
-    setDrawRange(start, count) {
-      this.drawRange.start = start;
+    setDrawRange(start2, count) {
+      this.drawRange.start = start2;
       this.drawRange.count = count;
     }
     applyMatrix4(matrix) {
@@ -11204,9 +11204,9 @@
       }
       for (let i2 = 0, il = groups.length; i2 < il; ++i2) {
         const group = groups[i2];
-        const start = group.start;
+        const start2 = group.start;
         const count = group.count;
-        for (let j2 = start, jl = start + count; j2 < jl; j2 += 3) {
+        for (let j2 = start2, jl = start2 + count; j2 < jl; j2 += 3) {
           handleTriangle(indices[j2 + 0], indices[j2 + 1], indices[j2 + 2]);
         }
       }
@@ -11228,9 +11228,9 @@
       }
       for (let i2 = 0, il = groups.length; i2 < il; ++i2) {
         const group = groups[i2];
-        const start = group.start;
+        const start2 = group.start;
         const count = group.count;
-        for (let j2 = start, jl = start + count; j2 < jl; j2 += 3) {
+        for (let j2 = start2, jl = start2 + count; j2 < jl; j2 += 3) {
           handleVertex(indices[j2 + 0]);
           handleVertex(indices[j2 + 1]);
           handleVertex(indices[j2 + 2]);
@@ -11590,9 +11590,9 @@
             for (let i2 = 0, il = groups.length; i2 < il; i2++) {
               const group = groups[i2];
               const groupMaterial = material[group.materialIndex];
-              const start = Math.max(group.start, drawRange.start);
-              const end = Math.min(index.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
-              for (let j2 = start, jl = end; j2 < jl; j2 += 3) {
+              const start2 = Math.max(group.start, drawRange.start);
+              const end2 = Math.min(index.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
+              for (let j2 = start2, jl = end2; j2 < jl; j2 += 3) {
                 const a2 = index.getX(j2);
                 const b2 = index.getX(j2 + 1);
                 const c2 = index.getX(j2 + 2);
@@ -11605,9 +11605,9 @@
               }
             }
           } else {
-            const start = Math.max(0, drawRange.start);
-            const end = Math.min(index.count, drawRange.start + drawRange.count);
-            for (let i2 = start, il = end; i2 < il; i2 += 3) {
+            const start2 = Math.max(0, drawRange.start);
+            const end2 = Math.min(index.count, drawRange.start + drawRange.count);
+            for (let i2 = start2, il = end2; i2 < il; i2 += 3) {
               const a2 = index.getX(i2);
               const b2 = index.getX(i2 + 1);
               const c2 = index.getX(i2 + 2);
@@ -11623,9 +11623,9 @@
             for (let i2 = 0, il = groups.length; i2 < il; i2++) {
               const group = groups[i2];
               const groupMaterial = material[group.materialIndex];
-              const start = Math.max(group.start, drawRange.start);
-              const end = Math.min(position.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
-              for (let j2 = start, jl = end; j2 < jl; j2 += 3) {
+              const start2 = Math.max(group.start, drawRange.start);
+              const end2 = Math.min(position.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
+              for (let j2 = start2, jl = end2; j2 < jl; j2 += 3) {
                 const a2 = j2;
                 const b2 = j2 + 1;
                 const c2 = j2 + 2;
@@ -11638,9 +11638,9 @@
               }
             }
           } else {
-            const start = Math.max(0, drawRange.start);
-            const end = Math.min(position.count, drawRange.start + drawRange.count);
-            for (let i2 = start, il = end; i2 < il; i2 += 3) {
+            const start2 = Math.max(0, drawRange.start);
+            const end2 = Math.min(position.count, drawRange.start + drawRange.count);
+            for (let i2 = start2, il = end2; i2 < il; i2 += 3) {
               const a2 = i2;
               const b2 = i2 + 1;
               const c2 = i2 + 2;
@@ -13763,11 +13763,11 @@
     function setMode(value) {
       mode = value;
     }
-    function render(start, count) {
-      gl.drawArrays(mode, start, count);
+    function render(start2, count) {
+      gl.drawArrays(mode, start2, count);
       info.update(count, mode, 1);
     }
-    function renderInstances(start, count, primcount) {
+    function renderInstances(start2, count, primcount) {
       if (primcount === 0)
         return;
       let extension, methodName;
@@ -13782,7 +13782,7 @@
           return;
         }
       }
-      extension[methodName](mode, start, count, primcount);
+      extension[methodName](mode, start2, count, primcount);
       info.update(count, mode, primcount);
     }
     this.setMode = setMode;
@@ -14864,11 +14864,11 @@
       type = value.type;
       bytesPerElement = value.bytesPerElement;
     }
-    function render(start, count) {
-      gl.drawElements(mode, count, type, start * bytesPerElement);
+    function render(start2, count) {
+      gl.drawElements(mode, count, type, start2 * bytesPerElement);
       info.update(count, mode, 1);
     }
-    function renderInstances(start, count, primcount) {
+    function renderInstances(start2, count, primcount) {
       if (primcount === 0)
         return;
       let extension, methodName;
@@ -14883,7 +14883,7 @@
           return;
         }
       }
-      extension[methodName](mode, count, type, start * bytesPerElement, primcount);
+      extension[methodName](mode, count, type, start2 * bytesPerElement, primcount);
       info.update(count, mode, primcount);
     }
     this.setMode = setMode;
@@ -15839,13 +15839,13 @@
   function unrollLoops(string) {
     return string.replace(unrollLoopPattern, loopReplacer).replace(deprecatedUnrollLoopPattern, deprecatedLoopReplacer);
   }
-  function deprecatedLoopReplacer(match, start, end, snippet) {
+  function deprecatedLoopReplacer(match, start2, end2, snippet) {
     console.warn("WebGLProgram: #pragma unroll_loop shader syntax is deprecated. Please use #pragma unroll_loop_start syntax instead.");
-    return loopReplacer(match, start, end, snippet);
+    return loopReplacer(match, start2, end2, snippet);
   }
-  function loopReplacer(match, start, end, snippet) {
+  function loopReplacer(match, start2, end2, snippet) {
     let string = "";
-    for (let i2 = parseInt(start); i2 < parseInt(end); i2++) {
+    for (let i2 = parseInt(start2); i2 < parseInt(end2); i2++) {
       string += snippet.replace(/\[\s*i\s*\]/g, "[ " + i2 + " ]").replace(/UNROLLED_LOOP_INDEX/g, i2);
     }
     return string;
@@ -16724,7 +16724,7 @@
     const opaque = [];
     const transmissive = [];
     const transparent = [];
-    function init2() {
+    function init3() {
       renderItemsIndex = 0;
       opaque.length = 0;
       transmissive.length = 0;
@@ -16801,7 +16801,7 @@
       opaque,
       transmissive,
       transparent,
-      init: init2,
+      init: init3,
       push,
       unshift,
       finish,
@@ -17183,7 +17183,7 @@
     const lights = new WebGLLights(extensions, capabilities);
     const lightsArray = [];
     const shadowsArray = [];
-    function init2() {
+    function init3() {
       lightsArray.length = 0;
       shadowsArray.length = 0;
     }
@@ -17205,7 +17205,7 @@
       lights
     };
     return {
-      init: init2,
+      init: init3,
       state,
       setupLights,
       setupLightsView,
@@ -22252,9 +22252,9 @@
         const attributes = geometry.attributes;
         const positionAttribute = attributes.position;
         if (index !== null) {
-          const start = Math.max(0, drawRange.start);
-          const end = Math.min(index.count, drawRange.start + drawRange.count);
-          for (let i2 = start, l2 = end - 1; i2 < l2; i2 += step) {
+          const start2 = Math.max(0, drawRange.start);
+          const end2 = Math.min(index.count, drawRange.start + drawRange.count);
+          for (let i2 = start2, l2 = end2 - 1; i2 < l2; i2 += step) {
             const a2 = index.getX(i2);
             const b2 = index.getX(i2 + 1);
             vStart.fromBufferAttribute(positionAttribute, a2);
@@ -22276,9 +22276,9 @@
             });
           }
         } else {
-          const start = Math.max(0, drawRange.start);
-          const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
-          for (let i2 = start, l2 = end - 1; i2 < l2; i2 += step) {
+          const start2 = Math.max(0, drawRange.start);
+          const end2 = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
+          for (let i2 = start2, l2 = end2 - 1; i2 < l2; i2 += step) {
             vStart.fromBufferAttribute(positionAttribute, i2);
             vEnd.fromBufferAttribute(positionAttribute, i2 + 1);
             const distSq = _ray$1.distanceSqToSegment(vStart, vEnd, interRay, interSegment);
@@ -22426,17 +22426,17 @@
         const attributes = geometry.attributes;
         const positionAttribute = attributes.position;
         if (index !== null) {
-          const start = Math.max(0, drawRange.start);
-          const end = Math.min(index.count, drawRange.start + drawRange.count);
-          for (let i2 = start, il = end; i2 < il; i2++) {
+          const start2 = Math.max(0, drawRange.start);
+          const end2 = Math.min(index.count, drawRange.start + drawRange.count);
+          for (let i2 = start2, il = end2; i2 < il; i2++) {
             const a2 = index.getX(i2);
             _position$2.fromBufferAttribute(positionAttribute, a2);
             testPoint(_position$2, a2, localThresholdSq, matrixWorld, raycaster, intersects2, this);
           }
         } else {
-          const start = Math.max(0, drawRange.start);
-          const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
-          for (let i2 = start, l2 = end; i2 < l2; i2++) {
+          const start2 = Math.max(0, drawRange.start);
+          const end2 = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
+          for (let i2 = start2, l2 = end2; i2 < l2; i2++) {
             _position$2.fromBufferAttribute(positionAttribute, i2);
             testPoint(_position$2, i2, localThresholdSq, matrixWorld, raycaster, intersects2, this);
           }
@@ -22833,7 +22833,7 @@
   ArcCurve.prototype.isArcCurve = true;
   function CubicPoly() {
     let c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-    function init2(x0, x1, t0, t1) {
+    function init3(x0, x1, t0, t1) {
       c0 = x0;
       c1 = t0;
       c2 = -3 * x0 + 3 * x1 - 2 * t0 - t1;
@@ -22841,14 +22841,14 @@
     }
     return {
       initCatmullRom: function(x0, x1, x2, x3, tension) {
-        init2(x1, x2, tension * (x2 - x0), tension * (x3 - x1));
+        init3(x1, x2, tension * (x2 - x0), tension * (x3 - x1));
       },
       initNonuniformCatmullRom: function(x0, x1, x2, x3, dt0, dt1, dt2) {
         let t1 = (x1 - x0) / dt0 - (x2 - x0) / (dt0 + dt1) + (x2 - x1) / dt1;
         let t2 = (x2 - x1) / dt1 - (x3 - x1) / (dt1 + dt2) + (x3 - x2) / dt2;
         t1 *= dt1;
         t2 *= dt1;
-        init2(x1, x2, t1, t2);
+        init3(x1, x2, t1, t2);
       },
       calc: function(t) {
         const t2 = t * t;
@@ -23586,13 +23586,13 @@
       return triangles;
     }
   };
-  function linkedList(data, start, end, dim, clockwise) {
+  function linkedList(data, start2, end2, dim, clockwise) {
     let i2, last;
-    if (clockwise === signedArea(data, start, end, dim) > 0) {
-      for (i2 = start; i2 < end; i2 += dim)
+    if (clockwise === signedArea(data, start2, end2, dim) > 0) {
+      for (i2 = start2; i2 < end2; i2 += dim)
         last = insertNode(i2, data[i2], data[i2 + 1], last);
     } else {
-      for (i2 = end - dim; i2 >= start; i2 -= dim)
+      for (i2 = end2 - dim; i2 >= start2; i2 -= dim)
         last = insertNode(i2, data[i2], data[i2 + 1], last);
     }
     if (last && equals(last, last.next)) {
@@ -23601,25 +23601,25 @@
     }
     return last;
   }
-  function filterPoints(start, end) {
-    if (!start)
-      return start;
-    if (!end)
-      end = start;
-    let p2 = start, again;
+  function filterPoints(start2, end2) {
+    if (!start2)
+      return start2;
+    if (!end2)
+      end2 = start2;
+    let p2 = start2, again;
     do {
       again = false;
       if (!p2.steiner && (equals(p2, p2.next) || area(p2.prev, p2, p2.next) === 0)) {
         removeNode(p2);
-        p2 = end = p2.prev;
+        p2 = end2 = p2.prev;
         if (p2 === p2.next)
           break;
         again = true;
       } else {
         p2 = p2.next;
       }
-    } while (again || p2 !== end);
-    return end;
+    } while (again || p2 !== end2);
+    return end2;
   }
   function earcutLinked(ear, triangles, dim, minX, minY, invSize, pass) {
     if (!ear)
@@ -23692,8 +23692,8 @@
     }
     return true;
   }
-  function cureLocalIntersections(start, triangles, dim) {
-    let p2 = start;
+  function cureLocalIntersections(start2, triangles, dim) {
+    let p2 = start2;
     do {
       const a2 = p2.prev, b2 = p2.next.next;
       if (!equals(a2, b2) && intersects(a2, p2, p2.next, b2) && locallyInside(a2, b2) && locallyInside(b2, a2)) {
@@ -23702,14 +23702,14 @@
         triangles.push(b2.i / dim);
         removeNode(p2);
         removeNode(p2.next);
-        p2 = start = b2;
+        p2 = start2 = b2;
       }
       p2 = p2.next;
-    } while (p2 !== start);
+    } while (p2 !== start2);
     return filterPoints(p2);
   }
-  function splitEarcut(start, triangles, dim, minX, minY, invSize) {
-    let a2 = start;
+  function splitEarcut(start2, triangles, dim, minX, minY, invSize) {
+    let a2 = start2;
     do {
       let b2 = a2.next.next;
       while (b2 !== a2.prev) {
@@ -23724,15 +23724,15 @@
         b2 = b2.next;
       }
       a2 = a2.next;
-    } while (a2 !== start);
+    } while (a2 !== start2);
   }
   function eliminateHoles(data, holeIndices, outerNode, dim) {
     const queue = [];
-    let i2, len, start, end, list;
+    let i2, len, start2, end2, list;
     for (i2 = 0, len = holeIndices.length; i2 < len; i2++) {
-      start = holeIndices[i2] * dim;
-      end = i2 < len - 1 ? holeIndices[i2 + 1] * dim : data.length;
-      list = linkedList(data, start, end, dim, false);
+      start2 = holeIndices[i2] * dim;
+      end2 = i2 < len - 1 ? holeIndices[i2 + 1] * dim : data.length;
+      list = linkedList(data, start2, end2, dim, false);
       if (list === list.next)
         list.steiner = true;
       queue.push(getLeftmost(list));
@@ -23798,15 +23798,15 @@
   function sectorContainsSector(m2, p2) {
     return area(m2.prev, m2, p2.prev) < 0 && area(p2.next, m2, m2.next) < 0;
   }
-  function indexCurve(start, minX, minY, invSize) {
-    let p2 = start;
+  function indexCurve(start2, minX, minY, invSize) {
+    let p2 = start2;
     do {
       if (p2.z === null)
         p2.z = zOrder(p2.x, p2.y, minX, minY, invSize);
       p2.prevZ = p2.prev;
       p2.nextZ = p2.next;
       p2 = p2.next;
-    } while (p2 !== start);
+    } while (p2 !== start2);
     p2.prevZ.nextZ = null;
     p2.prevZ = null;
     sortLinked(p2);
@@ -23866,13 +23866,13 @@
     y2 = (y2 | y2 << 1) & 1431655765;
     return x2 | y2 << 1;
   }
-  function getLeftmost(start) {
-    let p2 = start, leftmost = start;
+  function getLeftmost(start2) {
+    let p2 = start2, leftmost = start2;
     do {
       if (p2.x < leftmost.x || p2.x === leftmost.x && p2.y < leftmost.y)
         leftmost = p2;
       p2 = p2.next;
-    } while (p2 !== start);
+    } while (p2 !== start2);
     return leftmost;
   }
   function pointInTriangle(ax, ay, bx, by, cx, cy, px2, py2) {
@@ -23976,9 +23976,9 @@
     this.nextZ = null;
     this.steiner = false;
   }
-  function signedArea(data, start, end, dim) {
+  function signedArea(data, start2, end2, dim) {
     let sum = 0;
-    for (let i2 = start, j2 = end - dim; i2 < end; i2 += dim) {
+    for (let i2 = start2, j2 = end2 - dim; i2 < end2; i2 += dim) {
       sum += (data[j2] - data[i2]) * (data[i2 + 1] + data[j2 + 1]);
       j2 = i2;
     }
@@ -24245,7 +24245,7 @@
         buildLidFaces();
         buildSideFaces();
         function buildLidFaces() {
-          const start = verticesArray.length / 3;
+          const start2 = verticesArray.length / 3;
           if (bevelEnabled) {
             let layer = 0;
             let offset = vlen * layer;
@@ -24269,10 +24269,10 @@
               f3(face[0] + vlen * steps, face[1] + vlen * steps, face[2] + vlen * steps);
             }
           }
-          scope.addGroup(start, verticesArray.length / 3 - start, 0);
+          scope.addGroup(start2, verticesArray.length / 3 - start2, 0);
         }
         function buildSideFaces() {
-          const start = verticesArray.length / 3;
+          const start2 = verticesArray.length / 3;
           let layeroffset = 0;
           sidewalls(contour, layeroffset);
           layeroffset += contour.length;
@@ -24281,7 +24281,7 @@
             sidewalls(ahole, layeroffset);
             layeroffset += ahole.length;
           }
-          scope.addGroup(start, verticesArray.length / 3 - start, 1);
+          scope.addGroup(start2, verticesArray.length / 3 - start2, 1);
         }
         function sidewalls(contour2, layeroffset) {
           let i2 = contour2.length;
@@ -25643,7 +25643,7 @@
     interpolate_(i1, t0, t, t1) {
       const result = this.resultBuffer, values = this.sampleValues, stride = this.valueSize, alpha = (t - t0) / (t1 - t0);
       let offset = i1 * stride;
-      for (let end = offset + stride; offset !== end; offset += 4) {
+      for (let end2 = offset + stride; offset !== end2; offset += 4) {
         Quaternion.slerpFlat(result, 0, values, offset - stride, values, offset, alpha);
       }
       return result;
@@ -28638,13 +28638,13 @@
   var _startP = /* @__PURE__ */ new Vector3();
   var _startEnd = /* @__PURE__ */ new Vector3();
   var Line3 = class {
-    constructor(start = new Vector3(), end = new Vector3()) {
-      this.start = start;
-      this.end = end;
+    constructor(start2 = new Vector3(), end2 = new Vector3()) {
+      this.start = start2;
+      this.end = end2;
     }
-    set(start, end) {
-      this.start.copy(start);
-      this.end.copy(end);
+    set(start2, end2) {
+      this.start.copy(start2);
+      this.end.copy(end2);
       return this;
     }
     copy(line) {
@@ -29255,12 +29255,12 @@
     }
     return this.setAttribute(name, attribute);
   };
-  BufferGeometry.prototype.addDrawCall = function(start, count, indexOffset) {
+  BufferGeometry.prototype.addDrawCall = function(start2, count, indexOffset) {
     if (indexOffset !== void 0) {
       console.warn("THREE.BufferGeometry: .addDrawCall() no longer supports indexOffset.");
     }
     console.warn("THREE.BufferGeometry: .addDrawCall() is now .addGroup().");
-    this.addGroup(start, count);
+    this.addGroup(start2, count);
   };
   BufferGeometry.prototype.clearDrawCalls = function() {
     console.warn("THREE.BufferGeometry: .clearDrawCalls() is now .clearGroups().");
@@ -31041,6 +31041,7 @@
   var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
   var voice_current = new Value("Guy | UK English").save("voice_current");
   var voice_doer = new Value("Aus | UK English").save("voice_doer");
+  var scouter = new Value("green").save("scouter");
   var open_home = new Value(true);
   var open_game = new Value(false);
   var open_text = new Value(void 0);
@@ -31050,6 +31051,7 @@
   var open_heard = new Value(true).save("heard");
   var open_debug = new Value(false).save("debugger");
   var open_targeting = new Value(true).save("targeting_3");
+  var open_live = new Value(false);
   var camera = new Value();
   var camera_el = new Value();
   var toggle_selfie = new Value(state_default.selfie).save("selfie");
@@ -31180,7 +31182,17 @@ selfie camera mode
 ~ not selfie
 not selfie camera mode
 
+~ target
+show targeting UI, persists
 
+~ not target
+hide targeting UI, persists
+
+~ scouter ...color
+set your targeting UI to be that color, persists
+
+~ not scouter
+reset scout color to green, persists
 `);
 
   // src/component/vrm.ts
@@ -31390,6 +31402,12 @@ not selfie camera mode
     },
     ["vary" /* Vary */]: (items) => {
       do_vary.poke();
+    },
+    ["scouter" /* Scouter */]: (items) => {
+      scouter.set(items.join(" "));
+    },
+    ["notscouter" /* NotScouter */]: (items) => {
+      scouter.set("green");
     }
   };
 
@@ -31419,19 +31437,23 @@ not selfie camera mode
   });
 
   // src/chat.ts
-  var recognition = new webkitSpeechRecognition();
-  var synth = window.speechSynthesis;
   var recog = new Value();
-  recognition.continuous = false;
-  recognition.lang = "en-US";
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-  recognition.onresult = (event) => {
-    recog.set(event);
-  };
-  recognition.onend = () => {
-    recognition.start();
-  };
+  var recognition;
+  var synth = window.speechSynthesis;
+  function init() {
+    recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.onresult = (event) => {
+      recog.set(event);
+    };
+    recognition.onend = () => {
+      if (open_live.$)
+        recognition.start();
+    };
+  }
   function findVoice(voiceName) {
     const voices = synth.getVoices();
     return voices.find((voice) => voice.name.toLowerCase().indexOf(voiceName.toLowerCase()) !== -1);
@@ -31479,7 +31501,22 @@ not selfie camera mode
     var said = event.results[event.results.length - 1][0].transcript.trim();
     talk.set(said);
   });
+  var start = () => {
+    if (!recognition)
+      init();
+    recognition.start();
+  };
+  function end() {
+    recognition?.stop();
+  }
   var cancels = [];
+  open_live.on(($l) => {
+    if ($l) {
+      start();
+    } else {
+      end();
+    }
+  });
   binds.on(($binds) => {
     cancels.forEach((cancel) => cancel());
     cancels = [];
@@ -31710,7 +31747,7 @@ not selfie camera mode
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance8, create_fragment10, not_equal, props, append_styles, dirty = [-1]) {
+  function init2(component, options, instance8, create_fragment10, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -31913,7 +31950,7 @@ not selfie camera mode
   var Heard = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance, create_fragment, safe_not_equal, {});
+      init2(this, options, instance, create_fragment, safe_not_equal, {});
     }
   };
   var heard_default = Heard;
@@ -31944,17 +31981,17 @@ not selfie camera mode
         textarea = element("textarea");
         t2 = space();
         div2 = element("div");
-        attr(div0, "class", "sprites sprite svelte-1gdirzm");
-        attr(div1, "class", "flex svelte-1gdirzm");
+        attr(div0, "class", "sprites sprite svelte-1qmwcry");
+        attr(div1, "class", "flex svelte-1qmwcry");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-1gdirzm");
+        attr(textarea, "class", "text button svelte-1qmwcry");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-1gdirzm");
-        attr(div3, "class", "span2 full svelte-1gdirzm");
-        attr(div4, "class", "vbox svelte-1gdirzm");
-        attr(div5, "class", "menu svelte-1gdirzm");
+        attr(div2, "class", "flex svelte-1qmwcry");
+        attr(div3, "class", "span2 full svelte-1qmwcry");
+        attr(div4, "class", "vbox svelte-1qmwcry");
+        attr(div5, "class", "menu svelte-1qmwcry");
       },
       m(target, anchor) {
         insert(target, div5, anchor);
@@ -32001,7 +32038,7 @@ not selfie camera mode
   var Help = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance2, create_fragment2, safe_not_equal, {});
+      init2(this, options, instance2, create_fragment2, safe_not_equal, {});
     }
   };
   var help_default = Help;
@@ -32045,7 +32082,7 @@ not selfie camera mode
   var Title = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment3, safe_not_equal, {});
+      init2(this, options, null, create_fragment3, safe_not_equal, {});
     }
   };
   var title_default = Title;
@@ -32080,17 +32117,17 @@ not selfie camera mode
         textarea = element("textarea");
         t3 = space();
         div2 = element("div");
-        attr(div0, "class", "sprites sprite svelte-qfprcl");
-        attr(div1, "class", "flex svelte-qfprcl");
+        attr(div0, "class", "sprites sprite svelte-1tqvjp5");
+        attr(div1, "class", "flex svelte-1tqvjp5");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-qfprcl");
+        attr(textarea, "class", "text button svelte-1tqvjp5");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-qfprcl");
-        attr(div3, "class", "span2 full svelte-qfprcl");
-        attr(div4, "class", "vbox svelte-qfprcl");
-        attr(div5, "class", "menu svelte-qfprcl");
+        attr(div2, "class", "flex svelte-1tqvjp5");
+        attr(div3, "class", "span2 full svelte-1tqvjp5");
+        attr(div4, "class", "vbox svelte-1tqvjp5");
+        attr(div5, "class", "menu svelte-1tqvjp5");
       },
       m(target, anchor) {
         insert(target, div5, anchor);
@@ -32137,7 +32174,7 @@ not selfie camera mode
   var Loading = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance3, create_fragment4, safe_not_equal, {});
+      init2(this, options, instance3, create_fragment4, safe_not_equal, {});
     }
   };
   var loading_default = Loading;
@@ -32153,8 +32190,8 @@ not selfie camera mode
         div = element("div");
         input = element("input");
         attr(input, "type", "text");
-        attr(input, "class", "entry svelte-e0lgn5");
-        attr(div, "class", "lofi svelte-e0lgn5");
+        attr(input, "class", "entry svelte-1qlzmvl");
+        attr(div, "class", "lofi svelte-1qlzmvl");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -32284,7 +32321,7 @@ not selfie camera mode
   var Text = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance4, create_fragment5, safe_not_equal, {});
+      init2(this, options, instance4, create_fragment5, safe_not_equal, {});
     }
   };
   var text_default = Text;
@@ -32314,7 +32351,7 @@ not selfie camera mode
   var Characters_assets = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment6, safe_not_equal, {});
+      init2(this, options, null, create_fragment6, safe_not_equal, {});
     }
   };
   var characters_assets_default = Characters_assets;
@@ -32324,8 +32361,8 @@ not selfie camera mode
   var quat = new AFRAME.THREE.Quaternion();
   AFRAME.registerComponent("wasd-controller", {
     schema: {
-      speed: { type: "number", default: 0.2 },
-      rot: { type: "number", default: 0.01 }
+      speed: { type: "number", default: 0.4 },
+      rot: { type: "number", default: 25e-4 }
     },
     tick(_2, delta) {
       if (!this.el.body)
@@ -32335,12 +32372,12 @@ not selfie camera mode
       let torq;
       vec3.set(0, 0, 0);
       let intensity = 1;
-      let hop = 2;
+      let hop = 5;
       if (key_map.$["shift"]) {
         intensity = 1.5;
       }
-      if (key_map.$[" "] && o3d.position.y < 1) {
-        hop = 15;
+      if (key_map.$[" "] && o3d.position.y < 0.5) {
+        hop = 2.5 * delta;
       }
       if (key_map.$["w"]) {
         vec3.y = hop;
@@ -33708,6 +33745,8 @@ not selfie camera mode
   var videoElement = new Value();
   var canvasElement = new Value();
   var onResults = (results) => {
+    if (!open_live.$)
+      return;
     const faceLandmarks = results.faceLandmarks;
     const pose3DLandmarks = results.ea;
     const pose2DLandmarks = results.poseLandmarks;
@@ -33752,15 +33791,23 @@ not selfie camera mode
     const ctx = canvasElement.$.getContext("2d");
     ctx.translate(width, 0);
     ctx.scale(-1, 1);
-    const camera4 = new import_camera_utils.Camera($ve, {
-      onFrame: async () => {
-        ctx.drawImage($ve, 0, 0, width, height);
-        await holistic.send({ image: canvasElement.$ });
-      },
-      width,
-      height
+    let camera4;
+    open_live.on(($l) => {
+      if (!camera4 && $l) {
+        camera4 = new import_camera_utils.Camera($ve, {
+          onFrame: async () => {
+            ctx.drawImage($ve, 0, 0, width, height);
+            await holistic.send({ image: canvasElement.$ });
+          },
+          width,
+          height
+        });
+      }
+      if ($l)
+        camera4.start();
+      if (!$l && camera4)
+        camera4.stop();
     });
-    camera4.start();
   });
   tick.on(() => {
     if (currentVRM.$) {
@@ -33848,7 +33895,7 @@ not selfie camera mode
   var Characters = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment7, safe_not_equal, {});
+      init2(this, options, instance5, create_fragment7, safe_not_equal, {});
     }
   };
   var characters_default = Characters;
@@ -33918,7 +33965,7 @@ not selfie camera mode
   var Webcam = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment8, safe_not_equal, {});
+      init2(this, options, instance6, create_fragment8, safe_not_equal, {});
     }
   };
   var webcam_default = Webcam;
@@ -34193,7 +34240,7 @@ not selfie camera mode
   var Guest = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance7, create_fragment9, safe_not_equal, {});
+      init2(this, options, instance7, create_fragment9, safe_not_equal, {});
     }
   };
   var guest_default = Guest;

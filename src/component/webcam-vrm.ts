@@ -1,7 +1,7 @@
 import * as Kalidokit from 'kalidokit'
 import { Holistic } from '@mediapipe/holistic/holistic';
 import { Camera } from '@mediapipe/camera_utils/camera_utils';
-import { tick } from 'src/timing';
+import { open_live, tick } from 'src/timing';
 
 import { VRM, VRMSchema } from "@pixiv/three-vrm"
 import { Value } from 'src/value';
@@ -220,6 +220,8 @@ export const videoElement = new Value<HTMLVideoElement>()
 export const canvasElement = new Value<HTMLCanvasElement>()
 const onResults = (results) => {
 
+  if (!open_live.$) return
+
   const faceLandmarks = results.faceLandmarks;
   // Pose 3D Landmarks are with respect to Hip distance in meters
   const pose3DLandmarks = results.ea;
@@ -287,19 +289,29 @@ videoElement.on(($ve) => {
   ctx.scale(-1, 1)
   // Use `Mediapipe` utils to get camera - lower resolution = higher fps
 
-  const camera = new Camera($ve, {
-    onFrame: async () => {
-      // if (!ready) return
-     
-      ctx.drawImage($ve, 0, 0, width, height)
-      await holistic.send({ image: canvasElement.$ });
 
-    },
-    width,
-    height
-  });
+  let camera
+  open_live.on(($l) => {
+    if (!camera && $l) {
+      camera = new Camera($ve, {
+        onFrame: async () => {
+          // if (!ready) return
 
-  camera.start();
+          ctx.drawImage($ve, 0, 0, width, height)
+          await holistic.send({ image: canvasElement.$ });
+
+        },
+        width,
+        height
+      });
+    }
+
+
+    if ($l) camera.start();
+
+    if (!$l && camera) camera.stop();
+
+  })
 
 })
 

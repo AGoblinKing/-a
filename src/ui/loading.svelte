@@ -26,6 +26,7 @@
 
 	.menu {
 		display: flex;
+		cursor: auto;
 		opacity: 0.9;
 		flex-direction: column;
 		position: absolute;

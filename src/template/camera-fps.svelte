@@ -60,6 +60,7 @@
 	id="bbs"
 	geometry
 	material=" opacity: 0.15; color: #00ff00; transparent: true; shader: flat;"
+	text="value: targeting info"
 />
 
 <a-camera
@@ -69,7 +70,7 @@
 	character-camera
 	position="0 4 0"
 	wasd-controls="enabled: false;"
-	look-controls="enabled: false;"
+	look-control="pointerLockEnabled: true;"
 >
 	{#if $open_targeting}
 		<a-entity
@@ -80,7 +81,7 @@
 			on:collidestart={collidestart}
 			on:collideend={collideend}
 			ammo-body="type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;"
-			ammo-shape="type: box; halfExtents: 0.05 0.05 0.5;offset: 0 0 -9.5"
+			ammo-shape="type: box; halfExtents: 0.05 0.05 6;offset: 0 0 -9.5"
 		/>
 	{/if}
 </a-camera>

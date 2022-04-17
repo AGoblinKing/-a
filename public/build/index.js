@@ -5565,7 +5565,7 @@
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance12, create_fragment14, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance13, create_fragment15, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5588,7 +5588,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance12 ? instance12(component, options.props || {}, (i2, ret, ...rest) => {
+    $$.ctx = instance13 ? instance13(component, options.props || {}, (i2, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
         if (!$$.skip_bound && $$.bound[i2])
@@ -5601,7 +5601,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment14 ? create_fragment14($$.ctx) : false;
+    $$.fragment = create_fragment15 ? create_fragment15($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -7084,6 +7084,7 @@
   var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
   var voice_current = new Value("Guy | UK English").save("voice_current");
   var voice_doer = new Value("Aus | UK English").save("voice_doer");
+  var scouter = new Value("green").save("scouter");
   var open_home = new Value(true);
   var open_game = new Value(false);
   var open_text = new Value(void 0);
@@ -7093,6 +7094,7 @@
   var open_heard = new Value(true).save("heard");
   var open_debug = new Value(false).save("debugger");
   var open_targeting = new Value(true).save("targeting_3");
+  var open_live = new Value(false);
   var camera = new Value();
   var camera_el = new Value();
   var toggle_selfie = new Value(state_default.selfie).save("selfie");
@@ -7223,7 +7225,17 @@ selfie camera mode
 ~ not selfie
 not selfie camera mode
 
+~ target
+show targeting UI, persists
 
+~ not target
+hide targeting UI, persists
+
+~ scouter ...color
+set your targeting UI to be that color, persists
+
+~ not scouter
+reset scout color to green, persists
 `);
 
   // node_modules/three/build/three.module.js
@@ -13477,8 +13489,8 @@ not selfie camera mode
               const group = groups[i2];
               const groupMaterial = material[group.materialIndex];
               const start2 = Math.max(group.start, drawRange.start);
-              const end = Math.min(index.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
-              for (let j2 = start2, jl = end; j2 < jl; j2 += 3) {
+              const end2 = Math.min(index.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
+              for (let j2 = start2, jl = end2; j2 < jl; j2 += 3) {
                 const a2 = index.getX(j2);
                 const b2 = index.getX(j2 + 1);
                 const c2 = index.getX(j2 + 2);
@@ -13492,8 +13504,8 @@ not selfie camera mode
             }
           } else {
             const start2 = Math.max(0, drawRange.start);
-            const end = Math.min(index.count, drawRange.start + drawRange.count);
-            for (let i2 = start2, il = end; i2 < il; i2 += 3) {
+            const end2 = Math.min(index.count, drawRange.start + drawRange.count);
+            for (let i2 = start2, il = end2; i2 < il; i2 += 3) {
               const a2 = index.getX(i2);
               const b2 = index.getX(i2 + 1);
               const c2 = index.getX(i2 + 2);
@@ -13510,8 +13522,8 @@ not selfie camera mode
               const group = groups[i2];
               const groupMaterial = material[group.materialIndex];
               const start2 = Math.max(group.start, drawRange.start);
-              const end = Math.min(position.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
-              for (let j2 = start2, jl = end; j2 < jl; j2 += 3) {
+              const end2 = Math.min(position.count, Math.min(group.start + group.count, drawRange.start + drawRange.count));
+              for (let j2 = start2, jl = end2; j2 < jl; j2 += 3) {
                 const a2 = j2;
                 const b2 = j2 + 1;
                 const c2 = j2 + 2;
@@ -13525,8 +13537,8 @@ not selfie camera mode
             }
           } else {
             const start2 = Math.max(0, drawRange.start);
-            const end = Math.min(position.count, drawRange.start + drawRange.count);
-            for (let i2 = start2, il = end; i2 < il; i2 += 3) {
+            const end2 = Math.min(position.count, drawRange.start + drawRange.count);
+            for (let i2 = start2, il = end2; i2 < il; i2 += 3) {
               const a2 = i2;
               const b2 = i2 + 1;
               const c2 = i2 + 2;
@@ -17725,13 +17737,13 @@ not selfie camera mode
   function unrollLoops(string) {
     return string.replace(unrollLoopPattern, loopReplacer).replace(deprecatedUnrollLoopPattern, deprecatedLoopReplacer);
   }
-  function deprecatedLoopReplacer(match, start2, end, snippet) {
+  function deprecatedLoopReplacer(match, start2, end2, snippet) {
     console.warn("WebGLProgram: #pragma unroll_loop shader syntax is deprecated. Please use #pragma unroll_loop_start syntax instead.");
-    return loopReplacer(match, start2, end, snippet);
+    return loopReplacer(match, start2, end2, snippet);
   }
-  function loopReplacer(match, start2, end, snippet) {
+  function loopReplacer(match, start2, end2, snippet) {
     let string = "";
-    for (let i2 = parseInt(start2); i2 < parseInt(end); i2++) {
+    for (let i2 = parseInt(start2); i2 < parseInt(end2); i2++) {
       string += snippet.replace(/\[\s*i\s*\]/g, "[ " + i2 + " ]").replace(/UNROLLED_LOOP_INDEX/g, i2);
     }
     return string;
@@ -18610,7 +18622,7 @@ not selfie camera mode
     const opaque = [];
     const transmissive = [];
     const transparent = [];
-    function init2() {
+    function init3() {
       renderItemsIndex = 0;
       opaque.length = 0;
       transmissive.length = 0;
@@ -18687,7 +18699,7 @@ not selfie camera mode
       opaque,
       transmissive,
       transparent,
-      init: init2,
+      init: init3,
       push,
       unshift,
       finish,
@@ -19069,7 +19081,7 @@ not selfie camera mode
     const lights = new WebGLLights(extensions, capabilities);
     const lightsArray = [];
     const shadowsArray = [];
-    function init2() {
+    function init3() {
       lightsArray.length = 0;
       shadowsArray.length = 0;
     }
@@ -19091,7 +19103,7 @@ not selfie camera mode
       lights
     };
     return {
-      init: init2,
+      init: init3,
       state,
       setupLights,
       setupLightsView,
@@ -24139,8 +24151,8 @@ not selfie camera mode
         const positionAttribute = attributes.position;
         if (index !== null) {
           const start2 = Math.max(0, drawRange.start);
-          const end = Math.min(index.count, drawRange.start + drawRange.count);
-          for (let i2 = start2, l2 = end - 1; i2 < l2; i2 += step) {
+          const end2 = Math.min(index.count, drawRange.start + drawRange.count);
+          for (let i2 = start2, l2 = end2 - 1; i2 < l2; i2 += step) {
             const a2 = index.getX(i2);
             const b2 = index.getX(i2 + 1);
             vStart.fromBufferAttribute(positionAttribute, a2);
@@ -24163,8 +24175,8 @@ not selfie camera mode
           }
         } else {
           const start2 = Math.max(0, drawRange.start);
-          const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
-          for (let i2 = start2, l2 = end - 1; i2 < l2; i2 += step) {
+          const end2 = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
+          for (let i2 = start2, l2 = end2 - 1; i2 < l2; i2 += step) {
             vStart.fromBufferAttribute(positionAttribute, i2);
             vEnd.fromBufferAttribute(positionAttribute, i2 + 1);
             const distSq = _ray$1.distanceSqToSegment(vStart, vEnd, interRay, interSegment);
@@ -24313,16 +24325,16 @@ not selfie camera mode
         const positionAttribute = attributes.position;
         if (index !== null) {
           const start2 = Math.max(0, drawRange.start);
-          const end = Math.min(index.count, drawRange.start + drawRange.count);
-          for (let i2 = start2, il = end; i2 < il; i2++) {
+          const end2 = Math.min(index.count, drawRange.start + drawRange.count);
+          for (let i2 = start2, il = end2; i2 < il; i2++) {
             const a2 = index.getX(i2);
             _position$2.fromBufferAttribute(positionAttribute, a2);
             testPoint(_position$2, a2, localThresholdSq, matrixWorld, raycaster, intersects2, this);
           }
         } else {
           const start2 = Math.max(0, drawRange.start);
-          const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
-          for (let i2 = start2, l2 = end; i2 < l2; i2++) {
+          const end2 = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
+          for (let i2 = start2, l2 = end2; i2 < l2; i2++) {
             _position$2.fromBufferAttribute(positionAttribute, i2);
             testPoint(_position$2, i2, localThresholdSq, matrixWorld, raycaster, intersects2, this);
           }
@@ -24719,7 +24731,7 @@ not selfie camera mode
   ArcCurve.prototype.isArcCurve = true;
   function CubicPoly() {
     let c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-    function init2(x0, x1, t0, t1) {
+    function init3(x0, x1, t0, t1) {
       c0 = x0;
       c1 = t0;
       c2 = -3 * x0 + 3 * x1 - 2 * t0 - t1;
@@ -24727,14 +24739,14 @@ not selfie camera mode
     }
     return {
       initCatmullRom: function(x0, x1, x2, x3, tension) {
-        init2(x1, x2, tension * (x2 - x0), tension * (x3 - x1));
+        init3(x1, x2, tension * (x2 - x0), tension * (x3 - x1));
       },
       initNonuniformCatmullRom: function(x0, x1, x2, x3, dt0, dt1, dt2) {
         let t1 = (x1 - x0) / dt0 - (x2 - x0) / (dt0 + dt1) + (x2 - x1) / dt1;
         let t2 = (x2 - x1) / dt1 - (x3 - x1) / (dt1 + dt2) + (x3 - x2) / dt2;
         t1 *= dt1;
         t2 *= dt1;
-        init2(x1, x2, t1, t2);
+        init3(x1, x2, t1, t2);
       },
       calc: function(t) {
         const t2 = t * t;
@@ -25472,13 +25484,13 @@ not selfie camera mode
       return triangles;
     }
   };
-  function linkedList(data, start2, end, dim, clockwise) {
+  function linkedList(data, start2, end2, dim, clockwise) {
     let i2, last;
-    if (clockwise === signedArea(data, start2, end, dim) > 0) {
-      for (i2 = start2; i2 < end; i2 += dim)
+    if (clockwise === signedArea(data, start2, end2, dim) > 0) {
+      for (i2 = start2; i2 < end2; i2 += dim)
         last = insertNode(i2, data[i2], data[i2 + 1], last);
     } else {
-      for (i2 = end - dim; i2 >= start2; i2 -= dim)
+      for (i2 = end2 - dim; i2 >= start2; i2 -= dim)
         last = insertNode(i2, data[i2], data[i2 + 1], last);
     }
     if (last && equals(last, last.next)) {
@@ -25487,25 +25499,25 @@ not selfie camera mode
     }
     return last;
   }
-  function filterPoints(start2, end) {
+  function filterPoints(start2, end2) {
     if (!start2)
       return start2;
-    if (!end)
-      end = start2;
+    if (!end2)
+      end2 = start2;
     let p2 = start2, again;
     do {
       again = false;
       if (!p2.steiner && (equals(p2, p2.next) || area(p2.prev, p2, p2.next) === 0)) {
         removeNode(p2);
-        p2 = end = p2.prev;
+        p2 = end2 = p2.prev;
         if (p2 === p2.next)
           break;
         again = true;
       } else {
         p2 = p2.next;
       }
-    } while (again || p2 !== end);
-    return end;
+    } while (again || p2 !== end2);
+    return end2;
   }
   function earcutLinked(ear, triangles, dim, minX, minY, invSize, pass) {
     if (!ear)
@@ -25614,11 +25626,11 @@ not selfie camera mode
   }
   function eliminateHoles(data, holeIndices, outerNode, dim) {
     const queue = [];
-    let i2, len, start2, end, list;
+    let i2, len, start2, end2, list;
     for (i2 = 0, len = holeIndices.length; i2 < len; i2++) {
       start2 = holeIndices[i2] * dim;
-      end = i2 < len - 1 ? holeIndices[i2 + 1] * dim : data.length;
-      list = linkedList(data, start2, end, dim, false);
+      end2 = i2 < len - 1 ? holeIndices[i2 + 1] * dim : data.length;
+      list = linkedList(data, start2, end2, dim, false);
       if (list === list.next)
         list.steiner = true;
       queue.push(getLeftmost(list));
@@ -25862,9 +25874,9 @@ not selfie camera mode
     this.nextZ = null;
     this.steiner = false;
   }
-  function signedArea(data, start2, end, dim) {
+  function signedArea(data, start2, end2, dim) {
     let sum = 0;
-    for (let i2 = start2, j2 = end - dim; i2 < end; i2 += dim) {
+    for (let i2 = start2, j2 = end2 - dim; i2 < end2; i2 += dim) {
       sum += (data[j2] - data[i2]) * (data[i2 + 1] + data[j2 + 1]);
       j2 = i2;
     }
@@ -27529,7 +27541,7 @@ not selfie camera mode
     interpolate_(i1, t0, t, t1) {
       const result = this.resultBuffer, values = this.sampleValues, stride = this.valueSize, alpha = (t - t0) / (t1 - t0);
       let offset = i1 * stride;
-      for (let end = offset + stride; offset !== end; offset += 4) {
+      for (let end2 = offset + stride; offset !== end2; offset += 4) {
         Quaternion.slerpFlat(result, 0, values, offset - stride, values, offset, alpha);
       }
       return result;
@@ -30524,13 +30536,13 @@ not selfie camera mode
   var _startP = /* @__PURE__ */ new Vector3();
   var _startEnd = /* @__PURE__ */ new Vector3();
   var Line3 = class {
-    constructor(start2 = new Vector3(), end = new Vector3()) {
+    constructor(start2 = new Vector3(), end2 = new Vector3()) {
       this.start = start2;
-      this.end = end;
+      this.end = end2;
     }
-    set(start2, end) {
+    set(start2, end2) {
       this.start.copy(start2);
-      this.end.copy(end);
+      this.end.copy(end2);
       return this;
     }
     copy(line) {
@@ -33029,6 +33041,12 @@ not selfie camera mode
     },
     ["vary" /* Vary */]: (items) => {
       do_vary.poke();
+    },
+    ["scouter" /* Scouter */]: (items) => {
+      scouter.set(items.join(" "));
+    },
+    ["notscouter" /* NotScouter */]: (items) => {
+      scouter.set("green");
     }
   };
 
@@ -33058,19 +33076,23 @@ not selfie camera mode
   });
 
   // src/chat.ts
-  var recognition = new webkitSpeechRecognition();
-  var synth = window.speechSynthesis;
   var recog = new Value();
-  recognition.continuous = false;
-  recognition.lang = "en-US";
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-  recognition.onresult = (event) => {
-    recog.set(event);
-  };
-  recognition.onend = () => {
-    recognition.start();
-  };
+  var recognition;
+  var synth = window.speechSynthesis;
+  function init2() {
+    recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.onresult = (event) => {
+      recog.set(event);
+    };
+    recognition.onend = () => {
+      if (open_live.$)
+        recognition.start();
+    };
+  }
   function findVoice(voiceName) {
     const voices = synth.getVoices();
     return voices.find((voice) => voice.name.toLowerCase().indexOf(voiceName.toLowerCase()) !== -1);
@@ -33118,8 +33140,22 @@ not selfie camera mode
     var said = event.results[event.results.length - 1][0].transcript.trim();
     talk.set(said);
   });
-  var start = () => recognition.start();
+  var start = () => {
+    if (!recognition)
+      init2();
+    recognition.start();
+  };
+  function end() {
+    recognition?.stop();
+  }
   var cancels = [];
+  open_live.on(($l) => {
+    if ($l) {
+      start();
+    } else {
+      end();
+    }
+  });
   binds.on(($binds) => {
     cancels.forEach((cancel) => cancel());
     cancels = [];
@@ -33259,6 +33295,8 @@ not selfie camera mode
   var videoElement = new Value();
   var canvasElement = new Value();
   var onResults = (results) => {
+    if (!open_live.$)
+      return;
     const faceLandmarks = results.faceLandmarks;
     const pose3DLandmarks = results.ea;
     const pose2DLandmarks = results.poseLandmarks;
@@ -33303,15 +33341,23 @@ not selfie camera mode
     const ctx = canvasElement.$.getContext("2d");
     ctx.translate(width, 0);
     ctx.scale(-1, 1);
-    const camera4 = new import_camera_utils.Camera($ve, {
-      onFrame: async () => {
-        ctx.drawImage($ve, 0, 0, width, height);
-        await holistic.send({ image: canvasElement.$ });
-      },
-      width,
-      height
+    let camera4;
+    open_live.on(($l) => {
+      if (!camera4 && $l) {
+        camera4 = new import_camera_utils.Camera($ve, {
+          onFrame: async () => {
+            ctx.drawImage($ve, 0, 0, width, height);
+            await holistic.send({ image: canvasElement.$ });
+          },
+          width,
+          height
+        });
+      }
+      if ($l)
+        camera4.start();
+      if (!$l && camera4)
+        camera4.stop();
     });
-    camera4.start();
   });
   tick.on(() => {
     if (currentVRM.$) {
@@ -33467,8 +33513,8 @@ not selfie camera mode
   var quat2 = new AFRAME.THREE.Quaternion();
   AFRAME.registerComponent("wasd-controller", {
     schema: {
-      speed: { type: "number", default: 0.2 },
-      rot: { type: "number", default: 0.01 }
+      speed: { type: "number", default: 0.4 },
+      rot: { type: "number", default: 25e-4 }
     },
     tick(_2, delta) {
       if (!this.el.body)
@@ -33478,12 +33524,12 @@ not selfie camera mode
       let torq;
       vec32.set(0, 0, 0);
       let intensity = 1;
-      let hop = 2;
+      let hop = 5;
       if (key_map.$["shift"]) {
         intensity = 1.5;
       }
-      if (key_map.$[" "] && o3d.position.y < 1) {
-        hop = 15;
+      if (key_map.$[" "] && o3d.position.y < 0.5) {
+        hop = 2.5 * delta;
       }
       if (key_map.$["w"]) {
         vec32.y = hop;
@@ -33676,7 +33722,7 @@ not selfie camera mode
         set_custom_element_data(a_entity, "scale", "0.1 0.1 20");
         set_custom_element_data(a_entity, "position", "0 0 -1");
         set_custom_element_data(a_entity, "ammo-body", "type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;");
-        set_custom_element_data(a_entity, "ammo-shape", "type: box; halfExtents: 0.05 0.05 0.5;offset: 0 0 -9.5");
+        set_custom_element_data(a_entity, "ammo-shape", "type: box; halfExtents: 0.05 0.05 6;offset: 0 0 -9.5");
       },
       m(target, anchor) {
         insert(target, a_entity, anchor);
@@ -33720,13 +33766,14 @@ not selfie camera mode
         set_custom_element_data(a_mixin, "id", "bbs");
         set_custom_element_data(a_mixin, "geometry", "");
         set_custom_element_data(a_mixin, "material", " opacity: 0.15; color: #00ff00; transparent: true; shader: flat;");
+        set_custom_element_data(a_mixin, "text", "value: targeting info");
         set_custom_element_data(a_camera, "active", "");
         set_custom_element_data(a_camera, "fov", "75");
         set_custom_element_data(a_camera, "id", "camera");
         set_custom_element_data(a_camera, "character-camera", "");
         set_custom_element_data(a_camera, "position", "0 4 0");
         set_custom_element_data(a_camera, "wasd-controls", "enabled: false;");
-        set_custom_element_data(a_camera, "look-controls", "enabled: false;");
+        set_custom_element_data(a_camera, "look-control", "pointerLockEnabled: true;");
         set_custom_element_data(a_entity, "geometry", "");
         set_custom_element_data(a_entity, "material", "color: blue; opacity: 0.15; shader: flat; visible: false;");
         set_custom_element_data(a_entity, "position", "0 0 -1");
@@ -34353,35 +34400,87 @@ not selfie camera mode
   };
   var forest_default = Forest;
 
-  // src/template/host.svelte
+  // src/ui/live.svelte
   function create_fragment7(ctx) {
+    let div;
+    let div_class_value;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        div = element("div");
+        attr(div, "class", div_class_value = "action " + (ctx[0] ? "live" : "") + " svelte-13gi0im");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        if (!mounted) {
+          dispose = listen(div, "click", ctx[1]);
+          mounted = true;
+        }
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 1 && div_class_value !== (div_class_value = "action " + (ctx2[0] ? "live" : "") + " svelte-13gi0im")) {
+          attr(div, "class", div_class_value);
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function instance6($$self, $$props, $$invalidate) {
+    let $open_live;
+    component_subscribe($$self, open_live, ($$value) => $$invalidate(0, $open_live = $$value));
+    const click_handler = () => {
+      open_live.set(!open_live.$);
+    };
+    return [$open_live, click_handler];
+  }
+  var Live = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance6, create_fragment7, safe_not_equal, {});
+    }
+  };
+  var live_default = Live;
+
+  // src/template/host.svelte
+  function create_fragment8(ctx) {
     let webcam;
     let t0;
     let heard;
     let t1;
+    let live;
+    let t2;
     let a_scene;
     let a_assets;
     let audio;
     let audio_src_value;
-    let t2;
-    let a_mixin0;
     let t3;
-    let a_mixin1;
+    let a_mixin0;
     let t4;
+    let a_mixin1;
+    let t5;
     let a_mixin2;
     let a_mixin2_animation_value;
-    let t5;
-    let charactersmixins;
     let t6;
-    let camerafps;
+    let charactersmixins;
     let t7;
-    let characters;
+    let camerafps;
     let t8;
+    let characters;
+    let t9;
     let forest;
     let a_scene_physics_value;
     let current;
     webcam = new webcam_default({});
     heard = new heard_default({});
+    live = new live_default({});
     charactersmixins = new characters_assets_default({});
     camerafps = new camera_fps_default({});
     characters = new characters_default({});
@@ -34392,22 +34491,24 @@ not selfie camera mode
         t0 = space();
         create_component(heard.$$.fragment);
         t1 = space();
+        create_component(live.$$.fragment);
+        t2 = space();
         a_scene = element("a-scene");
         a_assets = element("a-assets");
         audio = element("audio");
-        t2 = space();
-        a_mixin0 = element("a-mixin");
         t3 = space();
-        a_mixin1 = element("a-mixin");
+        a_mixin0 = element("a-mixin");
         t4 = space();
-        a_mixin2 = element("a-mixin");
+        a_mixin1 = element("a-mixin");
         t5 = space();
-        create_component(charactersmixins.$$.fragment);
+        a_mixin2 = element("a-mixin");
         t6 = space();
-        create_component(camerafps.$$.fragment);
+        create_component(charactersmixins.$$.fragment);
         t7 = space();
-        create_component(characters.$$.fragment);
+        create_component(camerafps.$$.fragment);
         t8 = space();
+        create_component(characters.$$.fragment);
+        t9 = space();
         create_component(forest.$$.fragment);
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "./sound/bg-ocean.mp3"))
@@ -34435,22 +34536,24 @@ not selfie camera mode
         insert(target, t0, anchor);
         mount_component(heard, target, anchor);
         insert(target, t1, anchor);
+        mount_component(live, target, anchor);
+        insert(target, t2, anchor);
         insert(target, a_scene, anchor);
         append(a_scene, a_assets);
         append(a_assets, audio);
-        append(a_assets, t2);
-        append(a_assets, a_mixin0);
         append(a_assets, t3);
-        append(a_assets, a_mixin1);
+        append(a_assets, a_mixin0);
         append(a_assets, t4);
-        append(a_assets, a_mixin2);
+        append(a_assets, a_mixin1);
         append(a_assets, t5);
+        append(a_assets, a_mixin2);
+        append(a_assets, t6);
         mount_component(charactersmixins, a_assets, null);
-        append(a_scene, t6);
-        mount_component(camerafps, a_scene, null);
         append(a_scene, t7);
-        mount_component(characters, a_scene, null);
+        mount_component(camerafps, a_scene, null);
         append(a_scene, t8);
+        mount_component(characters, a_scene, null);
+        append(a_scene, t9);
         mount_component(forest, a_scene, null);
         current = true;
       },
@@ -34470,6 +34573,7 @@ not selfie camera mode
           return;
         transition_in(webcam.$$.fragment, local);
         transition_in(heard.$$.fragment, local);
+        transition_in(live.$$.fragment, local);
         transition_in(charactersmixins.$$.fragment, local);
         transition_in(camerafps.$$.fragment, local);
         transition_in(characters.$$.fragment, local);
@@ -34479,6 +34583,7 @@ not selfie camera mode
       o(local) {
         transition_out(webcam.$$.fragment, local);
         transition_out(heard.$$.fragment, local);
+        transition_out(live.$$.fragment, local);
         transition_out(charactersmixins.$$.fragment, local);
         transition_out(camerafps.$$.fragment, local);
         transition_out(characters.$$.fragment, local);
@@ -34492,6 +34597,9 @@ not selfie camera mode
         destroy_component(heard, detaching);
         if (detaching)
           detach(t1);
+        destroy_component(live, detaching);
+        if (detaching)
+          detach(t2);
         if (detaching)
           detach(a_scene);
         destroy_component(charactersmixins);
@@ -34501,15 +34609,14 @@ not selfie camera mode
       }
     };
   }
-  function instance6($$self, $$props, $$invalidate) {
+  function instance7($$self, $$props, $$invalidate) {
     let $open_stats;
     let $open_debug;
     component_subscribe($$self, open_stats, ($$value) => $$invalidate(1, $open_stats = $$value));
     component_subscribe($$self, open_debug, ($$value) => $$invalidate(2, $open_debug = $$value));
-    start();
-    const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize: groundSize2 = 100 } = $$props;
     const scatter = [-groundSize2 / 2, 0, -groundSize2 / 2, groundSize2 / 2, 0, groundSize2 / 2].join(" ");
+    let scene;
     $$self.$$set = ($$props2) => {
       if ("groundSize" in $$props2)
         $$invalidate(0, groundSize2 = $$props2.groundSize);
@@ -34519,13 +34626,13 @@ not selfie camera mode
   var Host = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment7, safe_not_equal, { groundSize: 0 });
+      init(this, options, instance7, create_fragment8, safe_not_equal, { groundSize: 0 });
     }
   };
   var host_default = Host;
 
   // src/ui/title.svelte
-  function create_fragment8(ctx) {
+  function create_fragment9(ctx) {
     let div3;
     let t8;
     let center;
@@ -34563,13 +34670,13 @@ not selfie camera mode
   var Title = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment8, safe_not_equal, {});
+      init(this, options, null, create_fragment9, safe_not_equal, {});
     }
   };
   var title_default = Title;
 
   // src/ui/home.svelte
-  function create_fragment9(ctx) {
+  function create_fragment10(ctx) {
     let div9;
     let div0;
     let t0;
@@ -34615,23 +34722,23 @@ not selfie camera mode
         div5.textContent = "\u{1F340}";
         t7 = space();
         div6 = element("div");
-        attr(div0, "class", "sprites sprite svelte-1uo4d6t");
-        attr(div1, "class", "flex svelte-1uo4d6t");
+        attr(div0, "class", "sprites sprite svelte-mb45pl");
+        attr(div1, "class", "flex svelte-mb45pl");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-1uo4d6t");
+        attr(textarea, "class", "text button svelte-mb45pl");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-1uo4d6t");
-        attr(div3, "class", "span2 full svelte-1uo4d6t");
-        attr(div4, "class", "flex svelte-1uo4d6t");
+        attr(div2, "class", "flex svelte-mb45pl");
+        attr(div3, "class", "span2 full svelte-mb45pl");
+        attr(div4, "class", "flex svelte-mb45pl");
         attr(div5, "type", "button");
-        attr(div5, "class", "button icon svelte-1uo4d6t");
+        attr(div5, "class", "button icon svelte-mb45pl");
         attr(div5, "value", "GO");
-        attr(div6, "class", "flex svelte-1uo4d6t");
-        attr(div7, "class", "span2 full svelte-1uo4d6t");
-        attr(div8, "class", "vbox svelte-1uo4d6t");
-        attr(div9, "class", "menu svelte-1uo4d6t");
+        attr(div6, "class", "flex svelte-mb45pl");
+        attr(div7, "class", "span2 full svelte-mb45pl");
+        attr(div8, "class", "vbox svelte-mb45pl");
+        attr(div9, "class", "menu svelte-mb45pl");
       },
       m(target, anchor) {
         insert(target, div9, anchor);
@@ -34696,7 +34803,7 @@ not selfie camera mode
   };
   var keydown_handler = (e) => {
   };
-  function instance7($$self, $$props, $$invalidate) {
+  function instance8($$self, $$props, $$invalidate) {
     let $motd;
     component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
     if (location.search === "?go") {
@@ -34712,7 +34819,7 @@ not selfie camera mode
   var Home = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance7, create_fragment9, safe_not_equal, {});
+      init(this, options, instance8, create_fragment10, safe_not_equal, {});
     }
   };
   var home_default = Home;
@@ -34728,8 +34835,8 @@ not selfie camera mode
         div = element("div");
         input = element("input");
         attr(input, "type", "text");
-        attr(input, "class", "entry svelte-e0lgn5");
-        attr(div, "class", "lofi svelte-e0lgn5");
+        attr(input, "class", "entry svelte-1qlzmvl");
+        attr(div, "class", "lofi svelte-1qlzmvl");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -34759,7 +34866,7 @@ not selfie camera mode
       }
     };
   }
-  function create_fragment10(ctx) {
+  function create_fragment11(ctx) {
     let if_block_anchor;
     let if_block = ctx[1] !== void 0 && create_if_block3(ctx);
     return {
@@ -34797,7 +34904,7 @@ not selfie camera mode
       }
     };
   }
-  function instance8($$self, $$props, $$invalidate) {
+  function instance9($$self, $$props, $$invalidate) {
     let $open_text;
     component_subscribe($$self, open_text, ($$value) => $$invalidate(1, $open_text = $$value));
     let ele;
@@ -34859,13 +34966,13 @@ not selfie camera mode
   var Text = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance8, create_fragment10, safe_not_equal, {});
+      init(this, options, instance9, create_fragment11, safe_not_equal, {});
     }
   };
   var text_default = Text;
 
   // src/ui/loading.svelte
-  function create_fragment11(ctx) {
+  function create_fragment12(ctx) {
     let div5;
     let div0;
     let t0;
@@ -34894,17 +35001,17 @@ not selfie camera mode
         textarea = element("textarea");
         t3 = space();
         div2 = element("div");
-        attr(div0, "class", "sprites sprite svelte-qfprcl");
-        attr(div1, "class", "flex svelte-qfprcl");
+        attr(div0, "class", "sprites sprite svelte-1tqvjp5");
+        attr(div1, "class", "flex svelte-1tqvjp5");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-qfprcl");
+        attr(textarea, "class", "text button svelte-1tqvjp5");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-qfprcl");
-        attr(div3, "class", "span2 full svelte-qfprcl");
-        attr(div4, "class", "vbox svelte-qfprcl");
-        attr(div5, "class", "menu svelte-qfprcl");
+        attr(div2, "class", "flex svelte-1tqvjp5");
+        attr(div3, "class", "span2 full svelte-1tqvjp5");
+        attr(div4, "class", "vbox svelte-1tqvjp5");
+        attr(div5, "class", "menu svelte-1tqvjp5");
       },
       m(target, anchor) {
         insert(target, div5, anchor);
@@ -34943,7 +35050,7 @@ not selfie camera mode
       }
     };
   }
-  function instance9($$self, $$props, $$invalidate) {
+  function instance10($$self, $$props, $$invalidate) {
     let $loading;
     component_subscribe($$self, loading, ($$value) => $$invalidate(0, $loading = $$value));
     return [$loading];
@@ -34951,13 +35058,13 @@ not selfie camera mode
   var Loading = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance9, create_fragment11, safe_not_equal, {});
+      init(this, options, instance10, create_fragment12, safe_not_equal, {});
     }
   };
   var loading_default = Loading;
 
   // src/ui/help.svelte
-  function create_fragment12(ctx) {
+  function create_fragment13(ctx) {
     let div5;
     let div0;
     let t0;
@@ -34982,17 +35089,17 @@ not selfie camera mode
         textarea = element("textarea");
         t2 = space();
         div2 = element("div");
-        attr(div0, "class", "sprites sprite svelte-1gdirzm");
-        attr(div1, "class", "flex svelte-1gdirzm");
+        attr(div0, "class", "sprites sprite svelte-1qmwcry");
+        attr(div1, "class", "flex svelte-1qmwcry");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-1gdirzm");
+        attr(textarea, "class", "text button svelte-1qmwcry");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-1gdirzm");
-        attr(div3, "class", "span2 full svelte-1gdirzm");
-        attr(div4, "class", "vbox svelte-1gdirzm");
-        attr(div5, "class", "menu svelte-1gdirzm");
+        attr(div2, "class", "flex svelte-1qmwcry");
+        attr(div3, "class", "span2 full svelte-1qmwcry");
+        attr(div4, "class", "vbox svelte-1qmwcry");
+        attr(div5, "class", "menu svelte-1qmwcry");
       },
       m(target, anchor) {
         insert(target, div5, anchor);
@@ -35028,7 +35135,7 @@ not selfie camera mode
       }
     };
   }
-  function instance10($$self, $$props, $$invalidate) {
+  function instance11($$self, $$props, $$invalidate) {
     let $helptext;
     component_subscribe($$self, helptext, ($$value) => $$invalidate(0, $helptext = $$value));
     function close() {
@@ -35039,7 +35146,7 @@ not selfie camera mode
   var Help = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance10, create_fragment12, safe_not_equal, {});
+      init(this, options, instance11, create_fragment13, safe_not_equal, {});
     }
   };
   var help_default = Help;
@@ -35154,7 +35261,7 @@ not selfie camera mode
       }
     };
   }
-  function create_fragment13(ctx) {
+  function create_fragment14(ctx) {
     let text_1;
     let t0;
     let t1;
@@ -35318,7 +35425,7 @@ not selfie camera mode
     };
   }
   var groundSize = 100;
-  function instance11($$self, $$props, $$invalidate) {
+  function instance12($$self, $$props, $$invalidate) {
     let $open_help;
     let $open_loading;
     let $open_home;
@@ -35332,7 +35439,7 @@ not selfie camera mode
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance11, create_fragment13, safe_not_equal, {});
+      init(this, options, instance12, create_fragment14, safe_not_equal, {});
     }
   };
   var main_default = Main;
