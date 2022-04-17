@@ -23,6 +23,7 @@ export const camera_el = new Value<any>()
 export const toggle_selfie = new Value(state.selfie).save("selfie")
 export const toggle_visible = new Value(state.visible).save("visible")
 export const do_echo = new Value(true).save("do_echo")
+export const do_vary = new Value(true)
 
 
 open_game.on(($g) => {

@@ -31055,6 +31055,7 @@
   var toggle_selfie = new Value(state_default.selfie).save("selfie");
   var toggle_visible = new Value(state_default.visible).save("visible");
   var do_echo = new Value(true).save("do_echo");
+  var do_vary = new Value(true);
   open_game.on(($g) => {
     if (open_game.$) {
       open_loading.set(true);
@@ -31385,6 +31386,9 @@ not selfie camera mode
     },
     ["notdebug" /* NotDebug */]: (items) => {
       open_debug.set(false);
+    },
+    ["vary" /* Vary */]: (items) => {
+      do_vary.poke();
     }
   };
 
@@ -32320,7 +32324,7 @@ not selfie camera mode
   AFRAME.registerComponent("wasd-controller", {
     schema: {
       speed: { type: "number", default: 0.2 },
-      rot: { type: "number", default: 0.25 }
+      rot: { type: "number", default: 0.01 }
     },
     tick(_2, delta) {
       if (!this.el.body)
@@ -32354,14 +32358,10 @@ not selfie camera mode
         vec3.x += this.data.speed * delta * intensity;
       }
       if (key_map.$["q"]) {
-        torq = new Ammo.btVector3(0, delta * this.data.rot, 0);
-        this.el.body.applyTorque(torq);
-        this.el.body.activate();
+        camera.$.parent.parent.parent.rotation.y += this.data.rot * delta;
       }
       if (key_map.$["e"]) {
-        torq = new Ammo.btVector3(0, -delta * this.data.rot, 0);
-        this.el.body.applyTorque(torq);
-        this.el.body.activate();
+        camera.$.parent.parent.parent.rotation.y -= this.data.rot * delta;
       }
       if (Math.abs(vec3.length()) > 0 && camera.$) {
         camera.$.updateMatrixWorld();

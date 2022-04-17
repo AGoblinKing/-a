@@ -7,7 +7,7 @@ const quat = new AFRAME.THREE.Quaternion()
 AFRAME.registerComponent("wasd-controller", {
     schema: {
         speed: { type: "number", default: 0.2 },
-        rot: { type: "number", default: 0.25 },
+        rot: { type: "number", default: 0.01 },
     },
     tick(_, delta) {
         if (!this.el.body) return
@@ -45,14 +45,10 @@ AFRAME.registerComponent("wasd-controller", {
             vec3.x += this.data.speed * delta * intensity
         }
         if (key_map.$["q"]) {
-            torq = new Ammo.btVector3(0, delta * this.data.rot, 0)
-            this.el.body.applyTorque(torq)
-            this.el.body.activate()
+            camera.$.parent.parent.parent.rotation.y += this.data.rot * delta
         }
         if (key_map.$["e"]) {
-            torq = new Ammo.btVector3(0, -delta * this.data.rot, 0)
-            this.el.body.applyTorque(torq)
-            this.el.body.activate()
+            camera.$.parent.parent.parent.rotation.y -= this.data.rot * delta
 
         }
         if (Math.abs(vec3.length()) > 0 && camera.$) {

@@ -290,6 +290,7 @@ videoElement.on(($ve) => {
   const camera = new Camera($ve, {
     onFrame: async () => {
       // if (!ready) return
+     
       ctx.drawImage($ve, 0, 0, width, height)
       await holistic.send({ image: canvasElement.$ });
 

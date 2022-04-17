@@ -5565,7 +5565,7 @@
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance11, create_fragment13, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance12, create_fragment14, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5588,7 +5588,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance11 ? instance11(component, options.props || {}, (i2, ret, ...rest) => {
+    $$.ctx = instance12 ? instance12(component, options.props || {}, (i2, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
         if (!$$.skip_bound && $$.bound[i2])
@@ -5601,7 +5601,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment13 ? create_fragment13($$.ctx) : false;
+    $$.fragment = create_fragment14 ? create_fragment14($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -7098,6 +7098,7 @@
   var toggle_selfie = new Value(state_default.selfie).save("selfie");
   var toggle_visible = new Value(state_default.visible).save("visible");
   var do_echo = new Value(true).save("do_echo");
+  var do_vary = new Value(true);
   open_game.on(($g) => {
     if (open_game.$) {
       open_loading.set(true);
@@ -11106,14 +11107,14 @@ not selfie camera mode
       this.set(1, yx, zx, 0, xy, 1, zy, 0, xz, yz, 1, 0, 0, 0, 0, 1);
       return this;
     }
-    compose(position, quaternion, scale2) {
+    compose(position, quaternion, scale3) {
       const te2 = this.elements;
       const x2 = quaternion._x, y2 = quaternion._y, z2 = quaternion._z, w2 = quaternion._w;
       const x22 = x2 + x2, y22 = y2 + y2, z22 = z2 + z2;
       const xx = x2 * x22, xy = x2 * y22, xz = x2 * z22;
       const yy = y2 * y22, yz = y2 * z22, zz = z2 * z22;
       const wx = w2 * x22, wy = w2 * y22, wz = w2 * z22;
-      const sx = scale2.x, sy = scale2.y, sz = scale2.z;
+      const sx = scale3.x, sy = scale3.y, sz = scale3.z;
       te2[0] = (1 - (yy + zz)) * sx;
       te2[1] = (xy + wz) * sx;
       te2[2] = (xz - wy) * sx;
@@ -11132,7 +11133,7 @@ not selfie camera mode
       te2[15] = 1;
       return this;
     }
-    decompose(position, quaternion, scale2) {
+    decompose(position, quaternion, scale3) {
       const te2 = this.elements;
       let sx = _v1$5.set(te2[0], te2[1], te2[2]).length();
       const sy = _v1$5.set(te2[4], te2[5], te2[6]).length();
@@ -11157,9 +11158,9 @@ not selfie camera mode
       _m1$2.elements[9] *= invSZ;
       _m1$2.elements[10] *= invSZ;
       quaternion.setFromRotationMatrix(_m1$2);
-      scale2.x = sx;
-      scale2.y = sy;
-      scale2.z = sz;
+      scale3.x = sx;
+      scale3.y = sy;
+      scale3.z = sz;
       return this;
     }
     makePerspective(left, right, top, bottom, near, far) {
@@ -11493,7 +11494,7 @@ not selfie camera mode
       const position = new Vector3();
       const rotation = new Euler2();
       const quaternion = new Quaternion();
-      const scale2 = new Vector3(1, 1, 1);
+      const scale3 = new Vector3(1, 1, 1);
       function onRotationChange() {
         quaternion.setFromEuler(rotation, false);
       }
@@ -11521,7 +11522,7 @@ not selfie camera mode
         scale: {
           configurable: true,
           enumerable: true,
-          value: scale2
+          value: scale3
         },
         modelViewMatrix: {
           value: new Matrix4()
@@ -20084,15 +20085,15 @@ not selfie camera mode
       return useOffscreenCanvas ? new OffscreenCanvas(width2, height2) : createElementNS("canvas");
     }
     function resizeImage(image, needsPowerOfTwo, needsNewCanvas, maxSize) {
-      let scale2 = 1;
+      let scale3 = 1;
       if (image.width > maxSize || image.height > maxSize) {
-        scale2 = maxSize / Math.max(image.width, image.height);
+        scale3 = maxSize / Math.max(image.width, image.height);
       }
-      if (scale2 < 1 || needsPowerOfTwo === true) {
+      if (scale3 < 1 || needsPowerOfTwo === true) {
         if (typeof HTMLImageElement !== "undefined" && image instanceof HTMLImageElement || typeof HTMLCanvasElement !== "undefined" && image instanceof HTMLCanvasElement || typeof ImageBitmap !== "undefined" && image instanceof ImageBitmap) {
           const floor = needsPowerOfTwo ? floorPowerOfTwo : Math.floor;
-          const width2 = floor(scale2 * image.width);
-          const height2 = floor(scale2 * image.height);
+          const width2 = floor(scale3 * image.width);
+          const height2 = floor(scale3 * image.height);
           if (_canvas2 === void 0)
             _canvas2 = createCanvas(width2, height2);
           const canvas = needsNewCanvas ? createCanvas(width2, height2) : _canvas2;
@@ -23711,8 +23712,8 @@ not selfie camera mode
     }
   };
   Sprite.prototype.isSprite = true;
-  function transformVertex(vertexPosition, mvPosition, center, scale2, sin, cos) {
-    _alignedPosition.subVectors(vertexPosition, center).addScalar(0.5).multiply(scale2);
+  function transformVertex(vertexPosition, mvPosition, center, scale3, sin, cos) {
+    _alignedPosition.subVectors(vertexPosition, center).addScalar(0.5).multiply(scale3);
     if (sin !== void 0) {
       _rotatedPosition.x = cos * _alignedPosition.x - sin * _alignedPosition.y;
       _rotatedPosition.y = sin * _alignedPosition.x + cos * _alignedPosition.y;
@@ -23766,9 +23767,9 @@ not selfie camera mode
         vector.y = skinWeight.getY(i2);
         vector.z = skinWeight.getZ(i2);
         vector.w = skinWeight.getW(i2);
-        const scale2 = 1 / vector.manhattanLength();
-        if (scale2 !== Infinity) {
-          vector.multiplyScalar(scale2);
+        const scale3 = 1 / vector.manhattanLength();
+        if (scale3 !== Infinity) {
+          vector.multiplyScalar(scale3);
         } else {
           vector.set(1, 0, 0, 0);
         }
@@ -33024,6 +33025,9 @@ not selfie camera mode
     },
     ["notdebug" /* NotDebug */]: (items) => {
       open_debug.set(false);
+    },
+    ["vary" /* Vary */]: (items) => {
+      do_vary.poke();
     }
   };
 
@@ -33344,23 +33348,16 @@ not selfie camera mode
       property: { type: "string", default: "position" },
       range: { type: "string", default: "-1 -1 -1 1 1 1" }
     },
-    update() {
-      const o3d = this.el.object3D;
-      bb2.setFromArray(this.data.range.split(" ").map((v2) => parseFloat(v2)));
-      o3d[this.data.property]?.set(bb2.min.x + Math.random() * (bb2.max.x - bb2.min.x), bb2.min.y + Math.random() * (bb2.max.y - bb2.min.y), bb2.min.z + Math.random() * (bb2.max.z - bb2.min.z));
-    }
-  });
-
-  // src/component/follow.ts
-  AFRAME.registerComponent("follow", {
-    schema: { target: { type: "selector" } },
     init() {
-      console.log("follow", this.data);
+      const range = this.data.range.split(" ").map((v2) => parseFloat(v2));
+      this.cancel = do_vary.on(($v) => {
+        const o3d = this.el.object3D;
+        bb2.setFromArray(range);
+        o3d[this.data.property]?.set(bb2.min.x + Math.random() * (bb2.max.x - bb2.min.x), bb2.min.y + Math.random() * (bb2.max.y - bb2.min.y), bb2.min.z + Math.random() * (bb2.max.z - bb2.min.z));
+      });
     },
-    tick() {
-      if (!this.data.target)
-        return;
-      console.log(this.data);
+    remove() {
+      this.cancel();
     }
   });
 
@@ -33470,7 +33467,7 @@ not selfie camera mode
   AFRAME.registerComponent("wasd-controller", {
     schema: {
       speed: { type: "number", default: 0.2 },
-      rot: { type: "number", default: 0.25 }
+      rot: { type: "number", default: 0.01 }
     },
     tick(_2, delta) {
       if (!this.el.body)
@@ -33504,14 +33501,10 @@ not selfie camera mode
         vec32.x += this.data.speed * delta * intensity;
       }
       if (key_map.$["q"]) {
-        torq = new Ammo.btVector3(0, delta * this.data.rot, 0);
-        this.el.body.applyTorque(torq);
-        this.el.body.activate();
+        camera.$.parent.parent.parent.rotation.y += this.data.rot * delta;
       }
       if (key_map.$["e"]) {
-        torq = new Ammo.btVector3(0, -delta * this.data.rot, 0);
-        this.el.body.applyTorque(torq);
-        this.el.body.activate();
+        camera.$.parent.parent.parent.rotation.y -= this.data.rot * delta;
       }
       if (Math.abs(vec32.length()) > 0 && camera.$) {
         camera.$.updateMatrixWorld();
@@ -33641,33 +33634,149 @@ not selfie camera mode
     }
   });
 
+  // src/component/copy.ts
+  var vec33 = new AFRAME.THREE.Vector3();
+  var quat4 = new AFRAME.THREE.Quaternion();
+  var scale2 = new AFRAME.THREE.Vector3();
+  AFRAME.registerComponent("copy", {
+    schema: {
+      target: { type: "selector" },
+      position: { type: "bool", default: true },
+      quaternion: { type: "bool", defualt: true },
+      scale: { type: "bool", default: false }
+    },
+    tick() {
+      if (!this.data.target)
+        return;
+      const o3d = this.el.object3D;
+      const o_o3d = this.data.target.object3D;
+      o_o3d.updateMatrixWorld();
+      o_o3d.matrixWorld.decompose(vec33, quat4, scale2);
+      if (this.data.position) {
+        o3d.position.copy(vec33);
+      }
+      if (this.data.quaternion) {
+        o3d.quaternion.copy(quat4);
+      }
+    }
+  });
+
   // src/template/camera-fps.svelte
-  function create_fragment4(ctx) {
-    let a_camera;
+  function create_if_block(ctx) {
+    let a_entity;
+    let a_entity_material_value;
+    let mounted;
+    let dispose;
     return {
       c() {
+        a_entity = element("a-entity");
+        set_custom_element_data(a_entity, "geometry", "");
+        set_custom_element_data(a_entity, "material", a_entity_material_value = "wireframe: true; opacity: 0.2; transparent: true; visible: " + ctx[1] + " };");
+        set_custom_element_data(a_entity, "scale", "0.1 0.1 20");
+        set_custom_element_data(a_entity, "position", "0 0 -1");
+        set_custom_element_data(a_entity, "ammo-body", "type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;");
+        set_custom_element_data(a_entity, "ammo-shape", "type: box; halfExtents: 0.05 0.05 0.5;offset: 0 0 -9.5");
+      },
+      m(target, anchor) {
+        insert(target, a_entity, anchor);
+        if (!mounted) {
+          dispose = [
+            listen(a_entity, "collidestart", ctx[2]),
+            listen(a_entity, "collideend", ctx[3])
+          ];
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 2 && a_entity_material_value !== (a_entity_material_value = "wireframe: true; opacity: 0.2; transparent: true; visible: " + ctx2[1] + " };")) {
+          set_custom_element_data(a_entity, "material", a_entity_material_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(a_entity);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function create_fragment4(ctx) {
+    let a_mixin;
+    let t0;
+    let a_camera;
+    let t1;
+    let a_entity;
+    let if_block = ctx[1] && create_if_block(ctx);
+    return {
+      c() {
+        a_mixin = element("a-mixin");
+        t0 = space();
         a_camera = element("a-camera");
+        if (if_block)
+          if_block.c();
+        t1 = space();
+        a_entity = element("a-entity");
+        set_custom_element_data(a_mixin, "id", "bbs");
+        set_custom_element_data(a_mixin, "geometry", "");
+        set_custom_element_data(a_mixin, "material", " opacity: 0.15; color: #00ff00; transparent: true; shader: flat;");
         set_custom_element_data(a_camera, "active", "");
         set_custom_element_data(a_camera, "fov", "75");
-        set_custom_element_data(a_camera, "id", "#camera");
+        set_custom_element_data(a_camera, "id", "camera");
         set_custom_element_data(a_camera, "character-camera", "");
         set_custom_element_data(a_camera, "position", "0 4 0");
         set_custom_element_data(a_camera, "wasd-controls", "enabled: false;");
         set_custom_element_data(a_camera, "look-controls", "enabled: false;");
+        set_custom_element_data(a_entity, "geometry", "");
+        set_custom_element_data(a_entity, "material", "color: blue; opacity: 0.15; shader: flat; visible: false;");
+        set_custom_element_data(a_entity, "position", "0 0 -1");
+        set_custom_element_data(a_entity, "pool__targeting", "mixin: bbs; size: 1");
       },
       m(target, anchor) {
+        insert(target, a_mixin, anchor);
+        insert(target, t0, anchor);
         insert(target, a_camera, anchor);
+        if (if_block)
+          if_block.m(a_camera, null);
+        insert(target, t1, anchor);
+        insert(target, a_entity, anchor);
+        ctx[4](a_entity);
       },
-      p: noop,
+      p(ctx2, [dirty]) {
+        if (ctx2[1]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block(ctx2);
+            if_block.c();
+            if_block.m(a_camera, null);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+      },
       i: noop,
       o: noop,
       d(detaching) {
         if (detaching)
+          detach(a_mixin);
+        if (detaching)
+          detach(t0);
+        if (detaching)
           detach(a_camera);
+        if (if_block)
+          if_block.d();
+        if (detaching)
+          detach(t1);
+        if (detaching)
+          detach(a_entity);
+        ctx[4](null);
       }
     };
   }
-  function instance3($$self) {
+  function instance3($$self, $$props, $$invalidate) {
+    let $open_targeting;
+    component_subscribe($$self, open_targeting, ($$value) => $$invalidate(1, $open_targeting = $$value));
     let el;
     open_targeting.on(($t) => {
       if (!$t)
@@ -33675,29 +33784,45 @@ not selfie camera mode
     });
     const ents = {};
     const box = new AFRAME.THREE.Box3();
+    open_targeting.on((t) => {
+      if (!t) {
+        Object.values(ents).forEach((e) => {
+          el.components.pool__targeting.returnEntity(e);
+          delete ents[e.object3D.uuid];
+        });
+      }
+    });
     function collidestart(e) {
       const who = e.detail.targetEl;
-      if (ents[who.id])
+      if (who.id === "ground")
         return;
       const keys = Object.keys(ents);
-      if (keys.length >= 5) {
+      if (keys.length >= 1) {
         const key = keys[Math.floor(Math.random() * keys.length)];
         el.components.pool__targeting.returnEntity(ents[key]);
         delete ents[key];
       }
       const ent = el.components.pool__targeting.requestEntity();
       ent.play();
-      ents[who.id] = ent;
-      box.setFromObject(who.object3D, true);
+      ents[who.object3D.uuid] = ent;
+      box.setFromObject(who.object3D);
       box.getSize(ent.object3D.scale);
       box.getCenter(ent.object3D.position);
     }
     function collideend(e) {
       const who = e.detail.targetEl;
-      el.components.pool__targeting.returnEntity(ents[who.id]);
-      delete ents[who.id];
+      if (!ents[who.object3D.uuid])
+        return;
+      el.components.pool__targeting.returnEntity(ents[who.object3D.uuid]);
+      delete ents[who.object3D.uuid];
     }
-    return [];
+    function a_entity_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        el = $$value;
+        $$invalidate(0, el);
+      });
+    }
+    return [el, $open_targeting, collidestart, collideend, a_entity_binding];
   }
   var Camera_fps = class extends SvelteComponent {
     constructor(options) {
@@ -33708,7 +33833,7 @@ not selfie camera mode
   var camera_fps_default = Camera_fps;
 
   // src/ui/heard.svelte
-  function create_if_block(ctx) {
+  function create_if_block2(ctx) {
     let div;
     let input;
     return {
@@ -33735,7 +33860,7 @@ not selfie camera mode
   }
   function create_fragment5(ctx) {
     let if_block_anchor;
-    let if_block = ctx[1] && create_if_block(ctx);
+    let if_block = ctx[1] && create_if_block2(ctx);
     return {
       c() {
         if (if_block)
@@ -33752,7 +33877,7 @@ not selfie camera mode
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
-            if_block = create_if_block(ctx2);
+            if_block = create_if_block2(ctx2);
             if_block.c();
             if_block.m(if_block_anchor.parentNode, if_block_anchor);
           }
@@ -33796,8 +33921,439 @@ not selfie camera mode
   };
   var heard_default = Heard;
 
-  // src/template/host.svelte
+  // src/template/forest.svelte
   function create_fragment6(ctx) {
+    let a_entity0;
+    let t0;
+    let a_mixin0;
+    let t1;
+    let a_mixin1;
+    let t2;
+    let a_mixin2;
+    let t3;
+    let a_mixin3;
+    let t4;
+    let a_mixin4;
+    let t5;
+    let a_mixin5;
+    let t6;
+    let a_mixin6;
+    let t7;
+    let a_mixin7;
+    let t8;
+    let a_mixin8;
+    let a_mixin8_ring_value;
+    let t9;
+    let a_sky;
+    let a_sky_animate_value;
+    let t10;
+    let a_entity1;
+    let t11;
+    let a_entity2;
+    let t12;
+    let a_entity3;
+    let t13;
+    let a_entity4;
+    let t14;
+    let a_entity5;
+    let t15;
+    let a_entity6;
+    let t16;
+    let a_entity7;
+    let t17;
+    let a_entity8;
+    let a_entity8_position_value;
+    let a_entity8_light_value;
+    let t18;
+    let a_entity9;
+    let a_entity9_position_value;
+    let a_entity9_light_value;
+    let t19;
+    let a_entity10;
+    let t20;
+    let a_plane;
+    let a_plane_width_value;
+    let a_plane_height_value;
+    let t21;
+    let a_entity11;
+    let a_entity11_position_value;
+    let t22;
+    let a_entity12;
+    return {
+      c() {
+        a_entity0 = element("a-entity");
+        t0 = space();
+        a_mixin0 = element("a-mixin");
+        t1 = space();
+        a_mixin1 = element("a-mixin");
+        t2 = space();
+        a_mixin2 = element("a-mixin");
+        t3 = space();
+        a_mixin3 = element("a-mixin");
+        t4 = space();
+        a_mixin4 = element("a-mixin");
+        t5 = space();
+        a_mixin5 = element("a-mixin");
+        t6 = space();
+        a_mixin6 = element("a-mixin");
+        t7 = space();
+        a_mixin7 = element("a-mixin");
+        t8 = space();
+        a_mixin8 = element("a-mixin");
+        t9 = space();
+        a_sky = element("a-sky");
+        t10 = space();
+        a_entity1 = element("a-entity");
+        t11 = space();
+        a_entity2 = element("a-entity");
+        t12 = space();
+        a_entity3 = element("a-entity");
+        t13 = space();
+        a_entity4 = element("a-entity");
+        t14 = space();
+        a_entity5 = element("a-entity");
+        t15 = space();
+        a_entity6 = element("a-entity");
+        t16 = space();
+        a_entity7 = element("a-entity");
+        t17 = space();
+        a_entity8 = element("a-entity");
+        t18 = space();
+        a_entity9 = element("a-entity");
+        t19 = space();
+        a_entity10 = element("a-entity");
+        t20 = space();
+        a_plane = element("a-plane");
+        t21 = space();
+        a_entity11 = element("a-entity");
+        t22 = space();
+        a_entity12 = element("a-entity");
+        set_custom_element_data(a_entity0, "id", "mountain-model");
+        set_custom_element_data(a_entity0, "gltf-model", "./glb/rockC.glb");
+        set_custom_element_data(a_entity0, "instanced-mesh", "capacity: 50");
+        set_custom_element_data(a_mixin0, "id", "smolitem");
+        set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;collisionFilterGroup: 2;");
+        set_custom_element_data(a_mixin0, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
+        set_custom_element_data(a_mixin1, "id", "smolfix");
+        set_custom_element_data(a_mixin1, "ammo-shape", "offset: -1.85 0 0.85;");
+        set_custom_element_data(a_mixin2, "id", "flowers");
+        set_custom_element_data(a_mixin2, "mixin", "smolitem smolfix");
+        set_custom_element_data(a_mixin2, "shadow", "");
+        set_custom_element_data(a_mixin2, "gltf-model", "./glb/flowers.glb");
+        set_custom_element_data(a_mixin2, "host", "");
+        set_custom_element_data(a_mixin2, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin2, "vary", vary);
+        set_custom_element_data(a_mixin3, "id", "mushroom");
+        set_custom_element_data(a_mixin3, "mixin", "smolitem smolfix");
+        set_custom_element_data(a_mixin3, "shadow", "");
+        set_custom_element_data(a_mixin3, "gltf-model", "./glb/mushrooms.glb");
+        set_custom_element_data(a_mixin3, "host", "");
+        set_custom_element_data(a_mixin3, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin3, "vary", vary);
+        set_custom_element_data(a_mixin4, "id", "flowersLow");
+        set_custom_element_data(a_mixin4, "mixin", "smolitem smolfix");
+        set_custom_element_data(a_mixin4, "shadow", "");
+        set_custom_element_data(a_mixin4, "gltf-model", "./glb/flowersLow.glb");
+        set_custom_element_data(a_mixin4, "host", "");
+        set_custom_element_data(a_mixin4, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin4, "vary", vary);
+        set_custom_element_data(a_mixin5, "id", "tree");
+        set_custom_element_data(a_mixin5, "class", "climbable");
+        set_custom_element_data(a_mixin5, "shadow", "");
+        set_custom_element_data(a_mixin5, "host", "");
+        set_custom_element_data(a_mixin5, "gltf-model", "./glb/tree.glb");
+        set_custom_element_data(a_mixin5, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin5, "vary", "property: scale; range: 1 0.5 1 2 3 2");
+        set_custom_element_data(a_mixin5, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin5, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
+        set_custom_element_data(a_mixin6, "id", "grass");
+        set_custom_element_data(a_mixin6, "host", "");
+        set_custom_element_data(a_mixin6, "mixin", "smolitem");
+        set_custom_element_data(a_mixin6, "gltf-model", "./glb/grass.glb");
+        set_custom_element_data(a_mixin6, "shadow", "");
+        set_custom_element_data(a_mixin6, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin6, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
+        set_custom_element_data(a_mixin7, "id", "rock");
+        set_custom_element_data(a_mixin7, "shadow", "");
+        set_custom_element_data(a_mixin7, "host", "");
+        set_custom_element_data(a_mixin7, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
+        set_custom_element_data(a_mixin7, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin7, "gltf-model", "./glb/rockB.glb");
+        set_custom_element_data(a_mixin7, "ammo-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin7, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
+        set_custom_element_data(a_mixin8, "id", "mountains");
+        set_custom_element_data(a_mixin8, "shadow", "");
+        set_custom_element_data(a_mixin8, "host", "");
+        set_custom_element_data(a_mixin8, "instanced-mesh-member", "mesh:#mountain-model");
+        set_custom_element_data(a_mixin8, "ring", a_mixin8_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 50");
+        set_custom_element_data(a_mixin8, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin8, "vary", "property: scale; range: 12 7.5 12 12 15 12");
+        set_custom_element_data(a_mixin8, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
+        set_custom_element_data(a_sky, "color", sky);
+        set_custom_element_data(a_sky, "host", "");
+        set_custom_element_data(a_sky, "animate", a_sky_animate_value = "property: color; to: " + sky_dark + "; easing: easeInOut; dur: 6000 ");
+        set_custom_element_data(a_entity1, "pool__tree", "mixin: tree; size: 50");
+        set_custom_element_data(a_entity1, "activate__tree", "");
+        set_custom_element_data(a_entity2, "pool__mountains", "mixin: mountains; size: 50");
+        set_custom_element_data(a_entity2, "activate__mountains", "");
+        set_custom_element_data(a_entity3, "pool__mushroom", "mixin: mushroom; size: 20");
+        set_custom_element_data(a_entity3, "activate__mushroom", "");
+        set_custom_element_data(a_entity4, "pool__grass", "mixin: grass; size: 50");
+        set_custom_element_data(a_entity4, "activate__grass", "");
+        set_custom_element_data(a_entity5, "pool__rock", "mixin: rock; size: 50");
+        set_custom_element_data(a_entity5, "activate__rock", "");
+        set_custom_element_data(a_entity6, "pool__flowers", "mixin: flowers; size: 50");
+        set_custom_element_data(a_entity6, "activate__flowers", "");
+        set_custom_element_data(a_entity7, "pool__flowerslow", "mixin: flowersLow; size: 50");
+        set_custom_element_data(a_entity7, "activate__flowerslow", "");
+        set_custom_element_data(a_entity8, "host", "");
+        set_custom_element_data(a_entity8, "position", a_entity8_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
+        set_custom_element_data(a_entity8, "light", a_entity8_light_value = ctx[1]({
+          type: "directional",
+          color: light,
+          castShadow: true,
+          shadowCameraTop: ctx[0],
+          shadowCameraLeft: -ctx[0],
+          shadowCameraRight: ctx[0],
+          shadowCameraBottom: -ctx[0],
+          shadowBias: -1e-4,
+          shadowMapHeight: 1024 * 4,
+          shadowMapWidth: 1024 * 4,
+          intensity: 0.75
+        }));
+        set_custom_element_data(a_entity9, "host", "");
+        set_custom_element_data(a_entity9, "position", a_entity9_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
+        set_custom_element_data(a_entity9, "light", a_entity9_light_value = ctx[1]({
+          type: "directional",
+          color: light,
+          intensity: 0.75
+        }));
+        set_custom_element_data(a_entity10, "host", "");
+        set_custom_element_data(a_entity10, "light", "type:ambient; color:white; intensity:0.1;");
+        set_custom_element_data(a_entity10, "position", "-1 1 1");
+        set_custom_element_data(a_plane, "shadow", "");
+        set_custom_element_data(a_plane, "id", "ground");
+        set_custom_element_data(a_plane, "host", "");
+        set_custom_element_data(a_plane, "position", "0 0 0");
+        set_custom_element_data(a_plane, "rotation", "-90 0 0");
+        set_custom_element_data(a_plane, "width", a_plane_width_value = ctx[0] * 1.5);
+        set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 1.5);
+        set_custom_element_data(a_plane, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_plane, "ammo-shape", "type:box");
+        set_custom_element_data(a_plane, "color", "#334411");
+        set_custom_element_data(a_entity11, "pool__cloud", "mixin: shadow cloud; size: 5");
+        set_custom_element_data(a_entity11, "activate__cloud", "");
+        set_custom_element_data(a_entity11, "position", a_entity11_position_value = "0 25 " + ctx[0] / 4);
+        set_custom_element_data(a_entity12, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
+      },
+      m(target, anchor) {
+        insert(target, a_entity0, anchor);
+        insert(target, t0, anchor);
+        insert(target, a_mixin0, anchor);
+        insert(target, t1, anchor);
+        insert(target, a_mixin1, anchor);
+        insert(target, t2, anchor);
+        insert(target, a_mixin2, anchor);
+        insert(target, t3, anchor);
+        insert(target, a_mixin3, anchor);
+        insert(target, t4, anchor);
+        insert(target, a_mixin4, anchor);
+        insert(target, t5, anchor);
+        insert(target, a_mixin5, anchor);
+        insert(target, t6, anchor);
+        insert(target, a_mixin6, anchor);
+        insert(target, t7, anchor);
+        insert(target, a_mixin7, anchor);
+        insert(target, t8, anchor);
+        insert(target, a_mixin8, anchor);
+        insert(target, t9, anchor);
+        insert(target, a_sky, anchor);
+        insert(target, t10, anchor);
+        insert(target, a_entity1, anchor);
+        insert(target, t11, anchor);
+        insert(target, a_entity2, anchor);
+        insert(target, t12, anchor);
+        insert(target, a_entity3, anchor);
+        insert(target, t13, anchor);
+        insert(target, a_entity4, anchor);
+        insert(target, t14, anchor);
+        insert(target, a_entity5, anchor);
+        insert(target, t15, anchor);
+        insert(target, a_entity6, anchor);
+        insert(target, t16, anchor);
+        insert(target, a_entity7, anchor);
+        insert(target, t17, anchor);
+        insert(target, a_entity8, anchor);
+        insert(target, t18, anchor);
+        insert(target, a_entity9, anchor);
+        insert(target, t19, anchor);
+        insert(target, a_entity10, anchor);
+        insert(target, t20, anchor);
+        insert(target, a_plane, anchor);
+        insert(target, t21, anchor);
+        insert(target, a_entity11, anchor);
+        insert(target, t22, anchor);
+        insert(target, a_entity12, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 1 && a_mixin8_ring_value !== (a_mixin8_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
+          set_custom_element_data(a_mixin8, "ring", a_mixin8_ring_value);
+        }
+        if (dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity8, "position", a_entity8_position_value);
+        }
+        if (dirty & 1 && a_entity8_light_value !== (a_entity8_light_value = ctx2[1]({
+          type: "directional",
+          color: light,
+          castShadow: true,
+          shadowCameraTop: ctx2[0],
+          shadowCameraLeft: -ctx2[0],
+          shadowCameraRight: ctx2[0],
+          shadowCameraBottom: -ctx2[0],
+          shadowBias: -1e-4,
+          shadowMapHeight: 1024 * 4,
+          shadowMapWidth: 1024 * 4,
+          intensity: 0.75
+        }))) {
+          set_custom_element_data(a_entity8, "light", a_entity8_light_value);
+        }
+        if (dirty & 1 && a_entity9_position_value !== (a_entity9_position_value = "-" + ctx2[0] / 4 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity9, "position", a_entity9_position_value);
+        }
+        if (dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 1.5)) {
+          set_custom_element_data(a_plane, "width", a_plane_width_value);
+        }
+        if (dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 1.5)) {
+          set_custom_element_data(a_plane, "height", a_plane_height_value);
+        }
+        if (dirty & 1 && a_entity11_position_value !== (a_entity11_position_value = "0 25 " + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity11, "position", a_entity11_position_value);
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_entity0);
+        if (detaching)
+          detach(t0);
+        if (detaching)
+          detach(a_mixin0);
+        if (detaching)
+          detach(t1);
+        if (detaching)
+          detach(a_mixin1);
+        if (detaching)
+          detach(t2);
+        if (detaching)
+          detach(a_mixin2);
+        if (detaching)
+          detach(t3);
+        if (detaching)
+          detach(a_mixin3);
+        if (detaching)
+          detach(t4);
+        if (detaching)
+          detach(a_mixin4);
+        if (detaching)
+          detach(t5);
+        if (detaching)
+          detach(a_mixin5);
+        if (detaching)
+          detach(t6);
+        if (detaching)
+          detach(a_mixin6);
+        if (detaching)
+          detach(t7);
+        if (detaching)
+          detach(a_mixin7);
+        if (detaching)
+          detach(t8);
+        if (detaching)
+          detach(a_mixin8);
+        if (detaching)
+          detach(t9);
+        if (detaching)
+          detach(a_sky);
+        if (detaching)
+          detach(t10);
+        if (detaching)
+          detach(a_entity1);
+        if (detaching)
+          detach(t11);
+        if (detaching)
+          detach(a_entity2);
+        if (detaching)
+          detach(t12);
+        if (detaching)
+          detach(a_entity3);
+        if (detaching)
+          detach(t13);
+        if (detaching)
+          detach(a_entity4);
+        if (detaching)
+          detach(t14);
+        if (detaching)
+          detach(a_entity5);
+        if (detaching)
+          detach(t15);
+        if (detaching)
+          detach(a_entity6);
+        if (detaching)
+          detach(t16);
+        if (detaching)
+          detach(a_entity7);
+        if (detaching)
+          detach(t17);
+        if (detaching)
+          detach(a_entity8);
+        if (detaching)
+          detach(t18);
+        if (detaching)
+          detach(a_entity9);
+        if (detaching)
+          detach(t19);
+        if (detaching)
+          detach(a_entity10);
+        if (detaching)
+          detach(t20);
+        if (detaching)
+          detach(a_plane);
+        if (detaching)
+          detach(t21);
+        if (detaching)
+          detach(a_entity11);
+        if (detaching)
+          detach(t22);
+        if (detaching)
+          detach(a_entity12);
+      }
+    };
+  }
+  var light = "#FEE";
+  var sky = "#336";
+  var sky_dark = "#003";
+  var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
+  function instance5($$self, $$props, $$invalidate) {
+    const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
+    let { groundSize: groundSize2 = 100 } = $$props;
+    const scatter = [-groundSize2 / 2, 0, -groundSize2 / 2, groundSize2 / 2, 0, groundSize2 / 2].join(" ");
+    $$self.$$set = ($$props2) => {
+      if ("groundSize" in $$props2)
+        $$invalidate(0, groundSize2 = $$props2.groundSize);
+    };
+    return [groundSize2, str, scatter];
+  }
+  var Forest = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance5, create_fragment6, safe_not_equal, { groundSize: 0 });
+    }
+  };
+  var forest_default = Forest;
+
+  // src/template/host.svelte
+  function create_fragment7(ctx) {
     let webcam;
     let t0;
     let heard;
@@ -33818,64 +34374,9 @@ not selfie camera mode
     let t6;
     let camerafps;
     let t7;
-    let a_entity0;
-    let t8;
-    let a_mixin3;
-    let t9;
-    let a_mixin4;
-    let t10;
-    let a_mixin5;
-    let t11;
-    let a_mixin6;
-    let t12;
-    let a_mixin7;
-    let t13;
-    let a_mixin8;
-    let t14;
-    let a_mixin9;
-    let t15;
-    let a_mixin10;
-    let t16;
-    let a_mixin11;
-    let a_mixin11_ring_value;
-    let t17;
-    let a_sky;
-    let a_sky_animate_value;
-    let t18;
-    let a_entity1;
-    let t19;
-    let a_entity2;
-    let t20;
-    let a_entity3;
-    let t21;
-    let a_entity4;
-    let t22;
-    let a_entity5;
-    let t23;
-    let a_entity6;
-    let t24;
-    let a_entity7;
-    let t25;
-    let a_entity8;
-    let a_entity8_position_value;
-    let a_entity8_light_value;
-    let t26;
-    let a_entity9;
-    let a_entity9_position_value;
-    let a_entity9_light_value;
-    let t27;
-    let a_entity10;
-    let t28;
     let characters;
-    let t29;
-    let a_plane;
-    let a_plane_width_value;
-    let a_plane_height_value;
-    let t30;
-    let a_entity11;
-    let a_entity11_position_value;
-    let t31;
-    let a_entity12;
+    let t8;
+    let forest;
     let a_scene_physics_value;
     let current;
     webcam = new webcam_default({});
@@ -33883,6 +34384,7 @@ not selfie camera mode
     charactersmixins = new characters_assets_default({});
     camerafps = new camera_fps_default({});
     characters = new characters_default({});
+    forest = new forest_default({});
     return {
       c() {
         create_component(webcam.$$.fragment);
@@ -33903,55 +34405,9 @@ not selfie camera mode
         t6 = space();
         create_component(camerafps.$$.fragment);
         t7 = space();
-        a_entity0 = element("a-entity");
-        t8 = space();
-        a_mixin3 = element("a-mixin");
-        t9 = space();
-        a_mixin4 = element("a-mixin");
-        t10 = space();
-        a_mixin5 = element("a-mixin");
-        t11 = space();
-        a_mixin6 = element("a-mixin");
-        t12 = space();
-        a_mixin7 = element("a-mixin");
-        t13 = space();
-        a_mixin8 = element("a-mixin");
-        t14 = space();
-        a_mixin9 = element("a-mixin");
-        t15 = space();
-        a_mixin10 = element("a-mixin");
-        t16 = space();
-        a_mixin11 = element("a-mixin");
-        t17 = space();
-        a_sky = element("a-sky");
-        t18 = space();
-        a_entity1 = element("a-entity");
-        t19 = space();
-        a_entity2 = element("a-entity");
-        t20 = space();
-        a_entity3 = element("a-entity");
-        t21 = space();
-        a_entity4 = element("a-entity");
-        t22 = space();
-        a_entity5 = element("a-entity");
-        t23 = space();
-        a_entity6 = element("a-entity");
-        t24 = space();
-        a_entity7 = element("a-entity");
-        t25 = space();
-        a_entity8 = element("a-entity");
-        t26 = space();
-        a_entity9 = element("a-entity");
-        t27 = space();
-        a_entity10 = element("a-entity");
-        t28 = space();
         create_component(characters.$$.fragment);
-        t29 = space();
-        a_plane = element("a-plane");
-        t30 = space();
-        a_entity11 = element("a-entity");
-        t31 = space();
-        a_entity12 = element("a-entity");
+        t8 = space();
+        create_component(forest.$$.fragment);
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "./sound/bg-ocean.mp3"))
           attr(audio, "src", audio_src_value);
@@ -33960,129 +34416,12 @@ not selfie camera mode
         set_custom_element_data(a_mixin1, "id", "toon");
         set_custom_element_data(a_mixin1, "material", "roughness: 1;dithering: false;");
         set_custom_element_data(a_mixin2, "id", "cloud");
-        set_custom_element_data(a_mixin2, "scatter", ctx[4]);
+        set_custom_element_data(a_mixin2, "scatter", ctx[3]);
         set_custom_element_data(a_mixin2, "animation", a_mixin2_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx[0] + "; easing: linear; loop: true;");
         set_custom_element_data(a_mixin2, "material", "color: #ffffff; opacity: 0.75; transparent: true; emissive: white; ");
         set_custom_element_data(a_mixin2, "geometry", "");
         set_custom_element_data(a_mixin2, "host", "");
         set_custom_element_data(a_mixin2, "scale", "25 5 15");
-        set_custom_element_data(a_entity0, "id", "mountain-model");
-        set_custom_element_data(a_entity0, "gltf-model", "./glb/rockC.glb");
-        set_custom_element_data(a_entity0, "instanced-mesh", "capacity: 50");
-        set_custom_element_data(a_mixin3, "id", "smolitem");
-        set_custom_element_data(a_mixin3, "ammo-body", "type: static; mass: 0;collisionFilterGroup: 2;");
-        set_custom_element_data(a_mixin3, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
-        set_custom_element_data(a_mixin4, "id", "smolfix");
-        set_custom_element_data(a_mixin4, "ammo-shape", "offset: -1.85 0 0.85;");
-        set_custom_element_data(a_mixin5, "id", "flowers");
-        set_custom_element_data(a_mixin5, "mixin", "smolitem smolfix");
-        set_custom_element_data(a_mixin5, "shadow", "");
-        set_custom_element_data(a_mixin5, "gltf-model", "./glb/flowers.glb");
-        set_custom_element_data(a_mixin5, "host", "");
-        set_custom_element_data(a_mixin5, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin5, "vary", vary);
-        set_custom_element_data(a_mixin6, "id", "mushroom");
-        set_custom_element_data(a_mixin6, "mixin", "smolitem smolfix");
-        set_custom_element_data(a_mixin6, "shadow", "");
-        set_custom_element_data(a_mixin6, "gltf-model", "./glb/mushrooms.glb");
-        set_custom_element_data(a_mixin6, "host", "");
-        set_custom_element_data(a_mixin6, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin6, "vary", vary);
-        set_custom_element_data(a_mixin7, "id", "flowersLow");
-        set_custom_element_data(a_mixin7, "mixin", "smolitem smolfix");
-        set_custom_element_data(a_mixin7, "shadow", "");
-        set_custom_element_data(a_mixin7, "gltf-model", "./glb/flowersLow.glb");
-        set_custom_element_data(a_mixin7, "host", "");
-        set_custom_element_data(a_mixin7, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin7, "vary", vary);
-        set_custom_element_data(a_mixin8, "id", "tree");
-        set_custom_element_data(a_mixin8, "class", "climbable");
-        set_custom_element_data(a_mixin8, "shadow", "");
-        set_custom_element_data(a_mixin8, "host", "");
-        set_custom_element_data(a_mixin8, "gltf-model", "./glb/tree.glb");
-        set_custom_element_data(a_mixin8, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin8, "vary", "property: scale; range: 1 0.5 1 2 3 2");
-        set_custom_element_data(a_mixin8, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin8, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
-        set_custom_element_data(a_mixin9, "id", "grass");
-        set_custom_element_data(a_mixin9, "host", "");
-        set_custom_element_data(a_mixin9, "mixin", "smolitem");
-        set_custom_element_data(a_mixin9, "gltf-model", "./glb/grass.glb");
-        set_custom_element_data(a_mixin9, "shadow", "");
-        set_custom_element_data(a_mixin9, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin9, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
-        set_custom_element_data(a_mixin10, "id", "rock");
-        set_custom_element_data(a_mixin10, "shadow", "");
-        set_custom_element_data(a_mixin10, "host", "");
-        set_custom_element_data(a_mixin10, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
-        set_custom_element_data(a_mixin10, "scatter", ctx[4]);
-        set_custom_element_data(a_mixin10, "gltf-model", "./glb/rockB.glb");
-        set_custom_element_data(a_mixin10, "ammo-body", "type: static; mass: 0");
-        set_custom_element_data(a_mixin10, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
-        set_custom_element_data(a_mixin11, "id", "mountains");
-        set_custom_element_data(a_mixin11, "shadow", "");
-        set_custom_element_data(a_mixin11, "host", "");
-        set_custom_element_data(a_mixin11, "instanced-mesh-member", "mesh:#mountain-model");
-        set_custom_element_data(a_mixin11, "ring", a_mixin11_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 50");
-        set_custom_element_data(a_mixin11, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin11, "vary", "property: scale; range: 12 7.5 12 12 15 12");
-        set_custom_element_data(a_mixin11, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
-        set_custom_element_data(a_sky, "color", sky);
-        set_custom_element_data(a_sky, "host", "");
-        set_custom_element_data(a_sky, "animate", a_sky_animate_value = "property: color; to: " + sky_dark + "; easing: easeInOut; dur: 6000 ");
-        set_custom_element_data(a_entity1, "pool__tree", "mixin: tree; size: 50");
-        set_custom_element_data(a_entity1, "activate__tree", "");
-        set_custom_element_data(a_entity2, "pool__mountains", "mixin: mountains; size: 50");
-        set_custom_element_data(a_entity2, "activate__mountains", "");
-        set_custom_element_data(a_entity3, "pool__mushroom", "mixin: mushroom; size: 20");
-        set_custom_element_data(a_entity3, "activate__mushroom", "");
-        set_custom_element_data(a_entity4, "pool__grass", "mixin: grass; size: 50");
-        set_custom_element_data(a_entity4, "activate__grass", "");
-        set_custom_element_data(a_entity5, "pool__rock", "mixin: rock; size: 50");
-        set_custom_element_data(a_entity5, "activate__rock", "");
-        set_custom_element_data(a_entity6, "pool__flowers", "mixin: flowers; size: 50");
-        set_custom_element_data(a_entity6, "activate__flowers", "");
-        set_custom_element_data(a_entity7, "pool__flowerslow", "mixin: flowersLow; size: 50");
-        set_custom_element_data(a_entity7, "activate__flowerslow", "");
-        set_custom_element_data(a_entity8, "host", "");
-        set_custom_element_data(a_entity8, "position", a_entity8_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
-        set_custom_element_data(a_entity8, "light", a_entity8_light_value = ctx[3]({
-          type: "directional",
-          color: light,
-          castShadow: true,
-          shadowCameraTop: ctx[0],
-          shadowCameraLeft: -ctx[0],
-          shadowCameraRight: ctx[0],
-          shadowCameraBottom: -ctx[0],
-          shadowBias: -1e-4,
-          shadowMapHeight: 1024 * 4,
-          shadowMapWidth: 1024 * 4,
-          intensity: 0.75
-        }));
-        set_custom_element_data(a_entity9, "host", "");
-        set_custom_element_data(a_entity9, "position", a_entity9_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
-        set_custom_element_data(a_entity9, "light", a_entity9_light_value = ctx[3]({
-          type: "directional",
-          color: light,
-          intensity: 0.75
-        }));
-        set_custom_element_data(a_entity10, "host", "");
-        set_custom_element_data(a_entity10, "light", "type:ambient; color:white; intensity:0.1;");
-        set_custom_element_data(a_entity10, "position", "-1 1 1");
-        set_custom_element_data(a_plane, "shadow", "");
-        set_custom_element_data(a_plane, "host", "");
-        set_custom_element_data(a_plane, "position", "0 0 0");
-        set_custom_element_data(a_plane, "rotation", "-90 0 0");
-        set_custom_element_data(a_plane, "width", a_plane_width_value = ctx[0] * 1.5);
-        set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 1.5);
-        set_custom_element_data(a_plane, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_plane, "ammo-shape", "type:box");
-        set_custom_element_data(a_plane, "material", "repeat: 10 10;");
-        set_custom_element_data(a_plane, "color", "#334411");
-        set_custom_element_data(a_entity11, "pool__cloud", "mixin: shadow cloud; size: 5");
-        set_custom_element_data(a_entity11, "activate__cloud", "");
-        set_custom_element_data(a_entity11, "position", a_entity11_position_value = "0 25 " + ctx[0] / 4);
-        set_custom_element_data(a_entity12, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
         set_custom_element_data(a_scene, "keyboard-shortcuts", "enterVR: false");
         set_custom_element_data(a_scene, "stats", ctx[1]);
         set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: low;");
@@ -34109,93 +34448,14 @@ not selfie camera mode
         append(a_scene, t6);
         mount_component(camerafps, a_scene, null);
         append(a_scene, t7);
-        append(a_scene, a_entity0);
-        append(a_scene, t8);
-        append(a_scene, a_mixin3);
-        append(a_scene, t9);
-        append(a_scene, a_mixin4);
-        append(a_scene, t10);
-        append(a_scene, a_mixin5);
-        append(a_scene, t11);
-        append(a_scene, a_mixin6);
-        append(a_scene, t12);
-        append(a_scene, a_mixin7);
-        append(a_scene, t13);
-        append(a_scene, a_mixin8);
-        append(a_scene, t14);
-        append(a_scene, a_mixin9);
-        append(a_scene, t15);
-        append(a_scene, a_mixin10);
-        append(a_scene, t16);
-        append(a_scene, a_mixin11);
-        append(a_scene, t17);
-        append(a_scene, a_sky);
-        append(a_scene, t18);
-        append(a_scene, a_entity1);
-        append(a_scene, t19);
-        append(a_scene, a_entity2);
-        append(a_scene, t20);
-        append(a_scene, a_entity3);
-        append(a_scene, t21);
-        append(a_scene, a_entity4);
-        append(a_scene, t22);
-        append(a_scene, a_entity5);
-        append(a_scene, t23);
-        append(a_scene, a_entity6);
-        append(a_scene, t24);
-        append(a_scene, a_entity7);
-        append(a_scene, t25);
-        append(a_scene, a_entity8);
-        append(a_scene, t26);
-        append(a_scene, a_entity9);
-        append(a_scene, t27);
-        append(a_scene, a_entity10);
-        append(a_scene, t28);
         mount_component(characters, a_scene, null);
-        append(a_scene, t29);
-        append(a_scene, a_plane);
-        append(a_scene, t30);
-        append(a_scene, a_entity11);
-        append(a_scene, t31);
-        append(a_scene, a_entity12);
+        append(a_scene, t8);
+        mount_component(forest, a_scene, null);
         current = true;
       },
       p(ctx2, [dirty]) {
         if (!current || dirty & 1 && a_mixin2_animation_value !== (a_mixin2_animation_value = "property:position.z; dur: " + 3e3 * 60 + "; to-" + ctx2[0] + "; easing: linear; loop: true;")) {
           set_custom_element_data(a_mixin2, "animation", a_mixin2_animation_value);
-        }
-        if (!current || dirty & 1 && a_mixin11_ring_value !== (a_mixin11_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
-          set_custom_element_data(a_mixin11, "ring", a_mixin11_ring_value);
-        }
-        if (!current || dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity8, "position", a_entity8_position_value);
-        }
-        if (!current || dirty & 1 && a_entity8_light_value !== (a_entity8_light_value = ctx2[3]({
-          type: "directional",
-          color: light,
-          castShadow: true,
-          shadowCameraTop: ctx2[0],
-          shadowCameraLeft: -ctx2[0],
-          shadowCameraRight: ctx2[0],
-          shadowCameraBottom: -ctx2[0],
-          shadowBias: -1e-4,
-          shadowMapHeight: 1024 * 4,
-          shadowMapWidth: 1024 * 4,
-          intensity: 0.75
-        }))) {
-          set_custom_element_data(a_entity8, "light", a_entity8_light_value);
-        }
-        if (!current || dirty & 1 && a_entity9_position_value !== (a_entity9_position_value = "-" + ctx2[0] / 4 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity9, "position", a_entity9_position_value);
-        }
-        if (!current || dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 1.5)) {
-          set_custom_element_data(a_plane, "width", a_plane_width_value);
-        }
-        if (!current || dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 1.5)) {
-          set_custom_element_data(a_plane, "height", a_plane_height_value);
-        }
-        if (!current || dirty & 1 && a_entity11_position_value !== (a_entity11_position_value = "0 25 " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity11, "position", a_entity11_position_value);
         }
         if (!current || dirty & 2) {
           set_custom_element_data(a_scene, "stats", ctx2[1]);
@@ -34212,6 +34472,7 @@ not selfie camera mode
         transition_in(charactersmixins.$$.fragment, local);
         transition_in(camerafps.$$.fragment, local);
         transition_in(characters.$$.fragment, local);
+        transition_in(forest.$$.fragment, local);
         current = true;
       },
       o(local) {
@@ -34220,6 +34481,7 @@ not selfie camera mode
         transition_out(charactersmixins.$$.fragment, local);
         transition_out(camerafps.$$.fragment, local);
         transition_out(characters.$$.fragment, local);
+        transition_out(forest.$$.fragment, local);
         current = false;
       },
       d(detaching) {
@@ -34234,14 +34496,11 @@ not selfie camera mode
         destroy_component(charactersmixins);
         destroy_component(camerafps);
         destroy_component(characters);
+        destroy_component(forest);
       }
     };
   }
-  var light = "#FEE";
-  var sky = "#336";
-  var sky_dark = "#003";
-  var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
-  function instance5($$self, $$props, $$invalidate) {
+  function instance6($$self, $$props, $$invalidate) {
     let $open_stats;
     let $open_debug;
     component_subscribe($$self, open_stats, ($$value) => $$invalidate(1, $open_stats = $$value));
@@ -34254,18 +34513,18 @@ not selfie camera mode
       if ("groundSize" in $$props2)
         $$invalidate(0, groundSize2 = $$props2.groundSize);
     };
-    return [groundSize2, $open_stats, $open_debug, str, scatter];
+    return [groundSize2, $open_stats, $open_debug, scatter];
   }
   var Host = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment6, safe_not_equal, { groundSize: 0 });
+      init(this, options, instance6, create_fragment7, safe_not_equal, { groundSize: 0 });
     }
   };
   var host_default = Host;
 
   // src/ui/title.svelte
-  function create_fragment7(ctx) {
+  function create_fragment8(ctx) {
     let div3;
     let t8;
     let center;
@@ -34303,13 +34562,13 @@ not selfie camera mode
   var Title = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment7, safe_not_equal, {});
+      init(this, options, null, create_fragment8, safe_not_equal, {});
     }
   };
   var title_default = Title;
 
   // src/ui/home.svelte
-  function create_fragment8(ctx) {
+  function create_fragment9(ctx) {
     let div9;
     let div0;
     let t0;
@@ -34436,7 +34695,7 @@ not selfie camera mode
   };
   var keydown_handler = (e) => {
   };
-  function instance6($$self, $$props, $$invalidate) {
+  function instance7($$self, $$props, $$invalidate) {
     let $motd;
     component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
     if (location.search === "?go") {
@@ -34452,13 +34711,13 @@ not selfie camera mode
   var Home = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment8, safe_not_equal, {});
+      init(this, options, instance7, create_fragment9, safe_not_equal, {});
     }
   };
   var home_default = Home;
 
   // src/ui/text.svelte
-  function create_if_block2(ctx) {
+  function create_if_block3(ctx) {
     let div;
     let input;
     let mounted;
@@ -34499,9 +34758,9 @@ not selfie camera mode
       }
     };
   }
-  function create_fragment9(ctx) {
+  function create_fragment10(ctx) {
     let if_block_anchor;
-    let if_block = ctx[1] !== void 0 && create_if_block2(ctx);
+    let if_block = ctx[1] !== void 0 && create_if_block3(ctx);
     return {
       c() {
         if (if_block)
@@ -34518,7 +34777,7 @@ not selfie camera mode
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
-            if_block = create_if_block2(ctx2);
+            if_block = create_if_block3(ctx2);
             if_block.c();
             if_block.m(if_block_anchor.parentNode, if_block_anchor);
           }
@@ -34537,7 +34796,7 @@ not selfie camera mode
       }
     };
   }
-  function instance7($$self, $$props, $$invalidate) {
+  function instance8($$self, $$props, $$invalidate) {
     let $open_text;
     component_subscribe($$self, open_text, ($$value) => $$invalidate(1, $open_text = $$value));
     let ele;
@@ -34599,13 +34858,13 @@ not selfie camera mode
   var Text = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance7, create_fragment9, safe_not_equal, {});
+      init(this, options, instance8, create_fragment10, safe_not_equal, {});
     }
   };
   var text_default = Text;
 
   // src/ui/loading.svelte
-  function create_fragment10(ctx) {
+  function create_fragment11(ctx) {
     let div5;
     let div0;
     let t0;
@@ -34683,7 +34942,7 @@ not selfie camera mode
       }
     };
   }
-  function instance8($$self, $$props, $$invalidate) {
+  function instance9($$self, $$props, $$invalidate) {
     let $loading;
     component_subscribe($$self, loading, ($$value) => $$invalidate(0, $loading = $$value));
     return [$loading];
@@ -34691,13 +34950,13 @@ not selfie camera mode
   var Loading = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance8, create_fragment10, safe_not_equal, {});
+      init(this, options, instance9, create_fragment11, safe_not_equal, {});
     }
   };
   var loading_default = Loading;
 
   // src/ui/help.svelte
-  function create_fragment11(ctx) {
+  function create_fragment12(ctx) {
     let div5;
     let div0;
     let t0;
@@ -34768,7 +35027,7 @@ not selfie camera mode
       }
     };
   }
-  function instance9($$self, $$props, $$invalidate) {
+  function instance10($$self, $$props, $$invalidate) {
     let $helptext;
     component_subscribe($$self, helptext, ($$value) => $$invalidate(0, $helptext = $$value));
     function close() {
@@ -34779,7 +35038,7 @@ not selfie camera mode
   var Help = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance9, create_fragment11, safe_not_equal, {});
+      init(this, options, instance10, create_fragment12, safe_not_equal, {});
     }
   };
   var help_default = Help;
@@ -34866,7 +35125,7 @@ not selfie camera mode
       }
     };
   }
-  function create_if_block3(ctx) {
+  function create_if_block4(ctx) {
     let host2;
     let current;
     host2 = new host_default({ props: { groundSize } });
@@ -34894,7 +35153,7 @@ not selfie camera mode
       }
     };
   }
-  function create_fragment12(ctx) {
+  function create_fragment13(ctx) {
     let text_1;
     let t0;
     let t1;
@@ -34906,7 +35165,7 @@ not selfie camera mode
     let if_block0 = ctx[0] && create_if_block_3(ctx);
     let if_block1 = ctx[1] && create_if_block_2(ctx);
     let if_block2 = ctx[2] && create_if_block_1(ctx);
-    let if_block3 = ctx[3] && create_if_block3(ctx);
+    let if_block3 = ctx[3] && create_if_block4(ctx);
     return {
       c() {
         create_component(text_1.$$.fragment);
@@ -35003,7 +35262,7 @@ not selfie camera mode
               transition_in(if_block3, 1);
             }
           } else {
-            if_block3 = create_if_block3(ctx2);
+            if_block3 = create_if_block4(ctx2);
             if_block3.c();
             transition_in(if_block3, 1);
             if_block3.m(if_block3_anchor.parentNode, if_block3_anchor);
@@ -35058,7 +35317,7 @@ not selfie camera mode
     };
   }
   var groundSize = 100;
-  function instance10($$self, $$props, $$invalidate) {
+  function instance11($$self, $$props, $$invalidate) {
     let $open_help;
     let $open_loading;
     let $open_home;
@@ -35072,7 +35331,7 @@ not selfie camera mode
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance10, create_fragment12, safe_not_equal, {});
+      init(this, options, instance11, create_fragment13, safe_not_equal, {});
     }
   };
   var main_default = Main;

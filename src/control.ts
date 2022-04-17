@@ -1,6 +1,6 @@
 import { currentVRM, mirrorVRM } from "./component/vrm"
 import state from "./state"
-import { avatar_current, avatar_doer, camera, camera_el, do_echo, open_debug, open_heard, open_help, open_stats, open_targeting, toggle_selfie, toggle_visible, voice_current } from "./timing"
+import { avatar_current, avatar_doer, camera, camera_el, do_echo, do_vary, open_debug, open_heard, open_help, open_stats, open_targeting, toggle_selfie, toggle_visible, voice_current } from "./timing"
 import { Value } from "./value"
 
 export const binds = new Value<{ [key: string]: string }>(clone(state.binds)).save("binds")
@@ -70,7 +70,9 @@ export enum EControl {
     NotTarget = "nottarget",
 
     Debug = "debug",
-    NotDebug = "notdebug"
+    NotDebug = "notdebug",
+
+    Vary = "vary"
 }
 
 
@@ -175,5 +177,8 @@ export const controls = {
     },
     [EControl.NotDebug]: (items: string[]) => {
         open_debug.set(false)
+    },
+    [EControl.Vary]: (items: string[]) => {
+        do_vary.poke()
     }
 }
