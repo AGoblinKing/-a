@@ -11,7 +11,7 @@ AFRAME.registerComponent("wasd-controller", {
     },
 
     init() {
-        this.jump = AFRAME.utils.throttleTick(this.jump, 1000, this)
+        this.jump = AFRAME.utils.throttleTick(this.jump, 2000, this)
     },
     jump() {
         this.el.emit("jump")
@@ -34,7 +34,7 @@ AFRAME.registerComponent("wasd-controller", {
 
         // TODO: or if colliding with a climbable
         if (key_map.$[" "] && o3d.position.y < 0.5) {
-            hop = 4 * delta
+            hop = 3 * delta
             // we're jumping
             this.jump()
         }

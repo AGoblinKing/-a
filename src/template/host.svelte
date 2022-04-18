@@ -8,6 +8,7 @@
 	import '../component/vrm'
 	import '../component/uniforms'
 	import '../component/vary'
+	import '../component/random'
 
 	import Webcam from './webcam.svelte'
 	import CharactersMixins from './characters-assets.svelte'
@@ -18,6 +19,7 @@
 	import { open_debug, open_stats } from 'src/timing'
 	import Forest from './forest.svelte'
 	import Live from 'src/ui/live.svelte'
+	import Debug from './debug.svelte'
 
 	export let groundSize = 100
 </script>
@@ -46,4 +48,5 @@
 	<CameraFps />
 	<Characters />
 	<Forest />
+	<Debug />
 </a-scene>

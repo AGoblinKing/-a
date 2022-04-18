@@ -32372,7 +32372,7 @@ reset scout color to green, persists
       rot: { type: "number", default: 25e-4 }
     },
     init() {
-      this.jump = AFRAME.utils.throttleTick(this.jump, 1e3, this);
+      this.jump = AFRAME.utils.throttleTick(this.jump, 2e3, this);
     },
     jump() {
       this.el.emit("jump");
@@ -32390,7 +32390,7 @@ reset scout color to green, persists
         intensity = 1.5;
       }
       if (key_map.$[" "] && o3d.position.y < 0.5) {
-        hop = 4 * delta;
+        hop = 3 * delta;
         this.jump();
       }
       if (key_map.$["w"]) {
@@ -32511,7 +32511,7 @@ reset scout color to green, persists
     "p_lpf_resonance": 0,
     "p_hpf_freq": 0.25097654676858755,
     "p_hpf_ramp": 0,
-    "sound_vol": 0.25,
+    "sound_vol": 1e-3,
     "sample_rate": 44100,
     "sample_size": 8
   };

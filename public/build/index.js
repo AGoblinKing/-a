@@ -33429,6 +33429,19 @@ reset scout color to green, persists
     }
   });
 
+  // src/component/random.ts
+  AFRAME.registerComponent("random", {
+    multiple: true,
+    schema: {
+      type: "string"
+    },
+    init() {
+      const spi = this.data.split("|");
+      const mix = spi[Math.floor(Math.random() * spi.length)];
+      this.el.setAttribute("mixin", this.el.getAttribute("mixin") || ` ${mix}`);
+    }
+  });
+
   // src/template/webcam.svelte
   function create_fragment(ctx) {
     let div;
@@ -33538,7 +33551,7 @@ reset scout color to green, persists
       rot: { type: "number", default: 25e-4 }
     },
     init() {
-      this.jump = AFRAME.utils.throttleTick(this.jump, 1e3, this);
+      this.jump = AFRAME.utils.throttleTick(this.jump, 2e3, this);
     },
     jump() {
       this.el.emit("jump");
@@ -33556,7 +33569,7 @@ reset scout color to green, persists
         intensity = 1.5;
       }
       if (key_map.$[" "] && o3d.position.y < 0.5) {
-        hop = 4 * delta;
+        hop = 3 * delta;
         this.jump();
       }
       if (key_map.$["w"]) {
@@ -33677,7 +33690,7 @@ reset scout color to green, persists
     "p_lpf_resonance": 0,
     "p_hpf_freq": 0.25097654676858755,
     "p_hpf_ramp": 0,
-    "sound_vol": 0.25,
+    "sound_vol": 1e-3,
     "sample_rate": 44100,
     "sample_size": 8
   };
@@ -34430,7 +34443,7 @@ reset scout color to green, persists
   var heard_default = Heard;
 
   // src/shader/floaty.vert
-  var floaty_default = "// time uniform\nvec4 Floaty(in vec4 v) {\n    float t = -time * 0.00005 + v.x*v.y*v.z / 100.;\n    float dst = 100.;\n    v.x += sin(t) * dst + cos(t * 2.) * dst;\n    v.y += cos(t) * dst/100. ;\n    v.z += sin(t) * dst+ sin(t * 2.) * dst;\n    return v;\n}";
+  var floaty_default = "// time uniform\nvec4 Floaty(in vec4 v) {\n    float t = time * 0.00005 + v.x*v.y*v.z / 100.;\n    float dst = 100.;\n    v.x += sin(t) * dst + cos(t * 2.) * dst;\n    v.y += cos(t) * dst/100. ;\n    v.z += sin(t) * dst+ sin(t * 2.) * dst;\n    return v;\n}";
 
   // src/component/floaty.ts
   var main = `
@@ -34442,6 +34455,14 @@ gl_Position = mvPosition;
 `;
   AFRAME.registerComponent("floaty", {
     init() {
+      this.setup = this.setup.bind(this);
+      this.setup();
+      this.el.addEventListener("model-loaded", this.setup);
+    },
+    remove() {
+      this.el.removeEventListener("model-loaded", this.setup);
+    },
+    setup() {
       this.el.object3D.traverse((c2) => {
         if (c2.material) {
           const prev = c2.material.onBeforeCompile;
@@ -34470,7 +34491,7 @@ gl_Position = mvPosition;
   });
 
   // src/shader/windy.vert
-  var windy_default = "vec4 Windy(in vec4 v) {\n    float t = -time * 0.0007 + v.x*v.y*v.z*100.;\n    float dst = 0.04;\n    v.x += sin(t) * dst;\n    v.y += cos(t) * dst/10.;\n    v.z += sin(t) * dst;\n    return v; \n}";
+  var windy_default = "vec4 Windy(in vec4 v) {\n    float t = -time * 0.001 + v.x*v.y*v.z*100.;\n    float dst = 0.025;\n    v.x += sin(t) * dst;\n    v.y += cos(t) * dst/10.;\n    v.z += sin(t) * dst;\n    return v; \n}";
 
   // src/component/windy.ts
   var main2 = `
@@ -34698,7 +34719,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_mixin6, "vary", "property: scale; range: 12 2 12 15 20 15");
         set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
-        set_custom_element_data(a_entity1, "pool__mountains", "mixin: mountains; size: 100");
+        set_custom_element_data(a_entity1, "pool__mountains", "mixin: mountains; size: 50");
         set_custom_element_data(a_entity1, "activate__mountains", "");
         set_custom_element_data(a_sky, "color", sky);
         set_custom_element_data(a_sky, "host", "");
@@ -35097,6 +35118,15 @@ gl_Position = mvPosition;
   };
   var live_default = Live;
 
+  // src/template/debug.svelte
+  var Debug = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, null, safe_not_equal, {});
+    }
+  };
+  var debug_default = Debug;
+
   // src/template/host.svelte
   function create_fragment8(ctx) {
     let webcam;
@@ -35121,6 +35151,8 @@ gl_Position = mvPosition;
     let characters;
     let t8;
     let forest;
+    let t9;
+    let debug_1;
     let a_scene_physics_value;
     let current;
     webcam = new webcam_default({});
@@ -35130,6 +35162,7 @@ gl_Position = mvPosition;
     camerafps = new camera_fps_default({});
     characters = new characters_default({});
     forest = new forest_default({});
+    debug_1 = new debug_default({});
     return {
       c() {
         create_component(webcam.$$.fragment);
@@ -35153,6 +35186,8 @@ gl_Position = mvPosition;
         create_component(characters.$$.fragment);
         t8 = space();
         create_component(forest.$$.fragment);
+        t9 = space();
+        create_component(debug_1.$$.fragment);
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "./sound/bg-ocean.mp3"))
           attr(audio, "src", audio_src_value);
@@ -35190,6 +35225,8 @@ gl_Position = mvPosition;
         mount_component(characters, a_scene, null);
         append(a_scene, t8);
         mount_component(forest, a_scene, null);
+        append(a_scene, t9);
+        mount_component(debug_1, a_scene, null);
         current = true;
       },
       p(ctx2, [dirty]) {
@@ -35210,6 +35247,7 @@ gl_Position = mvPosition;
         transition_in(camerafps.$$.fragment, local);
         transition_in(characters.$$.fragment, local);
         transition_in(forest.$$.fragment, local);
+        transition_in(debug_1.$$.fragment, local);
         current = true;
       },
       o(local) {
@@ -35220,6 +35258,7 @@ gl_Position = mvPosition;
         transition_out(camerafps.$$.fragment, local);
         transition_out(characters.$$.fragment, local);
         transition_out(forest.$$.fragment, local);
+        transition_out(debug_1.$$.fragment, local);
         current = false;
       },
       d(detaching) {
@@ -35238,6 +35277,7 @@ gl_Position = mvPosition;
         destroy_component(camerafps);
         destroy_component(characters);
         destroy_component(forest);
+        destroy_component(debug_1);
       }
     };
   }

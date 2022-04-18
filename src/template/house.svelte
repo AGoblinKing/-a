@@ -12,8 +12,10 @@
 	on:collisionstart={collideStart}
 />
 
+<a-mixin id="walls" rectangle="width: 5; length: 2; height: 2;" />
+
 <!-- walls -->
-<a-entity walls />
+<a-entity class="walls" pool__walls="" activate__walls />
 
 <!--a pool of floor tiles-->
 <a-entity id="floor" />

@@ -70,3 +70,13 @@
 - voice recording
 - goblins/animals using idle/run animation simple controller
 - head collider
+
+- random mixin
+allows for random mixin
+
+- avatar system
+recordding/playback animations for VRM based on physics/events
+
+- npcs/ai
+
+- volleyball

@@ -38,6 +38,7 @@ AFRAME.registerComponent("windy", {
                     } else {
                         shader.vertexShader = shader.vertexShader.replace("#include <common>", [
                             "#include <common>",
+
                             windyVert
                         ].join("\n")).replace("(mvPosition);", "(Windy(mvPosition));")
                     }

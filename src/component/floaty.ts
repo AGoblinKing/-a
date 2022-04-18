@@ -11,6 +11,15 @@ gl_Position = mvPosition;
 
 AFRAME.registerComponent("floaty", {
     init() {
+        this.setup = this.setup.bind(this)
+        this.setup()
+        this.el.addEventListener("model-loaded", this.setup)
+    },
+    remove() {
+        this.el.removeEventListener("model-loaded", this.setup)
+    },
+    setup() {
+
         // traverse o3d and update the material to have the spiral animation effect
         this.el.object3D.traverse((c) => {
             if (c.material) {

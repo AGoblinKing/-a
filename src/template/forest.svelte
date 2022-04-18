@@ -86,7 +86,7 @@
 	vary="property: scale; range: 12 2 12 15 20 15"
 	ammo-shape="type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0"
 />
-<a-entity pool__mountains="mixin: mountains; size: 100" activate__mountains />
+<a-entity pool__mountains="mixin: mountains; size: 50" activate__mountains />
 
 <a-sky color={sky} host animate="property: color; to: {sky_dark}; easing: easeInOut; dur: 6000 " />
 
