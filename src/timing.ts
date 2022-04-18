@@ -38,7 +38,7 @@ open_game.on(($g) => {
     }
 })
 
-export const motd = new Value(`🎊v0.1.2🎊
+export const motd = new Value(`🎊v0.2.0🎊
 
 ✅ Performance Pass
 ✅ Animals ✅ Wind ✅ Floofs

@@ -31067,13 +31067,13 @@
       open_loading.set(true);
     }
   });
-  var motd = new Value(`\u{1F38A}v0.1.2\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.2.0\u{1F38A}
 
-\u2705 Controls \u2705 Persist 
-\u2705 Help [f1]
 \u2705 Performance Pass
-\u2705 Targeting
+\u2705 Animals \u2705 Wind \u2705 Floofs
+\u2705 WASD / Mouse / Recording Mode
 
+\u274C Targeting
 \u274C AI DOER \u274C Gameplay 
 
 \u274C WebRTC Multiplayer 
