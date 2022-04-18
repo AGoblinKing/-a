@@ -3,6 +3,7 @@
 
 	import '../component/character-camera'
 	import '../component/copy'
+	import '../component/look'
 
 	let el
 	// change color on targets
@@ -68,7 +69,8 @@
 	character-camera
 	position="0 4 0"
 	wasd-controls="enabled: false;"
-	look-controls="enabled: true;pointerLockEnabled: true;"
+	look="enabled: true;pointerLockEnabled: true;"
+	look-controls="enabled: false;"
 >
 	{#if $open_targeting}
 		<a-entity

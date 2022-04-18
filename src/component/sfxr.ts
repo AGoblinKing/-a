@@ -29,13 +29,15 @@ AFRAME.registerComponent("sfxr", {
         sample_rate: { default: 44100 },
         sample_size: { default: 8 },
         autoplay: { type: "boolean", default: false },
-        loop: { type: "number", default: 0 },
+        spatial: { type: "boolean", default: true },
     },
     init: function () {
+
         // sign up for the event and autoplay stuff
         if (this.id) {
             this.event = this.event.bind(this)
             this.el.addEventListener(this.id, this.event)
+
         }
 
         if (this.autoplay) {
@@ -46,10 +48,10 @@ AFRAME.registerComponent("sfxr", {
         if (!this.audio) {
             this.audio = new SoundEffect(this.data).generate()
         }
-        this.audio.getAudio().play()
-        if (this.data.loop > 0) {
-            this.cancel = setTimeout(this.event, this.data.loop * 1000)
-        }
+
+
+        this.audio.getAudio().setVolume(0.5).play()
+
     },
     remove() {
         if (this.cancel) clearTimeout(this.cancel)

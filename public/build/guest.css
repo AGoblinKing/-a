@@ -238,10 +238,10 @@ b.svelte-1uatlh0 {
 }
 
 /* fakecss:/workspaces/-a/src/ui/loading.esbuild-svelte-fake-css */
-.full.svelte-1tqvjp5 {
+.full.svelte-7z92og {
   width: 90vw;
 }
-.menu.svelte-1tqvjp5 {
+.menu.svelte-7z92og {
   display: flex;
   cursor: auto;
   opacity: 0.9;
@@ -262,13 +262,13 @@ b.svelte-1uatlh0 {
     inset 40vw 0 5rem rgba(0, 140, 255, 0.2),
     inset -40vw 0 5rem rgba(0, 140, 255, 0.2) !important;
 }
-.button.text.svelte-1tqvjp5 {
+.button.text.svelte-7z92og {
   background-color: rgb(0, 58, 130);
   padding: 0.5vh 2.5vh;
   width: 100%;
   max-width: 60vh;
 }
-.button.svelte-1tqvjp5 {
+.button.svelte-7z92og {
   border: 0.5vh solid rgb(0, 106, 206);
   border-radius: 1vh;
   color: white;
@@ -289,16 +289,16 @@ b.svelte-1uatlh0 {
     0.15rem 0.15rem 0 #000;
   transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 }
-.button.svelte-1tqvjp5:active {
+.button.svelte-7z92og:active {
   background-color: rgb(0, 32, 53) !important;
 }
-.button.svelte-1tqvjp5:hover {
+.button.svelte-7z92og:hover {
   background-color: rgb(0, 106, 206) !important;
   color: rgb(0, 225, 255);
   cursor: pointer;
-  animation: svelte-1tqvjp5-beep 250ms alternate infinite;
+  animation: svelte-7z92og-beep 250ms alternate infinite;
 }
-@keyframes svelte-1tqvjp5-beep {
+@keyframes svelte-7z92og-beep {
   0% {
     opacity: 95%;
   }
@@ -306,7 +306,7 @@ b.svelte-1uatlh0 {
     opacity: 100%;
   }
 }
-@keyframes svelte-1tqvjp5-scroll {
+@keyframes svelte-7z92og-scroll {
   0% {
     background-position: 0% 0%;
     opacity: 20%;
@@ -321,11 +321,11 @@ b.svelte-1uatlh0 {
     transform: scale(0.25, 5);
   }
 }
-.span2.svelte-1tqvjp5 {
+.span2.svelte-7z92og {
   display: flex;
   align-self: center;
 }
-.sprites.svelte-1tqvjp5 {
+.sprites.svelte-7z92og {
   position: absolute;
   background-size: 100% auto;
   image-rendering: pixelated;
@@ -336,17 +336,17 @@ b.svelte-1uatlh0 {
   pointer-events: none;
   width: 100%;
   height: 100%;
-  animation: svelte-1tqvjp5-scroll 15s infinite linear;
+  animation: svelte-7z92og-scroll 15s infinite linear;
 }
-.vbox.svelte-1tqvjp5 {
+.vbox.svelte-7z92og {
   display: flex;
   flex: 1;
   flex-direction: column;
 }
-.flex.svelte-1tqvjp5 {
+.flex.svelte-7z92og {
   flex: 1;
 }
-textarea.svelte-1tqvjp5 {
+textarea.svelte-7z92og {
   -webkit-appearance: none;
   outline: none !important;
   font-family: monospace;
@@ -356,7 +356,7 @@ textarea.svelte-1tqvjp5 {
   resize: none;
   text-align: left;
   font-size: 0.8rem;
-  height: 25vh;
+  height: 40vh;
   box-sizing: border-box;
   border: 1px solid rgba(19, 18, 18, 0.836);
   background-color: rgb(190, 190, 190);

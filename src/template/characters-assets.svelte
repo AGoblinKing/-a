@@ -1,3 +1,7 @@
+<script>
+	import { video } from 'src/timing'
+</script>
+
 <a-mixin
 	id="character"
 	ammo-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 1;angularFactor: 0 1 0;"

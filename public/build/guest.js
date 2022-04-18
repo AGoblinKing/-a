@@ -12478,8 +12478,8 @@
     let isAnimating = false;
     let animationLoop = null;
     let requestId = null;
-    function onAnimationFrame(time, frame) {
-      animationLoop(time, frame);
+    function onAnimationFrame(time2, frame) {
+      animationLoop(time2, frame);
       requestId = context.requestAnimationFrame(onAnimationFrame);
     }
     return {
@@ -19793,7 +19793,7 @@
         }
       };
       let onAnimationFrameCallback = null;
-      function onAnimationFrame(time, frame) {
+      function onAnimationFrame(time2, frame) {
         pose = frame.getViewerPose(referenceSpace);
         xrFrame = frame;
         if (pose !== null) {
@@ -19839,7 +19839,7 @@
           controller.update(inputSource, frame, referenceSpace);
         }
         if (onAnimationFrameCallback)
-          onAnimationFrameCallback(time, frame);
+          onAnimationFrameCallback(time2, frame);
         xrFrame = null;
       }
       const animation = new WebGLAnimation();
@@ -20699,9 +20699,9 @@
       currentRenderState = null;
     };
     let onAnimationFrameCallback = null;
-    function onAnimationFrame(time) {
+    function onAnimationFrame(time2) {
       if (onAnimationFrameCallback)
-        onAnimationFrameCallback(time);
+        onAnimationFrameCallback(time2);
     }
     function onXRSessionStart() {
       animation.stop();
@@ -22491,27 +22491,27 @@
     }
   }
   var VideoTexture = class extends Texture {
-    constructor(video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy) {
-      super(video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
+    constructor(video2, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy) {
+      super(video2, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
       this.minFilter = minFilter !== void 0 ? minFilter : LinearFilter;
       this.magFilter = magFilter !== void 0 ? magFilter : LinearFilter;
       this.generateMipmaps = false;
       const scope = this;
       function updateVideo() {
         scope.needsUpdate = true;
-        video.requestVideoFrameCallback(updateVideo);
+        video2.requestVideoFrameCallback(updateVideo);
       }
-      if ("requestVideoFrameCallback" in video) {
-        video.requestVideoFrameCallback(updateVideo);
+      if ("requestVideoFrameCallback" in video2) {
+        video2.requestVideoFrameCallback(updateVideo);
       }
     }
     clone() {
       return new this.constructor(this.image).copy(this);
     }
     update() {
-      const video = this.image;
-      const hasVideoFrameCallback = "requestVideoFrameCallback" in video;
-      if (hasVideoFrameCallback === false && video.readyState >= video.HAVE_CURRENT_DATA) {
+      const video2 = this.image;
+      const hasVideoFrameCallback = "requestVideoFrameCallback" in video2;
+      if (hasVideoFrameCallback === false && video2.readyState >= video2.HAVE_CURRENT_DATA) {
         this.needsUpdate = true;
       }
     }
@@ -25568,9 +25568,9 @@
       let writeIndex = 1;
       for (let i2 = 1; i2 < lastIndex; ++i2) {
         let keep = false;
-        const time = times[i2];
+        const time2 = times[i2];
         const timeNext = times[i2 + 1];
-        if (time !== timeNext && (i2 !== 1 || time !== times[0])) {
+        if (time2 !== timeNext && (i2 !== 1 || time2 !== times[0])) {
           if (!smoothInterpolation) {
             const offset = i2 * stride, offsetP = offset - stride, offsetN = offset + stride;
             for (let j2 = 0; j2 !== stride; ++j2) {
@@ -27843,8 +27843,8 @@
     isScheduled() {
       return this._mixer._isActiveAction(this);
     }
-    startAt(time) {
-      this._startTime = time;
+    startAt(time2) {
+      this._startTime = time2;
       return this;
     }
     setLoop(mode, repetitions) {
@@ -27938,23 +27938,23 @@
     getRoot() {
       return this._localRoot || this._mixer._root;
     }
-    _update(time, deltaTime, timeDirection, accuIndex) {
+    _update(time2, deltaTime, timeDirection, accuIndex) {
       if (!this.enabled) {
-        this._updateWeight(time);
+        this._updateWeight(time2);
         return;
       }
       const startTime = this._startTime;
       if (startTime !== null) {
-        const timeRunning = (time - startTime) * timeDirection;
+        const timeRunning = (time2 - startTime) * timeDirection;
         if (timeRunning < 0 || timeDirection === 0) {
           return;
         }
         this._startTime = null;
         deltaTime = timeDirection * timeRunning;
       }
-      deltaTime *= this._updateTimeScale(time);
+      deltaTime *= this._updateTimeScale(time2);
       const clipTime = this._updateTime(deltaTime);
-      const weight = this._updateWeight(time);
+      const weight = this._updateWeight(time2);
       if (weight > 0) {
         const interpolants = this._interpolants;
         const propertyMixers = this._propertyBindings;
@@ -27974,15 +27974,15 @@
         }
       }
     }
-    _updateWeight(time) {
+    _updateWeight(time2) {
       let weight = 0;
       if (this.enabled) {
         weight = this.weight;
         const interpolant = this._weightInterpolant;
         if (interpolant !== null) {
-          const interpolantValue = interpolant.evaluate(time)[0];
+          const interpolantValue = interpolant.evaluate(time2)[0];
           weight *= interpolantValue;
-          if (time > interpolant.parameterPositions[1]) {
+          if (time2 > interpolant.parameterPositions[1]) {
             this.stopFading();
             if (interpolantValue === 0) {
               this.enabled = false;
@@ -27993,15 +27993,15 @@
       this._effectiveWeight = weight;
       return weight;
     }
-    _updateTimeScale(time) {
+    _updateTimeScale(time2) {
       let timeScale = 0;
       if (!this.paused) {
         timeScale = this.timeScale;
         const interpolant = this._timeScaleInterpolant;
         if (interpolant !== null) {
-          const interpolantValue = interpolant.evaluate(time)[0];
+          const interpolantValue = interpolant.evaluate(time2)[0];
           timeScale *= interpolantValue;
-          if (time > interpolant.parameterPositions[1]) {
+          if (time2 > interpolant.parameterPositions[1]) {
             this.stopWarping();
             if (timeScale === 0) {
               this.paused = true;
@@ -28017,13 +28017,13 @@
     _updateTime(deltaTime) {
       const duration = this._clip.duration;
       const loop = this.loop;
-      let time = this.time + deltaTime;
+      let time2 = this.time + deltaTime;
       let loopCount = this._loopCount;
       const pingPong = loop === LoopPingPong;
       if (deltaTime === 0) {
         if (loopCount === -1)
-          return time;
-        return pingPong && (loopCount & 1) === 1 ? duration - time : time;
+          return time2;
+        return pingPong && (loopCount & 1) === 1 ? duration - time2 : time2;
       }
       if (loop === LoopOnce) {
         if (loopCount === -1) {
@@ -28031,19 +28031,19 @@
           this._setEndings(true, true, false);
         }
         handle_stop: {
-          if (time >= duration) {
-            time = duration;
-          } else if (time < 0) {
-            time = 0;
+          if (time2 >= duration) {
+            time2 = duration;
+          } else if (time2 < 0) {
+            time2 = 0;
           } else {
-            this.time = time;
+            this.time = time2;
             break handle_stop;
           }
           if (this.clampWhenFinished)
             this.paused = true;
           else
             this.enabled = false;
-          this.time = time;
+          this.time = time2;
           this._mixer.dispatchEvent({
             type: "finished",
             action: this,
@@ -28059,9 +28059,9 @@
             this._setEndings(this.repetitions === 0, true, pingPong);
           }
         }
-        if (time >= duration || time < 0) {
-          const loopDelta = Math.floor(time / duration);
-          time -= duration * loopDelta;
+        if (time2 >= duration || time2 < 0) {
+          const loopDelta = Math.floor(time2 / duration);
+          time2 -= duration * loopDelta;
           loopCount += Math.abs(loopDelta);
           const pending = this.repetitions - loopCount;
           if (pending <= 0) {
@@ -28069,8 +28069,8 @@
               this.paused = true;
             else
               this.enabled = false;
-            time = deltaTime > 0 ? duration : 0;
-            this.time = time;
+            time2 = deltaTime > 0 ? duration : 0;
+            this.time = time2;
             this._mixer.dispatchEvent({
               type: "finished",
               action: this,
@@ -28084,7 +28084,7 @@
               this._setEndings(false, false, pingPong);
             }
             this._loopCount = loopCount;
-            this.time = time;
+            this.time = time2;
             this._mixer.dispatchEvent({
               type: "loop",
               action: this,
@@ -28092,13 +28092,13 @@
             });
           }
         } else {
-          this.time = time;
+          this.time = time2;
         }
         if (pingPong && (loopCount & 1) === 1) {
-          return duration - time;
+          return duration - time2;
         }
       }
-      return time;
+      return time2;
     }
     _setEndings(atStart, atEnd, pingPong) {
       const settings = this._interpolantSettings;
@@ -28402,10 +28402,10 @@
     }
     update(deltaTime) {
       deltaTime *= this.timeScale;
-      const actions = this._actions, nActions = this._nActiveActions, time = this.time += deltaTime, timeDirection = Math.sign(deltaTime), accuIndex = this._accuIndex ^= 1;
+      const actions = this._actions, nActions = this._nActiveActions, time2 = this.time += deltaTime, timeDirection = Math.sign(deltaTime), accuIndex = this._accuIndex ^= 1;
       for (let i2 = 0; i2 !== nActions; ++i2) {
         const action = actions[i2];
-        action._update(time, deltaTime, timeDirection, accuIndex);
+        action._update(time2, deltaTime, timeDirection, accuIndex);
       }
       const bindings = this._bindings, nBindings = this._nActiveBindings;
       for (let i2 = 0; i2 !== nBindings; ++i2) {
@@ -31043,6 +31043,7 @@
   var voice_doer = new Value("Aus | UK English").save("voice_doer");
   var scouter = new Value("green").save("scouter");
   var videos = new Value(["MePBW53Rtpw", "lyDJOPuanO0", "sDsZZiiSwG8"]);
+  var video = new Value("doer1.8").save("video_2");
   var open_home = new Value(true);
   var open_game = new Value(false);
   var open_text = new Value(void 0);
@@ -31051,7 +31052,7 @@
   var open_stats = new Value(false).save("stats");
   var open_heard = new Value(true).save("heard");
   var open_debug = new Value(false).save("debugger");
-  var open_targeting = new Value(true).save("targeting_3");
+  var open_targeting = new Value(false).save("targeting_3");
   var open_live = new Value(false);
   var camera = new Value();
   var camera_el = new Value();
@@ -31059,6 +31060,7 @@
   var toggle_visible = new Value(state_default.visible).save("visible");
   var do_echo = new Value(true).save("do_echo");
   var do_vary = new Value(true);
+  var time = new Value(new AFRAME.THREE.Uniform(0));
   open_game.on(($g) => {
     if (open_game.$) {
       open_loading.set(true);
@@ -32122,17 +32124,17 @@ reset scout color to green, persists
         textarea = element("textarea");
         t3 = space();
         div2 = element("div");
-        attr(div0, "class", "sprites sprite svelte-1tqvjp5");
-        attr(div1, "class", "flex svelte-1tqvjp5");
+        attr(div0, "class", "sprites sprite svelte-7z92og");
+        attr(div1, "class", "flex svelte-7z92og");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-1tqvjp5");
+        attr(textarea, "class", "text button svelte-7z92og");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-1tqvjp5");
-        attr(div3, "class", "span2 full svelte-1tqvjp5");
-        attr(div4, "class", "vbox svelte-1tqvjp5");
-        attr(div5, "class", "menu svelte-1tqvjp5");
+        attr(div2, "class", "flex svelte-7z92og");
+        attr(div3, "class", "span2 full svelte-7z92og");
+        attr(div4, "class", "vbox svelte-7z92og");
+        attr(div5, "class", "menu svelte-7z92og");
       },
       m(target, anchor) {
         insert(target, div5, anchor);
@@ -32369,6 +32371,12 @@ reset scout color to green, persists
       speed: { type: "number", default: 0.3 },
       rot: { type: "number", default: 25e-4 }
     },
+    init() {
+      this.jump = AFRAME.utils.throttleTick(this.jump, 1e3, this);
+    },
+    jump() {
+      this.el.emit("jump");
+    },
     tick(_2, delta) {
       if (!this.el.body)
         return;
@@ -32383,6 +32391,7 @@ reset scout color to green, persists
       }
       if (key_map.$[" "] && o3d.position.y < 0.5) {
         hop = 4 * delta;
+        this.jump();
       }
       if (key_map.$["w"]) {
         vec3.y = hop;
@@ -32419,6 +32428,158 @@ reset scout color to green, persists
         Ammo.destroy(torq);
     }
   });
+
+  // src/component/sfxr.ts
+  AFRAME.registerComponent("sfxr", {
+    multiple: true,
+    schema: {
+      oldParams: { default: true },
+      wave_type: { default: 1 },
+      p_env_attack: { default: 0 },
+      p_env_sustain: { default: 0.31718502829007483 },
+      p_env_punch: { default: 0 },
+      p_env_decay: { default: 0.2718540993592685 },
+      p_base_freq: { default: 0.26126191208337196 },
+      p_freq_limit: { default: 0 },
+      p_freq_ramp: { default: 0.43787689856926615 },
+      p_freq_dramp: { default: 0 },
+      p_vib_strength: { default: 0 },
+      p_vib_speed: { default: 0 },
+      p_arp_mod: { default: 0 },
+      p_arp_speed: { default: 0 },
+      p_duty: { default: 1 },
+      p_duty_ramp: { default: 0 },
+      p_repeat_speed: { default: 0.7558565452384385 },
+      p_pha_offset: { default: 0 },
+      p_pha_ramp: { default: 0 },
+      p_lpf_freq: { default: 1 },
+      p_lpf_ramp: { default: 0 },
+      p_lpf_resonance: { default: 0 },
+      p_hpf_freq: { default: 0 },
+      p_hpf_ramp: { default: 0 },
+      sound_vol: { default: 0.25 },
+      sample_rate: { default: 44100 },
+      sample_size: { default: 8 },
+      autoplay: { type: "boolean", default: false },
+      spatial: { type: "boolean", default: true }
+    },
+    init: function() {
+      if (this.id) {
+        this.event = this.event.bind(this);
+        this.el.addEventListener(this.id, this.event);
+      }
+      if (this.autoplay) {
+        this.event();
+      }
+    },
+    event() {
+      if (!this.audio) {
+        this.audio = new SoundEffect(this.data).generate();
+      }
+      this.audio.getAudio().setVolume(0.5).play();
+    },
+    remove() {
+      if (this.cancel)
+        clearTimeout(this.cancel);
+      this.el.removeEventlistener(this.id, this.event);
+    }
+  });
+
+  // src/sound/action.ts
+  var sfx_jump = {
+    "oldParams": true,
+    "wave_type": 0,
+    "p_env_attack": 0,
+    "p_env_sustain": 0.14827504779514308,
+    "p_env_punch": 0,
+    "p_env_decay": 0.2604416321207049,
+    "p_base_freq": 0.3492950945673611,
+    "p_freq_limit": 0,
+    "p_freq_ramp": 0.1370009340411704,
+    "p_freq_dramp": 0,
+    "p_vib_strength": 0,
+    "p_vib_speed": 0,
+    "p_arp_mod": 0,
+    "p_arp_speed": 0,
+    "p_duty": 0.4063339547539369,
+    "p_duty_ramp": 0,
+    "p_repeat_speed": 0,
+    "p_pha_offset": 0,
+    "p_pha_ramp": 0,
+    "p_lpf_freq": 1,
+    "p_lpf_ramp": 0,
+    "p_lpf_resonance": 0,
+    "p_hpf_freq": 0.25097654676858755,
+    "p_hpf_ramp": 0,
+    "sound_vol": 0.25,
+    "sample_rate": 44100,
+    "sample_size": 8
+  };
+
+  // src/template/characters.svelte
+  function create_fragment7(ctx) {
+    let a_entity0;
+    let a_entity0_vrm_value;
+    let a_entity0_sfxr__jump_value;
+    let t;
+    let a_entity1;
+    let a_entity1_vrm_value;
+    return {
+      c() {
+        a_entity0 = element("a-entity");
+        t = space();
+        a_entity1 = element("a-entity");
+        set_custom_element_data(a_entity0, "mixin", "shadow character");
+        set_custom_element_data(a_entity0, "position", "0 0 15");
+        set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value = "src: " + ctx[0] + "; current: true");
+        set_custom_element_data(a_entity0, "look-controls", "");
+        set_custom_element_data(a_entity0, "id", "focus");
+        set_custom_element_data(a_entity0, "wasd-controller", "");
+        set_custom_element_data(a_entity0, "sfxr__jump", a_entity0_sfxr__jump_value = AFRAME.utils.styleParser.stringify(sfx_jump));
+        set_custom_element_data(a_entity1, "mixin", "shadow character");
+        set_custom_element_data(a_entity1, "position", "0 0.25 14");
+        set_custom_element_data(a_entity1, "rotation", "0 180 0");
+        set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[1] + "; mirror: true");
+      },
+      m(target, anchor) {
+        insert(target, a_entity0, anchor);
+        insert(target, t, anchor);
+        insert(target, a_entity1, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 1 && a_entity0_vrm_value !== (a_entity0_vrm_value = "src: " + ctx2[0] + "; current: true")) {
+          set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value);
+        }
+        if (dirty & 2 && a_entity1_vrm_value !== (a_entity1_vrm_value = "src: " + ctx2[1] + "; mirror: true")) {
+          set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value);
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_entity0);
+        if (detaching)
+          detach(t);
+        if (detaching)
+          detach(a_entity1);
+      }
+    };
+  }
+  function instance5($$self, $$props, $$invalidate) {
+    let $avatar_current;
+    let $avatar_doer;
+    component_subscribe($$self, avatar_current, ($$value) => $$invalidate(0, $avatar_current = $$value));
+    component_subscribe($$self, avatar_doer, ($$value) => $$invalidate(1, $avatar_doer = $$value));
+    return [$avatar_current, $avatar_doer];
+  }
+  var Characters = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init2(this, options, instance5, create_fragment7, safe_not_equal, {});
+    }
+  };
+  var characters_default = Characters;
 
   // node_modules/kalidokit/dist/utils/helpers.js
   var helpers_exports = {};
@@ -33235,14 +33396,14 @@ reset scout color to green, persists
 
   // node_modules/kalidokit/dist/PoseSolver/index.js
   var PoseSolver = class {
-    static solve(lm3d, lm2d, { runtime = "mediapipe", video = null, imageSize = null, enableLegs = true } = {}) {
+    static solve(lm3d, lm2d, { runtime = "mediapipe", video: video2 = null, imageSize = null, enableLegs = true } = {}) {
       var _a, _b, _c, _d;
       if (!lm3d && !lm2d) {
         console.error("Need both World Pose and Pose Landmarks");
         return;
       }
-      if (video) {
-        const videoEl = typeof video === "string" ? document.querySelector(video) : video;
+      if (video2) {
+        const videoEl = typeof video2 === "string" ? document.querySelector(video2) : video2;
         imageSize = {
           width: videoEl.videoWidth,
           height: videoEl.videoHeight
@@ -33580,13 +33741,13 @@ reset scout color to green, persists
 
   // node_modules/kalidokit/dist/FaceSolver/index.js
   var FaceSolver = class {
-    static solve(lm, { runtime = "tfjs", video = null, imageSize = null, smoothBlink = false, blinkSettings = [] } = {}) {
+    static solve(lm, { runtime = "tfjs", video: video2 = null, imageSize = null, smoothBlink = false, blinkSettings = [] } = {}) {
       if (!lm) {
         console.error("Need Face Landmarks");
         return;
       }
-      if (video) {
-        const videoEl = typeof video === "string" ? document.querySelector(video) : video;
+      if (video2) {
+        const videoEl = typeof video2 === "string" ? document.querySelector(video2) : video2;
         imageSize = {
           width: videoEl.videoWidth,
           height: videoEl.videoHeight
@@ -33841,88 +34002,24 @@ reset scout color to green, persists
     }, 1 / 3.5 * 1e3);
   });
 
-  // src/template/characters.svelte
-  function create_fragment7(ctx) {
-    let a_entity0;
-    let a_entity0_vrm_value;
-    let t;
-    let a_entity1;
-    let a_entity1_vrm_value;
-    return {
-      c() {
-        a_entity0 = element("a-entity");
-        t = space();
-        a_entity1 = element("a-entity");
-        set_custom_element_data(a_entity0, "mixin", "shadow character");
-        set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value = "src: " + ctx[0] + "; current: true");
-        set_custom_element_data(a_entity0, "look-controls", "");
-        set_custom_element_data(a_entity0, "id", "focus");
-        set_custom_element_data(a_entity0, "host", "sync: position quaternion vrm; dynamic: true;");
-        set_custom_element_data(a_entity0, "wasd-controller", "");
-        set_custom_element_data(a_entity1, "mixin", "shadow character");
-        set_custom_element_data(a_entity1, "rotation", "0 180 0");
-        set_custom_element_data(a_entity1, "position", "0 0 -1");
-        set_custom_element_data(a_entity1, "host", "sync: position quaternion vrm; dynamic: true;");
-        set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[1] + "; doer: true; mirror: true");
-      },
-      m(target, anchor) {
-        insert(target, a_entity0, anchor);
-        insert(target, t, anchor);
-        insert(target, a_entity1, anchor);
-      },
-      p(ctx2, [dirty]) {
-        if (dirty & 1 && a_entity0_vrm_value !== (a_entity0_vrm_value = "src: " + ctx2[0] + "; current: true")) {
-          set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value);
-        }
-        if (dirty & 2 && a_entity1_vrm_value !== (a_entity1_vrm_value = "src: " + ctx2[1] + "; doer: true; mirror: true")) {
-          set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value);
-        }
-      },
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(a_entity0);
-        if (detaching)
-          detach(t);
-        if (detaching)
-          detach(a_entity1);
-      }
-    };
-  }
-  function instance5($$self, $$props, $$invalidate) {
-    let $avatar_current;
-    let $avatar_doer;
-    component_subscribe($$self, avatar_current, ($$value) => $$invalidate(0, $avatar_current = $$value));
-    component_subscribe($$self, avatar_doer, ($$value) => $$invalidate(1, $avatar_doer = $$value));
-    return [$avatar_current, $avatar_doer];
-  }
-  var Characters = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init2(this, options, instance5, create_fragment7, safe_not_equal, {});
-    }
-  };
-  var characters_default = Characters;
-
   // src/template/webcam.svelte
   function create_fragment8(ctx) {
     let div;
-    let video;
+    let video2;
     let t;
     let canvas;
     return {
       c() {
         div = element("div");
-        video = element("video");
+        video2 = element("video");
         t = space();
         canvas = element("canvas");
         attr(div, "class", "hidden svelte-oofj5h");
       },
       m(target, anchor) {
         insert(target, div, anchor);
-        append(div, video);
-        ctx[2](video);
+        append(div, video2);
+        ctx[2](video2);
         append(div, t);
         append(div, canvas);
         ctx[3](canvas);

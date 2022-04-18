@@ -6674,14 +6674,14 @@
 
   // node_modules/kalidokit/dist/PoseSolver/index.js
   var PoseSolver = class {
-    static solve(lm3d, lm2d, { runtime = "mediapipe", video = null, imageSize = null, enableLegs = true } = {}) {
+    static solve(lm3d, lm2d, { runtime = "mediapipe", video: video2 = null, imageSize = null, enableLegs = true } = {}) {
       var _a, _b, _c, _d;
       if (!lm3d && !lm2d) {
         console.error("Need both World Pose and Pose Landmarks");
         return;
       }
-      if (video) {
-        const videoEl = typeof video === "string" ? document.querySelector(video) : video;
+      if (video2) {
+        const videoEl = typeof video2 === "string" ? document.querySelector(video2) : video2;
         imageSize = {
           width: videoEl.videoWidth,
           height: videoEl.videoHeight
@@ -7019,13 +7019,13 @@
 
   // node_modules/kalidokit/dist/FaceSolver/index.js
   var FaceSolver = class {
-    static solve(lm, { runtime = "tfjs", video = null, imageSize = null, smoothBlink = false, blinkSettings = [] } = {}) {
+    static solve(lm, { runtime = "tfjs", video: video2 = null, imageSize = null, smoothBlink = false, blinkSettings = [] } = {}) {
       if (!lm) {
         console.error("Need Face Landmarks");
         return;
       }
-      if (video) {
-        const videoEl = typeof video === "string" ? document.querySelector(video) : video;
+      if (video2) {
+        const videoEl = typeof video2 === "string" ? document.querySelector(video2) : video2;
         imageSize = {
           width: videoEl.videoWidth,
           height: videoEl.videoHeight
@@ -7092,6 +7092,7 @@
   var voice_doer = new Value("Aus | UK English").save("voice_doer");
   var scouter = new Value("green").save("scouter");
   var videos = new Value(["MePBW53Rtpw", "lyDJOPuanO0", "sDsZZiiSwG8"]);
+  var video = new Value("doer1.8").save("video_2");
   var open_home = new Value(true);
   var open_game = new Value(false);
   var open_text = new Value(void 0);
@@ -7100,7 +7101,7 @@
   var open_stats = new Value(false).save("stats");
   var open_heard = new Value(true).save("heard");
   var open_debug = new Value(false).save("debugger");
-  var open_targeting = new Value(true).save("targeting_3");
+  var open_targeting = new Value(false).save("targeting_3");
   var open_live = new Value(false);
   var camera = new Value();
   var camera_el = new Value();
@@ -7108,6 +7109,7 @@
   var toggle_visible = new Value(state_default.visible).save("visible");
   var do_echo = new Value(true).save("do_echo");
   var do_vary = new Value(true);
+  var time = new Value(new AFRAME.THREE.Uniform(0));
   open_game.on(($g) => {
     if (open_game.$) {
       open_loading.set(true);
@@ -14385,8 +14387,8 @@ reset scout color to green, persists
     let isAnimating = false;
     let animationLoop = null;
     let requestId = null;
-    function onAnimationFrame(time, frame) {
-      animationLoop(time, frame);
+    function onAnimationFrame(time2, frame) {
+      animationLoop(time2, frame);
       requestId = context.requestAnimationFrame(onAnimationFrame);
     }
     return {
@@ -20088,7 +20090,7 @@ reset scout color to green, persists
       reset
     };
   }
-  function WebGLTextures(_gl, extensions, state, properties, capabilities, utils, info) {
+  function WebGLTextures(_gl, extensions, state, properties, capabilities, utils2, info) {
     const isWebGL2 = capabilities.isWebGL2;
     const maxTextures = capabilities.maxTextures;
     const maxCubemapSize = capabilities.maxCubemapSize;
@@ -20401,8 +20403,8 @@ reset scout color to green, persists
       const needsPowerOfTwo = textureNeedsPowerOfTwo(texture) && isPowerOfTwo$1(texture.image) === false;
       let image = resizeImage(texture.image, needsPowerOfTwo, false, maxTextureSize);
       image = verifyColorSpace(texture, image);
-      const supportsMips = isPowerOfTwo$1(image) || isWebGL2, glFormat = utils.convert(texture.format, texture.encoding);
-      let glType = utils.convert(texture.type), glInternalFormat = getInternalFormat(texture.internalFormat, glFormat, glType, texture.encoding, texture.isVideoTexture);
+      const supportsMips = isPowerOfTwo$1(image) || isWebGL2, glFormat = utils2.convert(texture.format, texture.encoding);
+      let glType = utils2.convert(texture.type), glInternalFormat = getInternalFormat(texture.internalFormat, glFormat, glType, texture.encoding, texture.isVideoTexture);
       setTextureParameters(textureType, texture, supportsMips);
       let mipmap;
       const mipmaps = texture.mipmaps;
@@ -20430,7 +20432,7 @@ reset scout color to green, persists
           if (texture.type !== UnsignedShortType && texture.type !== UnsignedIntType) {
             console.warn("THREE.WebGLRenderer: Use UnsignedShortType or UnsignedIntType for DepthFormat DepthTexture.");
             texture.type = UnsignedShortType;
-            glType = utils.convert(texture.type);
+            glType = utils2.convert(texture.type);
           }
         }
         if (texture.format === DepthStencilFormat && glInternalFormat === 6402) {
@@ -20438,7 +20440,7 @@ reset scout color to green, persists
           if (texture.type !== UnsignedInt248Type) {
             console.warn("THREE.WebGLRenderer: Use UnsignedInt248Type for DepthStencilFormat DepthTexture.");
             texture.type = UnsignedInt248Type;
-            glType = utils.convert(texture.type);
+            glType = utils2.convert(texture.type);
           }
         }
         if (useTexStorage && allocateMemory) {
@@ -20571,7 +20573,7 @@ reset scout color to green, persists
         }
         cubeImage[i2] = verifyColorSpace(texture, cubeImage[i2]);
       }
-      const image = cubeImage[0], supportsMips = isPowerOfTwo$1(image) || isWebGL2, glFormat = utils.convert(texture.format, texture.encoding), glType = utils.convert(texture.type), glInternalFormat = getInternalFormat(texture.internalFormat, glFormat, glType, texture.encoding);
+      const image = cubeImage[0], supportsMips = isPowerOfTwo$1(image) || isWebGL2, glFormat = utils2.convert(texture.format, texture.encoding), glType = utils2.convert(texture.type), glInternalFormat = getInternalFormat(texture.internalFormat, glFormat, glType, texture.encoding);
       const useTexStorage = isWebGL2 && texture.isVideoTexture !== true;
       const allocateMemory = textureProperties.__version === void 0;
       let levels = getMipLevels(texture, image, supportsMips);
@@ -20652,8 +20654,8 @@ reset scout color to green, persists
         texture.onUpdate(texture);
     }
     function setupFrameBufferTexture(framebuffer, renderTarget, texture, attachment, textureTarget) {
-      const glFormat = utils.convert(texture.format, texture.encoding);
-      const glType = utils.convert(texture.type);
+      const glFormat = utils2.convert(texture.format, texture.encoding);
+      const glType = utils2.convert(texture.type);
       const glInternalFormat = getInternalFormat(texture.internalFormat, glFormat, glType, texture.encoding);
       const renderTargetProperties = properties.get(renderTarget);
       if (!renderTargetProperties.__hasExternalTextures) {
@@ -20706,8 +20708,8 @@ reset scout color to green, persists
         _gl.framebufferRenderbuffer(36160, 33306, 36161, renderbuffer);
       } else {
         const texture = renderTarget.isWebGLMultipleRenderTargets === true ? renderTarget.texture[0] : renderTarget.texture;
-        const glFormat = utils.convert(texture.format, texture.encoding);
-        const glType = utils.convert(texture.type);
+        const glFormat = utils2.convert(texture.format, texture.encoding);
+        const glType = utils2.convert(texture.type);
         const glInternalFormat = getInternalFormat(texture.internalFormat, glFormat, glType, texture.encoding);
         const samples = getRenderTargetSamples(renderTarget);
         if (isMultisample && renderTarget.useRenderbuffer) {
@@ -20825,8 +20827,8 @@ reset scout color to green, persists
             renderTargetProperties.__webglMultisampledFramebuffer = _gl.createFramebuffer();
             renderTargetProperties.__webglColorRenderbuffer = _gl.createRenderbuffer();
             _gl.bindRenderbuffer(36161, renderTargetProperties.__webglColorRenderbuffer);
-            const glFormat = utils.convert(texture.format, texture.encoding);
-            const glType = utils.convert(texture.type);
+            const glFormat = utils2.convert(texture.format, texture.encoding);
+            const glType = utils2.convert(texture.type);
             const glInternalFormat = getInternalFormat(texture.internalFormat, glFormat, glType, texture.encoding);
             const samples = getRenderTargetSamples(renderTarget);
             _gl.renderbufferStorageMultisample(36161, samples, glInternalFormat, renderTarget.width, renderTarget.height);
@@ -21700,7 +21702,7 @@ reset scout color to green, persists
         }
       };
       let onAnimationFrameCallback = null;
-      function onAnimationFrame(time, frame) {
+      function onAnimationFrame(time2, frame) {
         pose = frame.getViewerPose(referenceSpace);
         xrFrame = frame;
         if (pose !== null) {
@@ -21746,7 +21748,7 @@ reset scout color to green, persists
           controller.update(inputSource, frame, referenceSpace);
         }
         if (onAnimationFrameCallback)
-          onAnimationFrameCallback(time, frame);
+          onAnimationFrameCallback(time2, frame);
         xrFrame = null;
       }
       const animation = new WebGLAnimation();
@@ -22286,16 +22288,16 @@ reset scout color to green, persists
     let properties, textures, cubemaps, cubeuvmaps, attributes, geometries, objects;
     let programCache, materials, renderLists, renderStates, clipping, shadowMap;
     let background, morphtargets, bufferRenderer, indexedBufferRenderer;
-    let utils, bindingStates;
+    let utils2, bindingStates;
     function initGLContext() {
       extensions = new WebGLExtensions(_gl);
       capabilities = new WebGLCapabilities(_gl, extensions, parameters);
       extensions.init(capabilities);
-      utils = new WebGLUtils(_gl, extensions, capabilities);
+      utils2 = new WebGLUtils(_gl, extensions, capabilities);
       state = new WebGLState(_gl, extensions, capabilities);
       info = new WebGLInfo(_gl);
       properties = new WebGLProperties();
-      textures = new WebGLTextures(_gl, extensions, state, properties, capabilities, utils, info);
+      textures = new WebGLTextures(_gl, extensions, state, properties, capabilities, utils2, info);
       cubemaps = new WebGLCubeMaps(_this);
       cubeuvmaps = new WebGLCubeUVMaps(_this);
       attributes = new WebGLAttributes(_gl, capabilities);
@@ -22606,9 +22608,9 @@ reset scout color to green, persists
       currentRenderState = null;
     };
     let onAnimationFrameCallback = null;
-    function onAnimationFrame(time) {
+    function onAnimationFrame(time2) {
       if (onAnimationFrameCallback)
-        onAnimationFrameCallback(time);
+        onAnimationFrameCallback(time2);
     }
     function onXRSessionStart() {
       animation.stop();
@@ -22786,7 +22788,7 @@ reset scout color to green, persists
         const renderTargetType = needsAntialias ? WebGLMultisampleRenderTarget : WebGLRenderTarget;
         _transmissionRenderTarget = new renderTargetType(1024, 1024, {
           generateMipmaps: true,
-          type: utils.convert(HalfFloatType) !== null ? HalfFloatType : UnsignedByteType,
+          type: utils2.convert(HalfFloatType) !== null ? HalfFloatType : UnsignedByteType,
           minFilter: LinearMipmapLinearFilter,
           magFilter: NearestFilter,
           wrapS: ClampToEdgeWrapping,
@@ -23177,18 +23179,18 @@ reset scout color to green, persists
           const texture = renderTarget.texture;
           const textureFormat = texture.format;
           const textureType = texture.type;
-          if (textureFormat !== RGBAFormat && utils.convert(textureFormat) !== _gl.getParameter(35739)) {
+          if (textureFormat !== RGBAFormat && utils2.convert(textureFormat) !== _gl.getParameter(35739)) {
             console.error("THREE.WebGLRenderer.readRenderTargetPixels: renderTarget is not in RGBA or implementation defined format.");
             return;
           }
           const halfFloatSupportedByExt = textureType === HalfFloatType && (extensions.has("EXT_color_buffer_half_float") || capabilities.isWebGL2 && extensions.has("EXT_color_buffer_float"));
-          if (textureType !== UnsignedByteType && utils.convert(textureType) !== _gl.getParameter(35738) && !(textureType === FloatType && (capabilities.isWebGL2 || extensions.has("OES_texture_float") || extensions.has("WEBGL_color_buffer_float"))) && !halfFloatSupportedByExt) {
+          if (textureType !== UnsignedByteType && utils2.convert(textureType) !== _gl.getParameter(35738) && !(textureType === FloatType && (capabilities.isWebGL2 || extensions.has("OES_texture_float") || extensions.has("WEBGL_color_buffer_float"))) && !halfFloatSupportedByExt) {
             console.error("THREE.WebGLRenderer.readRenderTargetPixels: renderTarget is not in UnsignedByteType or implementation defined type.");
             return;
           }
           if (_gl.checkFramebufferStatus(36160) === 36053) {
             if (x2 >= 0 && x2 <= renderTarget.width - width2 && (y2 >= 0 && y2 <= renderTarget.height - height2)) {
-              _gl.readPixels(x2, y2, width2, height2, utils.convert(textureFormat), utils.convert(textureType), buffer);
+              _gl.readPixels(x2, y2, width2, height2, utils2.convert(textureFormat), utils2.convert(textureType), buffer);
             }
           } else {
             console.error("THREE.WebGLRenderer.readRenderTargetPixels: readPixels from renderTarget failed. Framebuffer not complete.");
@@ -23214,8 +23216,8 @@ reset scout color to green, persists
     this.copyTextureToTexture = function(position, srcTexture, dstTexture, level = 0) {
       const width2 = srcTexture.image.width;
       const height2 = srcTexture.image.height;
-      const glFormat = utils.convert(dstTexture.format);
-      const glType = utils.convert(dstTexture.type);
+      const glFormat = utils2.convert(dstTexture.format);
+      const glType = utils2.convert(dstTexture.type);
       textures.setTexture2D(dstTexture, 0);
       _gl.pixelStorei(37440, dstTexture.flipY);
       _gl.pixelStorei(37441, dstTexture.premultiplyAlpha);
@@ -23241,8 +23243,8 @@ reset scout color to green, persists
       const width2 = sourceBox.max.x - sourceBox.min.x + 1;
       const height2 = sourceBox.max.y - sourceBox.min.y + 1;
       const depth = sourceBox.max.z - sourceBox.min.z + 1;
-      const glFormat = utils.convert(dstTexture.format);
-      const glType = utils.convert(dstTexture.type);
+      const glFormat = utils2.convert(dstTexture.format);
+      const glType = utils2.convert(dstTexture.type);
       let glTarget;
       if (dstTexture.isDataTexture3D) {
         textures.setTexture3D(dstTexture, 0);
@@ -24398,27 +24400,27 @@ reset scout color to green, persists
     }
   }
   var VideoTexture = class extends Texture {
-    constructor(video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy) {
-      super(video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
+    constructor(video2, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy) {
+      super(video2, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy);
       this.minFilter = minFilter !== void 0 ? minFilter : LinearFilter;
       this.magFilter = magFilter !== void 0 ? magFilter : LinearFilter;
       this.generateMipmaps = false;
       const scope = this;
       function updateVideo() {
         scope.needsUpdate = true;
-        video.requestVideoFrameCallback(updateVideo);
+        video2.requestVideoFrameCallback(updateVideo);
       }
-      if ("requestVideoFrameCallback" in video) {
-        video.requestVideoFrameCallback(updateVideo);
+      if ("requestVideoFrameCallback" in video2) {
+        video2.requestVideoFrameCallback(updateVideo);
       }
     }
     clone() {
       return new this.constructor(this.image).copy(this);
     }
     update() {
-      const video = this.image;
-      const hasVideoFrameCallback = "requestVideoFrameCallback" in video;
-      if (hasVideoFrameCallback === false && video.readyState >= video.HAVE_CURRENT_DATA) {
+      const video2 = this.image;
+      const hasVideoFrameCallback = "requestVideoFrameCallback" in video2;
+      if (hasVideoFrameCallback === false && video2.readyState >= video2.HAVE_CURRENT_DATA) {
         this.needsUpdate = true;
       }
     }
@@ -27475,9 +27477,9 @@ reset scout color to green, persists
       let writeIndex = 1;
       for (let i2 = 1; i2 < lastIndex; ++i2) {
         let keep = false;
-        const time = times[i2];
+        const time2 = times[i2];
         const timeNext = times[i2 + 1];
-        if (time !== timeNext && (i2 !== 1 || time !== times[0])) {
+        if (time2 !== timeNext && (i2 !== 1 || time2 !== times[0])) {
           if (!smoothInterpolation) {
             const offset = i2 * stride, offsetP = offset - stride, offsetN = offset + stride;
             for (let j2 = 0; j2 !== stride; ++j2) {
@@ -29750,8 +29752,8 @@ reset scout color to green, persists
     isScheduled() {
       return this._mixer._isActiveAction(this);
     }
-    startAt(time) {
-      this._startTime = time;
+    startAt(time2) {
+      this._startTime = time2;
       return this;
     }
     setLoop(mode, repetitions) {
@@ -29845,23 +29847,23 @@ reset scout color to green, persists
     getRoot() {
       return this._localRoot || this._mixer._root;
     }
-    _update(time, deltaTime, timeDirection, accuIndex) {
+    _update(time2, deltaTime, timeDirection, accuIndex) {
       if (!this.enabled) {
-        this._updateWeight(time);
+        this._updateWeight(time2);
         return;
       }
       const startTime = this._startTime;
       if (startTime !== null) {
-        const timeRunning = (time - startTime) * timeDirection;
+        const timeRunning = (time2 - startTime) * timeDirection;
         if (timeRunning < 0 || timeDirection === 0) {
           return;
         }
         this._startTime = null;
         deltaTime = timeDirection * timeRunning;
       }
-      deltaTime *= this._updateTimeScale(time);
+      deltaTime *= this._updateTimeScale(time2);
       const clipTime = this._updateTime(deltaTime);
-      const weight = this._updateWeight(time);
+      const weight = this._updateWeight(time2);
       if (weight > 0) {
         const interpolants = this._interpolants;
         const propertyMixers = this._propertyBindings;
@@ -29881,15 +29883,15 @@ reset scout color to green, persists
         }
       }
     }
-    _updateWeight(time) {
+    _updateWeight(time2) {
       let weight = 0;
       if (this.enabled) {
         weight = this.weight;
         const interpolant = this._weightInterpolant;
         if (interpolant !== null) {
-          const interpolantValue = interpolant.evaluate(time)[0];
+          const interpolantValue = interpolant.evaluate(time2)[0];
           weight *= interpolantValue;
-          if (time > interpolant.parameterPositions[1]) {
+          if (time2 > interpolant.parameterPositions[1]) {
             this.stopFading();
             if (interpolantValue === 0) {
               this.enabled = false;
@@ -29900,15 +29902,15 @@ reset scout color to green, persists
       this._effectiveWeight = weight;
       return weight;
     }
-    _updateTimeScale(time) {
+    _updateTimeScale(time2) {
       let timeScale = 0;
       if (!this.paused) {
         timeScale = this.timeScale;
         const interpolant = this._timeScaleInterpolant;
         if (interpolant !== null) {
-          const interpolantValue = interpolant.evaluate(time)[0];
+          const interpolantValue = interpolant.evaluate(time2)[0];
           timeScale *= interpolantValue;
-          if (time > interpolant.parameterPositions[1]) {
+          if (time2 > interpolant.parameterPositions[1]) {
             this.stopWarping();
             if (timeScale === 0) {
               this.paused = true;
@@ -29924,13 +29926,13 @@ reset scout color to green, persists
     _updateTime(deltaTime) {
       const duration = this._clip.duration;
       const loop = this.loop;
-      let time = this.time + deltaTime;
+      let time2 = this.time + deltaTime;
       let loopCount = this._loopCount;
       const pingPong = loop === LoopPingPong;
       if (deltaTime === 0) {
         if (loopCount === -1)
-          return time;
-        return pingPong && (loopCount & 1) === 1 ? duration - time : time;
+          return time2;
+        return pingPong && (loopCount & 1) === 1 ? duration - time2 : time2;
       }
       if (loop === LoopOnce) {
         if (loopCount === -1) {
@@ -29938,19 +29940,19 @@ reset scout color to green, persists
           this._setEndings(true, true, false);
         }
         handle_stop: {
-          if (time >= duration) {
-            time = duration;
-          } else if (time < 0) {
-            time = 0;
+          if (time2 >= duration) {
+            time2 = duration;
+          } else if (time2 < 0) {
+            time2 = 0;
           } else {
-            this.time = time;
+            this.time = time2;
             break handle_stop;
           }
           if (this.clampWhenFinished)
             this.paused = true;
           else
             this.enabled = false;
-          this.time = time;
+          this.time = time2;
           this._mixer.dispatchEvent({
             type: "finished",
             action: this,
@@ -29966,9 +29968,9 @@ reset scout color to green, persists
             this._setEndings(this.repetitions === 0, true, pingPong);
           }
         }
-        if (time >= duration || time < 0) {
-          const loopDelta = Math.floor(time / duration);
-          time -= duration * loopDelta;
+        if (time2 >= duration || time2 < 0) {
+          const loopDelta = Math.floor(time2 / duration);
+          time2 -= duration * loopDelta;
           loopCount += Math.abs(loopDelta);
           const pending = this.repetitions - loopCount;
           if (pending <= 0) {
@@ -29976,8 +29978,8 @@ reset scout color to green, persists
               this.paused = true;
             else
               this.enabled = false;
-            time = deltaTime > 0 ? duration : 0;
-            this.time = time;
+            time2 = deltaTime > 0 ? duration : 0;
+            this.time = time2;
             this._mixer.dispatchEvent({
               type: "finished",
               action: this,
@@ -29991,7 +29993,7 @@ reset scout color to green, persists
               this._setEndings(false, false, pingPong);
             }
             this._loopCount = loopCount;
-            this.time = time;
+            this.time = time2;
             this._mixer.dispatchEvent({
               type: "loop",
               action: this,
@@ -29999,13 +30001,13 @@ reset scout color to green, persists
             });
           }
         } else {
-          this.time = time;
+          this.time = time2;
         }
         if (pingPong && (loopCount & 1) === 1) {
-          return duration - time;
+          return duration - time2;
         }
       }
-      return time;
+      return time2;
     }
     _setEndings(atStart, atEnd, pingPong) {
       const settings = this._interpolantSettings;
@@ -30309,10 +30311,10 @@ reset scout color to green, persists
     }
     update(deltaTime) {
       deltaTime *= this.timeScale;
-      const actions = this._actions, nActions = this._nActiveActions, time = this.time += deltaTime, timeDirection = Math.sign(deltaTime), accuIndex = this._accuIndex ^= 1;
+      const actions = this._actions, nActions = this._nActiveActions, time2 = this.time += deltaTime, timeDirection = Math.sign(deltaTime), accuIndex = this._accuIndex ^= 1;
       for (let i2 = 0; i2 !== nActions; ++i2) {
         const action = actions[i2];
-        action._update(time, deltaTime, timeDirection, accuIndex);
+        action._update(time2, deltaTime, timeDirection, accuIndex);
       }
       const bindings = this._bindings, nBindings = this._nActiveBindings;
       for (let i2 = 0; i2 !== nBindings; ++i2) {
@@ -33397,6 +33399,14 @@ reset scout color to green, persists
     }, 1 / 3.5 * 1e3);
   });
 
+  // src/component/uniforms.ts
+  AFRAME.registerComponent("uniforms", {
+    tick() {
+      time.$.value = this.el.time;
+      time.poke();
+    }
+  });
+
   // src/component/vary.ts
   var vec3 = new AFRAME.THREE.Vector3();
   var bb2 = new AFRAME.THREE.Box3();
@@ -33422,21 +33432,21 @@ reset scout color to green, persists
   // src/template/webcam.svelte
   function create_fragment(ctx) {
     let div;
-    let video;
+    let video2;
     let t;
     let canvas;
     return {
       c() {
         div = element("div");
-        video = element("video");
+        video2 = element("video");
         t = space();
         canvas = element("canvas");
         attr(div, "class", "hidden svelte-oofj5h");
       },
       m(target, anchor) {
         insert(target, div, anchor);
-        append(div, video);
-        ctx[2](video);
+        append(div, video2);
+        ctx[2](video2);
         append(div, t);
         append(div, canvas);
         ctx[3](canvas);
@@ -33527,6 +33537,12 @@ reset scout color to green, persists
       speed: { type: "number", default: 0.3 },
       rot: { type: "number", default: 25e-4 }
     },
+    init() {
+      this.jump = AFRAME.utils.throttleTick(this.jump, 1e3, this);
+    },
+    jump() {
+      this.el.emit("jump");
+    },
     tick(_2, delta) {
       if (!this.el.body)
         return;
@@ -33541,6 +33557,7 @@ reset scout color to green, persists
       }
       if (key_map.$[" "] && o3d.position.y < 0.5) {
         hop = 4 * delta;
+        this.jump();
       }
       if (key_map.$["w"]) {
         vec32.y = hop;
@@ -33578,10 +33595,98 @@ reset scout color to green, persists
     }
   });
 
+  // src/component/sfxr.ts
+  AFRAME.registerComponent("sfxr", {
+    multiple: true,
+    schema: {
+      oldParams: { default: true },
+      wave_type: { default: 1 },
+      p_env_attack: { default: 0 },
+      p_env_sustain: { default: 0.31718502829007483 },
+      p_env_punch: { default: 0 },
+      p_env_decay: { default: 0.2718540993592685 },
+      p_base_freq: { default: 0.26126191208337196 },
+      p_freq_limit: { default: 0 },
+      p_freq_ramp: { default: 0.43787689856926615 },
+      p_freq_dramp: { default: 0 },
+      p_vib_strength: { default: 0 },
+      p_vib_speed: { default: 0 },
+      p_arp_mod: { default: 0 },
+      p_arp_speed: { default: 0 },
+      p_duty: { default: 1 },
+      p_duty_ramp: { default: 0 },
+      p_repeat_speed: { default: 0.7558565452384385 },
+      p_pha_offset: { default: 0 },
+      p_pha_ramp: { default: 0 },
+      p_lpf_freq: { default: 1 },
+      p_lpf_ramp: { default: 0 },
+      p_lpf_resonance: { default: 0 },
+      p_hpf_freq: { default: 0 },
+      p_hpf_ramp: { default: 0 },
+      sound_vol: { default: 0.25 },
+      sample_rate: { default: 44100 },
+      sample_size: { default: 8 },
+      autoplay: { type: "boolean", default: false },
+      spatial: { type: "boolean", default: true }
+    },
+    init: function() {
+      if (this.id) {
+        this.event = this.event.bind(this);
+        this.el.addEventListener(this.id, this.event);
+      }
+      if (this.autoplay) {
+        this.event();
+      }
+    },
+    event() {
+      if (!this.audio) {
+        this.audio = new SoundEffect(this.data).generate();
+      }
+      this.audio.getAudio().setVolume(0.5).play();
+    },
+    remove() {
+      if (this.cancel)
+        clearTimeout(this.cancel);
+      this.el.removeEventlistener(this.id, this.event);
+    }
+  });
+
+  // src/sound/action.ts
+  var sfx_jump = {
+    "oldParams": true,
+    "wave_type": 0,
+    "p_env_attack": 0,
+    "p_env_sustain": 0.14827504779514308,
+    "p_env_punch": 0,
+    "p_env_decay": 0.2604416321207049,
+    "p_base_freq": 0.3492950945673611,
+    "p_freq_limit": 0,
+    "p_freq_ramp": 0.1370009340411704,
+    "p_freq_dramp": 0,
+    "p_vib_strength": 0,
+    "p_vib_speed": 0,
+    "p_arp_mod": 0,
+    "p_arp_speed": 0,
+    "p_duty": 0.4063339547539369,
+    "p_duty_ramp": 0,
+    "p_repeat_speed": 0,
+    "p_pha_offset": 0,
+    "p_pha_ramp": 0,
+    "p_lpf_freq": 1,
+    "p_lpf_ramp": 0,
+    "p_lpf_resonance": 0,
+    "p_hpf_freq": 0.25097654676858755,
+    "p_hpf_ramp": 0,
+    "sound_vol": 0.25,
+    "sample_rate": 44100,
+    "sample_size": 8
+  };
+
   // src/template/characters.svelte
   function create_fragment3(ctx) {
     let a_entity0;
     let a_entity0_vrm_value;
+    let a_entity0_sfxr__jump_value;
     let t;
     let a_entity1;
     let a_entity1_vrm_value;
@@ -33591,16 +33696,16 @@ reset scout color to green, persists
         t = space();
         a_entity1 = element("a-entity");
         set_custom_element_data(a_entity0, "mixin", "shadow character");
+        set_custom_element_data(a_entity0, "position", "0 0 15");
         set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value = "src: " + ctx[0] + "; current: true");
         set_custom_element_data(a_entity0, "look-controls", "");
         set_custom_element_data(a_entity0, "id", "focus");
-        set_custom_element_data(a_entity0, "host", "sync: position quaternion vrm; dynamic: true;");
         set_custom_element_data(a_entity0, "wasd-controller", "");
+        set_custom_element_data(a_entity0, "sfxr__jump", a_entity0_sfxr__jump_value = AFRAME.utils.styleParser.stringify(sfx_jump));
         set_custom_element_data(a_entity1, "mixin", "shadow character");
+        set_custom_element_data(a_entity1, "position", "0 0.25 14");
         set_custom_element_data(a_entity1, "rotation", "0 180 0");
-        set_custom_element_data(a_entity1, "position", "0 0 -1");
-        set_custom_element_data(a_entity1, "host", "sync: position quaternion vrm; dynamic: true;");
-        set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[1] + "; doer: true; mirror: true");
+        set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[1] + "; mirror: true");
       },
       m(target, anchor) {
         insert(target, a_entity0, anchor);
@@ -33611,7 +33716,7 @@ reset scout color to green, persists
         if (dirty & 1 && a_entity0_vrm_value !== (a_entity0_vrm_value = "src: " + ctx2[0] + "; current: true")) {
           set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value);
         }
-        if (dirty & 2 && a_entity1_vrm_value !== (a_entity1_vrm_value = "src: " + ctx2[1] + "; doer: true; mirror: true")) {
+        if (dirty & 2 && a_entity1_vrm_value !== (a_entity1_vrm_value = "src: " + ctx2[1] + "; mirror: true")) {
           set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value);
         }
       },
@@ -33720,6 +33825,348 @@ reset scout color to green, persists
     }
   });
 
+  // src/component/look.ts
+  var registerComponent = AFRAME.registerComponent;
+  var THREE = AFRAME.THREE;
+  var utils = AFRAME.utils;
+  var PI_2 = Math.PI / 2;
+  registerComponent("look", {
+    dependencies: ["position", "rotation"],
+    schema: {
+      enabled: { default: true },
+      magicWindowTrackingEnabled: { default: true },
+      pointerLockEnabled: { default: false },
+      reverseMouseDrag: { default: false },
+      reverseTouchDrag: { default: false },
+      touchEnabled: { default: true },
+      mouseEnabled: { default: true }
+    },
+    init: function() {
+      this.deltaYaw = 0;
+      this.previousHMDPosition = new THREE.Vector3();
+      this.hmdQuaternion = new THREE.Quaternion();
+      this.magicWindowAbsoluteEuler = new THREE.Euler();
+      this.magicWindowDeltaEuler = new THREE.Euler();
+      this.position = new THREE.Vector3();
+      this.magicWindowObject = new THREE.Object3D();
+      this.rotation = {};
+      this.deltaRotation = {};
+      this.savedPose = null;
+      this.pointerLocked = false;
+      this.setupMouseControls();
+      this.bindMethods();
+      this.previousMouseEvent = {};
+      this.setupMagicWindowControls();
+      this.savedPose = {
+        position: new THREE.Vector3(),
+        rotation: new THREE.Euler()
+      };
+      if (this.el.sceneEl.is("vr-mode") || this.el.sceneEl.is("ar-mode")) {
+        this.onEnterVR();
+      }
+    },
+    setupMagicWindowControls: function() {
+      var magicWindowControls;
+      var data = this.data;
+      if (utils.device.isMobile() || utils.device.isMobileDeviceRequestingDesktopSite()) {
+        magicWindowControls = this.magicWindowControls = new THREE.DeviceOrientationControls(this.magicWindowObject);
+        if (typeof DeviceOrientationEvent !== "undefined" && DeviceOrientationEvent.requestPermission) {
+          magicWindowControls.enabled = false;
+          if (this.el.sceneEl.components["device-orientation-permission-ui"].permissionGranted) {
+            magicWindowControls.enabled = data.magicWindowTrackingEnabled;
+          } else {
+            this.el.sceneEl.addEventListener("deviceorientationpermissiongranted", function() {
+              magicWindowControls.enabled = data.magicWindowTrackingEnabled;
+            });
+          }
+        }
+      }
+    },
+    update: function(oldData) {
+      var data = this.data;
+      if (data.enabled !== oldData.enabled) {
+        this.updateGrabCursor(data.enabled);
+      }
+      if (oldData && !data.magicWindowTrackingEnabled && oldData.magicWindowTrackingEnabled) {
+        this.magicWindowAbsoluteEuler.set(0, 0, 0);
+        this.magicWindowDeltaEuler.set(0, 0, 0);
+      }
+      if (this.magicWindowControls) {
+        this.magicWindowControls.enabled = data.magicWindowTrackingEnabled;
+      }
+      if (oldData && !data.pointerLockEnabled !== oldData.pointerLockEnabled) {
+        this.removeEventListeners();
+        this.addEventListeners();
+        if (this.pointerLocked) {
+          this.exitPointerLock();
+        }
+      }
+    },
+    tick: function(t) {
+      var data = this.data;
+      if (!data.enabled) {
+        return;
+      }
+      this.updateOrientation();
+    },
+    play: function() {
+      this.addEventListeners();
+    },
+    pause: function() {
+      this.removeEventListeners();
+      if (this.pointerLocked) {
+        this.exitPointerLock();
+      }
+    },
+    remove: function() {
+      this.removeEventListeners();
+      if (this.pointerLocked) {
+        this.exitPointerLock();
+      }
+    },
+    bindMethods: function() {
+      this.onMouseDown = this.onMouseDown.bind(this);
+      this.onMouseMove = this.onMouseMove.bind(this);
+      this.onMouseUp = this.onMouseUp.bind(this);
+      this.onTouchStart = this.onTouchStart.bind(this);
+      this.onTouchMove = this.onTouchMove.bind(this);
+      this.onTouchEnd = this.onTouchEnd.bind(this);
+      this.onEnterVR = this.onEnterVR.bind(this);
+      this.onExitVR = this.onExitVR.bind(this);
+      this.onPointerLockChange = this.onPointerLockChange.bind(this);
+      this.onPointerLockError = this.onPointerLockError.bind(this);
+    },
+    setupMouseControls: function() {
+      this.mouseDown = false;
+      this.pitchObject = new THREE.Object3D();
+      this.yawObject = new THREE.Object3D();
+      this.yawObject.position.y = 10;
+      this.yawObject.add(this.pitchObject);
+    },
+    addEventListeners: function() {
+      var sceneEl = this.el.sceneEl;
+      var canvasEl = sceneEl.canvas;
+      if (!canvasEl) {
+        sceneEl.addEventListener("render-target-loaded", this.addEventListeners.bind(this));
+        return;
+      }
+      canvasEl.addEventListener("mousedown", this.onMouseDown, false);
+      window.addEventListener("mousemove", this.onMouseMove, false);
+      window.addEventListener("mouseup", this.onMouseUp, false);
+      canvasEl.addEventListener("touchstart", this.onTouchStart);
+      window.addEventListener("touchmove", this.onTouchMove);
+      window.addEventListener("touchend", this.onTouchEnd);
+      sceneEl.addEventListener("enter-vr", this.onEnterVR);
+      sceneEl.addEventListener("exit-vr", this.onExitVR);
+      if (this.data.pointerLockEnabled) {
+        document.addEventListener("pointerlockchange", this.onPointerLockChange, false);
+        document.addEventListener("mozpointerlockchange", this.onPointerLockChange, false);
+        document.addEventListener("pointerlockerror", this.onPointerLockError, false);
+      }
+    },
+    removeEventListeners: function() {
+      var sceneEl = this.el.sceneEl;
+      var canvasEl = sceneEl && sceneEl.canvas;
+      if (!canvasEl) {
+        return;
+      }
+      canvasEl.removeEventListener("mousedown", this.onMouseDown);
+      window.removeEventListener("mousemove", this.onMouseMove);
+      window.removeEventListener("mouseup", this.onMouseUp);
+      canvasEl.removeEventListener("touchstart", this.onTouchStart);
+      window.removeEventListener("touchmove", this.onTouchMove);
+      window.removeEventListener("touchend", this.onTouchEnd);
+      sceneEl.removeEventListener("enter-vr", this.onEnterVR);
+      sceneEl.removeEventListener("exit-vr", this.onExitVR);
+      document.removeEventListener("pointerlockchange", this.onPointerLockChange, false);
+      document.removeEventListener("mozpointerlockchange", this.onPointerLockChange, false);
+      document.removeEventListener("pointerlockerror", this.onPointerLockError, false);
+    },
+    updateOrientation: function() {
+      var object3D = this.el.object3D;
+      var pitchObject = this.pitchObject;
+      var yawObject = this.yawObject;
+      var sceneEl = this.el.sceneEl;
+      if ((sceneEl.is("vr-mode") || sceneEl.is("ar-mode")) && sceneEl.checkHeadsetConnected()) {
+        return;
+      }
+      this.updateMagicWindowOrientation();
+      object3D.rotation.x = this.magicWindowDeltaEuler.x + pitchObject.rotation.x;
+      object3D.rotation.y = this.magicWindowDeltaEuler.y + yawObject.rotation.y;
+      object3D.rotation.z = this.magicWindowDeltaEuler.z;
+    },
+    updateMagicWindowOrientation: function() {
+      var magicWindowAbsoluteEuler = this.magicWindowAbsoluteEuler;
+      var magicWindowDeltaEuler = this.magicWindowDeltaEuler;
+      if (this.magicWindowControls && this.magicWindowControls.enabled) {
+        this.magicWindowControls.update();
+        magicWindowAbsoluteEuler.setFromQuaternion(this.magicWindowObject.quaternion, "YXZ");
+        if (!this.previousMagicWindowYaw && magicWindowAbsoluteEuler.y !== 0) {
+          this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
+        }
+        if (this.previousMagicWindowYaw) {
+          magicWindowDeltaEuler.x = magicWindowAbsoluteEuler.x;
+          magicWindowDeltaEuler.y += magicWindowAbsoluteEuler.y - this.previousMagicWindowYaw;
+          magicWindowDeltaEuler.z = magicWindowAbsoluteEuler.z;
+          this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
+        }
+      }
+    },
+    onMouseMove: function(evt) {
+      var direction;
+      var movementX;
+      var movementY;
+      var pitchObject = this.pitchObject;
+      var previousMouseEvent = this.previousMouseEvent;
+      var yawObject = this.yawObject;
+      if (!this.data.enabled || !this.mouseDown && !this.pointerLocked) {
+        return;
+      }
+      if (this.pointerLocked) {
+        movementX = evt.movementX || evt.mozMovementX || 0;
+        movementY = evt.movementY || evt.mozMovementY || 0;
+      } else {
+        movementX = evt.screenX - previousMouseEvent.screenX;
+        movementY = evt.screenY - previousMouseEvent.screenY;
+      }
+      this.previousMouseEvent.screenX = evt.screenX;
+      this.previousMouseEvent.screenY = evt.screenY;
+      direction = this.data.reverseMouseDrag ? 1 : -1;
+      yawObject.rotation.y += movementX * 2e-3 * direction;
+      pitchObject.rotation.x += movementY * 2e-3 * direction;
+      pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
+    },
+    onMouseDown: function(evt) {
+      var sceneEl = this.el.sceneEl;
+      if (!this.data.enabled || !this.data.mouseEnabled || (sceneEl.is("vr-mode") || sceneEl.is("ar-mode")) && sceneEl.checkHeadsetConnected()) {
+        return;
+      }
+      if (evt.button !== 0) {
+        return;
+      }
+      var canvasEl = sceneEl && sceneEl.canvas;
+      this.mouseDown = true;
+      this.previousMouseEvent.screenX = evt.screenX;
+      this.previousMouseEvent.screenY = evt.screenY;
+      this.showGrabbingCursor();
+      if (this.data.pointerLockEnabled && !this.pointerLocked) {
+        if (canvasEl.requestPointerLock) {
+          canvasEl.requestPointerLock();
+        } else if (canvasEl.mozRequestPointerLock) {
+          canvasEl.mozRequestPointerLock();
+        }
+      }
+    },
+    showGrabbingCursor: function() {
+      this.el.sceneEl.canvas.style.cursor = "grabbing";
+    },
+    hideGrabbingCursor: function() {
+      this.el.sceneEl.canvas.style.cursor = "";
+    },
+    onMouseUp: function() {
+      this.mouseDown = false;
+      this.hideGrabbingCursor();
+    },
+    onTouchStart: function(evt) {
+      if (evt.touches.length !== 1 || !this.data.touchEnabled || this.el.sceneEl.is("vr-mode") || this.el.sceneEl.is("ar-mode")) {
+        return;
+      }
+      this.touchStart = {
+        x: evt.touches[0].pageX,
+        y: evt.touches[0].pageY
+      };
+      this.touchStarted = true;
+    },
+    onTouchMove: function(evt) {
+      var direction;
+      var canvas = this.el.sceneEl.canvas;
+      var deltaY;
+      var yawObject = this.yawObject;
+      if (!this.touchStarted || !this.data.touchEnabled) {
+        return;
+      }
+      deltaY = 2 * Math.PI * (evt.touches[0].pageX - this.touchStart.x) / canvas.clientWidth;
+      direction = this.data.reverseTouchDrag ? 1 : -1;
+      yawObject.rotation.y -= deltaY * 0.5 * direction;
+      this.touchStart = {
+        x: evt.touches[0].pageX,
+        y: evt.touches[0].pageY
+      };
+    },
+    onTouchEnd: function() {
+      this.touchStarted = false;
+    },
+    onEnterVR: function() {
+      var sceneEl = this.el.sceneEl;
+      if (!sceneEl.checkHeadsetConnected()) {
+        return;
+      }
+      this.saveCameraPose();
+      this.el.object3D.position.set(0, 0, 0);
+      this.el.object3D.rotation.set(0, 0, 0);
+      if (sceneEl.hasWebXR) {
+        this.el.object3D.matrixAutoUpdate = false;
+        this.el.object3D.updateMatrix();
+      }
+    },
+    onExitVR: function() {
+      if (!this.el.sceneEl.checkHeadsetConnected()) {
+        return;
+      }
+      this.restoreCameraPose();
+      this.previousHMDPosition.set(0, 0, 0);
+      this.el.object3D.matrixAutoUpdate = true;
+    },
+    onPointerLockChange: function() {
+      this.pointerLocked = !!(document.pointerLockElement || document.mozPointerLockElement);
+    },
+    onPointerLockError: function() {
+      this.pointerLocked = false;
+    },
+    exitPointerLock: function() {
+      document.exitPointerLock();
+      this.pointerLocked = false;
+    },
+    updateGrabCursor: function(enabled) {
+      var sceneEl = this.el.sceneEl;
+      function enableGrabCursor() {
+        sceneEl.canvas.classList.add("a-grab-cursor");
+      }
+      function disableGrabCursor() {
+        sceneEl.canvas.classList.remove("a-grab-cursor");
+      }
+      if (!sceneEl.canvas) {
+        if (enabled) {
+          sceneEl.addEventListener("render-target-loaded", enableGrabCursor);
+        } else {
+          sceneEl.addEventListener("render-target-loaded", disableGrabCursor);
+        }
+        return;
+      }
+      if (enabled) {
+        enableGrabCursor();
+        return;
+      }
+      disableGrabCursor();
+    },
+    saveCameraPose: function() {
+      var el = this.el;
+      this.savedPose.position.copy(el.object3D.position);
+      this.savedPose.rotation.copy(el.object3D.rotation);
+      this.hasSavedPose = true;
+    },
+    restoreCameraPose: function() {
+      var el = this.el;
+      var savedPose = this.savedPose;
+      if (!this.hasSavedPose) {
+        return;
+      }
+      el.object3D.position.copy(savedPose.position);
+      el.object3D.rotation.copy(savedPose.rotation);
+      this.hasSavedPose = false;
+    }
+  });
+
   // src/template/camera-fps.svelte
   function create_if_block(ctx) {
     let a_entity;
@@ -33785,7 +34232,8 @@ reset scout color to green, persists
         set_custom_element_data(a_camera, "character-camera", "");
         set_custom_element_data(a_camera, "position", "0 4 0");
         set_custom_element_data(a_camera, "wasd-controls", "enabled: false;");
-        set_custom_element_data(a_camera, "look-controls", "enabled: true;pointerLockEnabled: true;");
+        set_custom_element_data(a_camera, "look", "enabled: true;pointerLockEnabled: true;");
+        set_custom_element_data(a_camera, "look-controls", "enabled: false;");
         set_custom_element_data(a_entity, "geometry", "");
         set_custom_element_data(a_entity, "material", "color: blue; opacity: 0.15; shader: flat; visible: false;");
         set_custom_element_data(a_entity, "position", "0 0 -1");
@@ -33981,31 +34429,119 @@ reset scout color to green, persists
   };
   var heard_default = Heard;
 
+  // src/shader/floaty.vert
+  var floaty_default = "// time uniform\nvec4 Floaty(in vec4 v) {\n    float t = -time * 0.00005 + v.x*v.y*v.z / 100.;\n    float dst = 100.;\n    v.x += sin(t) * dst + cos(t * 2.) * dst;\n    v.y += cos(t) * dst/100. ;\n    v.z += sin(t) * dst+ sin(t * 2.) * dst;\n    return v;\n}";
+
+  // src/component/floaty.ts
+  var main = `
+vec4 mvPosition = vec4(transformed, 1.0);
+
+mvPosition = modelViewMatrix * Floaty(mvPosition);
+mvPosition = projectionMatrix * mvPosition;
+gl_Position = mvPosition;
+`;
+  AFRAME.registerComponent("floaty", {
+    init() {
+      this.el.object3D.traverse((c2) => {
+        if (c2.material) {
+          const prev = c2.material.onBeforeCompile;
+          c2.material.onBeforeCompile = (shader) => {
+            if (!shader.uniforms.time) {
+              shader.uniforms.time = time.$;
+              shader.vertexShader = shader.vertexShader.replace("#include <common>", [
+                "#include <common>",
+                "uniform float time;",
+                floaty_default
+              ].join("\n")).replace("#include <project_vertex>", main);
+            } else {
+              shader.vertexShader = shader.vertexShader.replace("#include <common>", [
+                "#include <common>",
+                floaty_default
+              ].join("\n")).replace("(mvPosition);", "(Floaty(mvPosition));");
+            }
+            if (prev) {
+              prev(shader);
+            }
+          };
+          c2.material.needsUpdate = true;
+        }
+      });
+    }
+  });
+
+  // src/shader/windy.vert
+  var windy_default = "vec4 Windy(in vec4 v) {\n    float t = -time * 0.0007 + v.x*v.y*v.z*100.;\n    float dst = 0.04;\n    v.x += sin(t) * dst;\n    v.y += cos(t) * dst/10.;\n    v.z += sin(t) * dst;\n    return v; \n}";
+
+  // src/component/windy.ts
+  var main2 = `
+vec4 mvPosition = vec4(transformed, 1.0);
+
+mvPosition = modelViewMatrix * Windy(mvPosition);
+mvPosition = projectionMatrix * mvPosition;
+gl_Position = mvPosition;
+`;
+  AFRAME.registerComponent("windy", {
+    init() {
+      this.setup = this.setup.bind(this);
+      this.setup();
+      this.el.addEventListener("model-loaded", this.setup);
+    },
+    remove() {
+      this.el.removeEventListener("model-loaded", this.setup);
+    },
+    setup() {
+      this.el.object3D.traverse((c2) => {
+        if (c2.material) {
+          const prev = c2.material.onBeforeCompile;
+          c2.material.onBeforeCompile = (shader) => {
+            if (!shader.uniforms.time) {
+              shader.uniforms.time = time.$;
+              shader.vertexShader = shader.vertexShader.replace("#include <common>", [
+                "#include <common>",
+                "uniform float time;",
+                windy_default
+              ].join("\n")).replace("#include <project_vertex>", main2);
+            } else {
+              shader.vertexShader = shader.vertexShader.replace("#include <common>", [
+                "#include <common>",
+                windy_default
+              ].join("\n")).replace("(mvPosition);", "(Windy(mvPosition));");
+            }
+            if (prev) {
+              prev(shader);
+            }
+          };
+          c2.material.needsUpdate = true;
+        }
+      });
+    }
+  });
+
   // src/template/forest.svelte
   function create_fragment6(ctx) {
-    let a_entity0;
-    let t0;
     let a_mixin0;
-    let t1;
+    let t0;
     let a_mixin1;
-    let t2;
+    let t1;
     let a_mixin2;
-    let t3;
+    let t2;
     let a_mixin3;
-    let t4;
+    let t3;
     let a_mixin4;
-    let t5;
+    let t4;
     let a_mixin5;
+    let t5;
+    let a_entity0;
     let t6;
     let a_mixin6;
+    let a_mixin6_ring_value;
     let t7;
-    let a_mixin7;
-    let a_mixin7_ring_value;
+    let a_entity1;
     let t8;
     let a_sky;
     let a_sky_animate_value;
     let t9;
-    let a_entity1;
+    let a_mixin7;
     let t10;
     let a_entity2;
     let t11;
@@ -34022,6 +34558,7 @@ reset scout color to green, persists
     let a_entity7;
     let t17;
     let a_entity8;
+    let a_sphere;
     let a_entity8_position_value;
     let a_entity8_light_value;
     let t18;
@@ -34040,6 +34577,7 @@ reset scout color to green, persists
     let a_entity11;
     let a_entity11_position_value;
     let a_entity11_animation_value;
+    let a_entity11_animation__scale_value;
     let t23;
     let a_entity12;
     let t24;
@@ -34054,27 +34592,27 @@ reset scout color to green, persists
     let a_entity14;
     return {
       c() {
-        a_entity0 = element("a-entity");
-        t0 = space();
         a_mixin0 = element("a-mixin");
-        t1 = space();
+        t0 = space();
         a_mixin1 = element("a-mixin");
-        t2 = space();
+        t1 = space();
         a_mixin2 = element("a-mixin");
-        t3 = space();
+        t2 = space();
         a_mixin3 = element("a-mixin");
-        t4 = space();
+        t3 = space();
         a_mixin4 = element("a-mixin");
-        t5 = space();
+        t4 = space();
         a_mixin5 = element("a-mixin");
+        t5 = space();
+        a_entity0 = element("a-entity");
         t6 = space();
         a_mixin6 = element("a-mixin");
         t7 = space();
-        a_mixin7 = element("a-mixin");
+        a_entity1 = element("a-entity");
         t8 = space();
         a_sky = element("a-sky");
         t9 = space();
-        a_entity1 = element("a-entity");
+        a_mixin7 = element("a-mixin");
         t10 = space();
         a_entity2 = element("a-entity");
         t11 = space();
@@ -34091,6 +34629,7 @@ reset scout color to green, persists
         a_entity7 = element("a-entity");
         t17 = space();
         a_entity8 = element("a-entity");
+        a_sphere = element("a-sphere");
         t18 = space();
         a_entity9 = element("a-entity");
         t19 = space();
@@ -34111,9 +34650,6 @@ reset scout color to green, persists
         a_mixin11 = element("a-mixin");
         t27 = space();
         a_entity14 = element("a-entity");
-        set_custom_element_data(a_entity0, "id", "mountain-model");
-        set_custom_element_data(a_entity0, "gltf-model", "./glb/rockC.glb");
-        set_custom_element_data(a_entity0, "instanced-mesh", "capacity: 50");
         set_custom_element_data(a_mixin0, "id", "smolitem");
         set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;collisionFilterGroup: 2;");
         set_custom_element_data(a_mixin0, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
@@ -34124,7 +34660,7 @@ reset scout color to green, persists
         set_custom_element_data(a_mixin2, "shadow", "");
         set_custom_element_data(a_mixin2, "gltf-model", "./glb/flowers.glb");
         set_custom_element_data(a_mixin2, "host", "");
-        set_custom_element_data(a_mixin2, "wind", "");
+        set_custom_element_data(a_mixin2, "windy", "");
         set_custom_element_data(a_mixin2, "scatter", ctx[2]);
         set_custom_element_data(a_mixin2, "vary", vary);
         set_custom_element_data(a_mixin3, "id", "mushroom");
@@ -34132,7 +34668,7 @@ reset scout color to green, persists
         set_custom_element_data(a_mixin3, "shadow", "");
         set_custom_element_data(a_mixin3, "gltf-model", "./glb/mushrooms.glb");
         set_custom_element_data(a_mixin3, "host", "");
-        set_custom_element_data(a_mixin3, "wind", "");
+        set_custom_element_data(a_mixin3, "windy", "");
         set_custom_element_data(a_mixin3, "scatter", ctx[2]);
         set_custom_element_data(a_mixin3, "vary", vary);
         set_custom_element_data(a_mixin4, "id", "flowersLow");
@@ -34140,47 +34676,50 @@ reset scout color to green, persists
         set_custom_element_data(a_mixin4, "shadow", "");
         set_custom_element_data(a_mixin4, "gltf-model", "./glb/flowersLow.glb");
         set_custom_element_data(a_mixin4, "host", "");
-        set_custom_element_data(a_mixin4, "wind", "");
+        set_custom_element_data(a_mixin4, "windy", "");
         set_custom_element_data(a_mixin4, "scatter", ctx[2]);
         set_custom_element_data(a_mixin4, "vary", vary);
-        set_custom_element_data(a_mixin5, "id", "tree");
-        set_custom_element_data(a_mixin5, "class", "climbable");
+        set_custom_element_data(a_mixin5, "id", "rock");
         set_custom_element_data(a_mixin5, "shadow", "");
         set_custom_element_data(a_mixin5, "host", "");
-        set_custom_element_data(a_mixin5, "wind", "");
-        set_custom_element_data(a_mixin5, "gltf-model", "./glb/tree.glb");
+        set_custom_element_data(a_mixin5, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
         set_custom_element_data(a_mixin5, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin5, "vary", "property: scale; range: 1 0.5 1 2 3 2");
-        set_custom_element_data(a_mixin5, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin5, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
-        set_custom_element_data(a_mixin6, "id", "rock");
+        set_custom_element_data(a_mixin5, "gltf-model", "./glb/rockB.glb");
+        set_custom_element_data(a_mixin5, "ammo-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin5, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
+        set_custom_element_data(a_entity0, "id", "mountain-model");
+        set_custom_element_data(a_entity0, "gltf-model", "./glb/rockC.glb");
+        set_custom_element_data(a_entity0, "instanced-mesh", "capacity: 50");
+        set_custom_element_data(a_mixin6, "id", "mountains");
         set_custom_element_data(a_mixin6, "shadow", "");
         set_custom_element_data(a_mixin6, "host", "");
-        set_custom_element_data(a_mixin6, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
-        set_custom_element_data(a_mixin6, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin6, "gltf-model", "./glb/rockB.glb");
-        set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0");
-        set_custom_element_data(a_mixin6, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
-        set_custom_element_data(a_mixin7, "id", "mountains");
-        set_custom_element_data(a_mixin7, "shadow", "");
-        set_custom_element_data(a_mixin7, "host", "");
-        set_custom_element_data(a_mixin7, "instanced-mesh-member", "mesh:#mountain-model");
-        set_custom_element_data(a_mixin7, "ring", a_mixin7_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 50");
-        set_custom_element_data(a_mixin7, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin7, "vary", "property: scale; range: 12 7.5 12 12 15 12");
-        set_custom_element_data(a_mixin7, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
+        set_custom_element_data(a_mixin6, "instanced-mesh-member", "mesh:#mountain-model");
+        set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 50");
+        set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin6, "vary", "property: scale; range: 12 2 12 15 20 15");
+        set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
+        set_custom_element_data(a_entity1, "pool__mountains", "mixin: mountains; size: 100");
+        set_custom_element_data(a_entity1, "activate__mountains", "");
         set_custom_element_data(a_sky, "color", sky);
         set_custom_element_data(a_sky, "host", "");
         set_custom_element_data(a_sky, "animate", a_sky_animate_value = "property: color; to: " + sky_dark + "; easing: easeInOut; dur: 6000 ");
-        set_custom_element_data(a_entity1, "pool__tree", "mixin: tree; size: 50");
-        set_custom_element_data(a_entity1, "activate__tree", "");
-        set_custom_element_data(a_entity2, "pool__mountains", "mixin: mountains; size: 50");
-        set_custom_element_data(a_entity2, "activate__mountains", "");
+        set_custom_element_data(a_mixin7, "id", "tree");
+        set_custom_element_data(a_mixin7, "class", "climbable");
+        set_custom_element_data(a_mixin7, "shadow", "");
+        set_custom_element_data(a_mixin7, "host", "");
+        set_custom_element_data(a_mixin7, "windy", "");
+        set_custom_element_data(a_mixin7, "gltf-model", "./glb/tree.glb");
+        set_custom_element_data(a_mixin7, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin7, "vary", "property: scale; range: 1 0.5 1 2 3 2");
+        set_custom_element_data(a_mixin7, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin7, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
+        set_custom_element_data(a_entity2, "pool__tree", "mixin: tree; size: 50");
+        set_custom_element_data(a_entity2, "activate__tree", "");
         set_custom_element_data(a_entity3, "pool__mushroom", "mixin: mushroom; size: 20");
         set_custom_element_data(a_entity3, "activate__mushroom", "");
         set_custom_element_data(a_mixin8, "id", "grass");
         set_custom_element_data(a_mixin8, "host", "");
-        set_custom_element_data(a_mixin8, "wind", "");
+        set_custom_element_data(a_mixin8, "windy", "");
         set_custom_element_data(a_mixin8, "mixin", "smolitem");
         set_custom_element_data(a_mixin8, "gltf-model", "./glb/grass.glb");
         set_custom_element_data(a_mixin8, "shadow", "");
@@ -34194,6 +34733,9 @@ reset scout color to green, persists
         set_custom_element_data(a_entity6, "activate__flowers", "");
         set_custom_element_data(a_entity7, "pool__flowerslow", "mixin: flowersLow; size: 50");
         set_custom_element_data(a_entity7, "activate__flowerslow", "");
+        set_custom_element_data(a_sphere, "position", "0 100 0");
+        set_custom_element_data(a_sphere, "radius", "10");
+        set_custom_element_data(a_sphere, "material", "color: yellow; shader: flat;");
         set_custom_element_data(a_entity8, "host", "");
         set_custom_element_data(a_entity8, "position", a_entity8_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
         set_custom_element_data(a_entity8, "light", a_entity8_light_value = ctx[1]({
@@ -34230,56 +34772,57 @@ reset scout color to green, persists
         set_custom_element_data(a_plane, "ammo-shape", "type:box");
         set_custom_element_data(a_plane, "color", "#334411");
         set_custom_element_data(a_mixin9, "id", "cloud");
-        set_custom_element_data(a_mixin9, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin9, "material", "color: #ffffff; opacity: 0.75; transparent: true; emissive: white; ");
+        set_custom_element_data(a_mixin9, "scatter", ctx[3]);
+        set_custom_element_data(a_mixin9, "material", "color: #ffffff; shader: flat; emissive: white; ");
         set_custom_element_data(a_mixin9, "geometry", "");
         set_custom_element_data(a_mixin9, "host", "");
         set_custom_element_data(a_mixin9, "scale", "15 5 10");
         set_custom_element_data(a_mixin9, "vary", "property: scale; range: 1 1 1 1.5 1.5 1.5");
-        set_custom_element_data(a_entity11, "pool__cloud", "mixin: shadow cloud; size: 15");
+        set_custom_element_data(a_entity11, "pool__cloud", "mixin: shadow cloud; size: 30");
         set_custom_element_data(a_entity11, "activate__cloud", "");
         set_custom_element_data(a_entity11, "position", a_entity11_position_value = "0 35 " + ctx[0]);
-        set_custom_element_data(a_entity11, "animation", a_entity11_animation_value = "property:object3D.position.z; to:-" + ctx[0] + "; dur: " + 400 * 300 + "; loop: true;");
+        set_custom_element_data(a_entity11, "animation", a_entity11_animation_value = "property:object3D.position.z; to:-" + ctx[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;");
+        set_custom_element_data(a_entity11, "animation__scale", a_entity11_animation__scale_value = "property:object3D.scale; from: 0 0 0; to:1 1 1; dur: " + 400 * 300 / 2 + "; loop: true; dir: alternate");
         set_custom_element_data(a_entity12, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
         set_custom_element_data(a_mixin10, "id", "floof");
         set_custom_element_data(a_mixin10, "geometry", "");
         set_custom_element_data(a_mixin10, "scale", "0.05 0.05 0.05");
         set_custom_element_data(a_mixin10, "material", "color: white; shader: flat;");
-        set_custom_element_data(a_mixin10, "vary", a_mixin10_vary_value = "property: position; range: -" + ctx[0] + " 0.5 -" + ctx[0] + " " + ctx[0] + " 4 " + ctx[0]);
-        set_custom_element_data(a_mixin10, "spiral", "");
+        set_custom_element_data(a_mixin10, "vary", a_mixin10_vary_value = "property: position; range: -" + ctx[0] * 0.75 + " 0 -" + ctx[0] * 0.75 + " " + ctx[0] * 0.75 + " 4 " + ctx[0] * 0.75);
+        set_custom_element_data(a_mixin10, "floaty", "");
         set_custom_element_data(a_entity13, "pool__floof", "mixin: floof; size: 300;");
         set_custom_element_data(a_entity13, "activate__floof", "");
         set_custom_element_data(a_mixin11, "id", "birds");
         set_custom_element_data(a_mixin11, "geometry", "");
-        set_custom_element_data(a_mixin11, "scale", "0.05 0.05 0.05");
+        set_custom_element_data(a_mixin11, "scale", "0.25 0.15 0.15");
         set_custom_element_data(a_mixin11, "material", "color: yellow; shader: flat;");
-        set_custom_element_data(a_mixin11, "vary", a_mixin11_vary_value = "property: position; range: -" + ctx[0] + " 10.5 -" + ctx[0] + " " + ctx[0] + " 40 " + ctx[0]);
-        set_custom_element_data(a_mixin11, "spiral", "");
+        set_custom_element_data(a_mixin11, "vary", a_mixin11_vary_value = "property: position; range: -" + ctx[0] * 0.75 + " 10.5 -" + ctx[0] * 0.75 + " " + ctx[0] * 0.75 + " 40 " + ctx[0] * 0.75);
+        set_custom_element_data(a_mixin11, "floaty", "");
         set_custom_element_data(a_entity14, "pool__birds", "mixin: birds; size: 50;");
         set_custom_element_data(a_entity14, "activate__birds", "");
       },
       m(target, anchor) {
-        insert(target, a_entity0, anchor);
-        insert(target, t0, anchor);
         insert(target, a_mixin0, anchor);
-        insert(target, t1, anchor);
+        insert(target, t0, anchor);
         insert(target, a_mixin1, anchor);
-        insert(target, t2, anchor);
+        insert(target, t1, anchor);
         insert(target, a_mixin2, anchor);
-        insert(target, t3, anchor);
+        insert(target, t2, anchor);
         insert(target, a_mixin3, anchor);
-        insert(target, t4, anchor);
+        insert(target, t3, anchor);
         insert(target, a_mixin4, anchor);
-        insert(target, t5, anchor);
+        insert(target, t4, anchor);
         insert(target, a_mixin5, anchor);
+        insert(target, t5, anchor);
+        insert(target, a_entity0, anchor);
         insert(target, t6, anchor);
         insert(target, a_mixin6, anchor);
         insert(target, t7, anchor);
-        insert(target, a_mixin7, anchor);
+        insert(target, a_entity1, anchor);
         insert(target, t8, anchor);
         insert(target, a_sky, anchor);
         insert(target, t9, anchor);
-        insert(target, a_entity1, anchor);
+        insert(target, a_mixin7, anchor);
         insert(target, t10, anchor);
         insert(target, a_entity2, anchor);
         insert(target, t11, anchor);
@@ -34296,6 +34839,7 @@ reset scout color to green, persists
         insert(target, a_entity7, anchor);
         insert(target, t17, anchor);
         insert(target, a_entity8, anchor);
+        append(a_entity8, a_sphere);
         insert(target, t18, anchor);
         insert(target, a_entity9, anchor);
         insert(target, t19, anchor);
@@ -34318,8 +34862,8 @@ reset scout color to green, persists
         insert(target, a_entity14, anchor);
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1 && a_mixin7_ring_value !== (a_mixin7_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
-          set_custom_element_data(a_mixin7, "ring", a_mixin7_ring_value);
+        if (dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
+          set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value);
         }
         if (dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
           set_custom_element_data(a_entity8, "position", a_entity8_position_value);
@@ -34351,13 +34895,13 @@ reset scout color to green, persists
         if (dirty & 1 && a_entity11_position_value !== (a_entity11_position_value = "0 35 " + ctx2[0])) {
           set_custom_element_data(a_entity11, "position", a_entity11_position_value);
         }
-        if (dirty & 1 && a_entity11_animation_value !== (a_entity11_animation_value = "property:object3D.position.z; to:-" + ctx2[0] + "; dur: " + 400 * 300 + "; loop: true;")) {
+        if (dirty & 1 && a_entity11_animation_value !== (a_entity11_animation_value = "property:object3D.position.z; to:-" + ctx2[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
           set_custom_element_data(a_entity11, "animation", a_entity11_animation_value);
         }
-        if (dirty & 1 && a_mixin10_vary_value !== (a_mixin10_vary_value = "property: position; range: -" + ctx2[0] + " 0.5 -" + ctx2[0] + " " + ctx2[0] + " 4 " + ctx2[0])) {
+        if (dirty & 1 && a_mixin10_vary_value !== (a_mixin10_vary_value = "property: position; range: -" + ctx2[0] * 0.75 + " 0 -" + ctx2[0] * 0.75 + " " + ctx2[0] * 0.75 + " 4 " + ctx2[0] * 0.75)) {
           set_custom_element_data(a_mixin10, "vary", a_mixin10_vary_value);
         }
-        if (dirty & 1 && a_mixin11_vary_value !== (a_mixin11_vary_value = "property: position; range: -" + ctx2[0] + " 10.5 -" + ctx2[0] + " " + ctx2[0] + " 40 " + ctx2[0])) {
+        if (dirty & 1 && a_mixin11_vary_value !== (a_mixin11_vary_value = "property: position; range: -" + ctx2[0] * 0.75 + " 10.5 -" + ctx2[0] * 0.75 + " " + ctx2[0] * 0.75 + " 40 " + ctx2[0] * 0.75)) {
           set_custom_element_data(a_mixin11, "vary", a_mixin11_vary_value);
         }
       },
@@ -34365,31 +34909,31 @@ reset scout color to green, persists
       o: noop,
       d(detaching) {
         if (detaching)
-          detach(a_entity0);
+          detach(a_mixin0);
         if (detaching)
           detach(t0);
         if (detaching)
-          detach(a_mixin0);
+          detach(a_mixin1);
         if (detaching)
           detach(t1);
         if (detaching)
-          detach(a_mixin1);
+          detach(a_mixin2);
         if (detaching)
           detach(t2);
         if (detaching)
-          detach(a_mixin2);
+          detach(a_mixin3);
         if (detaching)
           detach(t3);
         if (detaching)
-          detach(a_mixin3);
+          detach(a_mixin4);
         if (detaching)
           detach(t4);
         if (detaching)
-          detach(a_mixin4);
+          detach(a_mixin5);
         if (detaching)
           detach(t5);
         if (detaching)
-          detach(a_mixin5);
+          detach(a_entity0);
         if (detaching)
           detach(t6);
         if (detaching)
@@ -34397,7 +34941,7 @@ reset scout color to green, persists
         if (detaching)
           detach(t7);
         if (detaching)
-          detach(a_mixin7);
+          detach(a_entity1);
         if (detaching)
           detach(t8);
         if (detaching)
@@ -34405,7 +34949,7 @@ reset scout color to green, persists
         if (detaching)
           detach(t9);
         if (detaching)
-          detach(a_entity1);
+          detach(a_mixin7);
         if (detaching)
           detach(t10);
         if (detaching)
@@ -34489,11 +35033,12 @@ reset scout color to green, persists
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize: groundSize2 = 100 } = $$props;
     const scatter = [-groundSize2 / 2, 0, -groundSize2 / 2, groundSize2 / 2, 0, groundSize2 / 2].join(" ");
+    const scatterBig = [-groundSize2, 0, -groundSize2, groundSize2, 0, groundSize2].join(" ");
     $$self.$$set = ($$props2) => {
       if ("groundSize" in $$props2)
         $$invalidate(0, groundSize2 = $$props2.groundSize);
     };
-    return [groundSize2, str, scatter];
+    return [groundSize2, str, scatter, scatterBig];
   }
   var Forest = class extends SvelteComponent {
     constructor(options) {
@@ -34621,6 +35166,7 @@ reset scout color to green, persists
         set_custom_element_data(a_scene, "shadow", "type:basic;");
         set_custom_element_data(a_scene, "fog", "type: exponential; color: #555");
         set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[1]);
+        set_custom_element_data(a_scene, "uniforms", "");
       },
       m(target, anchor) {
         mount_component(webcam, target, anchor);
@@ -34820,35 +35366,35 @@ reset scout color to green, persists
     return child_ctx;
   }
   function create_each_block(ctx) {
-    let video;
+    let video2;
     let current;
-    video = new video_default({ props: { src: ctx[3] } });
+    video2 = new video_default({ props: { src: ctx[3] } });
     return {
       c() {
-        create_component(video.$$.fragment);
+        create_component(video2.$$.fragment);
       },
       m(target, anchor) {
-        mount_component(video, target, anchor);
+        mount_component(video2, target, anchor);
         current = true;
       },
       p(ctx2, dirty) {
         const video_changes = {};
         if (dirty & 2)
           video_changes.src = ctx2[3];
-        video.$set(video_changes);
+        video2.$set(video_changes);
       },
       i(local) {
         if (current)
           return;
-        transition_in(video.$$.fragment, local);
+        transition_in(video2.$$.fragment, local);
         current = true;
       },
       o(local) {
-        transition_out(video.$$.fragment, local);
+        transition_out(video2.$$.fragment, local);
         current = false;
       },
       d(detaching) {
-        destroy_component(video, detaching);
+        destroy_component(video2, detaching);
       }
     };
   }
@@ -35229,17 +35775,17 @@ reset scout color to green, persists
         textarea = element("textarea");
         t3 = space();
         div2 = element("div");
-        attr(div0, "class", "sprites sprite svelte-1tqvjp5");
-        attr(div1, "class", "flex svelte-1tqvjp5");
+        attr(div0, "class", "sprites sprite svelte-7z92og");
+        attr(div1, "class", "flex svelte-7z92og");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-1tqvjp5");
+        attr(textarea, "class", "text button svelte-7z92og");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-1tqvjp5");
-        attr(div3, "class", "span2 full svelte-1tqvjp5");
-        attr(div4, "class", "vbox svelte-1tqvjp5");
-        attr(div5, "class", "menu svelte-1tqvjp5");
+        attr(div2, "class", "flex svelte-7z92og");
+        attr(div3, "class", "span2 full svelte-7z92og");
+        attr(div4, "class", "vbox svelte-7z92og");
+        attr(div5, "class", "menu svelte-7z92og");
       },
       m(target, anchor) {
         insert(target, div5, anchor);

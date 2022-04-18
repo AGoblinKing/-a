@@ -138,7 +138,7 @@
 		text-align: left;
 
 		font-size: 0.8rem;
-		height: 25vh;
+		height: 40vh;
 		box-sizing: border-box;
 		border: 1px solid rgba(19, 18, 18, 0.836);
 		background-color: rgb(190, 190, 190);

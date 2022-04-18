@@ -9,6 +9,14 @@ AFRAME.registerComponent("wasd-controller", {
         speed: { type: "number", default: 0.3 },
         rot: { type: "number", default: 0.0025 },
     },
+
+    init() {
+        this.jump = AFRAME.utils.throttleTick(this.jump, 1000, this)
+    },
+    jump() {
+        this.el.emit("jump")
+    },
+
     tick(_, delta) {
         if (!this.el.body) return
 
@@ -27,6 +35,8 @@ AFRAME.registerComponent("wasd-controller", {
         // TODO: or if colliding with a climbable
         if (key_map.$[" "] && o3d.position.y < 0.5) {
             hop = 4 * delta
+            // we're jumping
+            this.jump()
         }
         if (key_map.$["w"]) {
             vec3.y = hop

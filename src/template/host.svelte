@@ -6,6 +6,7 @@
 	import '../component/net'
 	import '../component/webcam-vrm'
 	import '../component/vrm'
+	import '../component/uniforms'
 	import '../component/vary'
 
 	import Webcam from './webcam.svelte'
@@ -32,6 +33,7 @@
 	shadow="type:basic;"
 	fog="type: exponential; color: #555"
 	physics="driver: ammo; debug: {$open_debug}"
+	uniforms
 >
 	<a-assets>
 		<audio id="sound-bg" src="./sound/bg-ocean.mp3" />

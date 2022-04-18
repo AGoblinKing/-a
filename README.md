@@ -53,3 +53,20 @@
 - ~ INSPECT text overlay like goblin.life showing what they said/other stats
 - persistance
 - selfie cam
+
+
+- FPS Camera / toggle record button for mic/cam, default off
+- left/right mosue blink, mouse wheel for mouth open/close
+
+- select
+ - take first target
+- custom shader for wind animation
+ - 
+- jsfxr for custom sounds
+    - test this
+- environmental floofs using cube geoms
+- animation recording
+    - 
+- voice recording
+- goblins/animals using idle/run animation simple controller
+- head collider

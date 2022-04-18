@@ -9,6 +9,7 @@ export const voice_current = new Value("Guy | UK English").save("voice_current")
 export const voice_doer = new Value("Aus | UK English").save("voice_doer")
 export const scouter = new Value("green").save("scouter")
 export const videos = new Value(["MePBW53Rtpw", "lyDJOPuanO0", "sDsZZiiSwG8"])
+export const video = new Value("doer1.8").save("video_2")
 
 export const open_home = new Value(true)
 export const open_game = new Value(false)
@@ -18,7 +19,7 @@ export const open_help = new Value(false)
 export const open_stats = new Value(false).save("stats")
 export const open_heard = new Value(true).save("heard")
 export const open_debug = new Value(false).save("debugger")
-export const open_targeting = new Value(true).save("targeting_3")
+export const open_targeting = new Value(false).save("targeting_3")
 export const open_live = new Value(false)
 
 export const camera = new Value<Object3D>()
@@ -28,6 +29,7 @@ export const toggle_visible = new Value(state.visible).save("visible")
 export const do_echo = new Value(true).save("do_echo")
 export const do_vary = new Value(true)
 
+export const time = new Value(new AFRAME.THREE.Uniform(0))
 
 open_game.on(($g) => {
     if (open_game.$) {
