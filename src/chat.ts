@@ -56,6 +56,8 @@ function say(said: string) {
     utterThis.voice = findVoice(voice_current.$) || findVoice("Aus") || findVoice("UK English Female") || voices[0]
     utterThis.pitch = 1
     utterThis.rate = 0.8
+    utterThis.volume = 1
+
     synth.speak(utterThis);
 }
 

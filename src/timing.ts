@@ -1,4 +1,4 @@
-import { Object3D, Vector3 } from "three";
+import type { Object3D } from "three";
 import state from "./state";
 import { Value } from "./value";
 
@@ -8,7 +8,7 @@ export const avatar_doer = new Value<string>(state.avatar.doer).save("avatar_doe
 export const voice_current = new Value("Guy | UK English").save("voice_current")
 export const voice_doer = new Value("Aus | UK English").save("voice_doer")
 export const scouter = new Value("green").save("scouter")
-export const videos = new Value(["MePBW53Rtpw", "lyDJOPuanO0", "sDsZZiiSwG8"])
+export const videos = new Value(["BzIeSMDe85U", "MePBW53Rtpw", "lyDJOPuanO0"])
 export const video = new Value("doer1.8").save("video_2")
 
 export const open_home = new Value(true)
@@ -38,7 +38,7 @@ open_game.on(($g) => {
     }
 })
 
-export const motd = new Value(`🎊v0.2.0🎊
+export const motd = new Value(`🎊v0.2.1🎊
 
 ✅ Performance Pass
 ✅ Animals ✅ Wind ✅ Floofs

@@ -92,6 +92,6 @@
 		bottom: 2.5vh;
 		width: 100%;
 		pointer-events: all;
-		z-index: 10;
+		z-index: 15;
 	}
 </style>

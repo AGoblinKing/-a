@@ -5571,7 +5571,7 @@
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance14, create_fragment16, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance14, create_fragment17, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5607,7 +5607,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment16 ? create_fragment16($$.ctx) : false;
+    $$.fragment = create_fragment17 ? create_fragment17($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -7064,6 +7064,191 @@
   // src/component/webcam-vrm.ts
   var import_holistic = __toESM(require_holistic(), 1);
   var import_camera_utils = __toESM(require_camera_utils(), 1);
+
+  // src/state.ts
+  var state_default = {
+    "binds": {
+      "n": "control selfie",
+      "m": "control not selfie",
+      "h": "hi! | hey ! | hey you! | hello...",
+      "i": "it's doer 1 | it's me, doer 1 | doer 1 that's me",
+      "f1": "control help",
+      "f2": "control not help"
+    },
+    "vars": {},
+    "selfie": false,
+    avatar: {
+      doer: "./vrm/doer2.2.vrm",
+      current: "./vrm/doer.2.vrm"
+    },
+    visible: true
+  };
+
+  // src/timing.ts
+  var tick = new Value(0);
+  var avatar_current = new Value(state_default.avatar.current).save("avatar_current_2");
+  var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
+  var voice_current = new Value("Guy | UK English").save("voice_current");
+  var voice_doer = new Value("Aus | UK English").save("voice_doer");
+  var scouter = new Value("green").save("scouter");
+  var videos = new Value(["BzIeSMDe85U", "MePBW53Rtpw", "lyDJOPuanO0"]);
+  var video = new Value("doer1.8").save("video_2");
+  var open_home = new Value(true);
+  var open_game = new Value(false);
+  var open_text = new Value(void 0);
+  var open_loading = new Value(false);
+  var open_help = new Value(false);
+  var open_stats = new Value(false).save("stats");
+  var open_heard = new Value(true).save("heard");
+  var open_debug = new Value(false).save("debugger");
+  var open_targeting = new Value(false).save("targeting_3");
+  var open_live = new Value(false);
+  var camera = new Value();
+  var camera_el = new Value();
+  var toggle_selfie = new Value(state_default.selfie).save("selfie");
+  var toggle_visible = new Value(state_default.visible).save("visible");
+  var do_echo = new Value(true).save("do_echo");
+  var do_vary = new Value(true);
+  var time = new Value(new AFRAME.THREE.Uniform(0));
+  var size = new Value(new AFRAME.THREE.Vector3(1, 1, 1));
+  open_game.on(($g) => {
+    if (open_game.$) {
+      open_loading.set(true);
+    }
+  });
+  var motd = new Value(`\u{1F38A}v0.2.1\u{1F38A}
+
+\u2705 Performance Pass
+\u2705 Animals \u2705 Wind \u2705 Floofs
+\u2705 WASD / Mouse / Recording Mode
+
+\u274C Targeting
+\u274C AI DOER \u274C Gameplay 
+
+\u274C WebRTC Multiplayer 
+6 player, 5 clients to 1 host
+
+\u274C 1 MediaStream 
+music / video / camera source / picture
+
+\u274C Factions \u274C Rules 
+
+The web is a scary place. 
+\u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
+
+WebRTC connection details stored in central DB to allow connection by alias. 
+
+WebRTC data is sent to peers only. 
+
+Camera data is processed by mediapipe via tensorflow locally.
+
+Microphone data is handled by the browser provider, ie: Chrome / Edge / etc.
+
+Cookies are not used to track your personal data by us. localStorage is used for persistance. 
+There are iframes to 3rd parties that may attempt to track you, like youtube. 
+Users can load assets remotely using HTTP to other websites. We're not responsible for their content, contact the host directly.
+If that's a problem then reject this terms of use by closing your browser.
+
+Accountless. 
+
+Age 18+ only.
+
+`);
+  var ticker = () => {
+    requestAnimationFrame(ticker);
+    tick.set(tick.$ + 1);
+  };
+  var loading = new Value(`Loading...
+
+ WASD Move > Q+E Rotate
+ Enter > Chat
+     ~ > Command
+ Space > Jump
+ 
+ Default Binds:
+
+ N: Selfie
+ M: NotSelfie
+ H: Hi | Hi! | Hello | Heya | Yo
+ F1: Help
+ F2: NotHelp
+`);
+  ticker();
+  var helptext = new Value(`\u{1F916}Commands\u{1F916}
+
+~ echo 
+echo on, persisted
+
+~ not echo 
+echo off, persisted
+
+~ avatar ...url 
+set avatar to URL, persisted
+
+~ clear avatar 
+set avatar to default
+
+~ bind key ...commands 
+bind key to commands, persisted
+
+~ not bind key
+unbinds key, persisted
+
+~ var name ...commands 
+binds variable name to commands
+
+~ not var name 
+unbinds variable name
+
+~ stats 
+show fps stats
+
+~ not stats
+hide fps stats
+
+~ heard
+show top heard messages
+
+~ not heard
+hide top heard messages
+
+~ help
+show this help
+
+~ not help
+hide this help
+
+~ voice ...nameToSearch
+set voice to nameToSearch ie: aus would find an Australian voice or UK for British, persisted
+per browser
+
+~ swap
+swap places with your doer
+
+~ visible
+show your avatar
+
+~ not visible
+hide your avatar
+
+~ selfie
+selfie camera mode
+
+~ not selfie
+not selfie camera mode
+
+~ target
+show targeting UI, persists
+
+~ not target
+hide targeting UI, persists
+
+~ scouter ...color
+set your targeting UI to be that color, persists
+
+~ not scouter
+reset scout color to green, persists
+`);
 
   // node_modules/three/build/three.module.js
   var REVISION = "137";
@@ -27754,7 +27939,7 @@
       return this;
     }
   };
-  var loading = {};
+  var loading2 = {};
   var FileLoader = class extends Loader {
     constructor(manager) {
       super(manager);
@@ -27775,16 +27960,16 @@
         }, 0);
         return cached;
       }
-      if (loading[url] !== void 0) {
-        loading[url].push({
+      if (loading2[url] !== void 0) {
+        loading2[url].push({
           onLoad,
           onProgress,
           onError
         });
         return;
       }
-      loading[url] = [];
-      loading[url].push({
+      loading2[url] = [];
+      loading2[url].push({
         onLoad,
         onProgress,
         onError
@@ -27803,7 +27988,7 @@
           if (typeof ReadableStream === "undefined" || response.body.getReader === void 0) {
             return response;
           }
-          const callbacks = loading[url];
+          const callbacks = loading2[url];
           const reader = response.body.getReader();
           const contentLength = response.headers.get("Content-Length");
           const total = contentLength ? parseInt(contentLength) : 0;
@@ -27861,20 +28046,20 @@
         }
       }).then((data) => {
         Cache.add(url, data);
-        const callbacks = loading[url];
-        delete loading[url];
+        const callbacks = loading2[url];
+        delete loading2[url];
         for (let i2 = 0, il = callbacks.length; i2 < il; i2++) {
           const callback = callbacks[i2];
           if (callback.onLoad)
             callback.onLoad(data);
         }
       }).catch((err) => {
-        const callbacks = loading[url];
+        const callbacks = loading2[url];
         if (callbacks === void 0) {
           this.manager.itemError(url);
           throw err;
         }
-        delete loading[url];
+        delete loading2[url];
         for (let i2 = 0, il = callbacks.length; i2 < il; i2++) {
           const callback = callbacks[i2];
           if (callback.onError)
@@ -31463,191 +31648,6 @@
     }
   }
 
-  // src/state.ts
-  var state_default = {
-    "binds": {
-      "n": "control selfie",
-      "m": "control not selfie",
-      "h": "hi! | hey ! | hey you! | hello...",
-      "i": "it's doer 1 | it's me, doer 1 | doer 1 that's me",
-      "f1": "control help",
-      "f2": "control not help"
-    },
-    "vars": {},
-    "selfie": false,
-    avatar: {
-      doer: "./vrm/goblin.2.vrm",
-      current: "./vrm/doer.2.vrm"
-    },
-    visible: true
-  };
-
-  // src/timing.ts
-  var tick = new Value(0);
-  var avatar_current = new Value(state_default.avatar.current).save("avatar_current_2");
-  var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
-  var voice_current = new Value("Guy | UK English").save("voice_current");
-  var voice_doer = new Value("Aus | UK English").save("voice_doer");
-  var scouter = new Value("green").save("scouter");
-  var videos = new Value(["MePBW53Rtpw", "lyDJOPuanO0", "sDsZZiiSwG8"]);
-  var video = new Value("doer1.8").save("video_2");
-  var open_home = new Value(true);
-  var open_game = new Value(false);
-  var open_text = new Value(void 0);
-  var open_loading = new Value(false);
-  var open_help = new Value(false);
-  var open_stats = new Value(false).save("stats");
-  var open_heard = new Value(true).save("heard");
-  var open_debug = new Value(false).save("debugger");
-  var open_targeting = new Value(false).save("targeting_3");
-  var open_live = new Value(false);
-  var camera = new Value();
-  var camera_el = new Value();
-  var toggle_selfie = new Value(state_default.selfie).save("selfie");
-  var toggle_visible = new Value(state_default.visible).save("visible");
-  var do_echo = new Value(true).save("do_echo");
-  var do_vary = new Value(true);
-  var time = new Value(new AFRAME.THREE.Uniform(0));
-  var size = new Value(new AFRAME.THREE.Vector3(1, 1, 1));
-  open_game.on(($g) => {
-    if (open_game.$) {
-      open_loading.set(true);
-    }
-  });
-  var motd = new Value(`\u{1F38A}v0.2.0\u{1F38A}
-
-\u2705 Performance Pass
-\u2705 Animals \u2705 Wind \u2705 Floofs
-\u2705 WASD / Mouse / Recording Mode
-
-\u274C Targeting
-\u274C AI DOER \u274C Gameplay 
-
-\u274C WebRTC Multiplayer 
-6 player, 5 clients to 1 host
-
-\u274C 1 MediaStream 
-music / video / camera source / picture
-
-\u274C Factions \u274C Rules 
-
-The web is a scary place. 
-\u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
-
-WebRTC connection details stored in central DB to allow connection by alias. 
-
-WebRTC data is sent to peers only. 
-
-Camera data is processed by mediapipe via tensorflow locally.
-
-Microphone data is handled by the browser provider, ie: Chrome / Edge / etc.
-
-Cookies are not used to track your personal data by us. localStorage is used for persistance. 
-There are iframes to 3rd parties that may attempt to track you, like youtube. 
-Users can load assets remotely using HTTP to other websites. We're not responsible for their content, contact the host directly.
-If that's a problem then reject this terms of use by closing your browser.
-
-Accountless. 
-
-Age 18+ only.
-
-`);
-  var ticker = () => {
-    requestAnimationFrame(ticker);
-    tick.set(tick.$ + 1);
-  };
-  var loading2 = new Value(`Loading...
-
- WASD Move > Q+E Rotate
- Enter > Chat
-     ~ > Command
- Space > Jump
- 
- Default Binds:
-
- N: Selfie
- M: NotSelfie
- H: Hi | Hi! | Hello | Heya | Yo
- F1: Help
- F2: NotHelp
-`);
-  ticker();
-  var helptext = new Value(`\u{1F916}Commands\u{1F916}
-
-~ echo 
-echo on, persisted
-
-~ not echo 
-echo off, persisted
-
-~ avatar ...url 
-set avatar to URL, persisted
-
-~ clear avatar 
-set avatar to default
-
-~ bind key ...commands 
-bind key to commands, persisted
-
-~ not bind key
-unbinds key, persisted
-
-~ var name ...commands 
-binds variable name to commands
-
-~ not var name 
-unbinds variable name
-
-~ stats 
-show fps stats
-
-~ not stats
-hide fps stats
-
-~ heard
-show top heard messages
-
-~ not heard
-hide top heard messages
-
-~ help
-show this help
-
-~ not help
-hide this help
-
-~ voice ...nameToSearch
-set voice to nameToSearch ie: aus would find an Australian voice or UK for British, persisted
-per browser
-
-~ swap
-swap places with your doer
-
-~ visible
-show your avatar
-
-~ not visible
-hide your avatar
-
-~ selfie
-selfie camera mode
-
-~ not selfie
-not selfie camera mode
-
-~ target
-show targeting UI, persists
-
-~ not target
-hide targeting UI, persists
-
-~ scouter ...color
-set your targeting UI to be that color, persists
-
-~ not scouter
-reset scout color to green, persists
-`);
-
   // node_modules/@pixiv/three-vrm/lib/three-vrm.module.min.js
   function n(e, t, n2, i2) {
     return new (n2 || (n2 = Promise))(function(r2, o2) {
@@ -33140,6 +33140,7 @@ reset scout color to green, persists
     utterThis.voice = findVoice(voice_current.$) || findVoice("Aus") || findVoice("UK English Female") || voices[0];
     utterThis.pitch = 1;
     utterThis.rate = 0.8;
+    utterThis.volume = 1;
     synth.speak(utterThis);
   }
   function doControl(said) {
@@ -33559,6 +33560,12 @@ reset scout color to green, persists
   // src/component/wasd-controller.ts
   var vec32 = new AFRAME.THREE.Vector3();
   var quat2 = new AFRAME.THREE.Quaternion();
+  function getRoot(o3d) {
+    if (o3d.parent.name === "Root") {
+      return o3d.parent;
+    }
+    return getRoot(o3d.parent);
+  }
   AFRAME.registerComponent("wasd-controller", {
     schema: {
       speed: { type: "number", default: 0.3 },
@@ -33603,10 +33610,12 @@ reset scout color to green, persists
         vec32.x += this.data.speed * delta * intensity;
       }
       if (key_map.$["q"]) {
-        camera.$.parent.parent.parent.rotation.y += this.data.rot * delta;
+        const root = getRoot(camera.$);
+        root.rotation.y += this.data.rot * delta;
       }
       if (key_map.$["e"]) {
-        camera.$.parent.parent.parent.rotation.y -= this.data.rot * delta;
+        const root = getRoot(camera.$);
+        root.rotation.y -= this.data.rot * delta;
       }
       if (Math.abs(vec32.length()) > 0 && camera.$) {
         camera.$.updateMatrixWorld();
@@ -35256,8 +35265,131 @@ gl_Position = mvPosition;
   };
   var debug_default = Debug;
 
-  // src/template/host.svelte
+  // src/component/grid.ts
+  AFRAME.registerComponent("grid", {
+    schema: {
+      width: { type: "number", default: 1 },
+      length: { type: "number", default: 1 },
+      height: { type: "number", default: 1 },
+      fill: { type: "bool", default: false }
+    },
+    init() {
+      const d2 = this.el.object3D.parent.userData;
+      if (this.data.fill) {
+        const i2 = (d2.ringDex === void 0 ? d2.ringDex = 0 : d2.ringDex++) % (this.data.width * this.data.height * this.data.length);
+        this.el.object3D.position.set(i2 % this.data.width - this.data.width / 2, Math.floor(i2 / this.data.width / this.data.length) - this.data.height / 2, Math.floor(i2 / this.data.width) - this.data.length / 2);
+      } else {
+        const i2 = (d2.ringDex === void 0 ? d2.ringDex = 0 : d2.ringDex++) % ((this.data.width * 2 + 2 * this.data.height) * this.data.length);
+        this.el.object3D.position.set(i2 % (this.data.width * 2 + 2 * this.data.height) - this.data.width - this.data.height, Math.floor(i2 / (this.data.width * 2 + 2 * this.data.height)) - this.data.height, Math.floor(i2 / (this.data.width * 2 + 2 * this.data.height)) - this.data.length);
+      }
+    }
+  });
+
+  // src/template/house.svelte
   function create_fragment8(ctx) {
+    let a_entity0;
+    let t0;
+    let a_mixin0;
+    let t1;
+    let a_entity1;
+    let t2;
+    let a_mixin1;
+    let t3;
+    let a_entity2;
+    let t4;
+    let a_entity3;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        a_entity0 = element("a-entity");
+        t0 = space();
+        a_mixin0 = element("a-mixin");
+        t1 = space();
+        a_entity1 = element("a-entity");
+        t2 = space();
+        a_mixin1 = element("a-mixin");
+        t3 = space();
+        a_entity2 = element("a-entity");
+        t4 = space();
+        a_entity3 = element("a-entity");
+        set_custom_element_data(a_entity0, "id", "foundation");
+        set_custom_element_data(a_entity0, "ammo-shape", "type: box; fit: manual; halfExtents: 10 10 10; offset: 0 0 0");
+        set_custom_element_data(a_mixin0, "id", "floor");
+        set_custom_element_data(a_mixin0, "grid", "width: 5; length: 2; height: 1;fill: true;");
+        set_custom_element_data(a_mixin0, "gltf-model", "./glb/cabinFloor.glb");
+        set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin0, "ammo-shape", "type: box; fit: manual; half-extents: 0.5 0.1 0.5;");
+        set_custom_element_data(a_entity1, "class", "floors");
+        set_custom_element_data(a_entity1, "pool__floors", "size: 10; mixin: floor");
+        set_custom_element_data(a_entity1, "activate__floors", "");
+        set_custom_element_data(a_mixin1, "id", "walls");
+        set_custom_element_data(a_mixin1, "grid", "width: 5; length: 2; height: 2;");
+        set_custom_element_data(a_entity2, "class", "walls");
+        set_custom_element_data(a_entity2, "pool__walls", "");
+        set_custom_element_data(a_entity2, "activate__walls", "");
+        set_custom_element_data(a_entity3, "id", "floor");
+      },
+      m(target, anchor) {
+        insert(target, a_entity0, anchor);
+        insert(target, t0, anchor);
+        insert(target, a_mixin0, anchor);
+        insert(target, t1, anchor);
+        insert(target, a_entity1, anchor);
+        insert(target, t2, anchor);
+        insert(target, a_mixin1, anchor);
+        insert(target, t3, anchor);
+        insert(target, a_entity2, anchor);
+        insert(target, t4, anchor);
+        insert(target, a_entity3, anchor);
+        if (!mounted) {
+          dispose = listen(a_entity0, "collisionstart", collideStart);
+          mounted = true;
+        }
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_entity0);
+        if (detaching)
+          detach(t0);
+        if (detaching)
+          detach(a_mixin0);
+        if (detaching)
+          detach(t1);
+        if (detaching)
+          detach(a_entity1);
+        if (detaching)
+          detach(t2);
+        if (detaching)
+          detach(a_mixin1);
+        if (detaching)
+          detach(t3);
+        if (detaching)
+          detach(a_entity2);
+        if (detaching)
+          detach(t4);
+        if (detaching)
+          detach(a_entity3);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function collideStart() {
+  }
+  var House = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, create_fragment8, safe_not_equal, {});
+    }
+  };
+  var house_default = House;
+
+  // src/template/host.svelte
+  function create_fragment9(ctx) {
     let webcam;
     let t0;
     let heard;
@@ -35281,6 +35413,8 @@ gl_Position = mvPosition;
     let t8;
     let forest;
     let t9;
+    let house;
+    let t10;
     let debug_1;
     let a_scene_physics_value;
     let current;
@@ -35291,6 +35425,7 @@ gl_Position = mvPosition;
     camerafps = new camera_fps_default({});
     characters = new characters_default({});
     forest = new forest_default({});
+    house = new house_default({});
     debug_1 = new debug_default({});
     return {
       c() {
@@ -35316,6 +35451,8 @@ gl_Position = mvPosition;
         t8 = space();
         create_component(forest.$$.fragment);
         t9 = space();
+        create_component(house.$$.fragment);
+        t10 = space();
         create_component(debug_1.$$.fragment);
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "./sound/bg-ocean.mp3"))
@@ -35355,6 +35492,8 @@ gl_Position = mvPosition;
         append(a_scene, t8);
         mount_component(forest, a_scene, null);
         append(a_scene, t9);
+        mount_component(house, a_scene, null);
+        append(a_scene, t10);
         mount_component(debug_1, a_scene, null);
         current = true;
       },
@@ -35376,6 +35515,7 @@ gl_Position = mvPosition;
         transition_in(camerafps.$$.fragment, local);
         transition_in(characters.$$.fragment, local);
         transition_in(forest.$$.fragment, local);
+        transition_in(house.$$.fragment, local);
         transition_in(debug_1.$$.fragment, local);
         current = true;
       },
@@ -35387,6 +35527,7 @@ gl_Position = mvPosition;
         transition_out(camerafps.$$.fragment, local);
         transition_out(characters.$$.fragment, local);
         transition_out(forest.$$.fragment, local);
+        transition_out(house.$$.fragment, local);
         transition_out(debug_1.$$.fragment, local);
         current = false;
       },
@@ -35406,6 +35547,7 @@ gl_Position = mvPosition;
         destroy_component(camerafps);
         destroy_component(characters);
         destroy_component(forest);
+        destroy_component(house);
         destroy_component(debug_1);
       }
     };
@@ -35425,13 +35567,13 @@ gl_Position = mvPosition;
   var Host = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance7, create_fragment8, safe_not_equal, { groundSize: 2 });
+      init(this, options, instance7, create_fragment9, safe_not_equal, { groundSize: 2 });
     }
   };
   var host_default = Host;
 
   // src/ui/title.svelte
-  function create_fragment9(ctx) {
+  function create_fragment10(ctx) {
     let div3;
     let t8;
     let center;
@@ -35469,13 +35611,13 @@ gl_Position = mvPosition;
   var Title = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment9, safe_not_equal, {});
+      init(this, options, null, create_fragment10, safe_not_equal, {});
     }
   };
   var title_default = Title;
 
   // src/ui/video.svelte
-  function create_fragment10(ctx) {
+  function create_fragment11(ctx) {
     let iframe;
     let iframe_width_value;
     let iframe_src_value;
@@ -35523,7 +35665,7 @@ gl_Position = mvPosition;
   var Video = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance8, create_fragment10, safe_not_equal, { src: 0 });
+      init(this, options, instance8, create_fragment11, safe_not_equal, { src: 0 });
     }
   };
   var video_default = Video;
@@ -35567,7 +35709,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function create_fragment11(ctx) {
+  function create_fragment12(ctx) {
     let div10;
     let div0;
     let t0;
@@ -35762,7 +35904,7 @@ gl_Position = mvPosition;
   var Home = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance9, create_fragment11, safe_not_equal, {});
+      init(this, options, instance9, create_fragment12, safe_not_equal, {});
     }
   };
   var home_default = Home;
@@ -35778,8 +35920,8 @@ gl_Position = mvPosition;
         div = element("div");
         input = element("input");
         attr(input, "type", "text");
-        attr(input, "class", "entry svelte-1qlzmvl");
-        attr(div, "class", "lofi svelte-1qlzmvl");
+        attr(input, "class", "entry svelte-kqsr2i");
+        attr(div, "class", "lofi svelte-kqsr2i");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -35809,7 +35951,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function create_fragment12(ctx) {
+  function create_fragment13(ctx) {
     let if_block_anchor;
     let if_block = ctx[1] !== void 0 && create_if_block3(ctx);
     return {
@@ -35909,13 +36051,13 @@ gl_Position = mvPosition;
   var Text = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance10, create_fragment12, safe_not_equal, {});
+      init(this, options, instance10, create_fragment13, safe_not_equal, {});
     }
   };
   var text_default = Text;
 
   // src/ui/loading.svelte
-  function create_fragment13(ctx) {
+  function create_fragment14(ctx) {
     let div5;
     let div0;
     let t0;
@@ -35995,19 +36137,19 @@ gl_Position = mvPosition;
   }
   function instance11($$self, $$props, $$invalidate) {
     let $loading;
-    component_subscribe($$self, loading2, ($$value) => $$invalidate(0, $loading = $$value));
+    component_subscribe($$self, loading, ($$value) => $$invalidate(0, $loading = $$value));
     return [$loading];
   }
   var Loading = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance11, create_fragment13, safe_not_equal, {});
+      init(this, options, instance11, create_fragment14, safe_not_equal, {});
     }
   };
   var loading_default = Loading;
 
   // src/ui/help.svelte
-  function create_fragment14(ctx) {
+  function create_fragment15(ctx) {
     let div5;
     let div0;
     let t0;
@@ -36089,7 +36231,7 @@ gl_Position = mvPosition;
   var Help = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance12, create_fragment14, safe_not_equal, {});
+      init(this, options, instance12, create_fragment15, safe_not_equal, {});
     }
   };
   var help_default = Help;
@@ -36204,7 +36346,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function create_fragment15(ctx) {
+  function create_fragment16(ctx) {
     let text_1;
     let t0;
     let t1;
@@ -36382,7 +36524,7 @@ gl_Position = mvPosition;
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance13, create_fragment15, safe_not_equal, {});
+      init(this, options, instance13, create_fragment16, safe_not_equal, {});
     }
   };
   var main_default = Main;

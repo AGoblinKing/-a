@@ -1,9 +1,18 @@
+import type { Object3D } from "three"
 import { key_map } from "src/keyboard";
 import { camera } from "src/timing";
 
 const vec3 = new AFRAME.THREE.Vector3()
 const quat = new AFRAME.THREE.Quaternion()
 
+
+function getRoot(o3d: Object3D) {
+
+    if (o3d.parent.name === "Root") {
+        return o3d.parent
+    }
+    return getRoot(o3d.parent)
+}
 AFRAME.registerComponent("wasd-controller", {
     schema: {
         speed: { type: "number", default: 0.3 },
@@ -55,10 +64,12 @@ AFRAME.registerComponent("wasd-controller", {
             vec3.x += this.data.speed * delta * intensity
         }
         if (key_map.$["q"]) {
-            camera.$.parent.parent.parent.rotation.y += this.data.rot * delta
+            const root = getRoot(camera.$)
+            root.rotation.y += this.data.rot * delta
         }
         if (key_map.$["e"]) {
-            camera.$.parent.parent.parent.rotation.y -= this.data.rot * delta
+            const root = getRoot(camera.$)
+            root.rotation.y -= this.data.rot * delta
 
         }
         if (Math.abs(vec3.length()) > 0 && camera.$) {

@@ -30949,7 +30949,7 @@
     "vars": {},
     "selfie": false,
     avatar: {
-      doer: "./vrm/goblin.2.vrm",
+      doer: "./vrm/doer2.2.vrm",
       current: "./vrm/doer.2.vrm"
     },
     visible: true
@@ -31042,7 +31042,7 @@
   var voice_current = new Value("Guy | UK English").save("voice_current");
   var voice_doer = new Value("Aus | UK English").save("voice_doer");
   var scouter = new Value("green").save("scouter");
-  var videos = new Value(["MePBW53Rtpw", "lyDJOPuanO0", "sDsZZiiSwG8"]);
+  var videos = new Value(["BzIeSMDe85U", "MePBW53Rtpw", "lyDJOPuanO0"]);
   var video = new Value("doer1.8").save("video_2");
   var open_home = new Value(true);
   var open_game = new Value(false);
@@ -31067,7 +31067,7 @@
       open_loading.set(true);
     }
   });
-  var motd = new Value(`\u{1F38A}v0.2.0\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.2.1\u{1F38A}
 
 \u2705 Performance Pass
 \u2705 Animals \u2705 Wind \u2705 Floofs
@@ -31495,6 +31495,7 @@ reset scout color to green, persists
     utterThis.voice = findVoice(voice_current.$) || findVoice("Aus") || findVoice("UK English Female") || voices[0];
     utterThis.pitch = 1;
     utterThis.rate = 0.8;
+    utterThis.volume = 1;
     synth.speak(utterThis);
   }
   function doControl(said) {
@@ -32211,8 +32212,8 @@ reset scout color to green, persists
         div = element("div");
         input = element("input");
         attr(input, "type", "text");
-        attr(input, "class", "entry svelte-1qlzmvl");
-        attr(div, "class", "lofi svelte-1qlzmvl");
+        attr(input, "class", "entry svelte-kqsr2i");
+        attr(div, "class", "lofi svelte-kqsr2i");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -32380,6 +32381,12 @@ reset scout color to green, persists
   // src/component/wasd-controller.ts
   var vec3 = new AFRAME.THREE.Vector3();
   var quat = new AFRAME.THREE.Quaternion();
+  function getRoot(o3d) {
+    if (o3d.parent.name === "Root") {
+      return o3d.parent;
+    }
+    return getRoot(o3d.parent);
+  }
   AFRAME.registerComponent("wasd-controller", {
     schema: {
       speed: { type: "number", default: 0.3 },
@@ -32424,10 +32431,12 @@ reset scout color to green, persists
         vec3.x += this.data.speed * delta * intensity;
       }
       if (key_map.$["q"]) {
-        camera.$.parent.parent.parent.rotation.y += this.data.rot * delta;
+        const root = getRoot(camera.$);
+        root.rotation.y += this.data.rot * delta;
       }
       if (key_map.$["e"]) {
-        camera.$.parent.parent.parent.rotation.y -= this.data.rot * delta;
+        const root = getRoot(camera.$);
+        root.rotation.y -= this.data.rot * delta;
       }
       if (Math.abs(vec3.length()) > 0 && camera.$) {
         camera.$.updateMatrixWorld();

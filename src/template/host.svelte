@@ -20,6 +20,7 @@
 	import Forest from './forest.svelte'
 	import Live from 'src/ui/live.svelte'
 	import Debug from './debug.svelte'
+	import House from './house.svelte'
 
 	export let groundSize = 100
 </script>
@@ -48,5 +49,6 @@
 	<CameraFps />
 	<Characters />
 	<Forest />
+	<House />
 	<Debug />
 </a-scene>
