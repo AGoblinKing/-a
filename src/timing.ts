@@ -1,4 +1,4 @@
-import type { Object3D } from "three";
+import { Object3D, Vector3 } from "three";
 import state from "./state";
 import { Value } from "./value";
 
@@ -31,6 +31,7 @@ export const do_vary = new Value(true)
 
 export const time = new Value(new AFRAME.THREE.Uniform(0))
 
+export const size = new Value(new AFRAME.THREE.Vector3(1, 1, 1))
 open_game.on(($g) => {
     if (open_game.$) {
         open_loading.set(true)
@@ -39,11 +40,11 @@ open_game.on(($g) => {
 
 export const motd = new Value(`🎊v0.1.2🎊
 
-✅ Controls ✅ Persist 
-✅ Help [f1]
 ✅ Performance Pass
-✅ Targeting
+✅ Animals ✅ Wind ✅ Floofs
+✅ WASD / Mouse / Recording Mode
 
+❌ Targeting
 ❌ AI DOER ❌ Gameplay 
 
 ❌ WebRTC Multiplayer 

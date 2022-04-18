@@ -6324,13 +6324,13 @@
         }
       } else if (m2 = /^\#([A-Fa-f\d]+)$/.exec(style)) {
         const hex = m2[1];
-        const size = hex.length;
-        if (size === 3) {
+        const size2 = hex.length;
+        if (size2 === 3) {
           this.r = parseInt(hex.charAt(0) + hex.charAt(0), 16) / 255;
           this.g = parseInt(hex.charAt(1) + hex.charAt(1), 16) / 255;
           this.b = parseInt(hex.charAt(2) + hex.charAt(2), 16) / 255;
           return this;
-        } else if (size === 6) {
+        } else if (size2 === 6) {
           this.r = parseInt(hex.charAt(0) + hex.charAt(1), 16) / 255;
           this.g = parseInt(hex.charAt(2) + hex.charAt(3), 16) / 255;
           this.b = parseInt(hex.charAt(4) + hex.charAt(5), 16) / 255;
@@ -8188,8 +8188,8 @@
       }
       return this;
     }
-    setFromCenterAndSize(center, size) {
-      const halfSize = _vector$b.copy(size).multiplyScalar(0.5);
+    setFromCenterAndSize(center, size2) {
+      const halfSize = _vector$b.copy(size2).multiplyScalar(0.5);
       this.min.copy(center).sub(halfSize);
       this.max.copy(center).add(halfSize);
       return this;
@@ -12191,12 +12191,12 @@
   };
   CubeTexture.prototype.isCubeTexture = true;
   var WebGLCubeRenderTarget = class extends WebGLRenderTarget {
-    constructor(size, options, dummy) {
+    constructor(size2, options, dummy) {
       if (Number.isInteger(options)) {
         console.warn("THREE.WebGLCubeRenderTarget: constructor signature is now WebGLCubeRenderTarget( size, options )");
         options = dummy;
       }
-      super(size, size, options);
+      super(size2, size2, options);
       options = options || {};
       this.texture = new CubeTexture(void 0, options.mapping, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.encoding);
       this.texture.isRenderTargetTexture = true;
@@ -13596,11 +13596,11 @@
         }
       }
     }
-    function vertexAttribPointer(index, size, type, normalized, stride, offset) {
+    function vertexAttribPointer(index, size2, type, normalized, stride, offset) {
       if (capabilities.isWebGL2 === true && (type === 5124 || type === 5125)) {
-        gl.vertexAttribIPointer(index, size, type, stride, offset);
+        gl.vertexAttribIPointer(index, size2, type, stride, offset);
       } else {
-        gl.vertexAttribPointer(index, size, type, normalized, stride, offset);
+        gl.vertexAttribPointer(index, size2, type, normalized, stride, offset);
       }
     }
     function setupVertexAttributes(object, material, program, geometry) {
@@ -13624,7 +13624,7 @@
           }
           if (geometryAttribute !== void 0) {
             const normalized = geometryAttribute.normalized;
-            const size = geometryAttribute.itemSize;
+            const size2 = geometryAttribute.itemSize;
             const attribute = attributes.get(geometryAttribute);
             if (attribute === void 0)
               continue;
@@ -13649,7 +13649,7 @@
               }
               gl.bindBuffer(34962, buffer);
               for (let i2 = 0; i2 < programAttribute.locationSize; i2++) {
-                vertexAttribPointer(programAttribute.location + i2, size / programAttribute.locationSize, type, normalized, stride * bytesPerElement, (offset + size / programAttribute.locationSize * i2) * bytesPerElement);
+                vertexAttribPointer(programAttribute.location + i2, size2 / programAttribute.locationSize, type, normalized, stride * bytesPerElement, (offset + size2 / programAttribute.locationSize * i2) * bytesPerElement);
               }
             } else {
               if (geometryAttribute.isInstancedBufferAttribute) {
@@ -13666,7 +13666,7 @@
               }
               gl.bindBuffer(34962, buffer);
               for (let i2 = 0; i2 < programAttribute.locationSize; i2++) {
-                vertexAttribPointer(programAttribute.location + i2, size / programAttribute.locationSize, type, normalized, size * bytesPerElement, size / programAttribute.locationSize * i2 * bytesPerElement);
+                vertexAttribPointer(programAttribute.location + i2, size2 / programAttribute.locationSize, type, normalized, size2 * bytesPerElement, size2 / programAttribute.locationSize * i2 * bytesPerElement);
               }
             }
           } else if (materialDefaultAttributeValues !== void 0) {
@@ -22016,16 +22016,16 @@
       return new Skeleton(this.bones, this.boneInverses);
     }
     computeBoneTexture() {
-      let size = Math.sqrt(this.bones.length * 4);
-      size = ceilPowerOfTwo(size);
-      size = Math.max(size, 4);
-      const boneMatrices = new Float32Array(size * size * 4);
+      let size2 = Math.sqrt(this.bones.length * 4);
+      size2 = ceilPowerOfTwo(size2);
+      size2 = Math.max(size2, 4);
+      const boneMatrices = new Float32Array(size2 * size2 * 4);
       boneMatrices.set(this.boneMatrices);
-      const boneTexture = new DataTexture(boneMatrices, size, size, RGBAFormat, FloatType);
+      const boneTexture = new DataTexture(boneMatrices, size2, size2, RGBAFormat, FloatType);
       boneTexture.needsUpdate = true;
       this.boneMatrices = boneMatrices;
       this.boneTexture = boneTexture;
-      this.boneTextureSize = size;
+      this.boneTextureSize = size2;
       return this;
     }
     getBoneByName(name) {
@@ -24099,10 +24099,10 @@
           const ahole = holes[h2];
           vertices = vertices.concat(ahole);
         }
-        function scalePt2(pt, vec, size) {
+        function scalePt2(pt, vec, size2) {
           if (!vec)
             console.error("THREE.ExtrudeGeometry: vec does not exist");
-          return vec.clone().multiplyScalar(size).add(pt);
+          return vec.clone().multiplyScalar(size2).add(pt);
         }
         const vlen = vertices.length, flen = faces.length;
         function getBevelVec(inPt, inPrev, inNext) {
@@ -28553,8 +28553,8 @@
       }
       return this;
     }
-    setFromCenterAndSize(center, size) {
-      const halfSize = _vector$4.copy(size).multiplyScalar(0.5);
+    setFromCenterAndSize(center, size2) {
+      const halfSize = _vector$4.copy(size2).multiplyScalar(0.5);
       this.min.copy(center).sub(halfSize);
       this.max.copy(center).add(halfSize);
       return this;
@@ -28757,12 +28757,12 @@
     return boneList;
   }
   var GridHelper = class extends LineSegments {
-    constructor(size = 10, divisions = 10, color1 = 4473924, color2 = 8947848) {
+    constructor(size2 = 10, divisions = 10, color1 = 4473924, color2 = 8947848) {
       color1 = new Color(color1);
       color2 = new Color(color2);
       const center = divisions / 2;
-      const step = size / divisions;
-      const halfSize = size / 2;
+      const step = size2 / divisions;
+      const halfSize = size2 / 2;
       const vertices = [], colors = [];
       for (let i2 = 0, j2 = 0, k2 = -halfSize; i2 <= divisions; i2++, k2 += step) {
         vertices.push(-halfSize, 0, k2, halfSize, 0, k2);
@@ -31061,6 +31061,7 @@
   var do_echo = new Value(true).save("do_echo");
   var do_vary = new Value(true);
   var time = new Value(new AFRAME.THREE.Uniform(0));
+  var size = new Value(new AFRAME.THREE.Vector3(1, 1, 1));
   open_game.on(($g) => {
     if (open_game.$) {
       open_loading.set(true);
@@ -31415,6 +31416,19 @@ reset scout color to green, persists
     },
     ["notscouter" /* NotScouter */]: (items) => {
       scouter.set("green");
+    },
+    ["size" /* Size */]: (items) => {
+      const n2 = parseFloat(items[2]);
+      size.$.set(n2, n2, n2);
+      size.poke();
+    },
+    ["notsize" /* NotSize */]: (items) => {
+      size.$.set(1, 1, 1);
+      size.poke();
+    },
+    ["pos" /* Pos */]: (items) => {
+    },
+    ["notpos" /* NotPos */]: (items) => {
     }
   };
 
@@ -32418,8 +32432,9 @@ reset scout color to green, persists
       if (Math.abs(vec3.length()) > 0 && camera.$) {
         camera.$.updateMatrixWorld();
         quat.setFromRotationMatrix(camera.$.matrixWorld);
+        const up = vec3.y;
         vec3.applyQuaternion(quat);
-        force = new Ammo.btVector3(vec3.x, vec3.y, vec3.z);
+        force = new Ammo.btVector3(vec3.x, up, vec3.z);
         this.el.body.applyForce(force);
         this.el.body.activate();
         Ammo.destroy(force);
@@ -32520,6 +32535,7 @@ reset scout color to green, persists
   function create_fragment7(ctx) {
     let a_entity0;
     let a_entity0_vrm_value;
+    let a_entity0_scale_value;
     let a_entity0_sfxr__jump_value;
     let t;
     let a_entity1;
@@ -32533,13 +32549,14 @@ reset scout color to green, persists
         set_custom_element_data(a_entity0, "position", "0 0 15");
         set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value = "src: " + ctx[0] + "; current: true");
         set_custom_element_data(a_entity0, "look-controls", "");
+        set_custom_element_data(a_entity0, "scale", a_entity0_scale_value = ctx[1].x + " " + ctx[1].y + " " + ctx[1].z);
         set_custom_element_data(a_entity0, "id", "focus");
         set_custom_element_data(a_entity0, "wasd-controller", "");
         set_custom_element_data(a_entity0, "sfxr__jump", a_entity0_sfxr__jump_value = AFRAME.utils.styleParser.stringify(sfx_jump));
         set_custom_element_data(a_entity1, "mixin", "shadow character");
         set_custom_element_data(a_entity1, "position", "0 0.25 14");
         set_custom_element_data(a_entity1, "rotation", "0 180 0");
-        set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[1] + "; mirror: true");
+        set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[2] + "; mirror: true");
       },
       m(target, anchor) {
         insert(target, a_entity0, anchor);
@@ -32550,7 +32567,10 @@ reset scout color to green, persists
         if (dirty & 1 && a_entity0_vrm_value !== (a_entity0_vrm_value = "src: " + ctx2[0] + "; current: true")) {
           set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value);
         }
-        if (dirty & 2 && a_entity1_vrm_value !== (a_entity1_vrm_value = "src: " + ctx2[1] + "; mirror: true")) {
+        if (dirty & 2 && a_entity0_scale_value !== (a_entity0_scale_value = ctx2[1].x + " " + ctx2[1].y + " " + ctx2[1].z)) {
+          set_custom_element_data(a_entity0, "scale", a_entity0_scale_value);
+        }
+        if (dirty & 4 && a_entity1_vrm_value !== (a_entity1_vrm_value = "src: " + ctx2[2] + "; mirror: true")) {
           set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value);
         }
       },
@@ -32568,10 +32588,12 @@ reset scout color to green, persists
   }
   function instance5($$self, $$props, $$invalidate) {
     let $avatar_current;
+    let $size;
     let $avatar_doer;
     component_subscribe($$self, avatar_current, ($$value) => $$invalidate(0, $avatar_current = $$value));
-    component_subscribe($$self, avatar_doer, ($$value) => $$invalidate(1, $avatar_doer = $$value));
-    return [$avatar_current, $avatar_doer];
+    component_subscribe($$self, size, ($$value) => $$invalidate(1, $size = $$value));
+    component_subscribe($$self, avatar_doer, ($$value) => $$invalidate(2, $avatar_doer = $$value));
+    return [$avatar_current, $size, $avatar_doer];
   }
   var Characters = class extends SvelteComponent {
     constructor(options) {

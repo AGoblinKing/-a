@@ -9,6 +9,7 @@
 	import '../component/vary'
 	import '../component/floaty'
 	import '../component/windy'
+	import '../component/ai'
 
 	const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser)
 
@@ -155,7 +156,7 @@
 		intensity: 0.75
 	})}
 />
-<a-entity host light="type:ambient; color:white; intensity:0.1;" position="-1 1 1" />
+<a-entity host light="type:ambient; color:white; intensity:1;" />
 
 <a-plane
 	shadow
@@ -173,7 +174,7 @@
 <a-mixin
 	id="cloud"
 	scatter={scatterBig}
-	material="color: #ffffff; shader: flat; emissive: white; "
+	material="color: #ffffff; shader: flat; "
 	geometry
 	host
 	scale="15 5 10"
@@ -214,3 +215,23 @@
 />
 
 <a-entity pool__birds="mixin: birds; size: 50;" activate__birds />
+
+<a-mixin
+	id="animal"
+	gltf-model="./char/Horse.glb"
+	ammo-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;"
+	scale="0.35 0.35 0.35"
+	ammo-shape="type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; offset: 0 1 0"
+	shadow="cast: true; receive: false;"
+	ai="type: random;"
+	motion-events
+	gltf-events
+	material="shader: flat;"
+	{scatter}
+/>
+
+<a-mixin id="sheep" gltf-model="./char/Sheep.glb" />
+<a-mixin id="cow" gltf-model="./char/Cow.glb" />
+<a-entity pool__horse="mixin: animal; size: 5;" activate__horse />
+<a-entity pool__animal="mixin: animal sheep; size: 5;" activate__animal />
+<a-entity pool__animal="mixin: animal cow; size: 5;" activate__animal />

@@ -7065,190 +7065,6 @@
   var import_holistic = __toESM(require_holistic(), 1);
   var import_camera_utils = __toESM(require_camera_utils(), 1);
 
-  // src/state.ts
-  var state_default = {
-    "binds": {
-      "n": "control selfie",
-      "m": "control not selfie",
-      "h": "hi! | hey ! | hey you! | hello...",
-      "i": "it's doer 1 | it's me, doer 1 | doer 1 that's me",
-      "f1": "control help",
-      "f2": "control not help"
-    },
-    "vars": {},
-    "selfie": false,
-    avatar: {
-      doer: "./vrm/goblin.2.vrm",
-      current: "./vrm/doer.2.vrm"
-    },
-    visible: true
-  };
-
-  // src/timing.ts
-  var tick = new Value(0);
-  var avatar_current = new Value(state_default.avatar.current).save("avatar_current_2");
-  var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
-  var voice_current = new Value("Guy | UK English").save("voice_current");
-  var voice_doer = new Value("Aus | UK English").save("voice_doer");
-  var scouter = new Value("green").save("scouter");
-  var videos = new Value(["MePBW53Rtpw", "lyDJOPuanO0", "sDsZZiiSwG8"]);
-  var video = new Value("doer1.8").save("video_2");
-  var open_home = new Value(true);
-  var open_game = new Value(false);
-  var open_text = new Value(void 0);
-  var open_loading = new Value(false);
-  var open_help = new Value(false);
-  var open_stats = new Value(false).save("stats");
-  var open_heard = new Value(true).save("heard");
-  var open_debug = new Value(false).save("debugger");
-  var open_targeting = new Value(false).save("targeting_3");
-  var open_live = new Value(false);
-  var camera = new Value();
-  var camera_el = new Value();
-  var toggle_selfie = new Value(state_default.selfie).save("selfie");
-  var toggle_visible = new Value(state_default.visible).save("visible");
-  var do_echo = new Value(true).save("do_echo");
-  var do_vary = new Value(true);
-  var time = new Value(new AFRAME.THREE.Uniform(0));
-  open_game.on(($g) => {
-    if (open_game.$) {
-      open_loading.set(true);
-    }
-  });
-  var motd = new Value(`\u{1F38A}v0.1.2\u{1F38A}
-
-\u2705 Controls \u2705 Persist 
-\u2705 Help [f1]
-\u2705 Performance Pass
-\u2705 Targeting
-
-\u274C AI DOER \u274C Gameplay 
-
-\u274C WebRTC Multiplayer 
-6 player, 5 clients to 1 host
-
-\u274C 1 MediaStream 
-music / video / camera source / picture
-
-\u274C Factions \u274C Rules 
-
-The web is a scary place. 
-\u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
-
-WebRTC connection details stored in central DB to allow connection by alias. 
-
-WebRTC data is sent to peers only. 
-
-Camera data is processed by mediapipe via tensorflow locally.
-
-Microphone data is handled by the browser provider, ie: Chrome / Edge / etc.
-
-Cookies are not used to track your personal data by us. localStorage is used for persistance. 
-There are iframes to 3rd parties that may attempt to track you, like youtube. 
-Users can load assets remotely using HTTP to other websites. We're not responsible for their content, contact the host directly.
-If that's a problem then reject this terms of use by closing your browser.
-
-Accountless. 
-
-Age 18+ only.
-
-`);
-  var ticker = () => {
-    requestAnimationFrame(ticker);
-    tick.set(tick.$ + 1);
-  };
-  var loading = new Value(`Loading...
-
- WASD Move > Q+E Rotate
- Enter > Chat
-     ~ > Command
- Space > Jump
- 
- Default Binds:
-
- N: Selfie
- M: NotSelfie
- H: Hi | Hi! | Hello | Heya | Yo
- F1: Help
- F2: NotHelp
-`);
-  ticker();
-  var helptext = new Value(`\u{1F916}Commands\u{1F916}
-
-~ echo 
-echo on, persisted
-
-~ not echo 
-echo off, persisted
-
-~ avatar ...url 
-set avatar to URL, persisted
-
-~ clear avatar 
-set avatar to default
-
-~ bind key ...commands 
-bind key to commands, persisted
-
-~ not bind key
-unbinds key, persisted
-
-~ var name ...commands 
-binds variable name to commands
-
-~ not var name 
-unbinds variable name
-
-~ stats 
-show fps stats
-
-~ not stats
-hide fps stats
-
-~ heard
-show top heard messages
-
-~ not heard
-hide top heard messages
-
-~ help
-show this help
-
-~ not help
-hide this help
-
-~ voice ...nameToSearch
-set voice to nameToSearch ie: aus would find an Australian voice or UK for British, persisted
-per browser
-
-~ swap
-swap places with your doer
-
-~ visible
-show your avatar
-
-~ not visible
-hide your avatar
-
-~ selfie
-selfie camera mode
-
-~ not selfie
-not selfie camera mode
-
-~ target
-show targeting UI, persists
-
-~ not target
-hide targeting UI, persists
-
-~ scouter ...color
-set your targeting UI to be that color, persists
-
-~ not scouter
-reset scout color to green, persists
-`);
-
   // node_modules/three/build/three.module.js
   var REVISION = "137";
   var CullFaceNone = 0;
@@ -8233,13 +8049,13 @@ reset scout color to green, persists
         }
       } else if (m2 = /^\#([A-Fa-f\d]+)$/.exec(style)) {
         const hex = m2[1];
-        const size = hex.length;
-        if (size === 3) {
+        const size2 = hex.length;
+        if (size2 === 3) {
           this.r = parseInt(hex.charAt(0) + hex.charAt(0), 16) / 255;
           this.g = parseInt(hex.charAt(1) + hex.charAt(1), 16) / 255;
           this.b = parseInt(hex.charAt(2) + hex.charAt(2), 16) / 255;
           return this;
-        } else if (size === 6) {
+        } else if (size2 === 6) {
           this.r = parseInt(hex.charAt(0) + hex.charAt(1), 16) / 255;
           this.g = parseInt(hex.charAt(2) + hex.charAt(3), 16) / 255;
           this.b = parseInt(hex.charAt(4) + hex.charAt(5), 16) / 255;
@@ -10097,8 +9913,8 @@ reset scout color to green, persists
       }
       return this;
     }
-    setFromCenterAndSize(center, size) {
-      const halfSize = _vector$b.copy(size).multiplyScalar(0.5);
+    setFromCenterAndSize(center, size2) {
+      const halfSize = _vector$b.copy(size2).multiplyScalar(0.5);
       this.min.copy(center).sub(halfSize);
       this.max.copy(center).add(halfSize);
       return this;
@@ -14100,12 +13916,12 @@ reset scout color to green, persists
   };
   CubeTexture.prototype.isCubeTexture = true;
   var WebGLCubeRenderTarget = class extends WebGLRenderTarget {
-    constructor(size, options, dummy) {
+    constructor(size2, options, dummy) {
       if (Number.isInteger(options)) {
         console.warn("THREE.WebGLCubeRenderTarget: constructor signature is now WebGLCubeRenderTarget( size, options )");
         options = dummy;
       }
-      super(size, size, options);
+      super(size2, size2, options);
       options = options || {};
       this.texture = new CubeTexture(void 0, options.mapping, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.encoding);
       this.texture.isRenderTargetTexture = true;
@@ -15505,11 +15321,11 @@ reset scout color to green, persists
         }
       }
     }
-    function vertexAttribPointer(index, size, type, normalized, stride, offset) {
+    function vertexAttribPointer(index, size2, type, normalized, stride, offset) {
       if (capabilities.isWebGL2 === true && (type === 5124 || type === 5125)) {
-        gl.vertexAttribIPointer(index, size, type, stride, offset);
+        gl.vertexAttribIPointer(index, size2, type, stride, offset);
       } else {
-        gl.vertexAttribPointer(index, size, type, normalized, stride, offset);
+        gl.vertexAttribPointer(index, size2, type, normalized, stride, offset);
       }
     }
     function setupVertexAttributes(object, material, program, geometry) {
@@ -15533,7 +15349,7 @@ reset scout color to green, persists
           }
           if (geometryAttribute !== void 0) {
             const normalized = geometryAttribute.normalized;
-            const size = geometryAttribute.itemSize;
+            const size2 = geometryAttribute.itemSize;
             const attribute = attributes.get(geometryAttribute);
             if (attribute === void 0)
               continue;
@@ -15558,7 +15374,7 @@ reset scout color to green, persists
               }
               gl.bindBuffer(34962, buffer);
               for (let i2 = 0; i2 < programAttribute.locationSize; i2++) {
-                vertexAttribPointer(programAttribute.location + i2, size / programAttribute.locationSize, type, normalized, stride * bytesPerElement, (offset + size / programAttribute.locationSize * i2) * bytesPerElement);
+                vertexAttribPointer(programAttribute.location + i2, size2 / programAttribute.locationSize, type, normalized, stride * bytesPerElement, (offset + size2 / programAttribute.locationSize * i2) * bytesPerElement);
               }
             } else {
               if (geometryAttribute.isInstancedBufferAttribute) {
@@ -15575,7 +15391,7 @@ reset scout color to green, persists
               }
               gl.bindBuffer(34962, buffer);
               for (let i2 = 0; i2 < programAttribute.locationSize; i2++) {
-                vertexAttribPointer(programAttribute.location + i2, size / programAttribute.locationSize, type, normalized, size * bytesPerElement, size / programAttribute.locationSize * i2 * bytesPerElement);
+                vertexAttribPointer(programAttribute.location + i2, size2 / programAttribute.locationSize, type, normalized, size2 * bytesPerElement, size2 / programAttribute.locationSize * i2 * bytesPerElement);
               }
             }
           } else if (materialDefaultAttributeValues !== void 0) {
@@ -23925,16 +23741,16 @@ reset scout color to green, persists
       return new Skeleton(this.bones, this.boneInverses);
     }
     computeBoneTexture() {
-      let size = Math.sqrt(this.bones.length * 4);
-      size = ceilPowerOfTwo(size);
-      size = Math.max(size, 4);
-      const boneMatrices = new Float32Array(size * size * 4);
+      let size2 = Math.sqrt(this.bones.length * 4);
+      size2 = ceilPowerOfTwo(size2);
+      size2 = Math.max(size2, 4);
+      const boneMatrices = new Float32Array(size2 * size2 * 4);
       boneMatrices.set(this.boneMatrices);
-      const boneTexture = new DataTexture(boneMatrices, size, size, RGBAFormat, FloatType);
+      const boneTexture = new DataTexture(boneMatrices, size2, size2, RGBAFormat, FloatType);
       boneTexture.needsUpdate = true;
       this.boneMatrices = boneMatrices;
       this.boneTexture = boneTexture;
-      this.boneTextureSize = size;
+      this.boneTextureSize = size2;
       return this;
     }
     getBoneByName(name) {
@@ -26008,10 +25824,10 @@ reset scout color to green, persists
           const ahole = holes[h2];
           vertices = vertices.concat(ahole);
         }
-        function scalePt2(pt, vec, size) {
+        function scalePt2(pt, vec, size2) {
           if (!vec)
             console.error("THREE.ExtrudeGeometry: vec does not exist");
-          return vec.clone().multiplyScalar(size).add(pt);
+          return vec.clone().multiplyScalar(size2).add(pt);
         }
         const vlen = vertices.length, flen = faces.length;
         function getBevelVec(inPt, inPrev, inNext) {
@@ -27938,7 +27754,7 @@ reset scout color to green, persists
       return this;
     }
   };
-  var loading2 = {};
+  var loading = {};
   var FileLoader = class extends Loader {
     constructor(manager) {
       super(manager);
@@ -27959,16 +27775,16 @@ reset scout color to green, persists
         }, 0);
         return cached;
       }
-      if (loading2[url] !== void 0) {
-        loading2[url].push({
+      if (loading[url] !== void 0) {
+        loading[url].push({
           onLoad,
           onProgress,
           onError
         });
         return;
       }
-      loading2[url] = [];
-      loading2[url].push({
+      loading[url] = [];
+      loading[url].push({
         onLoad,
         onProgress,
         onError
@@ -27987,7 +27803,7 @@ reset scout color to green, persists
           if (typeof ReadableStream === "undefined" || response.body.getReader === void 0) {
             return response;
           }
-          const callbacks = loading2[url];
+          const callbacks = loading[url];
           const reader = response.body.getReader();
           const contentLength = response.headers.get("Content-Length");
           const total = contentLength ? parseInt(contentLength) : 0;
@@ -28045,20 +27861,20 @@ reset scout color to green, persists
         }
       }).then((data) => {
         Cache.add(url, data);
-        const callbacks = loading2[url];
-        delete loading2[url];
+        const callbacks = loading[url];
+        delete loading[url];
         for (let i2 = 0, il = callbacks.length; i2 < il; i2++) {
           const callback = callbacks[i2];
           if (callback.onLoad)
             callback.onLoad(data);
         }
       }).catch((err) => {
-        const callbacks = loading2[url];
+        const callbacks = loading[url];
         if (callbacks === void 0) {
           this.manager.itemError(url);
           throw err;
         }
-        delete loading2[url];
+        delete loading[url];
         for (let i2 = 0, il = callbacks.length; i2 < il; i2++) {
           const callback = callbacks[i2];
           if (callback.onError)
@@ -30462,8 +30278,8 @@ reset scout color to green, persists
       }
       return this;
     }
-    setFromCenterAndSize(center, size) {
-      const halfSize = _vector$4.copy(size).multiplyScalar(0.5);
+    setFromCenterAndSize(center, size2) {
+      const halfSize = _vector$4.copy(size2).multiplyScalar(0.5);
       this.min.copy(center).sub(halfSize);
       this.max.copy(center).add(halfSize);
       return this;
@@ -30666,12 +30482,12 @@ reset scout color to green, persists
     return boneList;
   }
   var GridHelper = class extends LineSegments {
-    constructor(size = 10, divisions = 10, color1 = 4473924, color2 = 8947848) {
+    constructor(size2 = 10, divisions = 10, color1 = 4473924, color2 = 8947848) {
       color1 = new Color(color1);
       color2 = new Color(color2);
       const center = divisions / 2;
-      const step = size / divisions;
-      const halfSize = size / 2;
+      const step = size2 / divisions;
+      const halfSize = size2 / 2;
       const vertices = [], colors = [];
       for (let i2 = 0, j2 = 0, k2 = -halfSize; i2 <= divisions; i2++, k2 += step) {
         vertices.push(-halfSize, 0, k2, halfSize, 0, k2);
@@ -31646,6 +31462,191 @@ reset scout color to green, persists
       window.__THREE__ = REVISION;
     }
   }
+
+  // src/state.ts
+  var state_default = {
+    "binds": {
+      "n": "control selfie",
+      "m": "control not selfie",
+      "h": "hi! | hey ! | hey you! | hello...",
+      "i": "it's doer 1 | it's me, doer 1 | doer 1 that's me",
+      "f1": "control help",
+      "f2": "control not help"
+    },
+    "vars": {},
+    "selfie": false,
+    avatar: {
+      doer: "./vrm/goblin.2.vrm",
+      current: "./vrm/doer.2.vrm"
+    },
+    visible: true
+  };
+
+  // src/timing.ts
+  var tick = new Value(0);
+  var avatar_current = new Value(state_default.avatar.current).save("avatar_current_2");
+  var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
+  var voice_current = new Value("Guy | UK English").save("voice_current");
+  var voice_doer = new Value("Aus | UK English").save("voice_doer");
+  var scouter = new Value("green").save("scouter");
+  var videos = new Value(["MePBW53Rtpw", "lyDJOPuanO0", "sDsZZiiSwG8"]);
+  var video = new Value("doer1.8").save("video_2");
+  var open_home = new Value(true);
+  var open_game = new Value(false);
+  var open_text = new Value(void 0);
+  var open_loading = new Value(false);
+  var open_help = new Value(false);
+  var open_stats = new Value(false).save("stats");
+  var open_heard = new Value(true).save("heard");
+  var open_debug = new Value(false).save("debugger");
+  var open_targeting = new Value(false).save("targeting_3");
+  var open_live = new Value(false);
+  var camera = new Value();
+  var camera_el = new Value();
+  var toggle_selfie = new Value(state_default.selfie).save("selfie");
+  var toggle_visible = new Value(state_default.visible).save("visible");
+  var do_echo = new Value(true).save("do_echo");
+  var do_vary = new Value(true);
+  var time = new Value(new AFRAME.THREE.Uniform(0));
+  var size = new Value(new AFRAME.THREE.Vector3(1, 1, 1));
+  open_game.on(($g) => {
+    if (open_game.$) {
+      open_loading.set(true);
+    }
+  });
+  var motd = new Value(`\u{1F38A}v0.1.2\u{1F38A}
+
+\u2705 Controls \u2705 Persist 
+\u2705 Help [f1]
+\u2705 Performance Pass
+\u2705 Targeting
+
+\u274C AI DOER \u274C Gameplay 
+
+\u274C WebRTC Multiplayer 
+6 player, 5 clients to 1 host
+
+\u274C 1 MediaStream 
+music / video / camera source / picture
+
+\u274C Factions \u274C Rules 
+
+The web is a scary place. 
+\u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
+
+WebRTC connection details stored in central DB to allow connection by alias. 
+
+WebRTC data is sent to peers only. 
+
+Camera data is processed by mediapipe via tensorflow locally.
+
+Microphone data is handled by the browser provider, ie: Chrome / Edge / etc.
+
+Cookies are not used to track your personal data by us. localStorage is used for persistance. 
+There are iframes to 3rd parties that may attempt to track you, like youtube. 
+Users can load assets remotely using HTTP to other websites. We're not responsible for their content, contact the host directly.
+If that's a problem then reject this terms of use by closing your browser.
+
+Accountless. 
+
+Age 18+ only.
+
+`);
+  var ticker = () => {
+    requestAnimationFrame(ticker);
+    tick.set(tick.$ + 1);
+  };
+  var loading2 = new Value(`Loading...
+
+ WASD Move > Q+E Rotate
+ Enter > Chat
+     ~ > Command
+ Space > Jump
+ 
+ Default Binds:
+
+ N: Selfie
+ M: NotSelfie
+ H: Hi | Hi! | Hello | Heya | Yo
+ F1: Help
+ F2: NotHelp
+`);
+  ticker();
+  var helptext = new Value(`\u{1F916}Commands\u{1F916}
+
+~ echo 
+echo on, persisted
+
+~ not echo 
+echo off, persisted
+
+~ avatar ...url 
+set avatar to URL, persisted
+
+~ clear avatar 
+set avatar to default
+
+~ bind key ...commands 
+bind key to commands, persisted
+
+~ not bind key
+unbinds key, persisted
+
+~ var name ...commands 
+binds variable name to commands
+
+~ not var name 
+unbinds variable name
+
+~ stats 
+show fps stats
+
+~ not stats
+hide fps stats
+
+~ heard
+show top heard messages
+
+~ not heard
+hide top heard messages
+
+~ help
+show this help
+
+~ not help
+hide this help
+
+~ voice ...nameToSearch
+set voice to nameToSearch ie: aus would find an Australian voice or UK for British, persisted
+per browser
+
+~ swap
+swap places with your doer
+
+~ visible
+show your avatar
+
+~ not visible
+hide your avatar
+
+~ selfie
+selfie camera mode
+
+~ not selfie
+not selfie camera mode
+
+~ target
+show targeting UI, persists
+
+~ not target
+hide targeting UI, persists
+
+~ scouter ...color
+set your targeting UI to be that color, persists
+
+~ not scouter
+reset scout color to green, persists
+`);
 
   // node_modules/@pixiv/three-vrm/lib/three-vrm.module.min.js
   function n(e, t, n2, i2) {
@@ -33060,6 +33061,19 @@ reset scout color to green, persists
     },
     ["notscouter" /* NotScouter */]: (items) => {
       scouter.set("green");
+    },
+    ["size" /* Size */]: (items) => {
+      const n2 = parseFloat(items[2]);
+      size.$.set(n2, n2, n2);
+      size.poke();
+    },
+    ["notsize" /* NotSize */]: (items) => {
+      size.$.set(1, 1, 1);
+      size.poke();
+    },
+    ["pos" /* Pos */]: (items) => {
+    },
+    ["notpos" /* NotPos */]: (items) => {
     }
   };
 
@@ -33597,8 +33611,9 @@ reset scout color to green, persists
       if (Math.abs(vec32.length()) > 0 && camera.$) {
         camera.$.updateMatrixWorld();
         quat2.setFromRotationMatrix(camera.$.matrixWorld);
+        const up = vec32.y;
         vec32.applyQuaternion(quat2);
-        force = new Ammo.btVector3(vec32.x, vec32.y, vec32.z);
+        force = new Ammo.btVector3(vec32.x, up, vec32.z);
         this.el.body.applyForce(force);
         this.el.body.activate();
         Ammo.destroy(force);
@@ -33699,6 +33714,7 @@ reset scout color to green, persists
   function create_fragment3(ctx) {
     let a_entity0;
     let a_entity0_vrm_value;
+    let a_entity0_scale_value;
     let a_entity0_sfxr__jump_value;
     let t;
     let a_entity1;
@@ -33712,13 +33728,14 @@ reset scout color to green, persists
         set_custom_element_data(a_entity0, "position", "0 0 15");
         set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value = "src: " + ctx[0] + "; current: true");
         set_custom_element_data(a_entity0, "look-controls", "");
+        set_custom_element_data(a_entity0, "scale", a_entity0_scale_value = ctx[1].x + " " + ctx[1].y + " " + ctx[1].z);
         set_custom_element_data(a_entity0, "id", "focus");
         set_custom_element_data(a_entity0, "wasd-controller", "");
         set_custom_element_data(a_entity0, "sfxr__jump", a_entity0_sfxr__jump_value = AFRAME.utils.styleParser.stringify(sfx_jump));
         set_custom_element_data(a_entity1, "mixin", "shadow character");
         set_custom_element_data(a_entity1, "position", "0 0.25 14");
         set_custom_element_data(a_entity1, "rotation", "0 180 0");
-        set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[1] + "; mirror: true");
+        set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[2] + "; mirror: true");
       },
       m(target, anchor) {
         insert(target, a_entity0, anchor);
@@ -33729,7 +33746,10 @@ reset scout color to green, persists
         if (dirty & 1 && a_entity0_vrm_value !== (a_entity0_vrm_value = "src: " + ctx2[0] + "; current: true")) {
           set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value);
         }
-        if (dirty & 2 && a_entity1_vrm_value !== (a_entity1_vrm_value = "src: " + ctx2[1] + "; mirror: true")) {
+        if (dirty & 2 && a_entity0_scale_value !== (a_entity0_scale_value = ctx2[1].x + " " + ctx2[1].y + " " + ctx2[1].z)) {
+          set_custom_element_data(a_entity0, "scale", a_entity0_scale_value);
+        }
+        if (dirty & 4 && a_entity1_vrm_value !== (a_entity1_vrm_value = "src: " + ctx2[2] + "; mirror: true")) {
           set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value);
         }
       },
@@ -33747,10 +33767,12 @@ reset scout color to green, persists
   }
   function instance2($$self, $$props, $$invalidate) {
     let $avatar_current;
+    let $size;
     let $avatar_doer;
     component_subscribe($$self, avatar_current, ($$value) => $$invalidate(0, $avatar_current = $$value));
-    component_subscribe($$self, avatar_doer, ($$value) => $$invalidate(1, $avatar_doer = $$value));
-    return [$avatar_current, $avatar_doer];
+    component_subscribe($$self, size, ($$value) => $$invalidate(1, $size = $$value));
+    component_subscribe($$self, avatar_doer, ($$value) => $$invalidate(2, $avatar_doer = $$value));
+    return [$avatar_current, $size, $avatar_doer];
   }
   var Characters = class extends SvelteComponent {
     constructor(options) {
@@ -34538,6 +34560,33 @@ gl_Position = mvPosition;
     }
   });
 
+  // src/component/ai.ts
+  AFRAME.registerComponent("ai", {
+    schema: {
+      type: { type: "string", default: "random" }
+    },
+    init() {
+      this.tick = AFRAME.utils.throttleTick(this.tick, 250, this);
+    },
+    tick() {
+      if (this[this.data.type])
+        this[this.data.type]();
+    },
+    random() {
+      if (!this.el.body)
+        return;
+      const speed = 250;
+      const x2 = (Math.random() - 0.5) * speed, y2 = (Math.random() - 0.5) * speed, z2 = (Math.random() - 0.5) * speed;
+      const force = new Ammo.btVector3(x2, y2, z2);
+      this.el.body.applyForce(force);
+      const torq = new Ammo.btVector3(x2 * 0.2, y2 * 0.2, z2 * 0.2);
+      this.el.body.applyTorque(torq);
+      this.el.body.activate();
+      Ammo.destroy(force);
+      Ammo.destroy(torq);
+    }
+  });
+
   // src/template/forest.svelte
   function create_fragment6(ctx) {
     let a_mixin0;
@@ -34611,6 +34660,18 @@ gl_Position = mvPosition;
     let a_mixin11_vary_value;
     let t27;
     let a_entity14;
+    let t28;
+    let a_mixin12;
+    let t29;
+    let a_mixin13;
+    let t30;
+    let a_mixin14;
+    let t31;
+    let a_entity15;
+    let t32;
+    let a_entity16;
+    let t33;
+    let a_entity17;
     return {
       c() {
         a_mixin0 = element("a-mixin");
@@ -34671,6 +34732,18 @@ gl_Position = mvPosition;
         a_mixin11 = element("a-mixin");
         t27 = space();
         a_entity14 = element("a-entity");
+        t28 = space();
+        a_mixin12 = element("a-mixin");
+        t29 = space();
+        a_mixin13 = element("a-mixin");
+        t30 = space();
+        a_mixin14 = element("a-mixin");
+        t31 = space();
+        a_entity15 = element("a-entity");
+        t32 = space();
+        a_entity16 = element("a-entity");
+        t33 = space();
+        a_entity17 = element("a-entity");
         set_custom_element_data(a_mixin0, "id", "smolitem");
         set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;collisionFilterGroup: 2;");
         set_custom_element_data(a_mixin0, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
@@ -34780,8 +34853,7 @@ gl_Position = mvPosition;
           intensity: 0.75
         }));
         set_custom_element_data(a_entity10, "host", "");
-        set_custom_element_data(a_entity10, "light", "type:ambient; color:white; intensity:0.1;");
-        set_custom_element_data(a_entity10, "position", "-1 1 1");
+        set_custom_element_data(a_entity10, "light", "type:ambient; color:white; intensity:1;");
         set_custom_element_data(a_plane, "shadow", "");
         set_custom_element_data(a_plane, "id", "ground");
         set_custom_element_data(a_plane, "host", "");
@@ -34794,7 +34866,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_plane, "color", "#334411");
         set_custom_element_data(a_mixin9, "id", "cloud");
         set_custom_element_data(a_mixin9, "scatter", ctx[3]);
-        set_custom_element_data(a_mixin9, "material", "color: #ffffff; shader: flat; emissive: white; ");
+        set_custom_element_data(a_mixin9, "material", "color: #ffffff; shader: flat; ");
         set_custom_element_data(a_mixin9, "geometry", "");
         set_custom_element_data(a_mixin9, "host", "");
         set_custom_element_data(a_mixin9, "scale", "15 5 10");
@@ -34821,6 +34893,27 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin11, "floaty", "");
         set_custom_element_data(a_entity14, "pool__birds", "mixin: birds; size: 50;");
         set_custom_element_data(a_entity14, "activate__birds", "");
+        set_custom_element_data(a_mixin12, "id", "animal");
+        set_custom_element_data(a_mixin12, "gltf-model", "./char/Horse.glb");
+        set_custom_element_data(a_mixin12, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin12, "scale", "0.35 0.35 0.35");
+        set_custom_element_data(a_mixin12, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; offset: 0 1 0");
+        set_custom_element_data(a_mixin12, "shadow", "cast: true; receive: false;");
+        set_custom_element_data(a_mixin12, "ai", "type: random;");
+        set_custom_element_data(a_mixin12, "motion-events", "");
+        set_custom_element_data(a_mixin12, "gltf-events", "");
+        set_custom_element_data(a_mixin12, "material", "shader: flat;");
+        set_custom_element_data(a_mixin12, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin13, "id", "sheep");
+        set_custom_element_data(a_mixin13, "gltf-model", "./char/Sheep.glb");
+        set_custom_element_data(a_mixin14, "id", "cow");
+        set_custom_element_data(a_mixin14, "gltf-model", "./char/Cow.glb");
+        set_custom_element_data(a_entity15, "pool__horse", "mixin: animal; size: 5;");
+        set_custom_element_data(a_entity15, "activate__horse", "");
+        set_custom_element_data(a_entity16, "pool__animal", "mixin: animal sheep; size: 5;");
+        set_custom_element_data(a_entity16, "activate__animal", "");
+        set_custom_element_data(a_entity17, "pool__animal", "mixin: animal cow; size: 5;");
+        set_custom_element_data(a_entity17, "activate__animal", "");
       },
       m(target, anchor) {
         insert(target, a_mixin0, anchor);
@@ -34881,6 +34974,18 @@ gl_Position = mvPosition;
         insert(target, a_mixin11, anchor);
         insert(target, t27, anchor);
         insert(target, a_entity14, anchor);
+        insert(target, t28, anchor);
+        insert(target, a_mixin12, anchor);
+        insert(target, t29, anchor);
+        insert(target, a_mixin13, anchor);
+        insert(target, t30, anchor);
+        insert(target, a_mixin14, anchor);
+        insert(target, t31, anchor);
+        insert(target, a_entity15, anchor);
+        insert(target, t32, anchor);
+        insert(target, a_entity16, anchor);
+        insert(target, t33, anchor);
+        insert(target, a_entity17, anchor);
       },
       p(ctx2, [dirty]) {
         if (dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
@@ -35043,6 +35148,30 @@ gl_Position = mvPosition;
           detach(t27);
         if (detaching)
           detach(a_entity14);
+        if (detaching)
+          detach(t28);
+        if (detaching)
+          detach(a_mixin12);
+        if (detaching)
+          detach(t29);
+        if (detaching)
+          detach(a_mixin13);
+        if (detaching)
+          detach(t30);
+        if (detaching)
+          detach(a_mixin14);
+        if (detaching)
+          detach(t31);
+        if (detaching)
+          detach(a_entity15);
+        if (detaching)
+          detach(t32);
+        if (detaching)
+          detach(a_entity16);
+        if (detaching)
+          detach(t33);
+        if (detaching)
+          detach(a_entity17);
       }
     };
   }
@@ -35866,7 +35995,7 @@ gl_Position = mvPosition;
   }
   function instance11($$self, $$props, $$invalidate) {
     let $loading;
-    component_subscribe($$self, loading, ($$value) => $$invalidate(0, $loading = $$value));
+    component_subscribe($$self, loading2, ($$value) => $$invalidate(0, $loading = $$value));
     return [$loading];
   }
   var Loading = class extends SvelteComponent {

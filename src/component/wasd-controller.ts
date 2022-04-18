@@ -64,8 +64,10 @@ AFRAME.registerComponent("wasd-controller", {
         if (Math.abs(vec3.length()) > 0 && camera.$) {
             camera.$.updateMatrixWorld()
             quat.setFromRotationMatrix(camera.$.matrixWorld)
+            const up = vec3.y
             vec3.applyQuaternion(quat)
-            force = new Ammo.btVector3(vec3.x, vec3.y, vec3.z)
+
+            force = new Ammo.btVector3(vec3.x, up, vec3.z)
             // apply to currentVRM body
             this.el.body.applyForce(force)
             this.el.body.activate()

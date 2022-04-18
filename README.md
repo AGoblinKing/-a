@@ -80,3 +80,10 @@ recordding/playback animations for VRM based on physics/events
 - npcs/ai
 
 - volleyball
+
+- vehicles using https://rawcdn.githack.com/kripken/ammo.js/99d0ec0b1e26d7ccc13e013caba8e8a5c98d953b/examples/webgl_demo_vehicle/index.html
+
+Jenga/other toys 
+https://rawcdn.githack.com/kripken/ammo.js/99d0ec0b1e26d7ccc13e013caba8e8a5c98d953b/examples/webgl_demo_softbody_rope/index.html
+
+- 90s style homely sitcom feel
