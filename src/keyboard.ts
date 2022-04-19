@@ -14,7 +14,7 @@ function bounce(e: KeyboardEvent) {
 window.addEventListener('keydown', (e) => {
 	if (bounce(e)) return
 
-	e.preventDefault()
+	//e.preventDefault()
 	const k = e.key.toLowerCase()
 
 	key_down.set(k)

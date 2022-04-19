@@ -21,6 +21,10 @@ export const open_heard = new Value(true).save("heard")
 export const open_debug = new Value(false).save("debugger")
 export const open_targeting = new Value(false).save("targeting_3")
 export const open_live = new Value(false)
+export const open_hostid = new Value(true)
+const loc = location.search.slice(1).split("&").map((i) => i.split("="))
+// @ts-ignore
+export const args = new Value(new Map(loc))
 
 export const camera = new Value<Object3D>()
 export const camera_el = new Value<any>()
@@ -38,29 +42,14 @@ open_game.on(($g) => {
     }
 })
 
-export const motd = new Value(`🎊v0.2.1🎊
+export const motd = new Value(`🎊v0.2.2🎊
 
-✅ Performance Pass
-✅ Animals ✅ Wind ✅ Floofs
-✅ WASD / Mouse / Recording Mode
+✅ WebSocket MMO
+❌ Recording Mode
 
 ❌ Targeting
 ❌ AI DOER ❌ Gameplay 
-
-❌ WebRTC Multiplayer 
-6 player, 5 clients to 1 host
-
-❌ 1 MediaStream 
-music / video / camera source / picture
-
 ❌ Factions ❌ Rules 
-
-The web is a scary place. 
-🖥️ Use a VPN.🖥️
-
-WebRTC connection details stored in central DB to allow connection by alias. 
-
-WebRTC data is sent to peers only. 
 
 Camera data is processed by mediapipe via tensorflow locally.
 
@@ -69,7 +58,7 @@ Microphone data is handled by the browser provider, ie: Chrome / Edge / etc.
 Cookies are not used to track your personal data by us. localStorage is used for persistance. 
 There are iframes to 3rd parties that may attempt to track you, like youtube. 
 Users can load assets remotely using HTTP to other websites. We're not responsible for their content, contact the host directly.
-If that's a problem then reject this terms of use by closing your browser.
+If that's a problem then reject this terms of use by closing your browser or navigating away from this website.
 
 Accountless. 
 

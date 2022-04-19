@@ -13,9 +13,10 @@
 	vrm="src: {$avatar_current}; current: true"
 	look-controls
 	scale="{$size.x} {$size.y} {$size.z}"
-	id="focus"
+	host="current"
 	wasd-controller
 	sfxr__jump={AFRAME.utils.styleParser.stringify(sfx_jump)}
+	networked="template:#forest;attachTemplateToLocal:false;"
 />
 
 <!--
@@ -26,5 +27,6 @@
 	mixin="shadow character"
 	position="0 0.25 14"
 	rotation="0 180 0"
+	host="doer"
 	vrm="src: {$avatar_doer}; mirror: true"
 />

@@ -1,6 +1,7 @@
 import type { Object3D } from "three"
 import { key_map } from "src/keyboard";
 import { camera } from "src/timing";
+import { guest } from "./net";
 
 const vec3 = new AFRAME.THREE.Vector3()
 const quat = new AFRAME.THREE.Quaternion()
@@ -27,6 +28,8 @@ AFRAME.registerComponent("wasd-controller", {
     },
 
     tick(_, delta) {
+        if (guest.$) return
+
         if (!this.el.body) return
 
         const o3d = this.el.object3D

@@ -407,3 +407,38 @@ textarea.svelte-7z92og {
 .hidden.svelte-oofj5h {
   display: none;
 }
+
+/* fakecss:/workspaces/-a/src/ui/netdata.esbuild-svelte-fake-css */
+.netdata.svelte-l8j1y5 {
+  position: absolute;
+  top: 0vh;
+  left: 1vh;
+  z-index: 15;
+  color: white;
+  font-size: 4vh;
+  user-select: all;
+  opacity: 0.75;
+  text-shadow:
+    -0.15rem -0.15rem 0 #000,
+    0.15rem -0.15rem 0 #000,
+    -0.15rem 0.15rem 0 #000,
+    0.15rem 0.15rem 0 #000;
+}
+
+/* fakecss:/workspaces/-a/src/ui/live.esbuild-svelte-fake-css */
+.action.svelte-1898r5o {
+  cursor: pointer;
+  top: 1vh;
+  right: 1vh;
+  position: absolute;
+  width: 3vh;
+  background-color: #444;
+  height: 3vh;
+  border-radius: 3vh;
+  border: 1vh solid #222;
+  opacity: 0.75;
+  z-index: 5;
+}
+.action.live.svelte-1898r5o {
+  background-color: red;
+}

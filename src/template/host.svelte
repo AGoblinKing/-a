@@ -3,7 +3,6 @@
 	import '../component/activate'
 	import '../component/ring'
 
-	import '../component/net'
 	import '../component/webcam-vrm'
 	import '../component/vrm'
 	import '../component/uniforms'
@@ -21,13 +20,14 @@
 	import Live from 'src/ui/live.svelte'
 	import Debug from './debug.svelte'
 	import House from './house.svelte'
-
-	export let groundSize = 100
+	import Netdata from 'src/ui/netdata.svelte'
+	import Environmental from './environmental.svelte'
 </script>
 
 <Webcam />
 <Heard />
 <Live />
+<Netdata />
 
 <a-scene
 	keyboard-shortcuts="enterVR: false"
@@ -37,11 +37,14 @@
 	fog="type: exponential; color: #555"
 	physics="driver: ammo; debug: {$open_debug}"
 	uniforms
+	net
 >
 	<a-assets>
+		<template id="forest">
+			<a-sphere color="blue" radius="5" />
+		</template>
 		<audio id="sound-bg" src="./sound/bg-ocean.mp3" />
 		<a-mixin id="shadow" shadow="cast: true" />
-		<a-mixin id="toon" material="roughness: 1;dithering: false;" />
 
 		<CharactersMixins />
 	</a-assets>
@@ -51,4 +54,5 @@
 	<Forest />
 	<House />
 	<Debug />
+	<Environmental />
 </a-scene>

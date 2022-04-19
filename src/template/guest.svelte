@@ -6,11 +6,20 @@
 	import Loading from 'src/ui/loading.svelte'
 
 	import Text from 'src/ui/text.svelte'
-	import CharactersAssets from './characters-assets.svelte'
-	import Characters from './characters.svelte'
+
 	import Webcam from './webcam.svelte'
 
 	import '../component/net'
+	import { avatar_current, avatar_doer, size, video } from 'src/timing'
+
+	import '../component/wasd-controller'
+	import '../component/sfxr'
+	import '../component/uniforms'
+	import { sfx_jump } from 'src/sound/action'
+	import Netdata from 'src/ui/netdata.svelte'
+	import CameraFps from './camera-fps.svelte'
+	import Live from 'src/ui/live.svelte'
+	import Environmental from './environmental.svelte'
 </script>
 
 <Text />
@@ -22,20 +31,45 @@
 	<Loading />
 {/if}
 
+<Live />
+<Netdata />
 <Webcam />
 <Heard />
 
 <a-scene
 	keyboard-shortcuts="enterVR: false"
 	stats={$open_stats}
-	renderer="highRefreshRate: true; alpha: false;precision: medium;"
+	renderer="highRefreshRate: true; alpha: false;precision: low;"
 	shadow="type:basic;"
+	uniforms
 	fog="type: exponential; color: #555"
-	guest
 >
 	<a-assets>
-		<CharactersAssets />
+		<audio id="sound-bg" src="./sound/bg-ocean.mp3" />
+		<a-mixin id="shadow" shadow="cast: true" />
 	</a-assets>
+	<CameraFps />
+	<a-entity
+		mixin="shadow "
+		position="0 0 15"
+		guest
+		vrm="src: {$avatar_current}; current: true"
+		look-controls
+		scale="{$size.x} {$size.y} {$size.z}"
+		id="focus"
+		sfxr__jump={AFRAME.utils.styleParser.stringify(sfx_jump)}
+	/>
 
-	<Characters />
+	<!--
+sfxr__collide
+-->
+	<!-- <a-entity mixin="shadow" position="0 0 -5"  rotation="0 180 0" vrm="src: /vrm/femgoblin.vrm; mirror: true" scatter="-5 0 -5 5 0 5"  /> -->
+	<a-entity
+		mixin="shadow "
+		guest
+		position="0 0.25 14"
+		rotation="0 180 0"
+		vrm="src: {$avatar_doer}; mirror: true"
+	/>
+	<Environmental />
 </a-scene>

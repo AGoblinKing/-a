@@ -62,6 +62,23 @@
   background-color: red;
 }
 
+/* fakecss:/workspaces/-a/src/ui/netdata.esbuild-svelte-fake-css */
+.netdata.svelte-l8j1y5 {
+  position: absolute;
+  top: 0vh;
+  left: 1vh;
+  z-index: 15;
+  color: white;
+  font-size: 4vh;
+  user-select: all;
+  opacity: 0.75;
+  text-shadow:
+    -0.15rem -0.15rem 0 #000,
+    0.15rem -0.15rem 0 #000,
+    -0.15rem 0.15rem 0 #000,
+    0.15rem 0.15rem 0 #000;
+}
+
 /* fakecss:/workspaces/-a/src/ui/title.esbuild-svelte-fake-css */
 a.svelte-1uatlh0 {
   font-size: 5vh;

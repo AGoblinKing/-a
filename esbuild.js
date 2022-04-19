@@ -1,8 +1,8 @@
-import esbuild from 'esbuild'
-import esbuildSvelte from 'esbuild-svelte'
-import sveltePreprocess from 'svelte-preprocess'
-import { glsl } from 'esbuild-plugin-glsl'
-import runAll from "npm-run-all"
+const esbuild = require('esbuild')
+const esbuildSvelte = require('esbuild-svelte')
+const sveltePreprocess = require('svelte-preprocess')
+const { glsl } = require('esbuild-plugin-glsl')
+const runAll = require("npm-run-all")
 
 esbuild
 	.build({
@@ -25,8 +25,9 @@ esbuild
 
 esbuild
 	.build({
-		entryPoints: ['src/test/runner.ts'],
+		entryPoints: ['src/test/runner.ts', 'src/server.ts'],
 		bundle: true,
+		platform: 'node',
 		watch: process.env.DEV == 1 ? { 
 			onRebuild(error) {
 				if(error) return
@@ -34,15 +35,9 @@ esbuild
 				runAll(["test"], { stdout: process.stdout, stderr: process.stderr })
 			}
 		} : false,
-		outdir: './debug',
+		outdir: './build',
 		plugins: [
-			esbuildSvelte({
-				filterWarnings: () => false,
-				preprocess: sveltePreprocess()
-			}),
-			glsl({
-				minify: false
-			})
+		
 		]
 	})
 	.catch(() => process.exit(1))

@@ -1,6 +1,7 @@
+import { guest, guests, host, room } from "./component/net"
 import { currentVRM, mirrorVRM } from "./component/vrm"
 import state from "./state"
-import { avatar_current, avatar_doer, camera, camera_el, do_echo, do_vary, open_debug, open_heard, open_help, open_stats, open_targeting, scouter, size, toggle_selfie, toggle_visible, voice_current } from "./timing"
+import { avatar_current, avatar_doer, camera, camera_el, do_echo, do_vary, open_debug, open_heard, open_help, open_hostid, open_stats, open_targeting, scouter, size, toggle_selfie, toggle_visible, voice_current } from "./timing"
 import { Value } from "./value"
 
 export const binds = new Value<{ [key: string]: string }>(clone(state.binds)).save("binds")
@@ -58,8 +59,8 @@ export enum EControl {
     Heard = "heard",
     NotHeard = "notheard",
 
-    Guest = "guest",
-    NotGuest = "notguest",
+    Join = "join",
+    NotJoin = "notjoin",
 
     Host = "host",
     NotHost = "nothost",
@@ -81,6 +82,9 @@ export enum EControl {
 
     Pos = "pos",
     NotPos = "notpos",
+
+    Room = "room",
+    NotRoom = "notroom",
 }
 
 
@@ -162,17 +166,12 @@ export const controls = {
     [EControl.Voice]: (items: string[]) => {
         voice_current.set(items.slice(2).join(" "))
     },
-    [EControl.Guest]: (items: string[]) => {
 
-    },
-    [EControl.NotGuest]: (items: string[]) => {
-
-    },
     [EControl.Host]: (items: string[]) => {
-
+        host.set(true)
     },
     [EControl.NotHost]: (items: string[]) => {
-
+        host.set(false)
     },
     [EControl.Target]: (items: string[]) => {
         open_targeting.set(true)
@@ -210,6 +209,20 @@ export const controls = {
     },
     [EControl.NotPos]: (items: string[]) => {
 
+    },
+    [EControl.Room]: (items: string[]) => {
+        open_hostid.set(true)
+    },
+    [EControl.NotRoom]: (items: string[]) => {
+        open_hostid.set(false)
+    },
+    [EControl.Join]: (items: string[]) => {
+        guest.set(true)
+        room.set(items.slice(2).join(" "))
+    },
+    [EControl.NotJoin]: (items: string[]) => {
+        guest.set(false)
+        room.set("")
     }
 }
 

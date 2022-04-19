@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { motd, open_game, open_home, videos } from 'src/timing'
+	import { args, motd, open_game, open_home, videos } from 'src/timing'
 
 	import Title from './title.svelte'
 	import Video from './video.svelte'
 
-	if (location.search === '?go') {
+	if (args.$.has("go")) {
 		open_game.set(true)
 		open_home.set(false)
 	}

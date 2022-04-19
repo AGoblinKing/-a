@@ -1,5 +1,7 @@
 // move/rotate the body based on the type of the AI
 
+import { guest } from "./net"
+
 AFRAME.registerComponent("ai", {
     schema: {
         type: { type: "string", default: "random" },
@@ -11,7 +13,7 @@ AFRAME.registerComponent("ai", {
         if (this[this.data.type]) this[this.data.type]()
     },
     random() {
-        if (!this.el.body) return
+        if (!this.el.body || guest.$) return
 
         const speed = 250
         const x = (Math.random() - 0.5) * speed,

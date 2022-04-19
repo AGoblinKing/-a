@@ -12,7 +12,7 @@ export default {
     },
     "selfie": false,
     avatar: {
-        doer: "./vrm/doer2.2.vrm",
+        doer: "./vrm/doer.2.vrm",
         current: "./vrm/doer.2.vrm"
     },
     visible: true

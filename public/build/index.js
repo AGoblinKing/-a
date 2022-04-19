@@ -423,17 +423,17 @@
             }
           };
           b2.prototype.then = function(f2, k2) {
-            function h2(p2, m2) {
-              return typeof p2 == "function" ? function(q2) {
+            function h2(p3, m2) {
+              return typeof p3 == "function" ? function(q3) {
                 try {
-                  l2(p2(q2));
+                  l2(p3(q3));
                 } catch (t) {
                   n2(t);
                 }
               } : m2;
             }
-            var l2, n2, r2 = new b2(function(p2, m2) {
-              l2 = p2;
+            var l2, n2, r2 = new b2(function(p3, m2) {
+              l2 = p3;
               n2 = m2;
             });
             this.J(h2(f2, l2), h2(k2, n2));
@@ -474,16 +474,16 @@
           b2.all = function(f2) {
             var k2 = B2(f2), h2 = k2.next();
             return h2.done ? d2([]) : new b2(function(l2, n2) {
-              function r2(q2) {
+              function r2(q3) {
                 return function(t) {
-                  p2[q2] = t;
+                  p3[q3] = t;
                   m2--;
-                  m2 == 0 && l2(p2);
+                  m2 == 0 && l2(p3);
                 };
               }
-              var p2 = [], m2 = 0;
+              var p3 = [], m2 = 0;
               do
-                p2.push(void 0), m2++, d2(h2.value).J(r2(p2.length - 1), n2), h2 = k2.next();
+                p3.push(void 0), m2++, d2(h2.value).J(r2(p3.length - 1), n2), h2 = k2.next();
               while (!h2.done);
             });
           };
@@ -1663,37 +1663,37 @@
         };
         function Ic(a2) {
           var b2, c2, d2, e, g2, f2, k2, h2, l2, n2, r2;
-          return H2(function(p2) {
-            switch (p2.g) {
+          return H2(function(p3) {
+            switch (p3.g) {
               case 1:
                 if (!a2.R)
-                  return p2.return();
+                  return p3.return();
                 b2 = a2.g.files === void 0 ? [] : typeof a2.g.files === "function" ? a2.g.files(a2.j) : a2.g.files;
-                return F2(p2, Gc(), 2);
+                return F2(p3, Gc(), 2);
               case 2:
-                c2 = p2.h;
+                c2 = p3.h;
                 if (typeof window === "object")
                   return Ec("createMediapipeSolutionsWasm", { locateFile: a2.locateFile }), Ec("createMediapipeSolutionsPackedAssets", { locateFile: a2.locateFile }), f2 = b2.filter(function(m2) {
                     return m2.data !== void 0;
                   }), k2 = b2.filter(function(m2) {
                     return m2.data === void 0;
                   }), h2 = Promise.all(f2.map(function(m2) {
-                    var q2 = Jc(a2, m2.url);
+                    var q3 = Jc(a2, m2.url);
                     if (m2.path !== void 0) {
                       var t = m2.path;
-                      q2 = q2.then(function(w2) {
+                      q3 = q3.then(function(w2) {
                         a2.overrideFile(t, w2);
                         return Promise.resolve(w2);
                       });
                     }
-                    return q2;
+                    return q3;
                   })), l2 = Promise.all(k2.map(function(m2) {
                     return m2.simd === void 0 || m2.simd && c2 || !m2.simd && !c2 ? Fc(a2.locateFile(m2.url, a2.S)) : Promise.resolve();
                   })).then(function() {
-                    var m2, q2, t;
+                    var m2, q3, t;
                     return H2(function(w2) {
                       if (w2.g == 1)
-                        return m2 = window.createMediapipeSolutionsWasm, q2 = window.createMediapipeSolutionsPackedAssets, t = a2, F2(w2, m2(q2), 2);
+                        return m2 = window.createMediapipeSolutionsWasm, q3 = window.createMediapipeSolutionsPackedAssets, t = a2, F2(w2, m2(q3), 2);
                       t.h = w2.h;
                       w2.g = 0;
                     });
@@ -1702,7 +1702,7 @@
                       a2.g.graph && a2.g.graph.url ? m2 = F2(m2, Jc(a2, a2.g.graph.url), 0) : (m2.g = 0, m2 = void 0);
                       return m2;
                     });
-                  }(), F2(p2, Promise.all([l2, h2, n2]), 7);
+                  }(), F2(p3, Promise.all([l2, h2, n2]), 7);
                 if (typeof importScripts !== "function")
                   throw Error("solutions can only be loaded on a web page or in a web worker");
                 d2 = b2.filter(function(m2) {
@@ -1712,9 +1712,9 @@
                 });
                 importScripts.apply(null, D2(d2));
                 e = a2;
-                return F2(p2, createMediapipeSolutionsWasm(Module), 6);
+                return F2(p3, createMediapipeSolutionsWasm(Module), 6);
               case 6:
-                e.h = p2.h;
+                e.h = p3.h;
                 a2.l = new OffscreenCanvas(1, 1);
                 a2.h.canvas = a2.l;
                 g2 = a2.h.GL.createContext(a2.l, {
@@ -1723,18 +1723,18 @@
                   aa: typeof WebGL2RenderingContext !== "undefined" ? 2 : 1
                 });
                 a2.h.GL.makeContextCurrent(g2);
-                p2.g = 4;
+                p3.g = 4;
                 break;
               case 7:
                 a2.l = document.createElement("canvas");
                 r2 = a2.l.getContext("webgl2", {});
                 if (!r2 && (r2 = a2.l.getContext("webgl", {}), !r2))
-                  return alert("Failed to create WebGL canvas context when passing video frame."), p2.return();
+                  return alert("Failed to create WebGL canvas context when passing video frame."), p3.return();
                 a2.D = r2;
                 a2.h.canvas = a2.l;
                 a2.h.createContext(a2.l, true, true, {});
               case 4:
-                a2.i = new a2.h.SolutionWasm(), a2.R = false, p2.g = 0;
+                a2.i = new a2.h.SolutionWasm(), a2.R = false, p3.g = 0;
             }
           });
         }
@@ -1864,15 +1864,15 @@
         };
         x2.send = function(a2, b2) {
           var c2 = this, d2, e, g2, f2, k2, h2, l2, n2, r2;
-          return H2(function(p2) {
-            switch (p2.g) {
+          return H2(function(p3) {
+            switch (p3.g) {
               case 1:
                 if (!c2.g.inputs)
-                  return p2.return();
+                  return p3.return();
                 d2 = 1e3 * (b2 === void 0 || b2 === null ? performance.now() : b2);
-                return F2(p2, c2.C, 2);
+                return F2(p3, c2.C, 2);
               case 2:
-                return F2(p2, c2.initialize(), 3);
+                return F2(p3, c2.initialize(), 3);
               case 3:
                 e = new c2.h.PacketDataList();
                 g2 = B2(Object.keys(a2));
@@ -1882,32 +1882,32 @@
                       var m2 = a2[k2];
                       switch (h2.type) {
                         case "video":
-                          var q2 = c2.m[h2.stream];
-                          q2 || (q2 = new yc(c2.h, c2.D), c2.m[h2.stream] = q2);
-                          q2.l === 0 && (q2.l = q2.h.createTexture());
+                          var q3 = c2.m[h2.stream];
+                          q3 || (q3 = new yc(c2.h, c2.D), c2.m[h2.stream] = q3);
+                          q3.l === 0 && (q3.l = q3.h.createTexture());
                           if (typeof HTMLVideoElement !== "undefined" && m2 instanceof HTMLVideoElement) {
                             var t = m2.videoWidth;
                             var w2 = m2.videoHeight;
                           } else
                             typeof HTMLImageElement !== "undefined" && m2 instanceof HTMLImageElement ? (t = m2.naturalWidth, w2 = m2.naturalHeight) : (t = m2.width, w2 = m2.height);
-                          w2 = { glName: q2.l, width: t, height: w2 };
-                          t = q2.g;
+                          w2 = { glName: q3.l, width: t, height: w2 };
+                          t = q3.g;
                           t.canvas.width = w2.width;
                           t.canvas.height = w2.height;
                           t.activeTexture(t.TEXTURE0);
-                          q2.h.bindTexture2d(q2.l);
+                          q3.h.bindTexture2d(q3.l);
                           t.texImage2D(t.TEXTURE_2D, 0, t.RGBA, t.RGBA, t.UNSIGNED_BYTE, m2);
-                          q2.h.bindTexture2d(0);
-                          q2 = w2;
+                          q3.h.bindTexture2d(0);
+                          q3 = w2;
                           break a;
                         case "detections":
-                          q2 = c2.m[h2.stream];
-                          q2 || (q2 = new Bc(c2.h), c2.m[h2.stream] = q2);
-                          q2.data || (q2.data = new q2.g.DetectionListData());
-                          q2.data.reset(m2.length);
+                          q3 = c2.m[h2.stream];
+                          q3 || (q3 = new Bc(c2.h), c2.m[h2.stream] = q3);
+                          q3.data || (q3.data = new q3.g.DetectionListData());
+                          q3.data.reset(m2.length);
                           for (w2 = 0; w2 < m2.length; ++w2) {
                             t = m2[w2];
-                            var v2 = q2.data, C2 = v2.setBoundingBox, J2 = w2;
+                            var v2 = q3.data, C2 = v2.setBoundingBox, J2 = w2;
                             var G2 = t.T;
                             var u2 = new dc();
                             Q2(u2, 1, G2.X);
@@ -1922,7 +1922,7 @@
                               for (v2 = 0; v2 < t.O.length; ++v2) {
                                 u2 = t.O[v2];
                                 var A2 = u2.visibility ? true : false;
-                                C2 = q2.data;
+                                C2 = q3.data;
                                 J2 = C2.addNormalizedLandmark;
                                 G2 = w2;
                                 u2 = Object.assign(Object.assign({}, u2), { visibility: A2 ? u2.visibility : 0 });
@@ -1936,15 +1936,15 @@
                               }
                             if (t.M)
                               for (v2 = 0; v2 < t.M.length; ++v2)
-                                C2 = q2.data, J2 = C2.addClassification, G2 = w2, u2 = t.M[v2], A2 = new Ob(), Q2(A2, 2, u2.score), u2.index && Q2(A2, 1, u2.index), u2.label && Q2(A2, 3, u2.label), u2.displayName && Q2(A2, 4, u2.displayName), u2 = Bb(A2, Qb), J2.call(C2, G2, u2);
+                                C2 = q3.data, J2 = C2.addClassification, G2 = w2, u2 = t.M[v2], A2 = new Ob(), Q2(A2, 2, u2.score), u2.index && Q2(A2, 1, u2.index), u2.label && Q2(A2, 3, u2.label), u2.displayName && Q2(A2, 4, u2.displayName), u2 = Bb(A2, Qb), J2.call(C2, G2, u2);
                           }
-                          q2 = q2.data;
+                          q3 = q3.data;
                           break a;
                         default:
-                          q2 = {};
+                          q3 = {};
                       }
                     }
-                    l2 = q2;
+                    l2 = q3;
                     n2 = h2.stream;
                     switch (h2.type) {
                       case "video":
@@ -1961,14 +1961,14 @@
                     }
                   }
                 c2.i.send(e);
-                return F2(p2, c2.C, 4);
+                return F2(p3, c2.C, 4);
               case 4:
-                e.delete(), p2.g = 0;
+                e.delete(), p3.g = 0;
             }
           });
         };
         function Nc(a2, b2, c2) {
-          var d2, e, g2, f2, k2, h2, l2, n2, r2, p2, m2, q2, t, w2;
+          var d2, e, g2, f2, k2, h2, l2, n2, r2, p3, m2, q3, t, w2;
           return H2(function(v2) {
             switch (v2.g) {
               case 1:
@@ -1991,11 +1991,11 @@
                 r2 = c2[n2];
                 if (typeof r2 === "string")
                   return t = d2, w2 = n2, F2(v2, Oc(a2, n2, b2[r2]), 14);
-                p2 = b2[r2.stream];
+                p3 = b2[r2.stream];
                 if (r2.type === "detection_list") {
-                  if (p2) {
-                    var C2 = p2.getRectList();
-                    for (var J2 = p2.getLandmarksList(), G2 = p2.getClassificationsList(), u2 = [], A2 = 0; A2 < C2.size(); ++A2) {
+                  if (p3) {
+                    var C2 = p3.getRectList();
+                    for (var J2 = p3.getLandmarksList(), G2 = p3.getClassificationsList(), u2 = [], A2 = 0; A2 < C2.size(); ++A2) {
                       var V2 = Cb(C2.get(A2), dc, gc);
                       V2 = { T: { X: S2(V2, 1), Y: S2(V2, 2), height: S2(V2, 3), width: S2(V2, 4), rotation: S2(V2, 5, 0), W: R2(V2, 6, 0) }, O: xc(J2.get(A2)), M: vc(Cb(G2.get(A2), Sb, Vb)) };
                       u2.push(V2);
@@ -2008,28 +2008,28 @@
                   break;
                 }
                 if (r2.type === "proto_list") {
-                  if (p2) {
-                    C2 = Array(p2.size());
-                    for (J2 = 0; J2 < p2.size(); J2++)
-                      C2[J2] = p2.get(J2);
-                    p2.delete();
+                  if (p3) {
+                    C2 = Array(p3.size());
+                    for (J2 = 0; J2 < p3.size(); J2++)
+                      C2[J2] = p3.get(J2);
+                    p3.delete();
                   } else
                     C2 = [];
                   d2[n2] = C2;
                   v2.g = 7;
                   break;
                 }
-                if (p2 === void 0) {
+                if (p3 === void 0) {
                   v2.g = 3;
                   break;
                 }
                 if (r2.type === "float_list") {
-                  d2[n2] = p2;
+                  d2[n2] = p3;
                   v2.g = 7;
                   break;
                 }
                 if (r2.type === "proto") {
-                  d2[n2] = p2;
+                  d2[n2] = p3;
                   v2.g = 7;
                   break;
                 }
@@ -2037,9 +2037,9 @@
                   throw Error("Unknown output config type: '" + r2.type + "'");
                 m2 = a2.s[n2];
                 m2 || (m2 = new yc(a2.h, a2.D), a2.s[n2] = m2);
-                return F2(v2, zc(m2, p2, a2.G), 13);
+                return F2(v2, zc(m2, p3, a2.G), 13);
               case 13:
-                q2 = v2.h, d2[n2] = q2;
+                q3 = v2.h, d2[n2] = q3;
               case 7:
                 r2.transform && d2[n2] && (d2[n2] = r2.transform(d2[n2]));
                 v2.g = 3;
@@ -2070,8 +2070,8 @@
             var n2 = a2.listeners[c2];
             n2 && (a2.C = Nc(a2, h2, b2.outs).then(function(r2) {
               r2 = n2(r2);
-              for (var p2 = 0; p2 < b2.wants.length; ++p2) {
-                var m2 = h2[d2[p2]];
+              for (var p3 = 0; p3 < b2.wants.length; ++p3) {
+                var m2 = h2[d2[p3]];
                 typeof m2 === "object" && m2.hasOwnProperty && m2.hasOwnProperty("delete") && m2.delete();
               }
               r2 && (a2.C = r2);
@@ -4869,7 +4869,7 @@
             return b2 < a2.length ? { done: false, value: a2[b2++] } : { done: true };
           };
         }
-        var q2 = typeof Object.defineProperties == "function" ? Object.defineProperty : function(a2, b2, e) {
+        var q3 = typeof Object.defineProperties == "function" ? Object.defineProperty : function(a2, b2, e) {
           if (a2 == Array.prototype || a2 == Object.prototype)
             return a2;
           a2[b2] = e.value;
@@ -4899,7 +4899,7 @@
               a2 = a2[a2.length - 1];
               f2 = e[a2];
               b2 = b2(f2);
-              b2 != f2 && b2 != null && q2(e, a2, { configurable: true, writable: true, value: b2 });
+              b2 != f2 && b2 != null && q3(e, a2, { configurable: true, writable: true, value: b2 });
             }
         }
         v2("Symbol", function(a2) {
@@ -4910,7 +4910,7 @@
           }
           function e(l2, c2) {
             this.g = l2;
-            q2(this, "description", { configurable: true, writable: true, value: c2 });
+            q3(this, "description", { configurable: true, writable: true, value: c2 });
           }
           if (a2)
             return a2;
@@ -4926,7 +4926,7 @@
           a2 = Symbol("Symbol.iterator");
           for (var b2 = "Array Int8Array Uint8Array Uint8ClampedArray Int16Array Uint16Array Int32Array Uint32Array Float32Array Float64Array".split(" "), e = 0; e < b2.length; e++) {
             var f2 = u2[b2[e]];
-            typeof f2 === "function" && typeof f2.prototype[a2] != "function" && q2(f2.prototype, a2, { configurable: true, writable: true, value: function() {
+            typeof f2 === "function" && typeof f2.prototype[a2] != "function" && q3(f2.prototype, a2, { configurable: true, writable: true, value: function() {
               return w2(n2(this));
             } });
           }
@@ -5199,17 +5199,17 @@
             }
           };
           b2.prototype.then = function(c2, d2) {
-            function g2(p2, r2) {
-              return typeof p2 == "function" ? function(E2) {
+            function g2(p3, r2) {
+              return typeof p3 == "function" ? function(E2) {
                 try {
-                  k2(p2(E2));
+                  k2(p3(E2));
                 } catch (F2) {
                   m2(F2);
                 }
               } : r2;
             }
-            var k2, m2, G2 = new b2(function(p2, r2) {
-              k2 = p2;
+            var k2, m2, G2 = new b2(function(p3, r2) {
+              k2 = p3;
               m2 = r2;
             });
             this.s(g2(c2, k2), g2(d2, m2));
@@ -5252,14 +5252,14 @@
             return g2.done ? f2([]) : new b2(function(k2, m2) {
               function G2(E2) {
                 return function(F2) {
-                  p2[E2] = F2;
+                  p3[E2] = F2;
                   r2--;
-                  r2 == 0 && k2(p2);
+                  r2 == 0 && k2(p3);
                 };
               }
-              var p2 = [], r2 = 0;
+              var p3 = [], r2 = 0;
               do
-                p2.push(void 0), r2++, f2(g2.value).s(G2(p2.length - 1), m2), g2 = d2.next();
+                p3.push(void 0), r2++, f2(g2.value).s(G2(p3.length - 1), m2), g2 = d2.next();
               while (!g2.done);
             });
           };
@@ -5433,6 +5433,11 @@
   function children(element2) {
     return Array.from(element2.childNodes);
   }
+  function set_data(text2, data) {
+    data = "" + data;
+    if (text2.wholeText !== data)
+      text2.data = data;
+  }
   function set_input_value(input, value) {
     input.value = value == null ? "" : value;
   }
@@ -5571,7 +5576,7 @@
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance14, create_fragment17, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance16, create_fragment19, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5594,7 +5599,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance14 ? instance14(component, options.props || {}, (i2, ret, ...rest) => {
+    $$.ctx = instance16 ? instance16(component, options.props || {}, (i2, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
         if (!$$.skip_bound && $$.bound[i2])
@@ -5607,7 +5612,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment17 ? create_fragment17($$.ctx) : false;
+    $$.fragment = create_fragment19 ? create_fragment19($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -5729,133 +5734,6 @@
       const d2 = this.el.object3D.parent.userData;
       const i2 = (d2.ringDex === void 0 ? d2.ringDex = 1 : d2.ringDex++) % this.data.count / this.data.count * Math.PI * 2;
       this.el.object3D.position.set(Math.sin(i2), 0, Math.cos(i2)).multiplyScalar(this.data.radius);
-    }
-  });
-
-  // src/value.ts
-  var Value = class {
-    constructor(value = void 0) {
-      this.$ = value;
-    }
-    set(value) {
-      this.$ = value;
-      this.poke();
-      return this;
-    }
-    on(subscribe2) {
-      if (this.reactions === void 0) {
-        this.reactions = /* @__PURE__ */ new Set();
-      }
-      this.reactions.add(subscribe2);
-      subscribe2(this.$);
-      return () => this.reactions.delete(subscribe2);
-    }
-    subscribe(subscribe2) {
-      return this.on(subscribe2);
-    }
-    log(msg) {
-      this.on(() => console.log(msg, this.$));
-      return this;
-    }
-    poke() {
-      if (this.reactions === void 0)
-        return;
-      for (let callback of this.reactions) {
-        callback(this.$);
-      }
-      return this;
-    }
-    do(fn) {
-      fn();
-      return this;
-    }
-    re(fn) {
-      this.on(fn);
-      return this;
-    }
-    me() {
-      return new Value(this.$);
-    }
-    fa(v2, transform, filter) {
-      v2.on((state) => {
-        if (filter) {
-          if (!filter(state))
-            return;
-        }
-        if (transform) {
-          this.set(transform(state));
-        } else {
-          this.set(state);
-        }
-      });
-      return this;
-    }
-    la(timing, fn) {
-      let i2 = 0;
-      setInterval(() => {
-        fn(i2++);
-      }, timing);
-      return this;
-    }
-    save(where) {
-      try {
-        const v2 = JSON.parse(localStorage.getItem(where));
-        if (v2 !== void 0 && v2 !== null) {
-          this.set(v2);
-        }
-      } catch (ex) {
-      }
-      this.on((v2) => {
-        localStorage.setItem(where, JSON.stringify(v2));
-      });
-      return this;
-    }
-  };
-
-  // src/component/net.ts
-  var host = new Value(false);
-  var hostid = new Value("");
-  var guest = new Value(window.location.search.slice(1));
-  var message = new Value([]);
-  var remote = new Value({});
-  message.on(($mess) => {
-    if (!$mess)
-      return;
-    for (const [command, data] of $mess) {
-      Process(command, data);
-    }
-  });
-  function Process(command, data) {
-    switch (command) {
-      case 0 /* GLB */:
-        break;
-      case 1 /* VRM */:
-        break;
-      case 2 /* O3D */:
-        break;
-    }
-  }
-  AFRAME.registerComponent("guest", {
-    init() {
-    }
-  });
-  host.on(($h) => {
-    if (!$h)
-      return;
-  });
-  AFRAME.registerComponent("host", {
-    schema: {
-      dynamic: { type: "bool", default: false },
-      sync: { type: "string", default: "position;quaternion;geometry;material;" }
-    },
-    init() {
-      this.tick = AFRAME.utils.throttleTick(this.tick, 2e3, this);
-    },
-    sync() {
-    },
-    tick() {
-      if (!this.dynamic)
-        return;
     }
   });
 
@@ -6820,13 +6698,13 @@
   // node_modules/kalidokit/dist/FaceSolver/calcHead.js
   var createEulerPlane = (lm) => {
     const p1 = new Vector(lm[21]);
-    const p2 = new Vector(lm[251]);
+    const p22 = new Vector(lm[251]);
     const p3 = new Vector(lm[397]);
     const p4 = new Vector(lm[172]);
     const p3mid = p3.lerp(p4, 0.5);
     return {
-      vector: [p1, p2, p3mid],
-      points: [p1, p2, p3, p4]
+      vector: [p1, p22, p3mid],
+      points: [p1, p22, p3, p4]
     };
   };
   var calcHead = (lm) => {
@@ -7062,8 +6940,8 @@
   FaceSolver.stabilizeBlink = stabilizeBlink;
 
   // src/component/webcam-vrm.ts
-  var import_holistic = __toESM(require_holistic(), 1);
-  var import_camera_utils = __toESM(require_camera_utils(), 1);
+  var import_holistic = __toESM(require_holistic());
+  var import_camera_utils = __toESM(require_camera_utils());
 
   // src/state.ts
   var state_default = {
@@ -7078,10 +6956,90 @@
     "vars": {},
     "selfie": false,
     avatar: {
-      doer: "./vrm/doer2.2.vrm",
+      doer: "./vrm/doer.2.vrm",
       current: "./vrm/doer.2.vrm"
     },
     visible: true
+  };
+
+  // src/value.ts
+  var Value = class {
+    constructor(value = void 0) {
+      this.$ = value;
+    }
+    set(value) {
+      this.$ = value;
+      this.poke();
+      return this;
+    }
+    on(subscribe2) {
+      if (this.reactions === void 0) {
+        this.reactions = /* @__PURE__ */ new Set();
+      }
+      this.reactions.add(subscribe2);
+      subscribe2(this.$);
+      return () => this.reactions.delete(subscribe2);
+    }
+    subscribe(subscribe2) {
+      return this.on(subscribe2);
+    }
+    log(msg) {
+      this.on(() => console.log(msg, this.$));
+      return this;
+    }
+    poke() {
+      if (this.reactions === void 0)
+        return;
+      for (let callback of this.reactions) {
+        callback(this.$);
+      }
+      return this;
+    }
+    do(fn) {
+      fn();
+      return this;
+    }
+    re(fn) {
+      this.on(fn);
+      return this;
+    }
+    me() {
+      return new Value(this.$);
+    }
+    fa(v2, transform, filter) {
+      v2.on((state2) => {
+        if (filter) {
+          if (!filter(state2))
+            return;
+        }
+        if (transform) {
+          this.set(transform(state2));
+        } else {
+          this.set(state2);
+        }
+      });
+      return this;
+    }
+    la(timing, fn) {
+      let i2 = 0;
+      setInterval(() => {
+        fn(i2++);
+      }, timing);
+      return this;
+    }
+    save(where) {
+      try {
+        const v2 = JSON.parse(localStorage.getItem(where));
+        if (v2 !== void 0 && v2 !== null) {
+          this.set(v2);
+        }
+      } catch (ex) {
+      }
+      this.on((v2) => {
+        localStorage.setItem(where, JSON.stringify(v2));
+      });
+      return this;
+    }
   };
 
   // src/timing.ts
@@ -7103,6 +7061,9 @@
   var open_debug = new Value(false).save("debugger");
   var open_targeting = new Value(false).save("targeting_3");
   var open_live = new Value(false);
+  var open_hostid = new Value(true);
+  var loc = location.search.slice(1).split("&").map((i2) => i2.split("="));
+  var args = new Value(new Map(loc));
   var camera = new Value();
   var camera_el = new Value();
   var toggle_selfie = new Value(state_default.selfie).save("selfie");
@@ -7116,29 +7077,14 @@
       open_loading.set(true);
     }
   });
-  var motd = new Value(`\u{1F38A}v0.2.1\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.2.2\u{1F38A}
 
-\u2705 Performance Pass
-\u2705 Animals \u2705 Wind \u2705 Floofs
-\u2705 WASD / Mouse / Recording Mode
+\u2705 WebSocket MMO
+\u274C Recording Mode
 
 \u274C Targeting
 \u274C AI DOER \u274C Gameplay 
-
-\u274C WebRTC Multiplayer 
-6 player, 5 clients to 1 host
-
-\u274C 1 MediaStream 
-music / video / camera source / picture
-
 \u274C Factions \u274C Rules 
-
-The web is a scary place. 
-\u{1F5A5}\uFE0F Use a VPN.\u{1F5A5}\uFE0F
-
-WebRTC connection details stored in central DB to allow connection by alias. 
-
-WebRTC data is sent to peers only. 
 
 Camera data is processed by mediapipe via tensorflow locally.
 
@@ -7147,7 +7093,7 @@ Microphone data is handled by the browser provider, ie: Chrome / Edge / etc.
 Cookies are not used to track your personal data by us. localStorage is used for persistance. 
 There are iframes to 3rd parties that may attempt to track you, like youtube. 
 Users can load assets remotely using HTTP to other websites. We're not responsible for their content, contact the host directly.
-If that's a problem then reject this terms of use by closing your browser.
+If that's a problem then reject this terms of use by closing your browser or navigating away from this website.
 
 Accountless. 
 
@@ -7542,9 +7488,9 @@ reset scout color to green, persists
       this.y += v2.y;
       return this;
     }
-    addScalar(s2) {
-      this.x += s2;
-      this.y += s2;
+    addScalar(s3) {
+      this.x += s3;
+      this.y += s3;
       return this;
     }
     addVectors(a2, b2) {
@@ -7552,9 +7498,9 @@ reset scout color to green, persists
       this.y = a2.y + b2.y;
       return this;
     }
-    addScaledVector(v2, s2) {
-      this.x += v2.x * s2;
-      this.y += v2.y * s2;
+    addScaledVector(v2, s3) {
+      this.x += v2.x * s3;
+      this.y += v2.y * s3;
       return this;
     }
     sub(v2, w2) {
@@ -7566,9 +7512,9 @@ reset scout color to green, persists
       this.y -= v2.y;
       return this;
     }
-    subScalar(s2) {
-      this.x -= s2;
-      this.y -= s2;
+    subScalar(s3) {
+      this.x -= s3;
+      this.y -= s3;
       return this;
     }
     subVectors(a2, b2) {
@@ -7717,11 +7663,11 @@ reset scout color to green, persists
       return this;
     }
     rotateAround(center, angle) {
-      const c2 = Math.cos(angle), s2 = Math.sin(angle);
+      const c2 = Math.cos(angle), s3 = Math.sin(angle);
       const x2 = this.x - center.x;
       const y2 = this.y - center.y;
-      this.x = x2 * c2 - y2 * s2 + center.x;
-      this.y = x2 * s2 + y2 * c2 + center.y;
+      this.x = x2 * c2 - y2 * s3 + center.x;
+      this.y = x2 * s3 + y2 * c2 + center.y;
       return this;
     }
     random() {
@@ -7821,17 +7767,17 @@ reset scout color to green, persists
       te2[8] = a31 * b13 + a32 * b23 + a33 * b33;
       return this;
     }
-    multiplyScalar(s2) {
+    multiplyScalar(s3) {
       const te2 = this.elements;
-      te2[0] *= s2;
-      te2[3] *= s2;
-      te2[6] *= s2;
-      te2[1] *= s2;
-      te2[4] *= s2;
-      te2[7] *= s2;
-      te2[2] *= s2;
-      te2[5] *= s2;
-      te2[8] *= s2;
+      te2[0] *= s3;
+      te2[3] *= s3;
+      te2[6] *= s3;
+      te2[1] *= s3;
+      te2[4] *= s3;
+      te2[7] *= s3;
+      te2[2] *= s3;
+      te2[5] *= s3;
+      te2[8] *= s3;
       return this;
     }
     determinant() {
@@ -7887,8 +7833,8 @@ reset scout color to green, persists
     }
     setUvTransform(tx, ty, sx, sy, rotation, cx, cy) {
       const c2 = Math.cos(rotation);
-      const s2 = Math.sin(rotation);
-      this.set(sx * c2, sx * s2, -sx * (c2 * cx + s2 * cy) + cx + tx, -sy * s2, sy * c2, -sy * (-s2 * cx + c2 * cy) + cy + ty, 0, 0, 1);
+      const s3 = Math.sin(rotation);
+      this.set(sx * c2, sx * s3, -sx * (c2 * cx + s3 * cy) + cx + tx, -sy * s3, sy * c2, -sy * (-s3 * cx + c2 * cy) + cy + ty, 0, 0, 1);
       return this;
     }
     scale(sx, sy) {
@@ -7903,16 +7849,16 @@ reset scout color to green, persists
     }
     rotate(theta) {
       const c2 = Math.cos(theta);
-      const s2 = Math.sin(theta);
+      const s3 = Math.sin(theta);
       const te2 = this.elements;
       const a11 = te2[0], a12 = te2[3], a13 = te2[6];
       const a21 = te2[1], a22 = te2[4], a23 = te2[7];
-      te2[0] = c2 * a11 + s2 * a21;
-      te2[3] = c2 * a12 + s2 * a22;
-      te2[6] = c2 * a13 + s2 * a23;
-      te2[1] = -s2 * a11 + c2 * a21;
-      te2[4] = -s2 * a12 + c2 * a22;
-      te2[7] = -s2 * a13 + c2 * a23;
+      te2[0] = c2 * a11 + s3 * a21;
+      te2[3] = c2 * a12 + s3 * a22;
+      te2[6] = c2 * a13 + s3 * a23;
+      te2[1] = -s3 * a11 + c2 * a21;
+      te2[4] = -s3 * a12 + c2 * a22;
+      te2[7] = -s3 * a13 + c2 * a23;
       return this;
     }
     translate(tx, ty) {
@@ -8120,18 +8066,18 @@ reset scout color to green, persists
   };
   var _hslA = { h: 0, s: 0, l: 0 };
   var _hslB = { h: 0, s: 0, l: 0 };
-  function hue2rgb(p2, q2, t) {
+  function hue2rgb(p3, q3, t) {
     if (t < 0)
       t += 1;
     if (t > 1)
       t -= 1;
     if (t < 1 / 6)
-      return p2 + (q2 - p2) * 6 * t;
+      return p3 + (q3 - p3) * 6 * t;
     if (t < 1 / 2)
-      return q2;
+      return q3;
     if (t < 2 / 3)
-      return p2 + (q2 - p2) * 6 * (2 / 3 - t);
-    return p2;
+      return p3 + (q3 - p3) * 6 * (2 / 3 - t);
+    return p3;
   }
   function SRGBToLinear(c2) {
     return c2 < 0.04045 ? c2 * 0.0773993808 : Math.pow(c2 * 0.9478672986 + 0.0521327014, 2.4);
@@ -8175,18 +8121,18 @@ reset scout color to green, persists
       this.b = b2;
       return this;
     }
-    setHSL(h2, s2, l2) {
+    setHSL(h2, s3, l2) {
       h2 = euclideanModulo(h2, 1);
-      s2 = clamp2(s2, 0, 1);
+      s3 = clamp2(s3, 0, 1);
       l2 = clamp2(l2, 0, 1);
-      if (s2 === 0) {
+      if (s3 === 0) {
         this.r = this.g = this.b = l2;
       } else {
-        const p2 = l2 <= 0.5 ? l2 * (1 + s2) : l2 + s2 - l2 * s2;
-        const q2 = 2 * l2 - p2;
-        this.r = hue2rgb(q2, p2, h2 + 1 / 3);
-        this.g = hue2rgb(q2, p2, h2);
-        this.b = hue2rgb(q2, p2, h2 - 1 / 3);
+        const p3 = l2 <= 0.5 ? l2 * (1 + s3) : l2 + s3 - l2 * s3;
+        const q3 = 2 * l2 - p3;
+        this.r = hue2rgb(q3, p3, h2 + 1 / 3);
+        this.g = hue2rgb(q3, p3, h2);
+        this.b = hue2rgb(q3, p3, h2 - 1 / 3);
       }
       return this;
     }
@@ -8225,10 +8171,10 @@ reset scout color to green, persists
           case "hsla":
             if (color = /^\s*(\d*\.?\d+)\s*,\s*(\d+)\%\s*,\s*(\d+)\%\s*(?:,\s*(\d*\.?\d+)\s*)?$/.exec(components)) {
               const h2 = parseFloat(color[1]) / 360;
-              const s2 = parseInt(color[2], 10) / 100;
+              const s3 = parseInt(color[2], 10) / 100;
               const l2 = parseInt(color[3], 10) / 100;
               handleAlpha(color[4]);
-              return this.setHSL(h2, s2, l2);
+              return this.setHSL(h2, s3, l2);
             }
             break;
         }
@@ -8329,10 +8275,10 @@ reset scout color to green, persists
     getStyle() {
       return "rgb(" + (this.r * 255 | 0) + "," + (this.g * 255 | 0) + "," + (this.b * 255 | 0) + ")";
     }
-    offsetHSL(h2, s2, l2) {
+    offsetHSL(h2, s3, l2) {
       this.getHSL(_hslA);
       _hslA.h += h2;
-      _hslA.s += s2;
+      _hslA.s += s3;
       _hslA.l += l2;
       this.setHSL(_hslA.h, _hslA.s, _hslA.l);
       return this;
@@ -8349,10 +8295,10 @@ reset scout color to green, persists
       this.b = color1.b + color2.b;
       return this;
     }
-    addScalar(s2) {
-      this.r += s2;
-      this.g += s2;
-      this.b += s2;
+    addScalar(s3) {
+      this.r += s3;
+      this.g += s3;
+      this.b += s3;
       return this;
     }
     sub(color) {
@@ -8367,10 +8313,10 @@ reset scout color to green, persists
       this.b *= color.b;
       return this;
     }
-    multiplyScalar(s2) {
-      this.r *= s2;
-      this.g *= s2;
-      this.b *= s2;
+    multiplyScalar(s3) {
+      this.r *= s3;
+      this.g *= s3;
+      this.b *= s3;
       return this;
     }
     lerp(color, alpha) {
@@ -8389,9 +8335,9 @@ reset scout color to green, persists
       this.getHSL(_hslA);
       color.getHSL(_hslB);
       const h2 = lerp(_hslA.h, _hslB.h, alpha);
-      const s2 = lerp(_hslA.s, _hslB.s, alpha);
+      const s3 = lerp(_hslA.s, _hslB.s, alpha);
       const l2 = lerp(_hslA.l, _hslB.l, alpha);
-      this.setHSL(h2, s2, l2);
+      this.setHSL(h2, s3, l2);
       return this;
     }
     equals(c2) {
@@ -8799,11 +8745,11 @@ reset scout color to green, persists
       this.w += v2.w;
       return this;
     }
-    addScalar(s2) {
-      this.x += s2;
-      this.y += s2;
-      this.z += s2;
-      this.w += s2;
+    addScalar(s3) {
+      this.x += s3;
+      this.y += s3;
+      this.z += s3;
+      this.w += s3;
       return this;
     }
     addVectors(a2, b2) {
@@ -8813,11 +8759,11 @@ reset scout color to green, persists
       this.w = a2.w + b2.w;
       return this;
     }
-    addScaledVector(v2, s2) {
-      this.x += v2.x * s2;
-      this.y += v2.y * s2;
-      this.z += v2.z * s2;
-      this.w += v2.w * s2;
+    addScaledVector(v2, s3) {
+      this.x += v2.x * s3;
+      this.y += v2.y * s3;
+      this.z += v2.z * s3;
+      this.w += v2.w * s3;
       return this;
     }
     sub(v2, w2) {
@@ -8831,11 +8777,11 @@ reset scout color to green, persists
       this.w -= v2.w;
       return this;
     }
-    subScalar(s2) {
-      this.x -= s2;
-      this.y -= s2;
-      this.z -= s2;
-      this.w -= s2;
+    subScalar(s3) {
+      this.x -= s3;
+      this.y -= s3;
+      this.z -= s3;
+      this.w -= s3;
       return this;
     }
     subVectors(a2, b2) {
@@ -8871,17 +8817,17 @@ reset scout color to green, persists
     divideScalar(scalar) {
       return this.multiplyScalar(1 / scalar);
     }
-    setAxisAngleFromQuaternion(q2) {
-      this.w = 2 * Math.acos(q2.w);
-      const s2 = Math.sqrt(1 - q2.w * q2.w);
-      if (s2 < 1e-4) {
+    setAxisAngleFromQuaternion(q3) {
+      this.w = 2 * Math.acos(q3.w);
+      const s3 = Math.sqrt(1 - q3.w * q3.w);
+      if (s3 < 1e-4) {
         this.x = 1;
         this.y = 0;
         this.z = 0;
       } else {
-        this.x = q2.x / s2;
-        this.y = q2.y / s2;
-        this.z = q2.z / s2;
+        this.x = q3.x / s3;
+        this.y = q3.y / s3;
+        this.z = q3.z / s3;
       }
       return this;
     }
@@ -8934,12 +8880,12 @@ reset scout color to green, persists
         this.set(x2, y2, z2, angle);
         return this;
       }
-      let s2 = Math.sqrt((m32 - m23) * (m32 - m23) + (m13 - m31) * (m13 - m31) + (m21 - m12) * (m21 - m12));
-      if (Math.abs(s2) < 1e-3)
-        s2 = 1;
-      this.x = (m32 - m23) / s2;
-      this.y = (m13 - m31) / s2;
-      this.z = (m21 - m12) / s2;
+      let s3 = Math.sqrt((m32 - m23) * (m32 - m23) + (m13 - m31) * (m13 - m31) + (m21 - m12) * (m21 - m12));
+      if (Math.abs(s3) < 1e-3)
+        s3 = 1;
+      this.x = (m32 - m23) / s3;
+      this.y = (m13 - m31) / s3;
+      this.z = (m21 - m12) / s3;
       this.w = Math.acos((m11 + m22 + m33 - 1) / 2);
       return this;
     }
@@ -9233,19 +9179,19 @@ reset scout color to green, persists
         return;
       }
       if (w0 !== w1 || x0 !== x1 || y0 !== y1 || z0 !== z1) {
-        let s2 = 1 - t;
+        let s3 = 1 - t;
         const cos = x0 * x1 + y0 * y1 + z0 * z1 + w0 * w1, dir = cos >= 0 ? 1 : -1, sqrSin = 1 - cos * cos;
         if (sqrSin > Number.EPSILON) {
           const sin = Math.sqrt(sqrSin), len = Math.atan2(sin, cos * dir);
-          s2 = Math.sin(s2 * len) / sin;
+          s3 = Math.sin(s3 * len) / sin;
           t = Math.sin(t * len) / sin;
         }
         const tDir = t * dir;
-        x0 = x0 * s2 + x1 * tDir;
-        y0 = y0 * s2 + y1 * tDir;
-        z0 = z0 * s2 + z1 * tDir;
-        w0 = w0 * s2 + w1 * tDir;
-        if (s2 === 1 - t) {
+        x0 = x0 * s3 + x1 * tDir;
+        y0 = y0 * s3 + y1 * tDir;
+        z0 = z0 * s3 + z1 * tDir;
+        w0 = w0 * s3 + w1 * tDir;
+        if (s3 === 1 - t) {
           const f2 = 1 / Math.sqrt(x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0);
           x0 *= f2;
           y0 *= f2;
@@ -9320,7 +9266,7 @@ reset scout color to green, persists
       this._onChangeCallback();
       return this;
     }
-    setFromEuler(euler2, update2) {
+    setFromEuler(euler2, update3) {
       if (!(euler2 && euler2.isEuler)) {
         throw new Error("THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.");
       }
@@ -9331,57 +9277,57 @@ reset scout color to green, persists
       const c2 = cos(y2 / 2);
       const c3 = cos(z2 / 2);
       const s1 = sin(x2 / 2);
-      const s2 = sin(y2 / 2);
+      const s22 = sin(y2 / 2);
       const s3 = sin(z2 / 2);
       switch (order) {
         case "XYZ":
-          this._x = s1 * c2 * c3 + c1 * s2 * s3;
-          this._y = c1 * s2 * c3 - s1 * c2 * s3;
-          this._z = c1 * c2 * s3 + s1 * s2 * c3;
-          this._w = c1 * c2 * c3 - s1 * s2 * s3;
+          this._x = s1 * c2 * c3 + c1 * s22 * s3;
+          this._y = c1 * s22 * c3 - s1 * c2 * s3;
+          this._z = c1 * c2 * s3 + s1 * s22 * c3;
+          this._w = c1 * c2 * c3 - s1 * s22 * s3;
           break;
         case "YXZ":
-          this._x = s1 * c2 * c3 + c1 * s2 * s3;
-          this._y = c1 * s2 * c3 - s1 * c2 * s3;
-          this._z = c1 * c2 * s3 - s1 * s2 * c3;
-          this._w = c1 * c2 * c3 + s1 * s2 * s3;
+          this._x = s1 * c2 * c3 + c1 * s22 * s3;
+          this._y = c1 * s22 * c3 - s1 * c2 * s3;
+          this._z = c1 * c2 * s3 - s1 * s22 * c3;
+          this._w = c1 * c2 * c3 + s1 * s22 * s3;
           break;
         case "ZXY":
-          this._x = s1 * c2 * c3 - c1 * s2 * s3;
-          this._y = c1 * s2 * c3 + s1 * c2 * s3;
-          this._z = c1 * c2 * s3 + s1 * s2 * c3;
-          this._w = c1 * c2 * c3 - s1 * s2 * s3;
+          this._x = s1 * c2 * c3 - c1 * s22 * s3;
+          this._y = c1 * s22 * c3 + s1 * c2 * s3;
+          this._z = c1 * c2 * s3 + s1 * s22 * c3;
+          this._w = c1 * c2 * c3 - s1 * s22 * s3;
           break;
         case "ZYX":
-          this._x = s1 * c2 * c3 - c1 * s2 * s3;
-          this._y = c1 * s2 * c3 + s1 * c2 * s3;
-          this._z = c1 * c2 * s3 - s1 * s2 * c3;
-          this._w = c1 * c2 * c3 + s1 * s2 * s3;
+          this._x = s1 * c2 * c3 - c1 * s22 * s3;
+          this._y = c1 * s22 * c3 + s1 * c2 * s3;
+          this._z = c1 * c2 * s3 - s1 * s22 * c3;
+          this._w = c1 * c2 * c3 + s1 * s22 * s3;
           break;
         case "YZX":
-          this._x = s1 * c2 * c3 + c1 * s2 * s3;
-          this._y = c1 * s2 * c3 + s1 * c2 * s3;
-          this._z = c1 * c2 * s3 - s1 * s2 * c3;
-          this._w = c1 * c2 * c3 - s1 * s2 * s3;
+          this._x = s1 * c2 * c3 + c1 * s22 * s3;
+          this._y = c1 * s22 * c3 + s1 * c2 * s3;
+          this._z = c1 * c2 * s3 - s1 * s22 * c3;
+          this._w = c1 * c2 * c3 - s1 * s22 * s3;
           break;
         case "XZY":
-          this._x = s1 * c2 * c3 - c1 * s2 * s3;
-          this._y = c1 * s2 * c3 - s1 * c2 * s3;
-          this._z = c1 * c2 * s3 + s1 * s2 * c3;
-          this._w = c1 * c2 * c3 + s1 * s2 * s3;
+          this._x = s1 * c2 * c3 - c1 * s22 * s3;
+          this._y = c1 * s22 * c3 - s1 * c2 * s3;
+          this._z = c1 * c2 * s3 + s1 * s22 * c3;
+          this._w = c1 * c2 * c3 + s1 * s22 * s3;
           break;
         default:
           console.warn("THREE.Quaternion: .setFromEuler() encountered an unknown order: " + order);
       }
-      if (update2 !== false)
+      if (update3 !== false)
         this._onChangeCallback();
       return this;
     }
     setFromAxisAngle(axis, angle) {
-      const halfAngle = angle / 2, s2 = Math.sin(halfAngle);
-      this._x = axis.x * s2;
-      this._y = axis.y * s2;
-      this._z = axis.z * s2;
+      const halfAngle = angle / 2, s3 = Math.sin(halfAngle);
+      this._x = axis.x * s3;
+      this._y = axis.y * s3;
+      this._z = axis.z * s3;
       this._w = Math.cos(halfAngle);
       this._onChangeCallback();
       return this;
@@ -9389,29 +9335,29 @@ reset scout color to green, persists
     setFromRotationMatrix(m2) {
       const te2 = m2.elements, m11 = te2[0], m12 = te2[4], m13 = te2[8], m21 = te2[1], m22 = te2[5], m23 = te2[9], m31 = te2[2], m32 = te2[6], m33 = te2[10], trace = m11 + m22 + m33;
       if (trace > 0) {
-        const s2 = 0.5 / Math.sqrt(trace + 1);
-        this._w = 0.25 / s2;
-        this._x = (m32 - m23) * s2;
-        this._y = (m13 - m31) * s2;
-        this._z = (m21 - m12) * s2;
+        const s3 = 0.5 / Math.sqrt(trace + 1);
+        this._w = 0.25 / s3;
+        this._x = (m32 - m23) * s3;
+        this._y = (m13 - m31) * s3;
+        this._z = (m21 - m12) * s3;
       } else if (m11 > m22 && m11 > m33) {
-        const s2 = 2 * Math.sqrt(1 + m11 - m22 - m33);
-        this._w = (m32 - m23) / s2;
-        this._x = 0.25 * s2;
-        this._y = (m12 + m21) / s2;
-        this._z = (m13 + m31) / s2;
+        const s3 = 2 * Math.sqrt(1 + m11 - m22 - m33);
+        this._w = (m32 - m23) / s3;
+        this._x = 0.25 * s3;
+        this._y = (m12 + m21) / s3;
+        this._z = (m13 + m31) / s3;
       } else if (m22 > m33) {
-        const s2 = 2 * Math.sqrt(1 + m22 - m11 - m33);
-        this._w = (m13 - m31) / s2;
-        this._x = (m12 + m21) / s2;
-        this._y = 0.25 * s2;
-        this._z = (m23 + m32) / s2;
+        const s3 = 2 * Math.sqrt(1 + m22 - m11 - m33);
+        this._w = (m13 - m31) / s3;
+        this._x = (m12 + m21) / s3;
+        this._y = 0.25 * s3;
+        this._z = (m23 + m32) / s3;
       } else {
-        const s2 = 2 * Math.sqrt(1 + m33 - m11 - m22);
-        this._w = (m21 - m12) / s2;
-        this._x = (m13 + m31) / s2;
-        this._y = (m23 + m32) / s2;
-        this._z = 0.25 * s2;
+        const s3 = 2 * Math.sqrt(1 + m33 - m11 - m22);
+        this._w = (m21 - m12) / s3;
+        this._x = (m13 + m31) / s3;
+        this._y = (m23 + m32) / s3;
+        this._z = 0.25 * s3;
       }
       this._onChangeCallback();
       return this;
@@ -9439,15 +9385,15 @@ reset scout color to green, persists
       }
       return this.normalize();
     }
-    angleTo(q2) {
-      return 2 * Math.acos(Math.abs(clamp2(this.dot(q2), -1, 1)));
+    angleTo(q3) {
+      return 2 * Math.acos(Math.abs(clamp2(this.dot(q3), -1, 1)));
     }
-    rotateTowards(q2, step) {
-      const angle = this.angleTo(q2);
+    rotateTowards(q3, step) {
+      const angle = this.angleTo(q3);
       if (angle === 0)
         return this;
       const t = Math.min(1, step / angle);
-      this.slerp(q2, t);
+      this.slerp(q3, t);
       return this;
     }
     identity() {
@@ -9489,15 +9435,15 @@ reset scout color to green, persists
       this._onChangeCallback();
       return this;
     }
-    multiply(q2, p2) {
-      if (p2 !== void 0) {
+    multiply(q3, p3) {
+      if (p3 !== void 0) {
         console.warn("THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.");
-        return this.multiplyQuaternions(q2, p2);
+        return this.multiplyQuaternions(q3, p3);
       }
-      return this.multiplyQuaternions(this, q2);
+      return this.multiplyQuaternions(this, q3);
     }
-    premultiply(q2) {
-      return this.multiplyQuaternions(q2, this);
+    premultiply(q3) {
+      return this.multiplyQuaternions(q3, this);
     }
     multiplyQuaternions(a2, b2) {
       const qax = a2._x, qay = a2._y, qaz = a2._z, qaw = a2._w;
@@ -9534,11 +9480,11 @@ reset scout color to green, persists
       }
       const sqrSinHalfTheta = 1 - cosHalfTheta * cosHalfTheta;
       if (sqrSinHalfTheta <= Number.EPSILON) {
-        const s2 = 1 - t;
-        this._w = s2 * w2 + t * this._w;
-        this._x = s2 * x2 + t * this._x;
-        this._y = s2 * y2 + t * this._y;
-        this._z = s2 * z2 + t * this._z;
+        const s3 = 1 - t;
+        this._w = s3 * w2 + t * this._w;
+        this._x = s3 * x2 + t * this._x;
+        this._y = s3 * y2 + t * this._y;
+        this._z = s3 * z2 + t * this._z;
         this.normalize();
         this._onChangeCallback();
         return this;
@@ -9676,10 +9622,10 @@ reset scout color to green, persists
       this.z += v2.z;
       return this;
     }
-    addScalar(s2) {
-      this.x += s2;
-      this.y += s2;
-      this.z += s2;
+    addScalar(s3) {
+      this.x += s3;
+      this.y += s3;
+      this.z += s3;
       return this;
     }
     addVectors(a2, b2) {
@@ -9688,10 +9634,10 @@ reset scout color to green, persists
       this.z = a2.z + b2.z;
       return this;
     }
-    addScaledVector(v2, s2) {
-      this.x += v2.x * s2;
-      this.y += v2.y * s2;
-      this.z += v2.z * s2;
+    addScaledVector(v2, s3) {
+      this.x += v2.x * s3;
+      this.y += v2.y * s3;
+      this.z += v2.z * s3;
       return this;
     }
     sub(v2, w2) {
@@ -9704,10 +9650,10 @@ reset scout color to green, persists
       this.z -= v2.z;
       return this;
     }
-    subScalar(s2) {
-      this.x -= s2;
-      this.y -= s2;
-      this.z -= s2;
+    subScalar(s3) {
+      this.x -= s3;
+      this.y -= s3;
+      this.z -= s3;
       return this;
     }
     subVectors(a2, b2) {
@@ -9767,9 +9713,9 @@ reset scout color to green, persists
       this.z = (e[2] * x2 + e[6] * y2 + e[10] * z2 + e[14]) * w2;
       return this;
     }
-    applyQuaternion(q2) {
+    applyQuaternion(q3) {
       const x2 = this.x, y2 = this.y, z2 = this.z;
-      const qx = q2.x, qy = q2.y, qz = q2.z, qw = q2.w;
+      const qx = q3.x, qy = q3.y, qz = q3.z, qw = q3.w;
       const ix = qw * x2 + qy * z2 - qz * y2;
       const iy = qw * y2 + qz * x2 - qx * z2;
       const iz = qw * z2 + qx * y2 - qy * x2;
@@ -9936,8 +9882,8 @@ reset scout color to green, persists
     manhattanDistanceTo(v2) {
       return Math.abs(this.x - v2.x) + Math.abs(this.y - v2.y) + Math.abs(this.z - v2.z);
     }
-    setFromSpherical(s2) {
-      return this.setFromSphericalCoords(s2.radius, s2.phi, s2.theta);
+    setFromSpherical(s3) {
+      return this.setFromSphericalCoords(s3.radius, s3.phi, s3.theta);
     }
     setFromSphericalCoords(radius, phi, theta) {
       const sinPhiRadius = Math.sin(phi) * radius;
@@ -10339,8 +10285,8 @@ reset scout color to green, persists
       const r2 = extents.x * Math.abs(_testAxis.x) + extents.y * Math.abs(_testAxis.y) + extents.z * Math.abs(_testAxis.z);
       const p0 = v0.dot(_testAxis);
       const p1 = v1.dot(_testAxis);
-      const p2 = v2.dot(_testAxis);
-      if (Math.max(-Math.max(p0, p1, p2), Math.min(p0, p1, p2)) > r2) {
+      const p22 = v2.dot(_testAxis);
+      if (Math.max(-Math.max(p0, p1, p22), Math.min(p0, p1, p22)) > r2) {
         return false;
       }
     }
@@ -10911,8 +10857,8 @@ reset scout color to green, persists
       te2[15] = 1;
       return this;
     }
-    makeRotationFromQuaternion(q2) {
-      return this.compose(_zero, q2, _one);
+    makeRotationFromQuaternion(q3) {
+      return this.compose(_zero, q3, _one);
     }
     lookAt(eye, target, up) {
       const te2 = this.elements;
@@ -10984,24 +10930,24 @@ reset scout color to green, persists
       te2[15] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44;
       return this;
     }
-    multiplyScalar(s2) {
+    multiplyScalar(s3) {
       const te2 = this.elements;
-      te2[0] *= s2;
-      te2[4] *= s2;
-      te2[8] *= s2;
-      te2[12] *= s2;
-      te2[1] *= s2;
-      te2[5] *= s2;
-      te2[9] *= s2;
-      te2[13] *= s2;
-      te2[2] *= s2;
-      te2[6] *= s2;
-      te2[10] *= s2;
-      te2[14] *= s2;
-      te2[3] *= s2;
-      te2[7] *= s2;
-      te2[11] *= s2;
-      te2[15] *= s2;
+      te2[0] *= s3;
+      te2[4] *= s3;
+      te2[8] *= s3;
+      te2[12] *= s3;
+      te2[1] *= s3;
+      te2[5] *= s3;
+      te2[9] *= s3;
+      te2[13] *= s3;
+      te2[2] *= s3;
+      te2[6] *= s3;
+      te2[10] *= s3;
+      te2[14] *= s3;
+      te2[3] *= s3;
+      te2[7] *= s3;
+      te2[11] *= s3;
+      te2[15] *= s3;
       return this;
     }
     determinant() {
@@ -11101,27 +11047,27 @@ reset scout color to green, persists
       return this;
     }
     makeRotationX(theta) {
-      const c2 = Math.cos(theta), s2 = Math.sin(theta);
-      this.set(1, 0, 0, 0, 0, c2, -s2, 0, 0, s2, c2, 0, 0, 0, 0, 1);
+      const c2 = Math.cos(theta), s3 = Math.sin(theta);
+      this.set(1, 0, 0, 0, 0, c2, -s3, 0, 0, s3, c2, 0, 0, 0, 0, 1);
       return this;
     }
     makeRotationY(theta) {
-      const c2 = Math.cos(theta), s2 = Math.sin(theta);
-      this.set(c2, 0, s2, 0, 0, 1, 0, 0, -s2, 0, c2, 0, 0, 0, 0, 1);
+      const c2 = Math.cos(theta), s3 = Math.sin(theta);
+      this.set(c2, 0, s3, 0, 0, 1, 0, 0, -s3, 0, c2, 0, 0, 0, 0, 1);
       return this;
     }
     makeRotationZ(theta) {
-      const c2 = Math.cos(theta), s2 = Math.sin(theta);
-      this.set(c2, -s2, 0, 0, s2, c2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+      const c2 = Math.cos(theta), s3 = Math.sin(theta);
+      this.set(c2, -s3, 0, 0, s3, c2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
       return this;
     }
     makeRotationAxis(axis, angle) {
       const c2 = Math.cos(angle);
-      const s2 = Math.sin(angle);
+      const s3 = Math.sin(angle);
       const t = 1 - c2;
       const x2 = axis.x, y2 = axis.y, z2 = axis.z;
       const tx = t * x2, ty = t * y2;
-      this.set(tx * x2 + c2, tx * y2 - s2 * z2, tx * z2 + s2 * y2, 0, tx * y2 + s2 * z2, ty * y2 + c2, ty * z2 - s2 * x2, 0, tx * z2 - s2 * y2, ty * z2 + s2 * x2, t * z2 * z2 + c2, 0, 0, 0, 0, 1);
+      this.set(tx * x2 + c2, tx * y2 - s3 * z2, tx * z2 + s3 * y2, 0, tx * y2 + s3 * z2, ty * y2 + c2, ty * z2 - s3 * x2, 0, tx * z2 - s3 * y2, ty * z2 + s3 * x2, t * z2 * z2 + c2, 0, 0, 0, 0, 1);
       return this;
     }
     makeScale(x2, y2, z2) {
@@ -11221,10 +11167,10 @@ reset scout color to green, persists
       const te2 = this.elements;
       const w2 = 1 / (right - left);
       const h2 = 1 / (top - bottom);
-      const p2 = 1 / (far - near);
+      const p3 = 1 / (far - near);
       const x2 = (right + left) * w2;
       const y2 = (top + bottom) * h2;
-      const z2 = (far + near) * p2;
+      const z2 = (far + near) * p3;
       te2[0] = 2 * w2;
       te2[4] = 0;
       te2[8] = 0;
@@ -11235,7 +11181,7 @@ reset scout color to green, persists
       te2[13] = -y2;
       te2[2] = 0;
       te2[6] = 0;
-      te2[10] = -2 * p2;
+      te2[10] = -2 * p3;
       te2[14] = -z2;
       te2[3] = 0;
       te2[7] = 0;
@@ -11343,7 +11289,7 @@ reset scout color to green, persists
       this._onChangeCallback();
       return this;
     }
-    setFromRotationMatrix(m2, order = this._order, update2 = true) {
+    setFromRotationMatrix(m2, order = this._order, update3 = true) {
       const te2 = m2.elements;
       const m11 = te2[0], m12 = te2[4], m13 = te2[8];
       const m21 = te2[1], m22 = te2[5], m23 = te2[9];
@@ -11413,13 +11359,13 @@ reset scout color to green, persists
           console.warn("THREE.Euler: .setFromRotationMatrix() encountered an unknown order: " + order);
       }
       this._order = order;
-      if (update2 === true)
+      if (update3 === true)
         this._onChangeCallback();
       return this;
     }
-    setFromQuaternion(q2, order, update2) {
-      _matrix$1.makeRotationFromQuaternion(q2);
-      return this.setFromRotationMatrix(_matrix$1, order, update2);
+    setFromQuaternion(q3, order, update3) {
+      _matrix$1.makeRotationFromQuaternion(q3);
+      return this.setFromRotationMatrix(_matrix$1, order, update3);
     }
     setFromVector3(v2, order = this._order) {
       return this.set(v2.x, v2.y, v2.z, order);
@@ -11579,8 +11525,8 @@ reset scout color to green, persists
       this.matrix.premultiply(matrix);
       this.matrix.decompose(this.position, this.quaternion, this.scale);
     }
-    applyQuaternion(q2) {
-      this.quaternion.premultiply(q2);
+    applyQuaternion(q3) {
+      this.quaternion.premultiply(q3);
       return this;
     }
     setRotationFromAxisAngle(axis, angle) {
@@ -11592,8 +11538,8 @@ reset scout color to green, persists
     setRotationFromMatrix(m2) {
       this.quaternion.setFromRotationMatrix(m2);
     }
-    setRotationFromQuaternion(q2) {
-      this.quaternion.copy(q2);
+    setRotationFromQuaternion(q3) {
+      this.quaternion.copy(q3);
     }
     rotateOnAxis(axis, angle) {
       _q1.setFromAxisAngle(axis, angle);
@@ -12050,8 +11996,8 @@ reset scout color to green, persists
       this.getBarycoord(point, a2, b2, c2, _v3$1);
       return _v3$1.x >= 0 && _v3$1.y >= 0 && _v3$1.x + _v3$1.y <= 1;
     }
-    static getUV(point, p1, p2, p3, uv1, uv2, uv3, target) {
-      this.getBarycoord(point, p1, p2, p3, _v3$1);
+    static getUV(point, p1, p22, p3, uv1, uv2, uv3, target) {
+      this.getBarycoord(point, p1, p22, p3, _v3$1);
       target.set(0, 0);
       target.addScaledVector(uv1, _v3$1.x);
       target.addScaledVector(uv2, _v3$1.y);
@@ -12119,18 +12065,18 @@ reset scout color to green, persists
     intersectsBox(box) {
       return box.intersectsTriangle(this);
     }
-    closestPointToPoint(p2, target) {
+    closestPointToPoint(p3, target) {
       const a2 = this.a, b2 = this.b, c2 = this.c;
       let v2, w2;
       _vab.subVectors(b2, a2);
       _vac.subVectors(c2, a2);
-      _vap.subVectors(p2, a2);
+      _vap.subVectors(p3, a2);
       const d1 = _vab.dot(_vap);
       const d2 = _vac.dot(_vap);
       if (d1 <= 0 && d2 <= 0) {
         return target.copy(a2);
       }
-      _vbp.subVectors(p2, b2);
+      _vbp.subVectors(p3, b2);
       const d3 = _vab.dot(_vbp);
       const d4 = _vac.dot(_vbp);
       if (d3 >= 0 && d4 <= d3) {
@@ -12141,7 +12087,7 @@ reset scout color to green, persists
         v2 = d1 / (d1 - d3);
         return target.copy(a2).addScaledVector(_vab, v2);
       }
-      _vcp.subVectors(p2, c2);
+      _vcp.subVectors(p3, c2);
       const d5 = _vab.dot(_vcp);
       const d6 = _vac.dot(_vcp);
       if (d6 >= 0 && d5 <= d6) {
@@ -12919,8 +12865,8 @@ reset scout color to green, persists
       }
       return this;
     }
-    applyQuaternion(q2) {
-      _m1.makeRotationFromQuaternion(q2);
+    applyQuaternion(q3) {
+      _m1.makeRotationFromQuaternion(q3);
       this.applyMatrix4(_m1);
       return this;
     }
@@ -13734,14 +13680,14 @@ reset scout color to green, persists
     const dst = {};
     for (const u2 in src) {
       dst[u2] = {};
-      for (const p2 in src[u2]) {
-        const property = src[u2][p2];
+      for (const p3 in src[u2]) {
+        const property = src[u2][p3];
         if (property && (property.isColor || property.isMatrix3 || property.isMatrix4 || property.isVector2 || property.isVector3 || property.isVector4 || property.isTexture || property.isQuaternion)) {
-          dst[u2][p2] = property.clone();
+          dst[u2][p3] = property.clone();
         } else if (Array.isArray(property)) {
-          dst[u2][p2] = property.slice();
+          dst[u2][p3] = property.slice();
         } else {
-          dst[u2][p2] = property;
+          dst[u2][p3] = property;
         }
       }
     }
@@ -13751,8 +13697,8 @@ reset scout color to green, persists
     const merged = {};
     for (let u2 = 0; u2 < uniforms.length; u2++) {
       const tmp2 = cloneUniforms(uniforms[u2]);
-      for (const p2 in tmp2) {
-        merged[p2] = tmp2[p2];
+      for (const p3 in tmp2) {
+        merged[p3] = tmp2[p3];
       }
     }
     return merged;
@@ -14057,7 +14003,7 @@ reset scout color to green, persists
       cameraNZ.lookAt(new Vector3(0, 0, -1));
       this.add(cameraNZ);
     }
-    update(renderer, scene) {
+    update(renderer, scene2) {
       if (this.parent === null)
         this.updateMatrixWorld();
       const renderTarget = this.renderTarget;
@@ -14068,18 +14014,18 @@ reset scout color to green, persists
       const generateMipmaps = renderTarget.texture.generateMipmaps;
       renderTarget.texture.generateMipmaps = false;
       renderer.setRenderTarget(renderTarget, 0);
-      renderer.render(scene, cameraPX);
+      renderer.render(scene2, cameraPX);
       renderer.setRenderTarget(renderTarget, 1);
-      renderer.render(scene, cameraNX);
+      renderer.render(scene2, cameraNX);
       renderer.setRenderTarget(renderTarget, 2);
-      renderer.render(scene, cameraPY);
+      renderer.render(scene2, cameraPY);
       renderer.setRenderTarget(renderTarget, 3);
-      renderer.render(scene, cameraNY);
+      renderer.render(scene2, cameraNY);
       renderer.setRenderTarget(renderTarget, 4);
-      renderer.render(scene, cameraPZ);
+      renderer.render(scene2, cameraPZ);
       renderTarget.texture.generateMipmaps = generateMipmaps;
       renderer.setRenderTarget(renderTarget, 5);
-      renderer.render(scene, cameraNZ);
+      renderer.render(scene2, cameraNZ);
       renderer.setRenderTarget(currentRenderTarget);
       renderer.xr.enabled = currentXrEnabled;
       renderTarget.texture.needsPMREMUpdate = true;
@@ -14297,14 +14243,14 @@ reset scout color to green, persists
   var _sphere$2 = /* @__PURE__ */ new Sphere();
   var _vector$7 = /* @__PURE__ */ new Vector3();
   var Frustum = class {
-    constructor(p0 = new Plane(), p1 = new Plane(), p2 = new Plane(), p3 = new Plane(), p4 = new Plane(), p5 = new Plane()) {
-      this.planes = [p0, p1, p2, p3, p4, p5];
+    constructor(p0 = new Plane(), p1 = new Plane(), p22 = new Plane(), p3 = new Plane(), p4 = new Plane(), p5 = new Plane()) {
+      this.planes = [p0, p1, p22, p3, p4, p5];
     }
-    set(p0, p1, p2, p3, p4, p5) {
+    set(p0, p1, p22, p3, p4, p5) {
       const planes = this.planes;
       planes[0].copy(p0);
       planes[1].copy(p1);
-      planes[2].copy(p2);
+      planes[2].copy(p22);
       planes[3].copy(p3);
       planes[4].copy(p4);
       planes[5].copy(p5);
@@ -14487,7 +14433,7 @@ reset scout color to green, persists
         buffers.delete(attribute);
       }
     }
-    function update2(attribute, bufferType) {
+    function update3(attribute, bufferType) {
       if (attribute.isGLBufferAttribute) {
         const cached = buffers.get(attribute);
         if (!cached || cached.version < attribute.version) {
@@ -14513,7 +14459,7 @@ reset scout color to green, persists
     return {
       get,
       remove,
-      update: update2
+      update: update3
     };
   }
   var PlaneGeometry = class extends BufferGeometry {
@@ -15221,7 +15167,7 @@ reset scout color to green, persists
     vertexShader: ShaderChunk.meshphysical_vert,
     fragmentShader: ShaderChunk.meshphysical_frag
   };
-  function WebGLBackground(renderer, cubemaps, state, objects, alpha, premultipliedAlpha) {
+  function WebGLBackground(renderer, cubemaps, state2, objects, alpha, premultipliedAlpha) {
     const clearColor = new Color(0);
     let clearAlpha = alpha === true ? 0 : 1;
     let planeMesh;
@@ -15229,9 +15175,9 @@ reset scout color to green, persists
     let currentBackground = null;
     let currentBackgroundVersion = 0;
     let currentTonemapping = null;
-    function render(renderList, scene) {
+    function render(renderList, scene2) {
       let forceClear = false;
-      let background = scene.isScene === true ? scene.background : null;
+      let background = scene2.isScene === true ? scene2.background : null;
       if (background && background.isTexture) {
         background = cubemaps.get(background);
       }
@@ -15263,7 +15209,7 @@ reset scout color to green, persists
           }));
           boxMesh.geometry.deleteAttribute("normal");
           boxMesh.geometry.deleteAttribute("uv");
-          boxMesh.onBeforeRender = function(renderer2, scene2, camera3) {
+          boxMesh.onBeforeRender = function(renderer2, scene3, camera3) {
             this.matrixWorld.copyPosition(camera3.matrixWorld);
           };
           Object.defineProperty(boxMesh.material, "envMap", {
@@ -15317,7 +15263,7 @@ reset scout color to green, persists
       }
     }
     function setClear(color, alpha2) {
-      state.buffers.color.setClear(color.r, color.g, color.b, alpha2, premultipliedAlpha);
+      state2.buffers.color.setClear(color.r, color.g, color.b, alpha2, premultipliedAlpha);
     }
     return {
       getClearColor: function() {
@@ -15348,9 +15294,9 @@ reset scout color to green, persists
     function setup(object, material, program, geometry, index) {
       let updateBuffers = false;
       if (vaoAvailable) {
-        const state = getBindingState(geometry, program, material);
-        if (currentState !== state) {
-          currentState = state;
+        const state2 = getBindingState(geometry, program, material);
+        if (currentState !== state2) {
+          currentState = state2;
           bindVertexArrayObject(currentState.object);
         }
         updateBuffers = needsUpdate(geometry, index);
@@ -15405,12 +15351,12 @@ reset scout color to green, persists
         stateMap = {};
         programMap[program.id] = stateMap;
       }
-      let state = stateMap[wireframe];
-      if (state === void 0) {
-        state = createBindingState(createVertexArrayObject());
-        stateMap[wireframe] = state;
+      let state2 = stateMap[wireframe];
+      if (state2 === void 0) {
+        state2 = createBindingState(createVertexArrayObject());
+        stateMap[wireframe] = state2;
       }
-      return state;
+      return state2;
     }
     function createBindingState(vao) {
       const newAttributes = [];
@@ -16023,10 +15969,10 @@ reset scout color to green, persists
       this._cubemapShader = null;
       this._compileMaterial(this._blurMaterial);
     }
-    fromScene(scene, sigma = 0, near = 0.1, far = 100) {
+    fromScene(scene2, sigma = 0, near = 0.1, far = 100) {
       _oldTarget = this._renderer.getRenderTarget();
       const cubeUVRenderTarget = this._allocateTargets();
-      this._sceneToCubeUV(scene, near, far, cubeUVRenderTarget);
+      this._sceneToCubeUV(scene2, near, far, cubeUVRenderTarget);
       if (sigma > 0) {
         this._blur(cubeUVRenderTarget, 0, 0, sigma);
       }
@@ -16098,7 +16044,7 @@ reset scout color to green, persists
       const tmpMesh = new Mesh(_lodPlanes[0], material);
       this._renderer.compile(tmpMesh, _flatCamera);
     }
-    _sceneToCubeUV(scene, near, far, cubeUVRenderTarget) {
+    _sceneToCubeUV(scene2, near, far, cubeUVRenderTarget) {
       const fov2 = 90;
       const aspect2 = 1;
       const cubeCamera = new PerspectiveCamera(fov2, aspect2, near, far);
@@ -16118,11 +16064,11 @@ reset scout color to green, persists
       });
       const backgroundBox = new Mesh(new BoxGeometry(), backgroundMaterial);
       let useSolidColor = false;
-      const background = scene.background;
+      const background = scene2.background;
       if (background) {
         if (background.isColor) {
           backgroundMaterial.color.copy(background);
-          scene.background = null;
+          scene2.background = null;
           useSolidColor = true;
         }
       } else {
@@ -16146,13 +16092,13 @@ reset scout color to green, persists
         if (useSolidColor) {
           renderer.render(backgroundBox, cubeCamera);
         }
-        renderer.render(scene, cubeCamera);
+        renderer.render(scene2, cubeCamera);
       }
       backgroundBox.geometry.dispose();
       backgroundBox.material.dispose();
       renderer.toneMapping = toneMapping;
       renderer.autoClear = originalAutoClear;
-      scene.background = background;
+      scene2.background = background;
     }
     _textureToCubeUV(texture, cubeUVRenderTarget) {
       const renderer = this._renderer;
@@ -16699,7 +16645,7 @@ reset scout color to green, persists
       info.memory.geometries++;
       return geometry;
     }
-    function update2(geometry) {
+    function update3(geometry) {
       const geometryAttributes = geometry.attributes;
       for (const name in geometryAttributes) {
         attributes.update(geometryAttributes[name], 34962);
@@ -16759,7 +16705,7 @@ reset scout color to green, persists
     }
     return {
       get,
-      update: update2,
+      update: update3,
       getWireframeAttribute
     };
   }
@@ -16813,7 +16759,7 @@ reset scout color to green, persists
       points: 0,
       lines: 0
     };
-    function update2(count, mode, instanceCount) {
+    function update3(count, mode, instanceCount) {
       render.calls++;
       switch (mode) {
         case 4:
@@ -16849,7 +16795,7 @@ reset scout color to green, persists
       programs: null,
       autoReset: true,
       reset,
-      update: update2
+      update: update3
     };
   }
   var DataTexture2DArray = class extends Texture {
@@ -16893,7 +16839,7 @@ reset scout color to green, persists
     for (let i2 = 0; i2 < 8; i2++) {
       workInfluences[i2] = [i2, 0];
     }
-    function update2(object, geometry, material, program) {
+    function update3(object, geometry, material, program) {
       const objectInfluences = object.morphTargetInfluences;
       if (capabilities.isWebGL2 === true) {
         const numberOfMorphTargets = geometry.morphAttributes.position.length;
@@ -17022,12 +16968,12 @@ reset scout color to green, persists
       }
     }
     return {
-      update: update2
+      update: update3
     };
   }
   function WebGLObjects(gl, geometries, attributes, info) {
     let updateMap = /* @__PURE__ */ new WeakMap();
-    function update2(object) {
+    function update3(object) {
       const frame = info.render.frame;
       const geometry = object.geometry;
       const buffergeometry = geometries.get(object, geometry);
@@ -17057,7 +17003,7 @@ reset scout color to green, persists
         attributes.remove(instancedMesh.instanceColor);
     }
     return {
-      update: update2,
+      update: update3,
       dispose
     };
   }
@@ -18237,9 +18183,9 @@ reset scout color to green, persists
         return maxBones;
       }
     }
-    function getParameters(material, lights, shadows, scene, object) {
-      const fog = scene.fog;
-      const environment = material.isMeshStandardMaterial ? scene.environment : null;
+    function getParameters(material, lights, shadows, scene2, object) {
+      const fog = scene2.fog;
+      const environment = material.isMeshStandardMaterial ? scene2.environment : null;
       const envMap = (material.isMeshStandardMaterial ? cubeuvmaps : cubemaps).get(material.envMap || environment);
       const shaderID = shaderIDs[material.type];
       const maxBones = object.isSkinnedMesh ? getMaxBones(object) : 0;
@@ -18539,8 +18485,8 @@ reset scout color to green, persists
     }
     function acquireProgram(parameters, cacheKey) {
       let program;
-      for (let p2 = 0, pl = programs.length; p2 < pl; p2++) {
-        const preexistingProgram = programs[p2];
+      for (let p3 = 0, pl = programs.length; p3 < pl; p3++) {
+        const preexistingProgram = programs[p3];
         if (preexistingProgram.cacheKey === cacheKey) {
           program = preexistingProgram;
           ++program.usedTimes;
@@ -18591,7 +18537,7 @@ reset scout color to green, persists
     function remove(object) {
       properties.delete(object);
     }
-    function update2(object, key, value) {
+    function update3(object, key, value) {
       properties.get(object)[key] = value;
     }
     function dispose() {
@@ -18600,7 +18546,7 @@ reset scout color to green, persists
     return {
       get,
       remove,
-      update: update2,
+      update: update3,
       dispose
     };
   }
@@ -18720,17 +18666,17 @@ reset scout color to green, persists
   }
   function WebGLRenderLists() {
     let lists = /* @__PURE__ */ new WeakMap();
-    function get(scene, renderCallDepth) {
+    function get(scene2, renderCallDepth) {
       let list;
-      if (lists.has(scene) === false) {
+      if (lists.has(scene2) === false) {
         list = new WebGLRenderList();
-        lists.set(scene, [list]);
+        lists.set(scene2, [list]);
       } else {
-        if (renderCallDepth >= lists.get(scene).length) {
+        if (renderCallDepth >= lists.get(scene2).length) {
           list = new WebGLRenderList();
-          lists.get(scene).push(list);
+          lists.get(scene2).push(list);
         } else {
-          list = lists.get(scene)[renderCallDepth];
+          list = lists.get(scene2)[renderCallDepth];
         }
       }
       return list;
@@ -18846,7 +18792,7 @@ reset scout color to green, persists
   function WebGLLights(extensions, capabilities) {
     const cache = new UniformsCache();
     const shadowCache = ShadowUniformsCache();
-    const state = {
+    const state2 = {
       version: 0,
       hash: {
         directionalLength: -1,
@@ -18878,14 +18824,14 @@ reset scout color to green, persists
       hemi: []
     };
     for (let i2 = 0; i2 < 9; i2++)
-      state.probe.push(new Vector3());
+      state2.probe.push(new Vector3());
     const vector3 = new Vector3();
     const matrix4 = new Matrix4();
     const matrix42 = new Matrix4();
     function setup(lights, physicallyCorrectLights) {
       let r2 = 0, g2 = 0, b2 = 0;
       for (let i2 = 0; i2 < 9; i2++)
-        state.probe[i2].set(0, 0, 0);
+        state2.probe[i2].set(0, 0, 0);
       let directionalLength = 0;
       let pointLength = 0;
       let spotLength = 0;
@@ -18908,7 +18854,7 @@ reset scout color to green, persists
           b2 += color.b * intensity * scaleFactor;
         } else if (light2.isLightProbe) {
           for (let j2 = 0; j2 < 9; j2++) {
-            state.probe[j2].addScaledVector(light2.sh.coefficients[j2], intensity);
+            state2.probe[j2].addScaledVector(light2.sh.coefficients[j2], intensity);
           }
         } else if (light2.isDirectionalLight) {
           const uniforms = cache.get(light2);
@@ -18920,12 +18866,12 @@ reset scout color to green, persists
             shadowUniforms.shadowNormalBias = shadow.normalBias;
             shadowUniforms.shadowRadius = shadow.radius;
             shadowUniforms.shadowMapSize = shadow.mapSize;
-            state.directionalShadow[directionalLength] = shadowUniforms;
-            state.directionalShadowMap[directionalLength] = shadowMap;
-            state.directionalShadowMatrix[directionalLength] = light2.shadow.matrix;
+            state2.directionalShadow[directionalLength] = shadowUniforms;
+            state2.directionalShadowMap[directionalLength] = shadowMap;
+            state2.directionalShadowMatrix[directionalLength] = light2.shadow.matrix;
             numDirectionalShadows++;
           }
-          state.directional[directionalLength] = uniforms;
+          state2.directional[directionalLength] = uniforms;
           directionalLength++;
         } else if (light2.isSpotLight) {
           const uniforms = cache.get(light2);
@@ -18942,19 +18888,19 @@ reset scout color to green, persists
             shadowUniforms.shadowNormalBias = shadow.normalBias;
             shadowUniforms.shadowRadius = shadow.radius;
             shadowUniforms.shadowMapSize = shadow.mapSize;
-            state.spotShadow[spotLength] = shadowUniforms;
-            state.spotShadowMap[spotLength] = shadowMap;
-            state.spotShadowMatrix[spotLength] = light2.shadow.matrix;
+            state2.spotShadow[spotLength] = shadowUniforms;
+            state2.spotShadowMap[spotLength] = shadowMap;
+            state2.spotShadowMatrix[spotLength] = light2.shadow.matrix;
             numSpotShadows++;
           }
-          state.spot[spotLength] = uniforms;
+          state2.spot[spotLength] = uniforms;
           spotLength++;
         } else if (light2.isRectAreaLight) {
           const uniforms = cache.get(light2);
           uniforms.color.copy(color).multiplyScalar(intensity);
           uniforms.halfWidth.set(light2.width * 0.5, 0, 0);
           uniforms.halfHeight.set(0, light2.height * 0.5, 0);
-          state.rectArea[rectAreaLength] = uniforms;
+          state2.rectArea[rectAreaLength] = uniforms;
           rectAreaLength++;
         } else if (light2.isPointLight) {
           const uniforms = cache.get(light2);
@@ -18970,56 +18916,56 @@ reset scout color to green, persists
             shadowUniforms.shadowMapSize = shadow.mapSize;
             shadowUniforms.shadowCameraNear = shadow.camera.near;
             shadowUniforms.shadowCameraFar = shadow.camera.far;
-            state.pointShadow[pointLength] = shadowUniforms;
-            state.pointShadowMap[pointLength] = shadowMap;
-            state.pointShadowMatrix[pointLength] = light2.shadow.matrix;
+            state2.pointShadow[pointLength] = shadowUniforms;
+            state2.pointShadowMap[pointLength] = shadowMap;
+            state2.pointShadowMatrix[pointLength] = light2.shadow.matrix;
             numPointShadows++;
           }
-          state.point[pointLength] = uniforms;
+          state2.point[pointLength] = uniforms;
           pointLength++;
         } else if (light2.isHemisphereLight) {
           const uniforms = cache.get(light2);
           uniforms.skyColor.copy(light2.color).multiplyScalar(intensity * scaleFactor);
           uniforms.groundColor.copy(light2.groundColor).multiplyScalar(intensity * scaleFactor);
-          state.hemi[hemiLength] = uniforms;
+          state2.hemi[hemiLength] = uniforms;
           hemiLength++;
         }
       }
       if (rectAreaLength > 0) {
         if (capabilities.isWebGL2) {
-          state.rectAreaLTC1 = UniformsLib.LTC_FLOAT_1;
-          state.rectAreaLTC2 = UniformsLib.LTC_FLOAT_2;
+          state2.rectAreaLTC1 = UniformsLib.LTC_FLOAT_1;
+          state2.rectAreaLTC2 = UniformsLib.LTC_FLOAT_2;
         } else {
           if (extensions.has("OES_texture_float_linear") === true) {
-            state.rectAreaLTC1 = UniformsLib.LTC_FLOAT_1;
-            state.rectAreaLTC2 = UniformsLib.LTC_FLOAT_2;
+            state2.rectAreaLTC1 = UniformsLib.LTC_FLOAT_1;
+            state2.rectAreaLTC2 = UniformsLib.LTC_FLOAT_2;
           } else if (extensions.has("OES_texture_half_float_linear") === true) {
-            state.rectAreaLTC1 = UniformsLib.LTC_HALF_1;
-            state.rectAreaLTC2 = UniformsLib.LTC_HALF_2;
+            state2.rectAreaLTC1 = UniformsLib.LTC_HALF_1;
+            state2.rectAreaLTC2 = UniformsLib.LTC_HALF_2;
           } else {
             console.error("THREE.WebGLRenderer: Unable to use RectAreaLight. Missing WebGL extensions.");
           }
         }
       }
-      state.ambient[0] = r2;
-      state.ambient[1] = g2;
-      state.ambient[2] = b2;
-      const hash = state.hash;
+      state2.ambient[0] = r2;
+      state2.ambient[1] = g2;
+      state2.ambient[2] = b2;
+      const hash = state2.hash;
       if (hash.directionalLength !== directionalLength || hash.pointLength !== pointLength || hash.spotLength !== spotLength || hash.rectAreaLength !== rectAreaLength || hash.hemiLength !== hemiLength || hash.numDirectionalShadows !== numDirectionalShadows || hash.numPointShadows !== numPointShadows || hash.numSpotShadows !== numSpotShadows) {
-        state.directional.length = directionalLength;
-        state.spot.length = spotLength;
-        state.rectArea.length = rectAreaLength;
-        state.point.length = pointLength;
-        state.hemi.length = hemiLength;
-        state.directionalShadow.length = numDirectionalShadows;
-        state.directionalShadowMap.length = numDirectionalShadows;
-        state.pointShadow.length = numPointShadows;
-        state.pointShadowMap.length = numPointShadows;
-        state.spotShadow.length = numSpotShadows;
-        state.spotShadowMap.length = numSpotShadows;
-        state.directionalShadowMatrix.length = numDirectionalShadows;
-        state.pointShadowMatrix.length = numPointShadows;
-        state.spotShadowMatrix.length = numSpotShadows;
+        state2.directional.length = directionalLength;
+        state2.spot.length = spotLength;
+        state2.rectArea.length = rectAreaLength;
+        state2.point.length = pointLength;
+        state2.hemi.length = hemiLength;
+        state2.directionalShadow.length = numDirectionalShadows;
+        state2.directionalShadowMap.length = numDirectionalShadows;
+        state2.pointShadow.length = numPointShadows;
+        state2.pointShadowMap.length = numPointShadows;
+        state2.spotShadow.length = numSpotShadows;
+        state2.spotShadowMap.length = numSpotShadows;
+        state2.directionalShadowMatrix.length = numDirectionalShadows;
+        state2.pointShadowMatrix.length = numPointShadows;
+        state2.spotShadowMatrix.length = numSpotShadows;
         hash.directionalLength = directionalLength;
         hash.pointLength = pointLength;
         hash.spotLength = spotLength;
@@ -19028,7 +18974,7 @@ reset scout color to green, persists
         hash.numDirectionalShadows = numDirectionalShadows;
         hash.numPointShadows = numPointShadows;
         hash.numSpotShadows = numSpotShadows;
-        state.version = nextVersion++;
+        state2.version = nextVersion++;
       }
     }
     function setupView(lights, camera3) {
@@ -19041,14 +18987,14 @@ reset scout color to green, persists
       for (let i2 = 0, l2 = lights.length; i2 < l2; i2++) {
         const light2 = lights[i2];
         if (light2.isDirectionalLight) {
-          const uniforms = state.directional[directionalLength];
+          const uniforms = state2.directional[directionalLength];
           uniforms.direction.setFromMatrixPosition(light2.matrixWorld);
           vector3.setFromMatrixPosition(light2.target.matrixWorld);
           uniforms.direction.sub(vector3);
           uniforms.direction.transformDirection(viewMatrix);
           directionalLength++;
         } else if (light2.isSpotLight) {
-          const uniforms = state.spot[spotLength];
+          const uniforms = state2.spot[spotLength];
           uniforms.position.setFromMatrixPosition(light2.matrixWorld);
           uniforms.position.applyMatrix4(viewMatrix);
           uniforms.direction.setFromMatrixPosition(light2.matrixWorld);
@@ -19057,7 +19003,7 @@ reset scout color to green, persists
           uniforms.direction.transformDirection(viewMatrix);
           spotLength++;
         } else if (light2.isRectAreaLight) {
-          const uniforms = state.rectArea[rectAreaLength];
+          const uniforms = state2.rectArea[rectAreaLength];
           uniforms.position.setFromMatrixPosition(light2.matrixWorld);
           uniforms.position.applyMatrix4(viewMatrix);
           matrix42.identity();
@@ -19070,12 +19016,12 @@ reset scout color to green, persists
           uniforms.halfHeight.applyMatrix4(matrix42);
           rectAreaLength++;
         } else if (light2.isPointLight) {
-          const uniforms = state.point[pointLength];
+          const uniforms = state2.point[pointLength];
           uniforms.position.setFromMatrixPosition(light2.matrixWorld);
           uniforms.position.applyMatrix4(viewMatrix);
           pointLength++;
         } else if (light2.isHemisphereLight) {
-          const uniforms = state.hemi[hemiLength];
+          const uniforms = state2.hemi[hemiLength];
           uniforms.direction.setFromMatrixPosition(light2.matrixWorld);
           uniforms.direction.transformDirection(viewMatrix);
           uniforms.direction.normalize();
@@ -19086,7 +19032,7 @@ reset scout color to green, persists
     return {
       setup,
       setupView,
-      state
+      state: state2
     };
   }
   function WebGLRenderState(extensions, capabilities) {
@@ -19109,14 +19055,14 @@ reset scout color to green, persists
     function setupLightsView(camera3) {
       lights.setupView(lightsArray, camera3);
     }
-    const state = {
+    const state2 = {
       lightsArray,
       shadowsArray,
       lights
     };
     return {
       init: init3,
-      state,
+      state: state2,
       setupLights,
       setupLightsView,
       pushLight,
@@ -19125,17 +19071,17 @@ reset scout color to green, persists
   }
   function WebGLRenderStates(extensions, capabilities) {
     let renderStates = /* @__PURE__ */ new WeakMap();
-    function get(scene, renderCallDepth = 0) {
+    function get(scene2, renderCallDepth = 0) {
       let renderState;
-      if (renderStates.has(scene) === false) {
+      if (renderStates.has(scene2) === false) {
         renderState = new WebGLRenderState(extensions, capabilities);
-        renderStates.set(scene, [renderState]);
+        renderStates.set(scene2, [renderState]);
       } else {
-        if (renderCallDepth >= renderStates.get(scene).length) {
+        if (renderCallDepth >= renderStates.get(scene2).length) {
           renderState = new WebGLRenderState(extensions, capabilities);
-          renderStates.get(scene).push(renderState);
+          renderStates.get(scene2).push(renderState);
         } else {
-          renderState = renderStates.get(scene)[renderCallDepth];
+          renderState = renderStates.get(scene2)[renderCallDepth];
         }
       }
       return renderState;
@@ -19234,7 +19180,7 @@ reset scout color to green, persists
     this.autoUpdate = true;
     this.needsUpdate = false;
     this.type = PCFShadowMap;
-    this.render = function(lights, scene, camera3) {
+    this.render = function(lights, scene2, camera3) {
       if (scope.enabled === false)
         return;
       if (scope.autoUpdate === false && scope.needsUpdate === false)
@@ -19296,7 +19242,7 @@ reset scout color to green, persists
           _state.viewport(_viewport);
           shadow.updateMatrices(light2, vp);
           _frustum = shadow.getFrustum();
-          renderObject(scene, camera3, shadow.camera, light2, this.type);
+          renderObject(scene2, camera3, shadow.camera, light2, this.type);
         }
         if (!shadow.isPointLightShadow && this.type === VSMShadowMap) {
           VSMPass(shadow, camera3);
@@ -20091,7 +20037,7 @@ reset scout color to green, persists
       reset
     };
   }
-  function WebGLTextures(_gl, extensions, state, properties, capabilities, utils2, info) {
+  function WebGLTextures(_gl, extensions, state2, properties, capabilities, utils2, info) {
     const isWebGL2 = capabilities.isWebGL2;
     const maxTextures = capabilities.maxTextures;
     const maxCubemapSize = capabilities.maxCubemapSize;
@@ -20301,8 +20247,8 @@ reset scout color to green, persists
           return;
         }
       }
-      state.activeTexture(33984 + slot);
-      state.bindTexture(3553, textureProperties.__webglTexture);
+      state2.activeTexture(33984 + slot);
+      state2.bindTexture(3553, textureProperties.__webglTexture);
     }
     function setTexture2DArray(texture, slot) {
       const textureProperties = properties.get(texture);
@@ -20310,8 +20256,8 @@ reset scout color to green, persists
         uploadTexture(textureProperties, texture, slot);
         return;
       }
-      state.activeTexture(33984 + slot);
-      state.bindTexture(35866, textureProperties.__webglTexture);
+      state2.activeTexture(33984 + slot);
+      state2.bindTexture(35866, textureProperties.__webglTexture);
     }
     function setTexture3D(texture, slot) {
       const textureProperties = properties.get(texture);
@@ -20319,8 +20265,8 @@ reset scout color to green, persists
         uploadTexture(textureProperties, texture, slot);
         return;
       }
-      state.activeTexture(33984 + slot);
-      state.bindTexture(32879, textureProperties.__webglTexture);
+      state2.activeTexture(33984 + slot);
+      state2.bindTexture(32879, textureProperties.__webglTexture);
     }
     function setTextureCube(texture, slot) {
       const textureProperties = properties.get(texture);
@@ -20328,8 +20274,8 @@ reset scout color to green, persists
         uploadCubeTexture(textureProperties, texture, slot);
         return;
       }
-      state.activeTexture(33984 + slot);
-      state.bindTexture(34067, textureProperties.__webglTexture);
+      state2.activeTexture(33984 + slot);
+      state2.bindTexture(34067, textureProperties.__webglTexture);
     }
     const wrappingToGL = {
       [RepeatWrapping]: 10497,
@@ -20395,8 +20341,8 @@ reset scout color to green, persists
       if (texture.isDataTexture3D)
         textureType = 32879;
       initTexture(textureProperties, texture);
-      state.activeTexture(33984 + slot);
-      state.bindTexture(textureType, textureProperties.__webglTexture);
+      state2.activeTexture(33984 + slot);
+      state2.bindTexture(textureType, textureProperties.__webglTexture);
       _gl.pixelStorei(37440, texture.flipY);
       _gl.pixelStorei(37441, texture.premultiplyAlpha);
       _gl.pixelStorei(3317, texture.unpackAlignment);
@@ -20445,104 +20391,104 @@ reset scout color to green, persists
           }
         }
         if (useTexStorage && allocateMemory) {
-          state.texStorage2D(3553, 1, glInternalFormat, image.width, image.height);
+          state2.texStorage2D(3553, 1, glInternalFormat, image.width, image.height);
         } else {
-          state.texImage2D(3553, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, null);
+          state2.texImage2D(3553, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, null);
         }
       } else if (texture.isDataTexture) {
         if (mipmaps.length > 0 && supportsMips) {
           if (useTexStorage && allocateMemory) {
-            state.texStorage2D(3553, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
+            state2.texStorage2D(3553, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
           }
           for (let i2 = 0, il = mipmaps.length; i2 < il; i2++) {
             mipmap = mipmaps[i2];
             if (useTexStorage) {
-              state.texSubImage2D(3553, 0, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
+              state2.texSubImage2D(3553, 0, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
             } else {
-              state.texImage2D(3553, i2, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
+              state2.texImage2D(3553, i2, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
             }
           }
           texture.generateMipmaps = false;
         } else {
           if (useTexStorage) {
             if (allocateMemory) {
-              state.texStorage2D(3553, levels, glInternalFormat, image.width, image.height);
+              state2.texStorage2D(3553, levels, glInternalFormat, image.width, image.height);
             }
-            state.texSubImage2D(3553, 0, 0, 0, image.width, image.height, glFormat, glType, image.data);
+            state2.texSubImage2D(3553, 0, 0, 0, image.width, image.height, glFormat, glType, image.data);
           } else {
-            state.texImage2D(3553, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, image.data);
+            state2.texImage2D(3553, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, image.data);
           }
         }
       } else if (texture.isCompressedTexture) {
         if (useTexStorage && allocateMemory) {
-          state.texStorage2D(3553, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
+          state2.texStorage2D(3553, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
         }
         for (let i2 = 0, il = mipmaps.length; i2 < il; i2++) {
           mipmap = mipmaps[i2];
           if (texture.format !== RGBAFormat) {
             if (glFormat !== null) {
               if (useTexStorage) {
-                state.compressedTexSubImage2D(3553, i2, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
+                state2.compressedTexSubImage2D(3553, i2, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
               } else {
-                state.compressedTexImage2D(3553, i2, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
+                state2.compressedTexImage2D(3553, i2, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
               }
             } else {
               console.warn("THREE.WebGLRenderer: Attempt to load unsupported compressed texture format in .uploadTexture()");
             }
           } else {
             if (useTexStorage) {
-              state.texSubImage2D(3553, i2, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
+              state2.texSubImage2D(3553, i2, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
             } else {
-              state.texImage2D(3553, i2, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
+              state2.texImage2D(3553, i2, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
             }
           }
         }
       } else if (texture.isDataTexture2DArray) {
         if (useTexStorage) {
           if (allocateMemory) {
-            state.texStorage3D(35866, levels, glInternalFormat, image.width, image.height, image.depth);
+            state2.texStorage3D(35866, levels, glInternalFormat, image.width, image.height, image.depth);
           }
-          state.texSubImage3D(35866, 0, 0, 0, 0, image.width, image.height, image.depth, glFormat, glType, image.data);
+          state2.texSubImage3D(35866, 0, 0, 0, 0, image.width, image.height, image.depth, glFormat, glType, image.data);
         } else {
-          state.texImage3D(35866, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data);
+          state2.texImage3D(35866, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data);
         }
       } else if (texture.isDataTexture3D) {
         if (useTexStorage) {
           if (allocateMemory) {
-            state.texStorage3D(32879, levels, glInternalFormat, image.width, image.height, image.depth);
+            state2.texStorage3D(32879, levels, glInternalFormat, image.width, image.height, image.depth);
           }
-          state.texSubImage3D(32879, 0, 0, 0, 0, image.width, image.height, image.depth, glFormat, glType, image.data);
+          state2.texSubImage3D(32879, 0, 0, 0, 0, image.width, image.height, image.depth, glFormat, glType, image.data);
         } else {
-          state.texImage3D(32879, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data);
+          state2.texImage3D(32879, 0, glInternalFormat, image.width, image.height, image.depth, 0, glFormat, glType, image.data);
         }
       } else if (texture.isFramebufferTexture) {
         if (useTexStorage && allocateMemory) {
-          state.texStorage2D(3553, levels, glInternalFormat, image.width, image.height);
+          state2.texStorage2D(3553, levels, glInternalFormat, image.width, image.height);
         } else {
-          state.texImage2D(3553, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, null);
+          state2.texImage2D(3553, 0, glInternalFormat, image.width, image.height, 0, glFormat, glType, null);
         }
       } else {
         if (mipmaps.length > 0 && supportsMips) {
           if (useTexStorage && allocateMemory) {
-            state.texStorage2D(3553, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
+            state2.texStorage2D(3553, levels, glInternalFormat, mipmaps[0].width, mipmaps[0].height);
           }
           for (let i2 = 0, il = mipmaps.length; i2 < il; i2++) {
             mipmap = mipmaps[i2];
             if (useTexStorage) {
-              state.texSubImage2D(3553, i2, 0, 0, glFormat, glType, mipmap);
+              state2.texSubImage2D(3553, i2, 0, 0, glFormat, glType, mipmap);
             } else {
-              state.texImage2D(3553, i2, glInternalFormat, glFormat, glType, mipmap);
+              state2.texImage2D(3553, i2, glInternalFormat, glFormat, glType, mipmap);
             }
           }
           texture.generateMipmaps = false;
         } else {
           if (useTexStorage) {
             if (allocateMemory) {
-              state.texStorage2D(3553, levels, glInternalFormat, image.width, image.height);
+              state2.texStorage2D(3553, levels, glInternalFormat, image.width, image.height);
             }
-            state.texSubImage2D(3553, 0, 0, 0, glFormat, glType, image);
+            state2.texSubImage2D(3553, 0, 0, 0, glFormat, glType, image);
           } else {
-            state.texImage2D(3553, 0, glInternalFormat, glFormat, glType, image);
+            state2.texImage2D(3553, 0, glInternalFormat, glFormat, glType, image);
           }
         }
       }
@@ -20557,8 +20503,8 @@ reset scout color to green, persists
       if (texture.image.length !== 6)
         return;
       initTexture(textureProperties, texture);
-      state.activeTexture(33984 + slot);
-      state.bindTexture(34067, textureProperties.__webglTexture);
+      state2.activeTexture(33984 + slot);
+      state2.bindTexture(34067, textureProperties.__webglTexture);
       _gl.pixelStorei(37440, texture.flipY);
       _gl.pixelStorei(37441, texture.premultiplyAlpha);
       _gl.pixelStorei(3317, texture.unpackAlignment);
@@ -20582,7 +20528,7 @@ reset scout color to green, persists
       let mipmaps;
       if (isCompressed) {
         if (useTexStorage && allocateMemory) {
-          state.texStorage2D(34067, levels, glInternalFormat, image.width, image.height);
+          state2.texStorage2D(34067, levels, glInternalFormat, image.width, image.height);
         }
         for (let i2 = 0; i2 < 6; i2++) {
           mipmaps = cubeImage[i2].mipmaps;
@@ -20591,18 +20537,18 @@ reset scout color to green, persists
             if (texture.format !== RGBAFormat) {
               if (glFormat !== null) {
                 if (useTexStorage) {
-                  state.compressedTexSubImage2D(34069 + i2, j2, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
+                  state2.compressedTexSubImage2D(34069 + i2, j2, 0, 0, mipmap.width, mipmap.height, glFormat, mipmap.data);
                 } else {
-                  state.compressedTexImage2D(34069 + i2, j2, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
+                  state2.compressedTexImage2D(34069 + i2, j2, glInternalFormat, mipmap.width, mipmap.height, 0, mipmap.data);
                 }
               } else {
                 console.warn("THREE.WebGLRenderer: Attempt to load unsupported compressed texture format in .setTextureCube()");
               }
             } else {
               if (useTexStorage) {
-                state.texSubImage2D(34069 + i2, j2, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
+                state2.texSubImage2D(34069 + i2, j2, 0, 0, mipmap.width, mipmap.height, glFormat, glType, mipmap.data);
               } else {
-                state.texImage2D(34069 + i2, j2, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
+                state2.texImage2D(34069 + i2, j2, glInternalFormat, mipmap.width, mipmap.height, 0, glFormat, glType, mipmap.data);
               }
             }
           }
@@ -20612,36 +20558,36 @@ reset scout color to green, persists
         if (useTexStorage && allocateMemory) {
           if (mipmaps.length > 0)
             levels++;
-          state.texStorage2D(34067, levels, glInternalFormat, cubeImage[0].width, cubeImage[0].height);
+          state2.texStorage2D(34067, levels, glInternalFormat, cubeImage[0].width, cubeImage[0].height);
         }
         for (let i2 = 0; i2 < 6; i2++) {
           if (isDataTexture) {
             if (useTexStorage) {
-              state.texSubImage2D(34069 + i2, 0, 0, 0, cubeImage[i2].width, cubeImage[i2].height, glFormat, glType, cubeImage[i2].data);
+              state2.texSubImage2D(34069 + i2, 0, 0, 0, cubeImage[i2].width, cubeImage[i2].height, glFormat, glType, cubeImage[i2].data);
             } else {
-              state.texImage2D(34069 + i2, 0, glInternalFormat, cubeImage[i2].width, cubeImage[i2].height, 0, glFormat, glType, cubeImage[i2].data);
+              state2.texImage2D(34069 + i2, 0, glInternalFormat, cubeImage[i2].width, cubeImage[i2].height, 0, glFormat, glType, cubeImage[i2].data);
             }
             for (let j2 = 0; j2 < mipmaps.length; j2++) {
               const mipmap = mipmaps[j2];
               const mipmapImage = mipmap.image[i2].image;
               if (useTexStorage) {
-                state.texSubImage2D(34069 + i2, j2 + 1, 0, 0, mipmapImage.width, mipmapImage.height, glFormat, glType, mipmapImage.data);
+                state2.texSubImage2D(34069 + i2, j2 + 1, 0, 0, mipmapImage.width, mipmapImage.height, glFormat, glType, mipmapImage.data);
               } else {
-                state.texImage2D(34069 + i2, j2 + 1, glInternalFormat, mipmapImage.width, mipmapImage.height, 0, glFormat, glType, mipmapImage.data);
+                state2.texImage2D(34069 + i2, j2 + 1, glInternalFormat, mipmapImage.width, mipmapImage.height, 0, glFormat, glType, mipmapImage.data);
               }
             }
           } else {
             if (useTexStorage) {
-              state.texSubImage2D(34069 + i2, 0, 0, 0, glFormat, glType, cubeImage[i2]);
+              state2.texSubImage2D(34069 + i2, 0, 0, 0, glFormat, glType, cubeImage[i2]);
             } else {
-              state.texImage2D(34069 + i2, 0, glInternalFormat, glFormat, glType, cubeImage[i2]);
+              state2.texImage2D(34069 + i2, 0, glInternalFormat, glFormat, glType, cubeImage[i2]);
             }
             for (let j2 = 0; j2 < mipmaps.length; j2++) {
               const mipmap = mipmaps[j2];
               if (useTexStorage) {
-                state.texSubImage2D(34069 + i2, j2 + 1, 0, 0, glFormat, glType, mipmap.image[i2]);
+                state2.texSubImage2D(34069 + i2, j2 + 1, 0, 0, glFormat, glType, mipmap.image[i2]);
               } else {
-                state.texImage2D(34069 + i2, j2 + 1, glInternalFormat, glFormat, glType, mipmap.image[i2]);
+                state2.texImage2D(34069 + i2, j2 + 1, glInternalFormat, glFormat, glType, mipmap.image[i2]);
               }
             }
           }
@@ -20661,18 +20607,18 @@ reset scout color to green, persists
       const renderTargetProperties = properties.get(renderTarget);
       if (!renderTargetProperties.__hasExternalTextures) {
         if (textureTarget === 32879 || textureTarget === 35866) {
-          state.texImage3D(textureTarget, 0, glInternalFormat, renderTarget.width, renderTarget.height, renderTarget.depth, 0, glFormat, glType, null);
+          state2.texImage3D(textureTarget, 0, glInternalFormat, renderTarget.width, renderTarget.height, renderTarget.depth, 0, glFormat, glType, null);
         } else {
-          state.texImage2D(textureTarget, 0, glInternalFormat, renderTarget.width, renderTarget.height, 0, glFormat, glType, null);
+          state2.texImage2D(textureTarget, 0, glInternalFormat, renderTarget.width, renderTarget.height, 0, glFormat, glType, null);
         }
       }
-      state.bindFramebuffer(36160, framebuffer);
+      state2.bindFramebuffer(36160, framebuffer);
       if (renderTarget.useRenderToTexture) {
         MultisampledRenderToTextureExtension.framebufferTexture2DMultisampleEXT(36160, attachment, textureTarget, properties.get(texture).__webglTexture, 0, getRenderTargetSamples(renderTarget));
       } else {
         _gl.framebufferTexture2D(36160, attachment, textureTarget, properties.get(texture).__webglTexture, 0);
       }
-      state.bindFramebuffer(36160, null);
+      state2.bindFramebuffer(36160, null);
     }
     function setupRenderBufferStorage(renderbuffer, renderTarget, isMultisample) {
       _gl.bindRenderbuffer(36161, renderbuffer);
@@ -20727,7 +20673,7 @@ reset scout color to green, persists
       const isCube = renderTarget && renderTarget.isWebGLCubeRenderTarget;
       if (isCube)
         throw new Error("Depth Texture with cube render targets is not supported");
-      state.bindFramebuffer(36160, framebuffer);
+      state2.bindFramebuffer(36160, framebuffer);
       if (!(renderTarget.depthTexture && renderTarget.depthTexture.isDepthTexture)) {
         throw new Error("renderTarget.depthTexture must be an instance of THREE.DepthTexture");
       }
@@ -20766,17 +20712,17 @@ reset scout color to green, persists
         if (isCube) {
           renderTargetProperties.__webglDepthbuffer = [];
           for (let i2 = 0; i2 < 6; i2++) {
-            state.bindFramebuffer(36160, renderTargetProperties.__webglFramebuffer[i2]);
+            state2.bindFramebuffer(36160, renderTargetProperties.__webglFramebuffer[i2]);
             renderTargetProperties.__webglDepthbuffer[i2] = _gl.createRenderbuffer();
             setupRenderBufferStorage(renderTargetProperties.__webglDepthbuffer[i2], renderTarget, false);
           }
         } else {
-          state.bindFramebuffer(36160, renderTargetProperties.__webglFramebuffer);
+          state2.bindFramebuffer(36160, renderTargetProperties.__webglFramebuffer);
           renderTargetProperties.__webglDepthbuffer = _gl.createRenderbuffer();
           setupRenderBufferStorage(renderTargetProperties.__webglDepthbuffer, renderTarget, false);
         }
       }
-      state.bindFramebuffer(36160, null);
+      state2.bindFramebuffer(36160, null);
     }
     function rebindTextures(renderTarget, colorTexture, depthTexture) {
       const renderTargetProperties = properties.get(renderTarget);
@@ -20833,21 +20779,21 @@ reset scout color to green, persists
             const glInternalFormat = getInternalFormat(texture.internalFormat, glFormat, glType, texture.encoding);
             const samples = getRenderTargetSamples(renderTarget);
             _gl.renderbufferStorageMultisample(36161, samples, glInternalFormat, renderTarget.width, renderTarget.height);
-            state.bindFramebuffer(36160, renderTargetProperties.__webglMultisampledFramebuffer);
+            state2.bindFramebuffer(36160, renderTargetProperties.__webglMultisampledFramebuffer);
             _gl.framebufferRenderbuffer(36160, 36064, 36161, renderTargetProperties.__webglColorRenderbuffer);
             _gl.bindRenderbuffer(36161, null);
             if (renderTarget.depthBuffer) {
               renderTargetProperties.__webglDepthRenderbuffer = _gl.createRenderbuffer();
               setupRenderBufferStorage(renderTargetProperties.__webglDepthRenderbuffer, renderTarget, true);
             }
-            state.bindFramebuffer(36160, null);
+            state2.bindFramebuffer(36160, null);
           } else {
             console.warn("THREE.WebGLRenderer: WebGLMultisampleRenderTarget can only be used with WebGL2.");
           }
         }
       }
       if (isCube) {
-        state.bindTexture(34067, textureProperties.__webglTexture);
+        state2.bindTexture(34067, textureProperties.__webglTexture);
         setTextureParameters(34067, texture, supportsMips);
         for (let i2 = 0; i2 < 6; i2++) {
           setupFrameBufferTexture(renderTargetProperties.__webglFramebuffer[i2], renderTarget, texture, 36064, 34069 + i2);
@@ -20855,20 +20801,20 @@ reset scout color to green, persists
         if (textureNeedsGenerateMipmaps(texture, supportsMips)) {
           generateMipmap(34067);
         }
-        state.unbindTexture();
+        state2.unbindTexture();
       } else if (isMultipleRenderTargets) {
         const textures = renderTarget.texture;
         for (let i2 = 0, il = textures.length; i2 < il; i2++) {
           const attachment = textures[i2];
           const attachmentProperties = properties.get(attachment);
-          state.bindTexture(3553, attachmentProperties.__webglTexture);
+          state2.bindTexture(3553, attachmentProperties.__webglTexture);
           setTextureParameters(3553, attachment, supportsMips);
           setupFrameBufferTexture(renderTargetProperties.__webglFramebuffer, renderTarget, attachment, 36064 + i2, 3553);
           if (textureNeedsGenerateMipmaps(attachment, supportsMips)) {
             generateMipmap(3553);
           }
         }
-        state.unbindTexture();
+        state2.unbindTexture();
       } else {
         let glTextureType = 3553;
         if (isRenderTarget3D) {
@@ -20879,13 +20825,13 @@ reset scout color to green, persists
             console.warn("THREE.DataTexture3D and THREE.DataTexture2DArray only supported with WebGL2.");
           }
         }
-        state.bindTexture(glTextureType, textureProperties.__webglTexture);
+        state2.bindTexture(glTextureType, textureProperties.__webglTexture);
         setTextureParameters(glTextureType, texture, supportsMips);
         setupFrameBufferTexture(renderTargetProperties.__webglFramebuffer, renderTarget, texture, 36064, glTextureType);
         if (textureNeedsGenerateMipmaps(texture, supportsMips)) {
           generateMipmap(glTextureType);
         }
-        state.unbindTexture();
+        state2.unbindTexture();
       }
       if (renderTarget.depthBuffer) {
         setupDepthRenderbuffer(renderTarget);
@@ -20899,9 +20845,9 @@ reset scout color to green, persists
         if (textureNeedsGenerateMipmaps(texture, supportsMips)) {
           const target = renderTarget.isWebGLCubeRenderTarget ? 34067 : 3553;
           const webglTexture = properties.get(texture).__webglTexture;
-          state.bindTexture(target, webglTexture);
+          state2.bindTexture(target, webglTexture);
           generateMipmap(target);
-          state.unbindTexture();
+          state2.unbindTexture();
         }
       }
     }
@@ -20923,16 +20869,16 @@ reset scout color to green, persists
               mask |= 1024;
           }
           const renderTargetProperties = properties.get(renderTarget);
-          state.bindFramebuffer(36008, renderTargetProperties.__webglMultisampledFramebuffer);
-          state.bindFramebuffer(36009, renderTargetProperties.__webglFramebuffer);
+          state2.bindFramebuffer(36008, renderTargetProperties.__webglMultisampledFramebuffer);
+          state2.bindFramebuffer(36009, renderTargetProperties.__webglFramebuffer);
           if (renderTarget.ignoreDepthForMultisampleCopy) {
             _gl.invalidateFramebuffer(36008, [depthStyle]);
             _gl.invalidateFramebuffer(36009, [depthStyle]);
           }
           _gl.blitFramebuffer(0, 0, width2, height2, 0, 0, width2, height2, mask, 9728);
           _gl.invalidateFramebuffer(36008, invalidationArray);
-          state.bindFramebuffer(36008, null);
-          state.bindFramebuffer(36009, renderTargetProperties.__webglMultisampledFramebuffer);
+          state2.bindFramebuffer(36008, null);
+          state2.bindFramebuffer(36009, renderTargetProperties.__webglMultisampledFramebuffer);
         } else {
           console.warn("THREE.WebGLRenderer: WebGLMultisampleRenderTarget can only be used with WebGL2.");
         }
@@ -21014,27 +20960,27 @@ reset scout color to green, persists
   }
   function WebGLUtils(gl, extensions, capabilities) {
     const isWebGL2 = capabilities.isWebGL2;
-    function convert(p2, encoding = null) {
+    function convert(p3, encoding = null) {
       let extension;
-      if (p2 === UnsignedByteType)
+      if (p3 === UnsignedByteType)
         return 5121;
-      if (p2 === UnsignedShort4444Type)
+      if (p3 === UnsignedShort4444Type)
         return 32819;
-      if (p2 === UnsignedShort5551Type)
+      if (p3 === UnsignedShort5551Type)
         return 32820;
-      if (p2 === ByteType)
+      if (p3 === ByteType)
         return 5120;
-      if (p2 === ShortType)
+      if (p3 === ShortType)
         return 5122;
-      if (p2 === UnsignedShortType)
+      if (p3 === UnsignedShortType)
         return 5123;
-      if (p2 === IntType)
+      if (p3 === IntType)
         return 5124;
-      if (p2 === UnsignedIntType)
+      if (p3 === UnsignedIntType)
         return 5125;
-      if (p2 === FloatType)
+      if (p3 === FloatType)
         return 5126;
-      if (p2 === HalfFloatType) {
+      if (p3 === HalfFloatType) {
         if (isWebGL2)
           return 5131;
         extension = extensions.get("OES_texture_half_float");
@@ -21044,25 +20990,25 @@ reset scout color to green, persists
           return null;
         }
       }
-      if (p2 === AlphaFormat)
+      if (p3 === AlphaFormat)
         return 6406;
-      if (p2 === RGBAFormat)
+      if (p3 === RGBAFormat)
         return 6408;
-      if (p2 === LuminanceFormat)
+      if (p3 === LuminanceFormat)
         return 6409;
-      if (p2 === LuminanceAlphaFormat)
+      if (p3 === LuminanceAlphaFormat)
         return 6410;
-      if (p2 === DepthFormat)
+      if (p3 === DepthFormat)
         return 6402;
-      if (p2 === DepthStencilFormat)
+      if (p3 === DepthStencilFormat)
         return 34041;
-      if (p2 === RedFormat)
+      if (p3 === RedFormat)
         return 6403;
-      if (p2 === RGBFormat) {
+      if (p3 === RGBFormat) {
         console.warn("THREE.WebGLRenderer: THREE.RGBFormat has been removed. Use THREE.RGBAFormat instead. https://github.com/mrdoob/three.js/pull/23228");
         return 6408;
       }
-      if (p2 === _SRGBAFormat) {
+      if (p3 === _SRGBAFormat) {
         extension = extensions.get("EXT_sRGB");
         if (extension !== null) {
           return extension.SRGB_ALPHA_EXT;
@@ -21070,25 +21016,25 @@ reset scout color to green, persists
           return null;
         }
       }
-      if (p2 === RedIntegerFormat)
+      if (p3 === RedIntegerFormat)
         return 36244;
-      if (p2 === RGFormat)
+      if (p3 === RGFormat)
         return 33319;
-      if (p2 === RGIntegerFormat)
+      if (p3 === RGIntegerFormat)
         return 33320;
-      if (p2 === RGBAIntegerFormat)
+      if (p3 === RGBAIntegerFormat)
         return 36249;
-      if (p2 === RGB_S3TC_DXT1_Format || p2 === RGBA_S3TC_DXT1_Format || p2 === RGBA_S3TC_DXT3_Format || p2 === RGBA_S3TC_DXT5_Format) {
+      if (p3 === RGB_S3TC_DXT1_Format || p3 === RGBA_S3TC_DXT1_Format || p3 === RGBA_S3TC_DXT3_Format || p3 === RGBA_S3TC_DXT5_Format) {
         if (encoding === sRGBEncoding) {
           extension = extensions.get("WEBGL_compressed_texture_s3tc_srgb");
           if (extension !== null) {
-            if (p2 === RGB_S3TC_DXT1_Format)
+            if (p3 === RGB_S3TC_DXT1_Format)
               return extension.COMPRESSED_SRGB_S3TC_DXT1_EXT;
-            if (p2 === RGBA_S3TC_DXT1_Format)
+            if (p3 === RGBA_S3TC_DXT1_Format)
               return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
-            if (p2 === RGBA_S3TC_DXT3_Format)
+            if (p3 === RGBA_S3TC_DXT3_Format)
               return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
-            if (p2 === RGBA_S3TC_DXT5_Format)
+            if (p3 === RGBA_S3TC_DXT5_Format)
               return extension.COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
           } else {
             return null;
@@ -21096,35 +21042,35 @@ reset scout color to green, persists
         } else {
           extension = extensions.get("WEBGL_compressed_texture_s3tc");
           if (extension !== null) {
-            if (p2 === RGB_S3TC_DXT1_Format)
+            if (p3 === RGB_S3TC_DXT1_Format)
               return extension.COMPRESSED_RGB_S3TC_DXT1_EXT;
-            if (p2 === RGBA_S3TC_DXT1_Format)
+            if (p3 === RGBA_S3TC_DXT1_Format)
               return extension.COMPRESSED_RGBA_S3TC_DXT1_EXT;
-            if (p2 === RGBA_S3TC_DXT3_Format)
+            if (p3 === RGBA_S3TC_DXT3_Format)
               return extension.COMPRESSED_RGBA_S3TC_DXT3_EXT;
-            if (p2 === RGBA_S3TC_DXT5_Format)
+            if (p3 === RGBA_S3TC_DXT5_Format)
               return extension.COMPRESSED_RGBA_S3TC_DXT5_EXT;
           } else {
             return null;
           }
         }
       }
-      if (p2 === RGB_PVRTC_4BPPV1_Format || p2 === RGB_PVRTC_2BPPV1_Format || p2 === RGBA_PVRTC_4BPPV1_Format || p2 === RGBA_PVRTC_2BPPV1_Format) {
+      if (p3 === RGB_PVRTC_4BPPV1_Format || p3 === RGB_PVRTC_2BPPV1_Format || p3 === RGBA_PVRTC_4BPPV1_Format || p3 === RGBA_PVRTC_2BPPV1_Format) {
         extension = extensions.get("WEBGL_compressed_texture_pvrtc");
         if (extension !== null) {
-          if (p2 === RGB_PVRTC_4BPPV1_Format)
+          if (p3 === RGB_PVRTC_4BPPV1_Format)
             return extension.COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
-          if (p2 === RGB_PVRTC_2BPPV1_Format)
+          if (p3 === RGB_PVRTC_2BPPV1_Format)
             return extension.COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
-          if (p2 === RGBA_PVRTC_4BPPV1_Format)
+          if (p3 === RGBA_PVRTC_4BPPV1_Format)
             return extension.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
-          if (p2 === RGBA_PVRTC_2BPPV1_Format)
+          if (p3 === RGBA_PVRTC_2BPPV1_Format)
             return extension.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
         } else {
           return null;
         }
       }
-      if (p2 === RGB_ETC1_Format) {
+      if (p3 === RGB_ETC1_Format) {
         extension = extensions.get("WEBGL_compressed_texture_etc1");
         if (extension !== null) {
           return extension.COMPRESSED_RGB_ETC1_WEBGL;
@@ -21132,62 +21078,62 @@ reset scout color to green, persists
           return null;
         }
       }
-      if (p2 === RGB_ETC2_Format || p2 === RGBA_ETC2_EAC_Format) {
+      if (p3 === RGB_ETC2_Format || p3 === RGBA_ETC2_EAC_Format) {
         extension = extensions.get("WEBGL_compressed_texture_etc");
         if (extension !== null) {
-          if (p2 === RGB_ETC2_Format)
+          if (p3 === RGB_ETC2_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ETC2 : extension.COMPRESSED_RGB8_ETC2;
-          if (p2 === RGBA_ETC2_EAC_Format)
+          if (p3 === RGBA_ETC2_EAC_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ETC2_EAC : extension.COMPRESSED_RGBA8_ETC2_EAC;
         } else {
           return null;
         }
       }
-      if (p2 === RGBA_ASTC_4x4_Format || p2 === RGBA_ASTC_5x4_Format || p2 === RGBA_ASTC_5x5_Format || p2 === RGBA_ASTC_6x5_Format || p2 === RGBA_ASTC_6x6_Format || p2 === RGBA_ASTC_8x5_Format || p2 === RGBA_ASTC_8x6_Format || p2 === RGBA_ASTC_8x8_Format || p2 === RGBA_ASTC_10x5_Format || p2 === RGBA_ASTC_10x6_Format || p2 === RGBA_ASTC_10x8_Format || p2 === RGBA_ASTC_10x10_Format || p2 === RGBA_ASTC_12x10_Format || p2 === RGBA_ASTC_12x12_Format) {
+      if (p3 === RGBA_ASTC_4x4_Format || p3 === RGBA_ASTC_5x4_Format || p3 === RGBA_ASTC_5x5_Format || p3 === RGBA_ASTC_6x5_Format || p3 === RGBA_ASTC_6x6_Format || p3 === RGBA_ASTC_8x5_Format || p3 === RGBA_ASTC_8x6_Format || p3 === RGBA_ASTC_8x8_Format || p3 === RGBA_ASTC_10x5_Format || p3 === RGBA_ASTC_10x6_Format || p3 === RGBA_ASTC_10x8_Format || p3 === RGBA_ASTC_10x10_Format || p3 === RGBA_ASTC_12x10_Format || p3 === RGBA_ASTC_12x12_Format) {
         extension = extensions.get("WEBGL_compressed_texture_astc");
         if (extension !== null) {
-          if (p2 === RGBA_ASTC_4x4_Format)
+          if (p3 === RGBA_ASTC_4x4_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR : extension.COMPRESSED_RGBA_ASTC_4x4_KHR;
-          if (p2 === RGBA_ASTC_5x4_Format)
+          if (p3 === RGBA_ASTC_5x4_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR : extension.COMPRESSED_RGBA_ASTC_5x4_KHR;
-          if (p2 === RGBA_ASTC_5x5_Format)
+          if (p3 === RGBA_ASTC_5x5_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR : extension.COMPRESSED_RGBA_ASTC_5x5_KHR;
-          if (p2 === RGBA_ASTC_6x5_Format)
+          if (p3 === RGBA_ASTC_6x5_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR : extension.COMPRESSED_RGBA_ASTC_6x5_KHR;
-          if (p2 === RGBA_ASTC_6x6_Format)
+          if (p3 === RGBA_ASTC_6x6_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR : extension.COMPRESSED_RGBA_ASTC_6x6_KHR;
-          if (p2 === RGBA_ASTC_8x5_Format)
+          if (p3 === RGBA_ASTC_8x5_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR : extension.COMPRESSED_RGBA_ASTC_8x5_KHR;
-          if (p2 === RGBA_ASTC_8x6_Format)
+          if (p3 === RGBA_ASTC_8x6_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR : extension.COMPRESSED_RGBA_ASTC_8x6_KHR;
-          if (p2 === RGBA_ASTC_8x8_Format)
+          if (p3 === RGBA_ASTC_8x8_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR : extension.COMPRESSED_RGBA_ASTC_8x8_KHR;
-          if (p2 === RGBA_ASTC_10x5_Format)
+          if (p3 === RGBA_ASTC_10x5_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR : extension.COMPRESSED_RGBA_ASTC_10x5_KHR;
-          if (p2 === RGBA_ASTC_10x6_Format)
+          if (p3 === RGBA_ASTC_10x6_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR : extension.COMPRESSED_RGBA_ASTC_10x6_KHR;
-          if (p2 === RGBA_ASTC_10x8_Format)
+          if (p3 === RGBA_ASTC_10x8_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR : extension.COMPRESSED_RGBA_ASTC_10x8_KHR;
-          if (p2 === RGBA_ASTC_10x10_Format)
+          if (p3 === RGBA_ASTC_10x10_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR : extension.COMPRESSED_RGBA_ASTC_10x10_KHR;
-          if (p2 === RGBA_ASTC_12x10_Format)
+          if (p3 === RGBA_ASTC_12x10_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR : extension.COMPRESSED_RGBA_ASTC_12x10_KHR;
-          if (p2 === RGBA_ASTC_12x12_Format)
+          if (p3 === RGBA_ASTC_12x12_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR : extension.COMPRESSED_RGBA_ASTC_12x12_KHR;
         } else {
           return null;
         }
       }
-      if (p2 === RGBA_BPTC_Format) {
+      if (p3 === RGBA_BPTC_Format) {
         extension = extensions.get("EXT_texture_compression_bptc");
         if (extension !== null) {
-          if (p2 === RGBA_BPTC_Format)
+          if (p3 === RGBA_BPTC_Format)
             return encoding === sRGBEncoding ? extension.COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT : extension.COMPRESSED_RGBA_BPTC_UNORM_EXT;
         } else {
           return null;
         }
       }
-      if (p2 === UnsignedInt248Type) {
+      if (p3 === UnsignedInt248Type) {
         if (isWebGL2)
           return 34042;
         extension = extensions.get("WEBGL_depth_texture");
@@ -22285,7 +22231,7 @@ reset scout color to green, persists
       console.error("THREE.WebGLRenderer: " + error.message);
       throw error;
     }
-    let extensions, capabilities, state, info;
+    let extensions, capabilities, state2, info;
     let properties, textures, cubemaps, cubeuvmaps, attributes, geometries, objects;
     let programCache, materials, renderLists, renderStates, clipping, shadowMap;
     let background, morphtargets, bufferRenderer, indexedBufferRenderer;
@@ -22295,10 +22241,10 @@ reset scout color to green, persists
       capabilities = new WebGLCapabilities(_gl, extensions, parameters);
       extensions.init(capabilities);
       utils2 = new WebGLUtils(_gl, extensions, capabilities);
-      state = new WebGLState(_gl, extensions, capabilities);
+      state2 = new WebGLState(_gl, extensions, capabilities);
       info = new WebGLInfo(_gl);
       properties = new WebGLProperties();
-      textures = new WebGLTextures(_gl, extensions, state, properties, capabilities, utils2, info);
+      textures = new WebGLTextures(_gl, extensions, state2, properties, capabilities, utils2, info);
       cubemaps = new WebGLCubeMaps(_this);
       cubeuvmaps = new WebGLCubeUVMaps(_this);
       attributes = new WebGLAttributes(_gl, capabilities);
@@ -22311,7 +22257,7 @@ reset scout color to green, persists
       materials = new WebGLMaterials(properties);
       renderLists = new WebGLRenderLists();
       renderStates = new WebGLRenderStates(extensions, capabilities);
-      background = new WebGLBackground(_this, cubemaps, state, objects, _alpha, _premultipliedAlpha);
+      background = new WebGLBackground(_this, cubemaps, state2, objects, _alpha, _premultipliedAlpha);
       shadowMap = new WebGLShadowMap(_this, objects, capabilities);
       bufferRenderer = new WebGLBufferRenderer(_gl, extensions, info, capabilities);
       indexedBufferRenderer = new WebGLIndexedBufferRenderer(_gl, extensions, info, capabilities);
@@ -22321,7 +22267,7 @@ reset scout color to green, persists
       _this.properties = properties;
       _this.renderLists = renderLists;
       _this.shadowMap = shadowMap;
-      _this.state = state;
+      _this.state = state2;
       _this.info = info;
     }
     initGLContext();
@@ -22393,7 +22339,7 @@ reset scout color to green, persists
       } else {
         _viewport.set(x2, y2, width2, height2);
       }
-      state.viewport(_currentViewport.copy(_viewport).multiplyScalar(_pixelRatio).floor());
+      state2.viewport(_currentViewport.copy(_viewport).multiplyScalar(_pixelRatio).floor());
     };
     this.getScissor = function(target) {
       return target.copy(_scissor);
@@ -22404,13 +22350,13 @@ reset scout color to green, persists
       } else {
         _scissor.set(x2, y2, width2, height2);
       }
-      state.scissor(_currentScissor.copy(_scissor).multiplyScalar(_pixelRatio).floor());
+      state2.scissor(_currentScissor.copy(_scissor).multiplyScalar(_pixelRatio).floor());
     };
     this.getScissorTest = function() {
       return _scissorTest;
     };
     this.setScissorTest = function(boolean) {
-      state.setScissorTest(_scissorTest = boolean);
+      state2.setScissorTest(_scissorTest = boolean);
     };
     this.setOpaqueSort = function(method) {
       _opaqueSort = method;
@@ -22509,12 +22455,12 @@ reset scout color to green, persists
         }
       }
     }
-    this.renderBufferDirect = function(camera3, scene, geometry, material, object, group) {
-      if (scene === null)
-        scene = _emptyScene;
+    this.renderBufferDirect = function(camera3, scene2, geometry, material, object, group) {
+      if (scene2 === null)
+        scene2 = _emptyScene;
       const frontFaceCW = object.isMesh && object.matrixWorld.determinant() < 0;
-      const program = setProgram(camera3, scene, geometry, material, object);
-      state.setMaterial(material, frontFaceCW);
+      const program = setProgram(camera3, scene2, geometry, material, object);
+      state2.setMaterial(material, frontFaceCW);
       let index = geometry.index;
       const position = geometry.attributes.position;
       if (index === null) {
@@ -22548,7 +22494,7 @@ reset scout color to green, persists
         return;
       if (object.isMesh) {
         if (material.wireframe === true) {
-          state.setLineWidth(material.wireframeLinewidth * getTargetPixelRatio());
+          state2.setLineWidth(material.wireframeLinewidth * getTargetPixelRatio());
           renderer.setMode(1);
         } else {
           renderer.setMode(4);
@@ -22557,7 +22503,7 @@ reset scout color to green, persists
         let lineWidth = material.linewidth;
         if (lineWidth === void 0)
           lineWidth = 1;
-        state.setLineWidth(lineWidth * getTargetPixelRatio());
+        state2.setLineWidth(lineWidth * getTargetPixelRatio());
         if (object.isLineSegments) {
           renderer.setMode(1);
         } else if (object.isLineLoop) {
@@ -22579,11 +22525,11 @@ reset scout color to green, persists
         renderer.render(drawStart, drawCount);
       }
     };
-    this.compile = function(scene, camera3) {
-      currentRenderState = renderStates.get(scene);
+    this.compile = function(scene2, camera3) {
+      currentRenderState = renderStates.get(scene2);
       currentRenderState.init();
       renderStateStack.push(currentRenderState);
-      scene.traverseVisible(function(object) {
+      scene2.traverseVisible(function(object) {
         if (object.isLight && object.layers.test(camera3.layers)) {
           currentRenderState.pushLight(object);
           if (object.castShadow) {
@@ -22592,16 +22538,16 @@ reset scout color to green, persists
         }
       });
       currentRenderState.setupLights(_this.physicallyCorrectLights);
-      scene.traverse(function(object) {
+      scene2.traverse(function(object) {
         const material = object.material;
         if (material) {
           if (Array.isArray(material)) {
             for (let i2 = 0; i2 < material.length; i2++) {
               const material2 = material[i2];
-              getProgram(material2, scene, object);
+              getProgram(material2, scene2, object);
             }
           } else {
-            getProgram(material, scene, object);
+            getProgram(material, scene2, object);
           }
         }
       });
@@ -22630,15 +22576,15 @@ reset scout color to green, persists
     };
     xr.addEventListener("sessionstart", onXRSessionStart);
     xr.addEventListener("sessionend", onXRSessionEnd);
-    this.render = function(scene, camera3) {
+    this.render = function(scene2, camera3) {
       if (camera3 !== void 0 && camera3.isCamera !== true) {
         console.error("THREE.WebGLRenderer.render: camera is not an instance of THREE.Camera.");
         return;
       }
       if (_isContextLost === true)
         return;
-      if (scene.autoUpdate === true)
-        scene.updateMatrixWorld();
+      if (scene2.autoUpdate === true)
+        scene2.updateMatrixWorld();
       if (camera3.parent === null)
         camera3.updateMatrixWorld();
       if (xr.enabled === true && xr.isPresenting === true) {
@@ -22646,19 +22592,19 @@ reset scout color to green, persists
           xr.updateCamera(camera3);
         camera3 = xr.getCamera();
       }
-      if (scene.isScene === true)
-        scene.onBeforeRender(_this, scene, camera3, _currentRenderTarget);
-      currentRenderState = renderStates.get(scene, renderStateStack.length);
+      if (scene2.isScene === true)
+        scene2.onBeforeRender(_this, scene2, camera3, _currentRenderTarget);
+      currentRenderState = renderStates.get(scene2, renderStateStack.length);
       currentRenderState.init();
       renderStateStack.push(currentRenderState);
       _projScreenMatrix2.multiplyMatrices(camera3.projectionMatrix, camera3.matrixWorldInverse);
       _frustum.setFromProjectionMatrix(_projScreenMatrix2);
       _localClippingEnabled = this.localClippingEnabled;
       _clippingEnabled = clipping.init(this.clippingPlanes, _localClippingEnabled, camera3);
-      currentRenderList = renderLists.get(scene, renderListStack.length);
+      currentRenderList = renderLists.get(scene2, renderListStack.length);
       currentRenderList.init();
       renderListStack.push(currentRenderList);
-      projectObject(scene, camera3, 0, _this.sortObjects);
+      projectObject(scene2, camera3, 0, _this.sortObjects);
       currentRenderList.finish();
       if (_this.sortObjects === true) {
         currentRenderList.sort(_opaqueSort, _transparentSort);
@@ -22666,32 +22612,32 @@ reset scout color to green, persists
       if (_clippingEnabled === true)
         clipping.beginShadows();
       const shadowsArray = currentRenderState.state.shadowsArray;
-      shadowMap.render(shadowsArray, scene, camera3);
+      shadowMap.render(shadowsArray, scene2, camera3);
       if (_clippingEnabled === true)
         clipping.endShadows();
       if (this.info.autoReset === true)
         this.info.reset();
-      background.render(currentRenderList, scene);
+      background.render(currentRenderList, scene2);
       currentRenderState.setupLights(_this.physicallyCorrectLights);
       if (camera3.isArrayCamera) {
         const cameras = camera3.cameras;
         for (let i2 = 0, l2 = cameras.length; i2 < l2; i2++) {
           const camera22 = cameras[i2];
-          renderScene(currentRenderList, scene, camera22, camera22.viewport);
+          renderScene(currentRenderList, scene2, camera22, camera22.viewport);
         }
       } else {
-        renderScene(currentRenderList, scene, camera3);
+        renderScene(currentRenderList, scene2, camera3);
       }
       if (_currentRenderTarget !== null) {
         textures.updateMultisampleRenderTarget(_currentRenderTarget);
         textures.updateRenderTargetMipmap(_currentRenderTarget);
       }
-      if (scene.isScene === true)
-        scene.onAfterRender(_this, scene, camera3);
-      state.buffers.depth.setTest(true);
-      state.buffers.depth.setMask(true);
-      state.buffers.color.setMask(true);
-      state.setPolygonOffset(false);
+      if (scene2.isScene === true)
+        scene2.onAfterRender(_this, scene2, camera3);
+      state2.buffers.depth.setTest(true);
+      state2.buffers.depth.setMask(true);
+      state2.buffers.color.setMask(true);
+      state2.setPolygonOffset(false);
       bindingStates.resetDefaultState();
       _currentMaterialId = -1;
       _currentCamera = null;
@@ -22767,23 +22713,23 @@ reset scout color to green, persists
         projectObject(children2[i2], camera3, groupOrder, sortObjects);
       }
     }
-    function renderScene(currentRenderList2, scene, camera3, viewport) {
+    function renderScene(currentRenderList2, scene2, camera3, viewport) {
       const opaqueObjects = currentRenderList2.opaque;
       const transmissiveObjects = currentRenderList2.transmissive;
       const transparentObjects = currentRenderList2.transparent;
       currentRenderState.setupLightsView(camera3);
       if (transmissiveObjects.length > 0)
-        renderTransmissionPass(opaqueObjects, scene, camera3);
+        renderTransmissionPass(opaqueObjects, scene2, camera3);
       if (viewport)
-        state.viewport(_currentViewport.copy(viewport));
+        state2.viewport(_currentViewport.copy(viewport));
       if (opaqueObjects.length > 0)
-        renderObjects(opaqueObjects, scene, camera3);
+        renderObjects(opaqueObjects, scene2, camera3);
       if (transmissiveObjects.length > 0)
-        renderObjects(transmissiveObjects, scene, camera3);
+        renderObjects(transmissiveObjects, scene2, camera3);
       if (transparentObjects.length > 0)
-        renderObjects(transparentObjects, scene, camera3);
+        renderObjects(transparentObjects, scene2, camera3);
     }
-    function renderTransmissionPass(opaqueObjects, scene, camera3) {
+    function renderTransmissionPass(opaqueObjects, scene2, camera3) {
       if (_transmissionRenderTarget === null) {
         const needsAntialias = _antialias === true && capabilities.isWebGL2 === true;
         const renderTargetType = needsAntialias ? WebGLMultisampleRenderTarget : WebGLRenderTarget;
@@ -22802,14 +22748,14 @@ reset scout color to green, persists
       _this.clear();
       const currentToneMapping = _this.toneMapping;
       _this.toneMapping = NoToneMapping;
-      renderObjects(opaqueObjects, scene, camera3);
+      renderObjects(opaqueObjects, scene2, camera3);
       _this.toneMapping = currentToneMapping;
       textures.updateMultisampleRenderTarget(_transmissionRenderTarget);
       textures.updateRenderTargetMipmap(_transmissionRenderTarget);
       _this.setRenderTarget(currentRenderTarget);
     }
-    function renderObjects(renderList, scene, camera3) {
-      const overrideMaterial = scene.isScene === true ? scene.overrideMaterial : null;
+    function renderObjects(renderList, scene2, camera3) {
+      const overrideMaterial = scene2.isScene === true ? scene2.overrideMaterial : null;
       for (let i2 = 0, l2 = renderList.length; i2 < l2; i2++) {
         const renderItem = renderList[i2];
         const object = renderItem.object;
@@ -22817,40 +22763,40 @@ reset scout color to green, persists
         const material = overrideMaterial === null ? renderItem.material : overrideMaterial;
         const group = renderItem.group;
         if (object.layers.test(camera3.layers)) {
-          renderObject(object, scene, camera3, geometry, material, group);
+          renderObject(object, scene2, camera3, geometry, material, group);
         }
       }
     }
-    function renderObject(object, scene, camera3, geometry, material, group) {
-      object.onBeforeRender(_this, scene, camera3, geometry, material, group);
+    function renderObject(object, scene2, camera3, geometry, material, group) {
+      object.onBeforeRender(_this, scene2, camera3, geometry, material, group);
       object.modelViewMatrix.multiplyMatrices(camera3.matrixWorldInverse, object.matrixWorld);
       object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
-      material.onBeforeRender(_this, scene, camera3, geometry, object, group);
+      material.onBeforeRender(_this, scene2, camera3, geometry, object, group);
       if (material.transparent === true && material.side === DoubleSide) {
         material.side = BackSide;
         material.needsUpdate = true;
-        _this.renderBufferDirect(camera3, scene, geometry, material, object, group);
+        _this.renderBufferDirect(camera3, scene2, geometry, material, object, group);
         material.side = FrontSide;
         material.needsUpdate = true;
-        _this.renderBufferDirect(camera3, scene, geometry, material, object, group);
+        _this.renderBufferDirect(camera3, scene2, geometry, material, object, group);
         material.side = DoubleSide;
       } else {
-        _this.renderBufferDirect(camera3, scene, geometry, material, object, group);
+        _this.renderBufferDirect(camera3, scene2, geometry, material, object, group);
       }
-      object.onAfterRender(_this, scene, camera3, geometry, material, group);
+      object.onAfterRender(_this, scene2, camera3, geometry, material, group);
     }
-    function getProgram(material, scene, object) {
-      if (scene.isScene !== true)
-        scene = _emptyScene;
+    function getProgram(material, scene2, object) {
+      if (scene2.isScene !== true)
+        scene2 = _emptyScene;
       const materialProperties = properties.get(material);
       const lights = currentRenderState.state.lights;
       const shadowsArray = currentRenderState.state.shadowsArray;
       const lightsStateVersion = lights.state.version;
-      const parameters2 = programCache.getParameters(material, lights.state, shadowsArray, scene, object);
+      const parameters2 = programCache.getParameters(material, lights.state, shadowsArray, scene2, object);
       const programCacheKey = programCache.getProgramCacheKey(parameters2);
       let programs = materialProperties.programs;
-      materialProperties.environment = material.isMeshStandardMaterial ? scene.environment : null;
-      materialProperties.fog = scene.fog;
+      materialProperties.environment = material.isMeshStandardMaterial ? scene2.environment : null;
+      materialProperties.fog = scene2.fog;
       materialProperties.envMap = (material.isMeshStandardMaterial ? cubeuvmaps : cubemaps).get(material.envMap || materialProperties.environment);
       if (programs === void 0) {
         material.addEventListener("dispose", onMaterialDispose);
@@ -22918,12 +22864,12 @@ reset scout color to green, persists
       materialProperties.vertexTangents = parameters2.vertexTangents;
       materialProperties.toneMapping = parameters2.toneMapping;
     }
-    function setProgram(camera3, scene, geometry, material, object) {
-      if (scene.isScene !== true)
-        scene = _emptyScene;
+    function setProgram(camera3, scene2, geometry, material, object) {
+      if (scene2.isScene !== true)
+        scene2 = _emptyScene;
       textures.resetTextureUnits();
-      const fog = scene.fog;
-      const environment = material.isMeshStandardMaterial ? scene.environment : null;
+      const fog = scene2.fog;
+      const environment = material.isMeshStandardMaterial ? scene2.environment : null;
       const encoding = _currentRenderTarget === null ? _this.outputEncoding : _currentRenderTarget.isXRRenderTarget === true ? _currentRenderTarget.texture.encoding : LinearEncoding;
       const envMap = (material.isMeshStandardMaterial ? cubeuvmaps : cubemaps).get(material.envMap || environment);
       const vertexAlphas = material.vertexColors === true && !!geometry.attributes.color && geometry.attributes.color.itemSize === 4;
@@ -22979,13 +22925,13 @@ reset scout color to green, persists
       }
       let program = materialProperties.currentProgram;
       if (needsProgramChange === true) {
-        program = getProgram(material, scene, object);
+        program = getProgram(material, scene2, object);
       }
       let refreshProgram = false;
       let refreshMaterial = false;
       let refreshLights = false;
       const p_uniforms = program.getUniforms(), m_uniforms = materialProperties.uniforms;
-      if (state.useProgram(program.program)) {
+      if (state2.useProgram(program.program)) {
         refreshProgram = true;
         refreshMaterial = true;
         refreshLights = true;
@@ -23115,7 +23061,7 @@ reset scout color to green, persists
       if (renderTarget) {
         const renderTargetProperties = properties.get(renderTarget);
         if (renderTargetProperties.__useDefaultFramebuffer !== void 0) {
-          state.bindFramebuffer(36160, null);
+          state2.bindFramebuffer(36160, null);
           useDefaultFramebuffer = false;
         } else if (renderTargetProperties.__webglFramebuffer === void 0) {
           textures.setupRenderTarget(renderTarget);
@@ -23148,13 +23094,13 @@ reset scout color to green, persists
         _currentScissor.copy(_scissor).multiplyScalar(_pixelRatio).floor();
         _currentScissorTest = _scissorTest;
       }
-      const framebufferBound = state.bindFramebuffer(36160, framebuffer);
+      const framebufferBound = state2.bindFramebuffer(36160, framebuffer);
       if (framebufferBound && capabilities.drawBuffers && useDefaultFramebuffer) {
-        state.drawBuffers(renderTarget, framebuffer);
+        state2.drawBuffers(renderTarget, framebuffer);
       }
-      state.viewport(_currentViewport);
-      state.scissor(_currentScissor);
-      state.setScissorTest(_currentScissorTest);
+      state2.viewport(_currentViewport);
+      state2.scissor(_currentScissor);
+      state2.setScissorTest(_currentScissorTest);
       if (isCube) {
         const textureProperties = properties.get(renderTarget.texture);
         _gl.framebufferTexture2D(36160, 36064, 34069 + activeCubeFace, textureProperties.__webglTexture, activeMipmapLevel);
@@ -23175,7 +23121,7 @@ reset scout color to green, persists
         framebuffer = framebuffer[activeCubeFaceIndex];
       }
       if (framebuffer) {
-        state.bindFramebuffer(36160, framebuffer);
+        state2.bindFramebuffer(36160, framebuffer);
         try {
           const texture = renderTarget.texture;
           const textureFormat = texture.format;
@@ -23198,7 +23144,7 @@ reset scout color to green, persists
           }
         } finally {
           const framebuffer2 = _currentRenderTarget !== null ? properties.get(_currentRenderTarget).__webglFramebuffer : null;
-          state.bindFramebuffer(36160, framebuffer2);
+          state2.bindFramebuffer(36160, framebuffer2);
         }
       }
     };
@@ -23212,7 +23158,7 @@ reset scout color to green, persists
       const height2 = Math.floor(texture.image.height * levelScale);
       textures.setTexture2D(texture, 0);
       _gl.copyTexSubImage2D(3553, level, 0, 0, position.x, position.y, width2, height2);
-      state.unbindTexture();
+      state2.unbindTexture();
     };
     this.copyTextureToTexture = function(position, srcTexture, dstTexture, level = 0) {
       const width2 = srcTexture.image.width;
@@ -23234,7 +23180,7 @@ reset scout color to green, persists
       }
       if (level === 0 && dstTexture.generateMipmaps)
         _gl.generateMipmap(3553);
-      state.unbindTexture();
+      state2.unbindTexture();
     };
     this.copyTextureToTexture3D = function(sourceBox, position, srcTexture, dstTexture, level = 0) {
       if (_this.isWebGL1Renderer) {
@@ -23288,17 +23234,17 @@ reset scout color to green, persists
       _gl.pixelStorei(32877, unpackSkipImages);
       if (level === 0 && dstTexture.generateMipmaps)
         _gl.generateMipmap(glTarget);
-      state.unbindTexture();
+      state2.unbindTexture();
     };
     this.initTexture = function(texture) {
       textures.setTexture2D(texture, 0);
-      state.unbindTexture();
+      state2.unbindTexture();
     };
     this.resetState = function() {
       _currentActiveCubeFace = 0;
       _currentActiveMipmapLevel = 0;
       _currentRenderTarget = null;
-      state.reset();
+      state2.reset();
       bindingStates.reset();
     };
     if (typeof __THREE_DEVTOOLS__ !== "undefined") {
@@ -24499,8 +24445,8 @@ reset scout color to green, persists
       let current, last = this.getPoint(0);
       let sum = 0;
       cache.push(0);
-      for (let p2 = 1; p2 <= divisions; p2++) {
-        current = this.getPoint(p2 / divisions);
+      for (let p3 = 1; p3 <= divisions; p3++) {
+        current = this.getPoint(p3 / divisions);
         sum += current.distanceTo(last);
         cache.push(sum);
         last = current;
@@ -24784,16 +24730,16 @@ reset scout color to green, persists
       const point = optionalTarget;
       const points2 = this.points;
       const l2 = points2.length;
-      const p2 = (l2 - (this.closed ? 0 : 1)) * t;
-      let intPoint = Math.floor(p2);
-      let weight = p2 - intPoint;
+      const p3 = (l2 - (this.closed ? 0 : 1)) * t;
+      let intPoint = Math.floor(p3);
+      let weight = p3 - intPoint;
       if (this.closed) {
         intPoint += intPoint > 0 ? 0 : (Math.floor(Math.abs(intPoint) / l2) + 1) * l2;
       } else if (weight === 0 && intPoint === l2 - 1) {
         intPoint = l2 - 2;
         weight = 1;
       }
-      let p0, p3;
+      let p0, p32;
       if (this.closed || intPoint > 0) {
         p0 = points2[(intPoint - 1) % l2];
       } else {
@@ -24803,29 +24749,29 @@ reset scout color to green, persists
       const p1 = points2[intPoint % l2];
       const p22 = points2[(intPoint + 1) % l2];
       if (this.closed || intPoint + 2 < l2) {
-        p3 = points2[(intPoint + 2) % l2];
+        p32 = points2[(intPoint + 2) % l2];
       } else {
         tmp.subVectors(points2[l2 - 1], points2[l2 - 2]).add(points2[l2 - 1]);
-        p3 = tmp;
+        p32 = tmp;
       }
       if (this.curveType === "centripetal" || this.curveType === "chordal") {
         const pow = this.curveType === "chordal" ? 0.5 : 0.25;
         let dt0 = Math.pow(p0.distanceToSquared(p1), pow);
         let dt1 = Math.pow(p1.distanceToSquared(p22), pow);
-        let dt2 = Math.pow(p22.distanceToSquared(p3), pow);
+        let dt2 = Math.pow(p22.distanceToSquared(p32), pow);
         if (dt1 < 1e-4)
           dt1 = 1;
         if (dt0 < 1e-4)
           dt0 = dt1;
         if (dt2 < 1e-4)
           dt2 = dt1;
-        px.initNonuniformCatmullRom(p0.x, p1.x, p22.x, p3.x, dt0, dt1, dt2);
-        py.initNonuniformCatmullRom(p0.y, p1.y, p22.y, p3.y, dt0, dt1, dt2);
-        pz.initNonuniformCatmullRom(p0.z, p1.z, p22.z, p3.z, dt0, dt1, dt2);
+        px.initNonuniformCatmullRom(p0.x, p1.x, p22.x, p32.x, dt0, dt1, dt2);
+        py.initNonuniformCatmullRom(p0.y, p1.y, p22.y, p32.y, dt0, dt1, dt2);
+        pz.initNonuniformCatmullRom(p0.z, p1.z, p22.z, p32.z, dt0, dt1, dt2);
       } else if (this.curveType === "catmullrom") {
-        px.initCatmullRom(p0.x, p1.x, p22.x, p3.x, this.tension);
-        py.initCatmullRom(p0.y, p1.y, p22.y, p3.y, this.tension);
-        pz.initCatmullRom(p0.z, p1.z, p22.z, p3.z, this.tension);
+        px.initCatmullRom(p0.x, p1.x, p22.x, p32.x, this.tension);
+        py.initCatmullRom(p0.y, p1.y, p22.y, p32.y, this.tension);
+        pz.initCatmullRom(p0.z, p1.z, p22.z, p32.z, this.tension);
       }
       point.set(px.calc(weight), py.calc(weight), pz.calc(weight));
       return point;
@@ -24868,42 +24814,42 @@ reset scout color to green, persists
     }
   };
   CatmullRomCurve3.prototype.isCatmullRomCurve3 = true;
-  function CatmullRom(t, p0, p1, p2, p3) {
-    const v0 = (p2 - p0) * 0.5;
+  function CatmullRom(t, p0, p1, p22, p3) {
+    const v0 = (p22 - p0) * 0.5;
     const v1 = (p3 - p1) * 0.5;
     const t2 = t * t;
     const t3 = t * t2;
-    return (2 * p1 - 2 * p2 + v0 + v1) * t3 + (-3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
+    return (2 * p1 - 2 * p22 + v0 + v1) * t3 + (-3 * p1 + 3 * p22 - 2 * v0 - v1) * t2 + v0 * t + p1;
   }
-  function QuadraticBezierP0(t, p2) {
+  function QuadraticBezierP0(t, p3) {
     const k2 = 1 - t;
-    return k2 * k2 * p2;
+    return k2 * k2 * p3;
   }
-  function QuadraticBezierP1(t, p2) {
-    return 2 * (1 - t) * t * p2;
+  function QuadraticBezierP1(t, p3) {
+    return 2 * (1 - t) * t * p3;
   }
-  function QuadraticBezierP2(t, p2) {
-    return t * t * p2;
+  function QuadraticBezierP2(t, p3) {
+    return t * t * p3;
   }
-  function QuadraticBezier(t, p0, p1, p2) {
-    return QuadraticBezierP0(t, p0) + QuadraticBezierP1(t, p1) + QuadraticBezierP2(t, p2);
+  function QuadraticBezier(t, p0, p1, p22) {
+    return QuadraticBezierP0(t, p0) + QuadraticBezierP1(t, p1) + QuadraticBezierP2(t, p22);
   }
-  function CubicBezierP0(t, p2) {
+  function CubicBezierP0(t, p3) {
     const k2 = 1 - t;
-    return k2 * k2 * k2 * p2;
+    return k2 * k2 * k2 * p3;
   }
-  function CubicBezierP1(t, p2) {
+  function CubicBezierP1(t, p3) {
     const k2 = 1 - t;
-    return 3 * k2 * k2 * t * p2;
+    return 3 * k2 * k2 * t * p3;
   }
-  function CubicBezierP2(t, p2) {
-    return 3 * (1 - t) * t * t * p2;
+  function CubicBezierP2(t, p3) {
+    return 3 * (1 - t) * t * t * p3;
   }
-  function CubicBezierP3(t, p2) {
-    return t * t * t * p2;
+  function CubicBezierP3(t, p3) {
+    return t * t * t * p3;
   }
-  function CubicBezier(t, p0, p1, p2, p3) {
-    return CubicBezierP0(t, p0) + CubicBezierP1(t, p1) + CubicBezierP2(t, p2) + CubicBezierP3(t, p3);
+  function CubicBezier(t, p0, p1, p22, p3) {
+    return CubicBezierP0(t, p0) + CubicBezierP1(t, p1) + CubicBezierP2(t, p22) + CubicBezierP3(t, p3);
   }
   var CubicBezierCurve = class extends Curve {
     constructor(v0 = new Vector2(), v1 = new Vector2(), v2 = new Vector2(), v32 = new Vector2()) {
@@ -25155,14 +25101,14 @@ reset scout color to green, persists
     getPoint(t, optionalTarget = new Vector2()) {
       const point = optionalTarget;
       const points2 = this.points;
-      const p2 = (points2.length - 1) * t;
-      const intPoint = Math.floor(p2);
-      const weight = p2 - intPoint;
+      const p3 = (points2.length - 1) * t;
+      const intPoint = Math.floor(p3);
+      const weight = p3 - intPoint;
       const p0 = points2[intPoint === 0 ? intPoint : intPoint - 1];
       const p1 = points2[intPoint];
       const p22 = points2[intPoint > points2.length - 2 ? points2.length - 1 : intPoint + 1];
-      const p3 = points2[intPoint > points2.length - 3 ? points2.length - 1 : intPoint + 2];
-      point.set(CatmullRom(weight, p0.x, p1.x, p22.x, p3.x), CatmullRom(weight, p0.y, p1.y, p22.y, p3.y));
+      const p32 = points2[intPoint > points2.length - 3 ? points2.length - 1 : intPoint + 2];
+      point.set(CatmullRom(weight, p0.x, p1.x, p22.x, p32.x), CatmullRom(weight, p0.y, p1.y, p22.y, p32.y));
       return point;
     }
     copy(source) {
@@ -25516,19 +25462,19 @@ reset scout color to green, persists
       return start2;
     if (!end2)
       end2 = start2;
-    let p2 = start2, again;
+    let p3 = start2, again;
     do {
       again = false;
-      if (!p2.steiner && (equals(p2, p2.next) || area(p2.prev, p2, p2.next) === 0)) {
-        removeNode(p2);
-        p2 = end2 = p2.prev;
-        if (p2 === p2.next)
+      if (!p3.steiner && (equals(p3, p3.next) || area(p3.prev, p3, p3.next) === 0)) {
+        removeNode(p3);
+        p3 = end2 = p3.prev;
+        if (p3 === p3.next)
           break;
         again = true;
       } else {
-        p2 = p2.next;
+        p3 = p3.next;
       }
-    } while (again || p2 !== end2);
+    } while (again || p3 !== end2);
     return end2;
   }
   function earcutLinked(ear, triangles, dim, minX, minY, invSize, pass) {
@@ -25567,11 +25513,11 @@ reset scout color to green, persists
     const a2 = ear.prev, b2 = ear, c2 = ear.next;
     if (area(a2, b2, c2) >= 0)
       return false;
-    let p2 = ear.next.next;
-    while (p2 !== ear.prev) {
-      if (pointInTriangle(a2.x, a2.y, b2.x, b2.y, c2.x, c2.y, p2.x, p2.y) && area(p2.prev, p2, p2.next) >= 0)
+    let p3 = ear.next.next;
+    while (p3 !== ear.prev) {
+      if (pointInTriangle(a2.x, a2.y, b2.x, b2.y, c2.x, c2.y, p3.x, p3.y) && area(p3.prev, p3, p3.next) >= 0)
         return false;
-      p2 = p2.next;
+      p3 = p3.next;
     }
     return true;
   }
@@ -25581,19 +25527,19 @@ reset scout color to green, persists
       return false;
     const minTX = a2.x < b2.x ? a2.x < c2.x ? a2.x : c2.x : b2.x < c2.x ? b2.x : c2.x, minTY = a2.y < b2.y ? a2.y < c2.y ? a2.y : c2.y : b2.y < c2.y ? b2.y : c2.y, maxTX = a2.x > b2.x ? a2.x > c2.x ? a2.x : c2.x : b2.x > c2.x ? b2.x : c2.x, maxTY = a2.y > b2.y ? a2.y > c2.y ? a2.y : c2.y : b2.y > c2.y ? b2.y : c2.y;
     const minZ = zOrder(minTX, minTY, minX, minY, invSize), maxZ = zOrder(maxTX, maxTY, minX, minY, invSize);
-    let p2 = ear.prevZ, n2 = ear.nextZ;
-    while (p2 && p2.z >= minZ && n2 && n2.z <= maxZ) {
-      if (p2 !== ear.prev && p2 !== ear.next && pointInTriangle(a2.x, a2.y, b2.x, b2.y, c2.x, c2.y, p2.x, p2.y) && area(p2.prev, p2, p2.next) >= 0)
+    let p3 = ear.prevZ, n2 = ear.nextZ;
+    while (p3 && p3.z >= minZ && n2 && n2.z <= maxZ) {
+      if (p3 !== ear.prev && p3 !== ear.next && pointInTriangle(a2.x, a2.y, b2.x, b2.y, c2.x, c2.y, p3.x, p3.y) && area(p3.prev, p3, p3.next) >= 0)
         return false;
-      p2 = p2.prevZ;
+      p3 = p3.prevZ;
       if (n2 !== ear.prev && n2 !== ear.next && pointInTriangle(a2.x, a2.y, b2.x, b2.y, c2.x, c2.y, n2.x, n2.y) && area(n2.prev, n2, n2.next) >= 0)
         return false;
       n2 = n2.nextZ;
     }
-    while (p2 && p2.z >= minZ) {
-      if (p2 !== ear.prev && p2 !== ear.next && pointInTriangle(a2.x, a2.y, b2.x, b2.y, c2.x, c2.y, p2.x, p2.y) && area(p2.prev, p2, p2.next) >= 0)
+    while (p3 && p3.z >= minZ) {
+      if (p3 !== ear.prev && p3 !== ear.next && pointInTriangle(a2.x, a2.y, b2.x, b2.y, c2.x, c2.y, p3.x, p3.y) && area(p3.prev, p3, p3.next) >= 0)
         return false;
-      p2 = p2.prevZ;
+      p3 = p3.prevZ;
     }
     while (n2 && n2.z <= maxZ) {
       if (n2 !== ear.prev && n2 !== ear.next && pointInTriangle(a2.x, a2.y, b2.x, b2.y, c2.x, c2.y, n2.x, n2.y) && area(n2.prev, n2, n2.next) >= 0)
@@ -25603,20 +25549,20 @@ reset scout color to green, persists
     return true;
   }
   function cureLocalIntersections(start2, triangles, dim) {
-    let p2 = start2;
+    let p3 = start2;
     do {
-      const a2 = p2.prev, b2 = p2.next.next;
-      if (!equals(a2, b2) && intersects(a2, p2, p2.next, b2) && locallyInside(a2, b2) && locallyInside(b2, a2)) {
+      const a2 = p3.prev, b2 = p3.next.next;
+      if (!equals(a2, b2) && intersects(a2, p3, p3.next, b2) && locallyInside(a2, b2) && locallyInside(b2, a2)) {
         triangles.push(a2.i / dim);
-        triangles.push(p2.i / dim);
+        triangles.push(p3.i / dim);
         triangles.push(b2.i / dim);
-        removeNode(p2);
-        removeNode(p2.next);
-        p2 = start2 = b2;
+        removeNode(p3);
+        removeNode(p3.next);
+        p3 = start2 = b2;
       }
-      p2 = p2.next;
-    } while (p2 !== start2);
-    return filterPoints(p2);
+      p3 = p3.next;
+    } while (p3 !== start2);
+    return filterPoints(p3);
   }
   function splitEarcut(start2, triangles, dim, minX, minY, invSize) {
     let a2 = start2;
@@ -25666,87 +25612,87 @@ reset scout color to green, persists
     }
   }
   function findHoleBridge(hole, outerNode) {
-    let p2 = outerNode;
+    let p3 = outerNode;
     const hx = hole.x;
     const hy = hole.y;
     let qx = -Infinity, m2;
     do {
-      if (hy <= p2.y && hy >= p2.next.y && p2.next.y !== p2.y) {
-        const x2 = p2.x + (hy - p2.y) * (p2.next.x - p2.x) / (p2.next.y - p2.y);
+      if (hy <= p3.y && hy >= p3.next.y && p3.next.y !== p3.y) {
+        const x2 = p3.x + (hy - p3.y) * (p3.next.x - p3.x) / (p3.next.y - p3.y);
         if (x2 <= hx && x2 > qx) {
           qx = x2;
           if (x2 === hx) {
-            if (hy === p2.y)
-              return p2;
-            if (hy === p2.next.y)
-              return p2.next;
+            if (hy === p3.y)
+              return p3;
+            if (hy === p3.next.y)
+              return p3.next;
           }
-          m2 = p2.x < p2.next.x ? p2 : p2.next;
+          m2 = p3.x < p3.next.x ? p3 : p3.next;
         }
       }
-      p2 = p2.next;
-    } while (p2 !== outerNode);
+      p3 = p3.next;
+    } while (p3 !== outerNode);
     if (!m2)
       return null;
     if (hx === qx)
       return m2;
     const stop = m2, mx = m2.x, my = m2.y;
     let tanMin = Infinity, tan;
-    p2 = m2;
+    p3 = m2;
     do {
-      if (hx >= p2.x && p2.x >= mx && hx !== p2.x && pointInTriangle(hy < my ? hx : qx, hy, mx, my, hy < my ? qx : hx, hy, p2.x, p2.y)) {
-        tan = Math.abs(hy - p2.y) / (hx - p2.x);
-        if (locallyInside(p2, hole) && (tan < tanMin || tan === tanMin && (p2.x > m2.x || p2.x === m2.x && sectorContainsSector(m2, p2)))) {
-          m2 = p2;
+      if (hx >= p3.x && p3.x >= mx && hx !== p3.x && pointInTriangle(hy < my ? hx : qx, hy, mx, my, hy < my ? qx : hx, hy, p3.x, p3.y)) {
+        tan = Math.abs(hy - p3.y) / (hx - p3.x);
+        if (locallyInside(p3, hole) && (tan < tanMin || tan === tanMin && (p3.x > m2.x || p3.x === m2.x && sectorContainsSector(m2, p3)))) {
+          m2 = p3;
           tanMin = tan;
         }
       }
-      p2 = p2.next;
-    } while (p2 !== stop);
+      p3 = p3.next;
+    } while (p3 !== stop);
     return m2;
   }
-  function sectorContainsSector(m2, p2) {
-    return area(m2.prev, m2, p2.prev) < 0 && area(p2.next, m2, m2.next) < 0;
+  function sectorContainsSector(m2, p3) {
+    return area(m2.prev, m2, p3.prev) < 0 && area(p3.next, m2, m2.next) < 0;
   }
   function indexCurve(start2, minX, minY, invSize) {
-    let p2 = start2;
+    let p3 = start2;
     do {
-      if (p2.z === null)
-        p2.z = zOrder(p2.x, p2.y, minX, minY, invSize);
-      p2.prevZ = p2.prev;
-      p2.nextZ = p2.next;
-      p2 = p2.next;
-    } while (p2 !== start2);
-    p2.prevZ.nextZ = null;
-    p2.prevZ = null;
-    sortLinked(p2);
+      if (p3.z === null)
+        p3.z = zOrder(p3.x, p3.y, minX, minY, invSize);
+      p3.prevZ = p3.prev;
+      p3.nextZ = p3.next;
+      p3 = p3.next;
+    } while (p3 !== start2);
+    p3.prevZ.nextZ = null;
+    p3.prevZ = null;
+    sortLinked(p3);
   }
   function sortLinked(list) {
-    let i2, p2, q2, e, tail, numMerges, pSize, qSize, inSize = 1;
+    let i2, p3, q3, e, tail, numMerges, pSize, qSize, inSize = 1;
     do {
-      p2 = list;
+      p3 = list;
       list = null;
       tail = null;
       numMerges = 0;
-      while (p2) {
+      while (p3) {
         numMerges++;
-        q2 = p2;
+        q3 = p3;
         pSize = 0;
         for (i2 = 0; i2 < inSize; i2++) {
           pSize++;
-          q2 = q2.nextZ;
-          if (!q2)
+          q3 = q3.nextZ;
+          if (!q3)
             break;
         }
         qSize = inSize;
-        while (pSize > 0 || qSize > 0 && q2) {
-          if (pSize !== 0 && (qSize === 0 || !q2 || p2.z <= q2.z)) {
-            e = p2;
-            p2 = p2.nextZ;
+        while (pSize > 0 || qSize > 0 && q3) {
+          if (pSize !== 0 && (qSize === 0 || !q3 || p3.z <= q3.z)) {
+            e = p3;
+            p3 = p3.nextZ;
             pSize--;
           } else {
-            e = q2;
-            q2 = q2.nextZ;
+            e = q3;
+            q3 = q3.nextZ;
             qSize--;
           }
           if (tail)
@@ -25756,7 +25702,7 @@ reset scout color to green, persists
           e.prevZ = tail;
           tail = e;
         }
-        p2 = q2;
+        p3 = q3;
       }
       tail.nextZ = null;
       inSize *= 2;
@@ -25777,12 +25723,12 @@ reset scout color to green, persists
     return x2 | y2 << 1;
   }
   function getLeftmost(start2) {
-    let p2 = start2, leftmost = start2;
+    let p3 = start2, leftmost = start2;
     do {
-      if (p2.x < leftmost.x || p2.x === leftmost.x && p2.y < leftmost.y)
-        leftmost = p2;
-      p2 = p2.next;
-    } while (p2 !== start2);
+      if (p3.x < leftmost.x || p3.x === leftmost.x && p3.y < leftmost.y)
+        leftmost = p3;
+      p3 = p3.next;
+    } while (p3 !== start2);
     return leftmost;
   }
   function pointInTriangle(ax, ay, bx, by, cx, cy, px2, py2) {
@@ -25791,55 +25737,55 @@ reset scout color to green, persists
   function isValidDiagonal(a2, b2) {
     return a2.next.i !== b2.i && a2.prev.i !== b2.i && !intersectsPolygon(a2, b2) && (locallyInside(a2, b2) && locallyInside(b2, a2) && middleInside(a2, b2) && (area(a2.prev, a2, b2.prev) || area(a2, b2.prev, b2)) || equals(a2, b2) && area(a2.prev, a2, a2.next) > 0 && area(b2.prev, b2, b2.next) > 0);
   }
-  function area(p2, q2, r2) {
-    return (q2.y - p2.y) * (r2.x - q2.x) - (q2.x - p2.x) * (r2.y - q2.y);
+  function area(p3, q3, r2) {
+    return (q3.y - p3.y) * (r2.x - q3.x) - (q3.x - p3.x) * (r2.y - q3.y);
   }
-  function equals(p1, p2) {
-    return p1.x === p2.x && p1.y === p2.y;
+  function equals(p1, p22) {
+    return p1.x === p22.x && p1.y === p22.y;
   }
-  function intersects(p1, q1, p2, q2) {
-    const o1 = sign(area(p1, q1, p2));
-    const o2 = sign(area(p1, q1, q2));
-    const o3 = sign(area(p2, q2, p1));
-    const o4 = sign(area(p2, q2, q1));
+  function intersects(p1, q1, p22, q22) {
+    const o1 = sign(area(p1, q1, p22));
+    const o2 = sign(area(p1, q1, q22));
+    const o3 = sign(area(p22, q22, p1));
+    const o4 = sign(area(p22, q22, q1));
     if (o1 !== o2 && o3 !== o4)
       return true;
-    if (o1 === 0 && onSegment(p1, p2, q1))
+    if (o1 === 0 && onSegment(p1, p22, q1))
       return true;
-    if (o2 === 0 && onSegment(p1, q2, q1))
+    if (o2 === 0 && onSegment(p1, q22, q1))
       return true;
-    if (o3 === 0 && onSegment(p2, p1, q2))
+    if (o3 === 0 && onSegment(p22, p1, q22))
       return true;
-    if (o4 === 0 && onSegment(p2, q1, q2))
+    if (o4 === 0 && onSegment(p22, q1, q22))
       return true;
     return false;
   }
-  function onSegment(p2, q2, r2) {
-    return q2.x <= Math.max(p2.x, r2.x) && q2.x >= Math.min(p2.x, r2.x) && q2.y <= Math.max(p2.y, r2.y) && q2.y >= Math.min(p2.y, r2.y);
+  function onSegment(p3, q3, r2) {
+    return q3.x <= Math.max(p3.x, r2.x) && q3.x >= Math.min(p3.x, r2.x) && q3.y <= Math.max(p3.y, r2.y) && q3.y >= Math.min(p3.y, r2.y);
   }
   function sign(num) {
     return num > 0 ? 1 : num < 0 ? -1 : 0;
   }
   function intersectsPolygon(a2, b2) {
-    let p2 = a2;
+    let p3 = a2;
     do {
-      if (p2.i !== a2.i && p2.next.i !== a2.i && p2.i !== b2.i && p2.next.i !== b2.i && intersects(p2, p2.next, a2, b2))
+      if (p3.i !== a2.i && p3.next.i !== a2.i && p3.i !== b2.i && p3.next.i !== b2.i && intersects(p3, p3.next, a2, b2))
         return true;
-      p2 = p2.next;
-    } while (p2 !== a2);
+      p3 = p3.next;
+    } while (p3 !== a2);
     return false;
   }
   function locallyInside(a2, b2) {
     return area(a2.prev, a2, a2.next) < 0 ? area(a2, b2, a2.next) >= 0 && area(a2, a2.prev, b2) >= 0 : area(a2, b2, a2.prev) < 0 || area(a2, a2.next, b2) < 0;
   }
   function middleInside(a2, b2) {
-    let p2 = a2, inside = false;
+    let p3 = a2, inside = false;
     const px2 = (a2.x + b2.x) / 2, py2 = (a2.y + b2.y) / 2;
     do {
-      if (p2.y > py2 !== p2.next.y > py2 && p2.next.y !== p2.y && px2 < (p2.next.x - p2.x) * (py2 - p2.y) / (p2.next.y - p2.y) + p2.x)
+      if (p3.y > py2 !== p3.next.y > py2 && p3.next.y !== p3.y && px2 < (p3.next.x - p3.x) * (py2 - p3.y) / (p3.next.y - p3.y) + p3.x)
         inside = !inside;
-      p2 = p2.next;
-    } while (p2 !== a2);
+      p3 = p3.next;
+    } while (p3 !== a2);
     return inside;
   }
   function splitPolygon(a2, b2) {
@@ -25855,25 +25801,25 @@ reset scout color to green, persists
     return b22;
   }
   function insertNode(i2, x2, y2, last) {
-    const p2 = new Node(i2, x2, y2);
+    const p3 = new Node(i2, x2, y2);
     if (!last) {
-      p2.prev = p2;
-      p2.next = p2;
+      p3.prev = p3;
+      p3.next = p3;
     } else {
-      p2.next = last.next;
-      p2.prev = last;
-      last.next.prev = p2;
-      last.next = p2;
+      p3.next = last.next;
+      p3.prev = last;
+      last.next.prev = p3;
+      last.next = p3;
     }
-    return p2;
+    return p3;
   }
-  function removeNode(p2) {
-    p2.next.prev = p2.prev;
-    p2.prev.next = p2.next;
-    if (p2.prevZ)
-      p2.prevZ.nextZ = p2.nextZ;
-    if (p2.nextZ)
-      p2.nextZ.prevZ = p2.prevZ;
+  function removeNode(p3) {
+    p3.next.prev = p3.prev;
+    p3.prev.next = p3.next;
+    if (p3.prevZ)
+      p3.prevZ.nextZ = p3.nextZ;
+    if (p3.nextZ)
+      p3.nextZ.prevZ = p3.prevZ;
   }
   function Node(i2, x2, y2) {
     this.i = i2;
@@ -25898,8 +25844,8 @@ reset scout color to green, persists
     static area(contour) {
       const n2 = contour.length;
       let a2 = 0;
-      for (let p2 = n2 - 1, q2 = 0; q2 < n2; p2 = q2++) {
-        a2 += contour[p2].x * contour[q2].y - contour[q2].x * contour[p2].y;
+      for (let p3 = n2 - 1, q3 = 0; q3 < n2; p3 = q3++) {
+        a2 += contour[p3].x * contour[q3].y - contour[q3].x * contour[p3].y;
       }
       return a2 * 0.5;
     }
@@ -26118,15 +26064,15 @@ reset scout color to green, persists
             v2(position2.x, position2.y, position2.z);
           }
         }
-        for (let s2 = 1; s2 <= steps; s2++) {
+        for (let s3 = 1; s3 <= steps; s3++) {
           for (let i2 = 0; i2 < vlen; i2++) {
             const vert = bevelEnabled ? scalePt2(vertices[i2], verticesMovements[i2], bs) : vertices[i2];
             if (!extrudeByPath) {
-              v2(vert.x, vert.y, depth / steps * s2);
+              v2(vert.x, vert.y, depth / steps * s3);
             } else {
-              normal.copy(splineTube.normals[s2]).multiplyScalar(vert.x);
-              binormal.copy(splineTube.binormals[s2]).multiplyScalar(vert.y);
-              position2.copy(extrudePts[s2]).add(normal).add(binormal);
+              normal.copy(splineTube.normals[s3]).multiplyScalar(vert.x);
+              binormal.copy(splineTube.binormals[s3]).multiplyScalar(vert.y);
+              position2.copy(extrudePts[s3]).add(normal).add(binormal);
               v2(position2.x, position2.y, position2.z);
             }
           }
@@ -26200,9 +26146,9 @@ reset scout color to green, persists
             let k2 = i2 - 1;
             if (k2 < 0)
               k2 = contour2.length - 1;
-            for (let s2 = 0, sl = steps + bevelSegments * 2; s2 < sl; s2++) {
-              const slen1 = vlen * s2;
-              const slen2 = vlen * (s2 + 1);
+            for (let s3 = 0, sl = steps + bevelSegments * 2; s3 < sl; s3++) {
+              const slen1 = vlen * s3;
+              const slen2 = vlen * (s3 + 1);
               const a2 = layeroffset + j2 + slen1, b2 = layeroffset + k2 + slen1, c2 = layeroffset + k2 + slen2, d2 = layeroffset + j2 + slen2;
               f4(a2, b2, c2, d2);
             }
@@ -27282,10 +27228,10 @@ reset scout color to green, persists
       this._offsetNext = iNext * stride;
     }
     interpolate_(i1, t0, t, t1) {
-      const result = this.resultBuffer, values = this.sampleValues, stride = this.valueSize, o1 = i1 * stride, o0 = o1 - stride, oP = this._offsetPrev, oN = this._offsetNext, wP = this._weightPrev, wN = this._weightNext, p2 = (t - t0) / (t1 - t0), pp = p2 * p2, ppp = pp * p2;
-      const sP = -wP * ppp + 2 * wP * pp - wP * p2;
-      const s0 = (1 + wP) * ppp + (-1.5 - 2 * wP) * pp + (-0.5 + wP) * p2 + 1;
-      const s1 = (-1 - wN) * ppp + (1.5 + wN) * pp + 0.5 * p2;
+      const result = this.resultBuffer, values = this.sampleValues, stride = this.valueSize, o1 = i1 * stride, o0 = o1 - stride, oP = this._offsetPrev, oN = this._offsetNext, wP = this._weightPrev, wN = this._weightNext, p3 = (t - t0) / (t1 - t0), pp = p3 * p3, ppp = pp * p3;
+      const sP = -wP * ppp + 2 * wP * pp - wP * p3;
+      const s0 = (1 + wP) * ppp + (-1.5 - 2 * wP) * pp + (-0.5 + wP) * p3 + 1;
+      const s1 = (-1 - wN) * ppp + (1.5 + wN) * pp + 0.5 * p3;
       const sN = wN * ppp - wN * pp;
       for (let i2 = 0; i2 !== stride; ++i2) {
         result[i2] = sP * values[oP + i2] + s0 * values[o0 + i2] + s1 * values[o1 + i2] + sN * values[oN + i2];
@@ -27366,15 +27312,15 @@ reset scout color to green, persists
           break;
       }
       if (factoryMethod === void 0) {
-        const message2 = "unsupported interpolation for " + this.ValueTypeName + " keyframe track named " + this.name;
+        const message = "unsupported interpolation for " + this.ValueTypeName + " keyframe track named " + this.name;
         if (this.createInterpolant === void 0) {
           if (interpolation !== this.DefaultInterpolation) {
             this.setInterpolation(this.DefaultInterpolation);
           } else {
-            throw new Error(message2);
+            throw new Error(message);
           }
         }
-        console.warn("THREE.KeyframeTrack:", message2);
+        console.warn("THREE.KeyframeTrack:", message);
         return this;
       }
       this.createInterpolant = factoryMethod;
@@ -28559,15 +28505,15 @@ reset scout color to green, persists
       }
       return this;
     }
-    addScaledSH(sh, s2) {
+    addScaledSH(sh, s3) {
       for (let i2 = 0; i2 < 9; i2++) {
-        this.coefficients[i2].addScaledVector(sh.coefficients[i2], s2);
+        this.coefficients[i2].addScaledVector(sh.coefficients[i2], s3);
       }
       return this;
     }
-    scale(s2) {
+    scale(s3) {
       for (let i2 = 0; i2 < 9; i2++) {
-        this.coefficients[i2].multiplyScalar(s2);
+        this.coefficients[i2].multiplyScalar(s3);
       }
       return this;
     }
@@ -28646,14 +28592,14 @@ reset scout color to green, persists
       if (typeof TextDecoder !== "undefined") {
         return new TextDecoder().decode(array);
       }
-      let s2 = "";
+      let s3 = "";
       for (let i2 = 0, il = array.length; i2 < il; i2++) {
-        s2 += String.fromCharCode(array[i2]);
+        s3 += String.fromCharCode(array[i2]);
       }
       try {
-        return decodeURIComponent(escape(s2));
+        return decodeURIComponent(escape(s3));
       } catch (e) {
-        return s2;
+        return s3;
       }
     }
     static extractUrlBase(url) {
@@ -29179,10 +29125,10 @@ reset scout color to green, persists
       Quaternion.slerpFlat(buffer, dstOffset, buffer, dstOffset, buffer, workOffset, t);
     }
     _lerp(buffer, dstOffset, srcOffset, t, stride) {
-      const s2 = 1 - t;
+      const s3 = 1 - t;
       for (let i2 = 0; i2 !== stride; ++i2) {
         const j2 = dstOffset + i2;
-        buffer[j2] = buffer[j2] * s2 + buffer[srcOffset + i2] * t;
+        buffer[j2] = buffer[j2] * s3 + buffer[srcOffset + i2] * t;
       }
     }
     _lerpAdditive(buffer, dstOffset, srcOffset, t, stride) {
@@ -29569,7 +29515,7 @@ reset scout color to green, persists
       };
     }
     add() {
-      const objects = this._objects, indicesByUUID = this._indicesByUUID, paths = this._paths, parsedPaths = this._parsedPaths, bindings = this._bindings, nBindings = bindings.length;
+      const objects = this._objects, indicesByUUID = this._indicesByUUID, paths2 = this._paths, parsedPaths = this._parsedPaths, bindings = this._bindings, nBindings = bindings.length;
       let knownObject = void 0, nObjects = objects.length, nCachedObjects = this.nCachedObjects_;
       for (let i2 = 0, n2 = arguments.length; i2 !== n2; ++i2) {
         const object = arguments[i2], uuid = object.uuid;
@@ -29579,7 +29525,7 @@ reset scout color to green, persists
           indicesByUUID[uuid] = index;
           objects.push(object);
           for (let j2 = 0, m2 = nBindings; j2 !== m2; ++j2) {
-            bindings[j2].push(new PropertyBinding(object, paths[j2], parsedPaths[j2]));
+            bindings[j2].push(new PropertyBinding(object, paths2[j2], parsedPaths[j2]));
           }
         } else if (index < nCachedObjects) {
           knownObject = objects[index];
@@ -29593,7 +29539,7 @@ reset scout color to green, persists
             let binding = bindingsForPath[index];
             bindingsForPath[index] = lastCached;
             if (binding === void 0) {
-              binding = new PropertyBinding(object, paths[j2], parsedPaths[j2]);
+              binding = new PropertyBinding(object, paths2[j2], parsedPaths[j2]);
             }
             bindingsForPath[firstActiveIndex] = binding;
           }
@@ -29666,10 +29612,10 @@ reset scout color to green, persists
       const bindings = this._bindings;
       if (index !== void 0)
         return bindings[index];
-      const paths = this._paths, parsedPaths = this._parsedPaths, objects = this._objects, nObjects = objects.length, nCachedObjects = this.nCachedObjects_, bindingsForPath = new Array(nObjects);
+      const paths2 = this._paths, parsedPaths = this._parsedPaths, objects = this._objects, nObjects = objects.length, nCachedObjects = this.nCachedObjects_, bindingsForPath = new Array(nObjects);
       index = bindings.length;
       indicesByPath[path] = index;
-      paths.push(path);
+      paths2.push(path);
       parsedPaths.push(parsedPath);
       bindings.push(bindingsForPath);
       for (let i2 = nCachedObjects, n2 = objects.length; i2 !== n2; ++i2) {
@@ -29681,14 +29627,14 @@ reset scout color to green, persists
     unsubscribe_(path) {
       const indicesByPath = this._bindingsIndicesByPath, index = indicesByPath[path];
       if (index !== void 0) {
-        const paths = this._paths, parsedPaths = this._parsedPaths, bindings = this._bindings, lastBindingsIndex = bindings.length - 1, lastBindings = bindings[lastBindingsIndex], lastBindingsPath = path[lastBindingsIndex];
+        const paths2 = this._paths, parsedPaths = this._parsedPaths, bindings = this._bindings, lastBindingsIndex = bindings.length - 1, lastBindings = bindings[lastBindingsIndex], lastBindingsPath = path[lastBindingsIndex];
         indicesByPath[lastBindingsPath] = index;
         bindings[index] = lastBindings;
         bindings.pop();
         parsedPaths[index] = parsedPaths[lastBindingsIndex];
         parsedPaths.pop();
-        paths[index] = paths[lastBindingsIndex];
-        paths.pop();
+        paths2[index] = paths2[lastBindingsIndex];
+        paths2.pop();
       }
     }
   };
@@ -30808,9 +30754,9 @@ reset scout color to green, persists
     console.warn("THREE.Matrix4: .getPosition() has been removed. Use Vector3.setFromMatrixPosition( matrix ) instead.");
     return new Vector3().setFromMatrixColumn(this, 3);
   };
-  Matrix4.prototype.setRotationFromQuaternion = function(q2) {
+  Matrix4.prototype.setRotationFromQuaternion = function(q3) {
     console.warn("THREE.Matrix4: .setRotationFromQuaternion() has been renamed to .makeRotationFromQuaternion().");
-    return this.makeRotationFromQuaternion(q2);
+    return this.makeRotationFromQuaternion(q3);
   };
   Matrix4.prototype.multiplyToArray = function() {
     console.warn("THREE.Matrix4: .multiplyToArray() has been removed.");
@@ -31602,9 +31548,9 @@ reset scout color to green, persists
     console.warn("THREE.AudioAnalyser: .getData() is now .getFrequencyData().");
     return this.getFrequencyData();
   };
-  CubeCamera.prototype.updateCubeMap = function(renderer, scene) {
+  CubeCamera.prototype.updateCubeMap = function(renderer, scene2) {
     console.warn("THREE.CubeCamera: .updateCubeMap() is now .update().");
-    return this.update(renderer, scene);
+    return this.update(renderer, scene2);
   };
   CubeCamera.prototype.clear = function(renderer, color, depth, stencil) {
     console.warn("THREE.CubeCamera: .clear() is now .renderTarget.clear().");
@@ -31651,7 +31597,7 @@ reset scout color to green, persists
   // node_modules/@pixiv/three-vrm/lib/three-vrm.module.min.js
   function n(e, t, n2, i2) {
     return new (n2 || (n2 = Promise))(function(r2, o2) {
-      function s2(e2) {
+      function s3(e2) {
         try {
           l2(i2.next(e2));
         } catch (e3) {
@@ -31669,7 +31615,7 @@ reset scout color to green, persists
         var t2;
         e2.done ? r2(e2.value) : (t2 = e2.value, t2 instanceof n2 ? t2 : new n2(function(e3) {
           e3(t2);
-        })).then(s2, a2);
+        })).then(s3, a2);
       }
       l2((i2 = i2.apply(e, t || [])).next());
     });
@@ -31706,8 +31652,8 @@ reset scout color to green, persists
     }
     addMaterialValue(t) {
       const n2 = t.material, i2 = t.propertyName;
-      let r2, s2, a2, l2, d2 = n2[i2];
-      d2 && (d2 = t.defaultValue || d2, d2.isVector2 ? (r2 = o.VECTOR2, s2 = d2.clone(), a2 = new Vector2().fromArray(t.targetValue), l2 = a2.clone().sub(s2)) : d2.isVector3 ? (r2 = o.VECTOR3, s2 = d2.clone(), a2 = new Vector3().fromArray(t.targetValue), l2 = a2.clone().sub(s2)) : d2.isVector4 ? (r2 = o.VECTOR4, s2 = d2.clone(), a2 = new Vector4().fromArray([t.targetValue[2], t.targetValue[3], t.targetValue[0], t.targetValue[1]]), l2 = a2.clone().sub(s2)) : d2.isColor ? (r2 = o.COLOR, s2 = d2.clone(), a2 = new Color().fromArray(t.targetValue), l2 = a2.clone().sub(s2)) : (r2 = o.NUMBER, s2 = d2, a2 = t.targetValue[0], l2 = a2 - s2), this._materialValues.push({ material: n2, propertyName: i2, defaultValue: s2, targetValue: a2, deltaValue: l2, type: r2 }));
+      let r2, s3, a2, l2, d2 = n2[i2];
+      d2 && (d2 = t.defaultValue || d2, d2.isVector2 ? (r2 = o.VECTOR2, s3 = d2.clone(), a2 = new Vector2().fromArray(t.targetValue), l2 = a2.clone().sub(s3)) : d2.isVector3 ? (r2 = o.VECTOR3, s3 = d2.clone(), a2 = new Vector3().fromArray(t.targetValue), l2 = a2.clone().sub(s3)) : d2.isVector4 ? (r2 = o.VECTOR4, s3 = d2.clone(), a2 = new Vector4().fromArray([t.targetValue[2], t.targetValue[3], t.targetValue[0], t.targetValue[1]]), l2 = a2.clone().sub(s3)) : d2.isColor ? (r2 = o.COLOR, s3 = d2.clone(), a2 = new Color().fromArray(t.targetValue), l2 = a2.clone().sub(s3)) : (r2 = o.NUMBER, s3 = d2, a2 = t.targetValue[0], l2 = a2 - s3), this._materialValues.push({ material: n2, propertyName: i2, defaultValue: s3, targetValue: a2, deltaValue: l2, type: r2 }));
     }
     applyWeight() {
       const e = this.isBinary ? this.weight < 0.5 ? 0 : 1 : this.weight;
@@ -31788,8 +31734,8 @@ reset scout color to green, persists
     return e[0] !== "_" ? (console.warn(`renameMaterialProperty: Given property name "${e}" might be invalid`), e) : (e = e.substring(1), /[A-Z]/.test(e[0]) ? e[0].toLowerCase() + e.substring(1) : (console.warn(`renameMaterialProperty: Given property name "${e}" might be invalid`), e));
   }
   !function(e) {
-    var t, n2, i2, r2, o2, s2;
-    (t = e.BlendShapePresetName || (e.BlendShapePresetName = {})).A = "a", t.Angry = "angry", t.Blink = "blink", t.BlinkL = "blink_l", t.BlinkR = "blink_r", t.E = "e", t.Fun = "fun", t.I = "i", t.Joy = "joy", t.Lookdown = "lookdown", t.Lookleft = "lookleft", t.Lookright = "lookright", t.Lookup = "lookup", t.Neutral = "neutral", t.O = "o", t.Sorrow = "sorrow", t.U = "u", t.Unknown = "unknown", (n2 = e.FirstPersonLookAtTypeName || (e.FirstPersonLookAtTypeName = {})).BlendShape = "BlendShape", n2.Bone = "Bone", (i2 = e.HumanoidBoneName || (e.HumanoidBoneName = {})).Chest = "chest", i2.Head = "head", i2.Hips = "hips", i2.Jaw = "jaw", i2.LeftEye = "leftEye", i2.LeftFoot = "leftFoot", i2.LeftHand = "leftHand", i2.LeftIndexDistal = "leftIndexDistal", i2.LeftIndexIntermediate = "leftIndexIntermediate", i2.LeftIndexProximal = "leftIndexProximal", i2.LeftLittleDistal = "leftLittleDistal", i2.LeftLittleIntermediate = "leftLittleIntermediate", i2.LeftLittleProximal = "leftLittleProximal", i2.LeftLowerArm = "leftLowerArm", i2.LeftLowerLeg = "leftLowerLeg", i2.LeftMiddleDistal = "leftMiddleDistal", i2.LeftMiddleIntermediate = "leftMiddleIntermediate", i2.LeftMiddleProximal = "leftMiddleProximal", i2.LeftRingDistal = "leftRingDistal", i2.LeftRingIntermediate = "leftRingIntermediate", i2.LeftRingProximal = "leftRingProximal", i2.LeftShoulder = "leftShoulder", i2.LeftThumbDistal = "leftThumbDistal", i2.LeftThumbIntermediate = "leftThumbIntermediate", i2.LeftThumbProximal = "leftThumbProximal", i2.LeftToes = "leftToes", i2.LeftUpperArm = "leftUpperArm", i2.LeftUpperLeg = "leftUpperLeg", i2.Neck = "neck", i2.RightEye = "rightEye", i2.RightFoot = "rightFoot", i2.RightHand = "rightHand", i2.RightIndexDistal = "rightIndexDistal", i2.RightIndexIntermediate = "rightIndexIntermediate", i2.RightIndexProximal = "rightIndexProximal", i2.RightLittleDistal = "rightLittleDistal", i2.RightLittleIntermediate = "rightLittleIntermediate", i2.RightLittleProximal = "rightLittleProximal", i2.RightLowerArm = "rightLowerArm", i2.RightLowerLeg = "rightLowerLeg", i2.RightMiddleDistal = "rightMiddleDistal", i2.RightMiddleIntermediate = "rightMiddleIntermediate", i2.RightMiddleProximal = "rightMiddleProximal", i2.RightRingDistal = "rightRingDistal", i2.RightRingIntermediate = "rightRingIntermediate", i2.RightRingProximal = "rightRingProximal", i2.RightShoulder = "rightShoulder", i2.RightThumbDistal = "rightThumbDistal", i2.RightThumbIntermediate = "rightThumbIntermediate", i2.RightThumbProximal = "rightThumbProximal", i2.RightToes = "rightToes", i2.RightUpperArm = "rightUpperArm", i2.RightUpperLeg = "rightUpperLeg", i2.Spine = "spine", i2.UpperChest = "upperChest", (r2 = e.MetaAllowedUserName || (e.MetaAllowedUserName = {})).Everyone = "Everyone", r2.ExplicitlyLicensedPerson = "ExplicitlyLicensedPerson", r2.OnlyAuthor = "OnlyAuthor", (o2 = e.MetaUssageName || (e.MetaUssageName = {})).Allow = "Allow", o2.Disallow = "Disallow", (s2 = e.MetaLicenseName || (e.MetaLicenseName = {})).Cc0 = "CC0", s2.CcBy = "CC_BY", s2.CcByNc = "CC_BY_NC", s2.CcByNcNd = "CC_BY_NC_ND", s2.CcByNcSa = "CC_BY_NC_SA", s2.CcByNd = "CC_BY_ND", s2.CcBySa = "CC_BY_SA", s2.Other = "Other", s2.RedistributionProhibited = "Redistribution_Prohibited";
+    var t, n2, i2, r2, o2, s3;
+    (t = e.BlendShapePresetName || (e.BlendShapePresetName = {})).A = "a", t.Angry = "angry", t.Blink = "blink", t.BlinkL = "blink_l", t.BlinkR = "blink_r", t.E = "e", t.Fun = "fun", t.I = "i", t.Joy = "joy", t.Lookdown = "lookdown", t.Lookleft = "lookleft", t.Lookright = "lookright", t.Lookup = "lookup", t.Neutral = "neutral", t.O = "o", t.Sorrow = "sorrow", t.U = "u", t.Unknown = "unknown", (n2 = e.FirstPersonLookAtTypeName || (e.FirstPersonLookAtTypeName = {})).BlendShape = "BlendShape", n2.Bone = "Bone", (i2 = e.HumanoidBoneName || (e.HumanoidBoneName = {})).Chest = "chest", i2.Head = "head", i2.Hips = "hips", i2.Jaw = "jaw", i2.LeftEye = "leftEye", i2.LeftFoot = "leftFoot", i2.LeftHand = "leftHand", i2.LeftIndexDistal = "leftIndexDistal", i2.LeftIndexIntermediate = "leftIndexIntermediate", i2.LeftIndexProximal = "leftIndexProximal", i2.LeftLittleDistal = "leftLittleDistal", i2.LeftLittleIntermediate = "leftLittleIntermediate", i2.LeftLittleProximal = "leftLittleProximal", i2.LeftLowerArm = "leftLowerArm", i2.LeftLowerLeg = "leftLowerLeg", i2.LeftMiddleDistal = "leftMiddleDistal", i2.LeftMiddleIntermediate = "leftMiddleIntermediate", i2.LeftMiddleProximal = "leftMiddleProximal", i2.LeftRingDistal = "leftRingDistal", i2.LeftRingIntermediate = "leftRingIntermediate", i2.LeftRingProximal = "leftRingProximal", i2.LeftShoulder = "leftShoulder", i2.LeftThumbDistal = "leftThumbDistal", i2.LeftThumbIntermediate = "leftThumbIntermediate", i2.LeftThumbProximal = "leftThumbProximal", i2.LeftToes = "leftToes", i2.LeftUpperArm = "leftUpperArm", i2.LeftUpperLeg = "leftUpperLeg", i2.Neck = "neck", i2.RightEye = "rightEye", i2.RightFoot = "rightFoot", i2.RightHand = "rightHand", i2.RightIndexDistal = "rightIndexDistal", i2.RightIndexIntermediate = "rightIndexIntermediate", i2.RightIndexProximal = "rightIndexProximal", i2.RightLittleDistal = "rightLittleDistal", i2.RightLittleIntermediate = "rightLittleIntermediate", i2.RightLittleProximal = "rightLittleProximal", i2.RightLowerArm = "rightLowerArm", i2.RightLowerLeg = "rightLowerLeg", i2.RightMiddleDistal = "rightMiddleDistal", i2.RightMiddleIntermediate = "rightMiddleIntermediate", i2.RightMiddleProximal = "rightMiddleProximal", i2.RightRingDistal = "rightRingDistal", i2.RightRingIntermediate = "rightRingIntermediate", i2.RightRingProximal = "rightRingProximal", i2.RightShoulder = "rightShoulder", i2.RightThumbDistal = "rightThumbDistal", i2.RightThumbIntermediate = "rightThumbIntermediate", i2.RightThumbProximal = "rightThumbProximal", i2.RightToes = "rightToes", i2.RightUpperArm = "rightUpperArm", i2.RightUpperLeg = "rightUpperLeg", i2.Spine = "spine", i2.UpperChest = "upperChest", (r2 = e.MetaAllowedUserName || (e.MetaAllowedUserName = {})).Everyone = "Everyone", r2.ExplicitlyLicensedPerson = "ExplicitlyLicensedPerson", r2.OnlyAuthor = "OnlyAuthor", (o2 = e.MetaUssageName || (e.MetaUssageName = {})).Allow = "Allow", o2.Disallow = "Disallow", (s3 = e.MetaLicenseName || (e.MetaLicenseName = {})).Cc0 = "CC0", s3.CcBy = "CC_BY", s3.CcByNc = "CC_BY_NC", s3.CcByNcNd = "CC_BY_NC_ND", s3.CcByNcSa = "CC_BY_NC_SA", s3.CcByNd = "CC_BY_ND", s3.CcBySa = "CC_BY_SA", s3.Other = "Other", s3.RedistributionProhibited = "Redistribution_Prohibited";
   }(u || (u = {}));
   var f = new Vector3();
   var g = new Vector3();
@@ -31851,18 +31797,18 @@ reset scout color to green, persists
         const r2 = i2.blendShapeMaster;
         if (!r2)
           return null;
-        const o2 = new v(), s2 = r2.blendShapeGroups;
-        if (!s2)
+        const o2 = new v(), s3 = r2.blendShapeGroups;
+        if (!s3)
           return o2;
         const a2 = {};
-        return yield Promise.all(s2.map((t2) => n(this, void 0, void 0, function* () {
+        return yield Promise.all(s3.map((t2) => n(this, void 0, void 0, function* () {
           const i3 = t2.name;
           if (i3 === void 0)
             return void console.warn("VRMBlendShapeImporter: One of blendShapeGroups has no name");
           let r3;
           t2.presetName && t2.presetName !== u.BlendShapePresetName.Unknown && !a2[t2.presetName] && (r3 = t2.presetName, a2[t2.presetName] = i3);
-          const s3 = new h(i3);
-          e.scene.add(s3), s3.isBinary = t2.isBinary || false, t2.binds && t2.binds.forEach((i4) => n(this, void 0, void 0, function* () {
+          const s4 = new h(i3);
+          e.scene.add(s4), s4.isBinary = t2.isBinary || false, t2.binds && t2.binds.forEach((i4) => n(this, void 0, void 0, function* () {
             if (i4.mesh === void 0 || i4.index === void 0)
               return;
             const r4 = [];
@@ -31878,7 +31824,7 @@ reset scout color to green, persists
                   return c(e2, t3, n2);
                 });
               }(e, r5);
-              l3.every((e2) => Array.isArray(e2.morphTargetInfluences) && o3 < e2.morphTargetInfluences.length) ? s3.addBind({ meshes: l3, morphTargetIndex: o3, weight: (a3 = i4.weight) !== null && a3 !== void 0 ? a3 : 100 }) : console.warn(`VRMBlendShapeImporter: ${t2.name} attempts to index ${o3}th morph but not found.`);
+              l3.every((e2) => Array.isArray(e2.morphTargetInfluences) && o3 < e2.morphTargetInfluences.length) ? s4.addBind({ meshes: l3, morphTargetIndex: o3, weight: (a3 = i4.weight) !== null && a3 !== void 0 ? a3 : 100 }) : console.warn(`VRMBlendShapeImporter: ${t2.name} attempts to index ${o3}th morph but not found.`);
             })));
           }));
           const l2 = t2.materialValues;
@@ -31892,9 +31838,9 @@ reset scout color to green, persists
                 Array.isArray(i4) ? n2.push(...i4.filter((e3) => e3.name === t3.materialName && n2.indexOf(e3) === -1)) : i4.name === t3.materialName && n2.indexOf(i4) === -1 && n2.push(i4);
               }
             }), n2.forEach((e2) => {
-              s3.addMaterialValue({ material: e2, propertyName: m(t3.propertyName), targetValue: t3.targetValue });
+              s4.addMaterialValue({ material: e2, propertyName: m(t3.propertyName), targetValue: t3.targetValue });
             });
-          }), o2.registerBlendShapeGroup(i3, r3, s3);
+          }), o2.registerBlendShapeGroup(i3, r3, s4);
         }))), o2;
       });
     }
@@ -31961,7 +31907,7 @@ reset scout color to green, persists
       let r2 = 0;
       if (t != null && t.length > 0)
         for (let o2 = 0; o2 < e.length; o2 += 3) {
-          const s2 = e[o2], a2 = e[o2 + 1], l2 = e[o2 + 2], d2 = t[s2], h2 = n2[s2];
+          const s3 = e[o2], a2 = e[o2 + 1], l2 = e[o2 + 2], d2 = t[s3], h2 = n2[s3];
           if (d2[0] > 0 && i2.includes(h2[0]))
             continue;
           if (d2[1] > 0 && i2.includes(h2[1]))
@@ -31979,24 +31925,24 @@ reset scout color to green, persists
             continue;
           if (u2[3] > 0 && i2.includes(c2[3]))
             continue;
-          const p2 = t[l2], m2 = n2[l2];
-          p2[0] > 0 && i2.includes(m2[0]) || (p2[1] > 0 && i2.includes(m2[1]) || p2[2] > 0 && i2.includes(m2[2]) || p2[3] > 0 && i2.includes(m2[3]) || (e[r2++] = s2, e[r2++] = a2, e[r2++] = l2));
+          const p3 = t[l2], m2 = n2[l2];
+          p3[0] > 0 && i2.includes(m2[0]) || (p3[1] > 0 && i2.includes(m2[1]) || p3[2] > 0 && i2.includes(m2[2]) || p3[3] > 0 && i2.includes(m2[3]) || (e[r2++] = s3, e[r2++] = a2, e[r2++] = l2));
         }
       return r2;
     }
     _createErasedMesh(t, n2) {
       const i2 = new SkinnedMesh(t.geometry.clone(), t.material);
       i2.name = `${t.name}(erase)`, i2.frustumCulled = t.frustumCulled, i2.layers.set(this._firstPersonOnlyLayer);
-      const r2 = i2.geometry, o2 = r2.getAttribute("skinIndex").array, s2 = [];
+      const r2 = i2.geometry, o2 = r2.getAttribute("skinIndex").array, s3 = [];
       for (let e = 0; e < o2.length; e += 4)
-        s2.push([o2[e], o2[e + 1], o2[e + 2], o2[e + 3]]);
+        s3.push([o2[e], o2[e + 1], o2[e + 2], o2[e + 3]]);
       const a2 = r2.getAttribute("skinWeight").array, l2 = [];
       for (let e = 0; e < a2.length; e += 4)
         l2.push([a2[e], a2[e + 1], a2[e + 2], a2[e + 3]]);
       const d2 = r2.getIndex();
       if (!d2)
         throw new Error("The geometry doesn't have an index buffer");
-      const h2 = Array.from(d2.array), u2 = this._excludeTriangles(h2, l2, s2, n2), c2 = [];
+      const h2 = Array.from(d2.array), u2 = this._excludeTriangles(h2, l2, s3, n2), c2 = [];
       for (let e = 0; e < u2; e++)
         c2[e] = h2[e];
       return r2.setIndex(c2), t.onBeforeRender && (i2.onBeforeRender = t.onBeforeRender), i2.bind(new Skeleton(t.skeleton.bones, t.skeleton.boneInverses), new Matrix4()), i2;
@@ -32035,9 +31981,9 @@ reset scout color to green, persists
         const o2 = n2.firstPerson;
         if (!o2)
           return null;
-        const s2 = o2.firstPersonBone;
+        const s3 = o2.firstPersonBone;
         let a2;
-        if (a2 = s2 === void 0 || s2 === -1 ? i2.getBoneNode(u.HumanoidBoneName.Head) : yield t.parser.getDependency("node", s2), !a2)
+        if (a2 = s3 === void 0 || s3 === -1 ? i2.getBoneNode(u.HumanoidBoneName.Head) : yield t.parser.getDependency("node", s3), !a2)
           return console.warn("VRMFirstPersonImporter: Could not find firstPersonBone of the VRM"), null;
         const l2 = o2.firstPersonBoneOffset ? new Vector3(o2.firstPersonBoneOffset.x, o2.firstPersonBoneOffset.y, -o2.firstPersonBoneOffset.z) : new Vector3(0, 0.06, 0), d2 = [], h2 = yield p(t);
         return Array.from(h2.entries()).forEach(([e, n3]) => {
@@ -32122,15 +32068,15 @@ reset scout color to green, persists
         const o2 = r2.humanoid;
         if (!o2)
           return null;
-        const s2 = [];
+        const s3 = [];
         o2.humanBones && (yield Promise.all(o2.humanBones.map((i3) => n(this, void 0, void 0, function* () {
           if (!i3.bone || i3.node == null)
             return;
           const n2 = yield t.parser.getDependency("node", i3.node);
-          s2.push({ name: i3.bone, bone: new R(n2, { axisLength: i3.axisLength, center: i3.center && new Vector3(i3.center.x, i3.center.y, i3.center.z), max: i3.max && new Vector3(i3.max.x, i3.max.y, i3.max.z), min: i3.min && new Vector3(i3.min.x, i3.min.y, i3.min.z), useDefaultValues: i3.useDefaultValues }) });
+          s3.push({ name: i3.bone, bone: new R(n2, { axisLength: i3.axisLength, center: i3.center && new Vector3(i3.center.x, i3.center.y, i3.center.z), max: i3.max && new Vector3(i3.max.x, i3.max.y, i3.max.z), min: i3.min && new Vector3(i3.min.x, i3.min.y, i3.min.z), useDefaultValues: i3.useDefaultValues }) });
         }))));
         const a2 = { armStretch: o2.armStretch, legStretch: o2.legStretch, upperArmTwist: o2.upperArmTwist, lowerArmTwist: o2.lowerArmTwist, upperLegTwist: o2.upperLegTwist, lowerLegTwist: o2.lowerLegTwist, feetSpacing: o2.feetSpacing, hasTranslationDoF: o2.hasTranslationDoF };
-        return new b(s2, a2);
+        return new b(s3, a2);
       });
     }
   };
@@ -32157,8 +32103,8 @@ reset scout color to green, persists
           return e2[4 * i2 + 5];
         const r2 = e2[4 * i2], o2 = (t2 - r2) / (e2[4 * n2] - r2);
         return ((e3, t3, n3, i3, r3) => {
-          const o3 = r3 * r3 * r3, s2 = r3 * r3;
-          return e3 + (t3 - e3) * (-2 * o3 + 3 * s2) + n3 * (o3 - 2 * s2 + r3) + i3 * (o3 - s2);
+          const o3 = r3 * r3 * r3, s3 = r3 * r3;
+          return e3 + (t3 - e3) * (-2 * o3 + 3 * s3) + n3 * (o3 - 2 * s3 + r3) + i3 * (o3 - s3);
         })(e2[4 * i2 + 1], e2[4 * n2 + 1], e2[4 * i2 + 3], e2[4 * n2 + 2], o2);
       })(this.curve, t);
     }
@@ -32219,19 +32165,19 @@ reset scout color to green, persists
       const o2 = (r2 = e.parser.json.extensions) === null || r2 === void 0 ? void 0 : r2.VRM;
       if (!o2)
         return null;
-      const s2 = o2.firstPerson;
-      if (!s2)
+      const s3 = o2.firstPerson;
+      if (!s3)
         return null;
-      const a2 = this._importApplyer(s2, n2, i2);
+      const a2 = this._importApplyer(s3, n2, i2);
       return new H(t, a2 || void 0);
     }
     _importApplyer(e, t, n2) {
-      const i2 = e.lookAtHorizontalInner, r2 = e.lookAtHorizontalOuter, o2 = e.lookAtVerticalDown, s2 = e.lookAtVerticalUp;
+      const i2 = e.lookAtHorizontalInner, r2 = e.lookAtHorizontalOuter, o2 = e.lookAtVerticalDown, s3 = e.lookAtVerticalUp;
       switch (e.lookAtTypeName) {
         case u.FirstPersonLookAtTypeName.Bone:
-          return i2 === void 0 || r2 === void 0 || o2 === void 0 || s2 === void 0 ? null : new k(n2, this._importCurveMapperBone(i2), this._importCurveMapperBone(r2), this._importCurveMapperBone(o2), this._importCurveMapperBone(s2));
+          return i2 === void 0 || r2 === void 0 || o2 === void 0 || s3 === void 0 ? null : new k(n2, this._importCurveMapperBone(i2), this._importCurveMapperBone(r2), this._importCurveMapperBone(o2), this._importCurveMapperBone(s3));
         case u.FirstPersonLookAtTypeName.BlendShape:
-          return r2 === void 0 || o2 === void 0 || s2 === void 0 ? null : new N(t, this._importCurveMapperBlendShape(r2), this._importCurveMapperBlendShape(o2), this._importCurveMapperBlendShape(s2));
+          return r2 === void 0 || o2 === void 0 || s3 === void 0 ? null : new N(t, this._importCurveMapperBlendShape(r2), this._importCurveMapperBlendShape(o2), this._importCurveMapperBlendShape(s3));
         default:
           return null;
       }
@@ -32439,7 +32385,7 @@ reset scout color to green, persists
         const r2 = i2.materialProperties;
         if (!r2)
           return null;
-        const o2 = yield p(e), s2 = {}, a2 = [];
+        const o2 = yield p(e), s3 = {}, a2 = [];
         return yield Promise.all(Array.from(o2.entries()).map(([t2, i3]) => n(this, void 0, void 0, function* () {
           const o3 = e.parser.json.nodes[t2], l2 = e.parser.json.meshes[o3.mesh];
           yield Promise.all(i3.map((t3, i4) => n(this, void 0, void 0, function* () {
@@ -32450,7 +32396,7 @@ reset scout color to green, persists
             Array.isArray(t3.material) || (t3.material = [t3.material], o4.addGroup(0, d2, 0));
             const h2 = n2.material;
             let u2, c2 = r2[h2];
-            c2 || (console.warn(`VRMMaterialImporter: There are no material definition for material #${h2} on VRM extension.`), c2 = { shader: "VRM_USE_GLTFSHADER" }), s2[h2] ? u2 = s2[h2] : (u2 = yield this.createVRMMaterials(t3.material[0], c2, e), s2[h2] = u2, a2.push(u2.surface), u2.outline && a2.push(u2.outline)), t3.material[0] = u2.surface, this._requestEnvMap && u2.surface.isMeshStandardMaterial && this._requestEnvMap().then((e2) => {
+            c2 || (console.warn(`VRMMaterialImporter: There are no material definition for material #${h2} on VRM extension.`), c2 = { shader: "VRM_USE_GLTFSHADER" }), s3[h2] ? u2 = s3[h2] : (u2 = yield this.createVRMMaterials(t3.material[0], c2, e), s3[h2] = u2, a2.push(u2.surface), u2.outline && a2.push(u2.outline)), t3.material[0] = u2.surface, this._requestEnvMap && u2.surface.isMeshStandardMaterial && this._requestEnvMap().then((e2) => {
               u2.surface.envMap = e2, u2.surface.needsUpdate = true;
             }), t3.renderOrder = c2.renderQueue || 2e3, u2.outline && (t3.material[1] = u2.outline, o4.addGroup(0, d2, 1));
           })));
@@ -32502,8 +32448,8 @@ reset scout color to green, persists
       const r2 = [], o2 = {};
       if (n2.textureProperties)
         for (const e of Object.keys(n2.textureProperties)) {
-          const t2 = this._renameMaterialProperty(e), s2 = n2.textureProperties[e];
-          r2.push(i2.parser.getDependency("texture", s2).then((e2) => {
+          const t2 = this._renameMaterialProperty(e), s3 = n2.textureProperties[e];
+          r2.push(i2.parser.getDependency("texture", s3).then((e2) => {
             o2[t2] = e2;
           }));
         }
@@ -32566,8 +32512,8 @@ reset scout color to green, persists
   var me = new Matrix4();
   var fe = class {
     constructor(t, n2 = {}) {
-      var i2, r2, o2, s2, a2, l2;
-      if (this._currentTail = new Vector3(), this._prevTail = new Vector3(), this._nextTail = new Vector3(), this._boneAxis = new Vector3(), this._centerSpacePosition = new Vector3(), this._center = null, this._parentWorldRotation = new Quaternion(), this._initialLocalMatrix = new Matrix4(), this._initialLocalRotation = new Quaternion(), this._initialLocalChildPosition = new Vector3(), this.bone = t, this.bone.matrixAutoUpdate = false, this.radius = (i2 = n2.radius) !== null && i2 !== void 0 ? i2 : 0.02, this.stiffnessForce = (r2 = n2.stiffnessForce) !== null && r2 !== void 0 ? r2 : 1, this.gravityDir = n2.gravityDir ? new Vector3().copy(n2.gravityDir) : new Vector3().set(0, -1, 0), this.gravityPower = (o2 = n2.gravityPower) !== null && o2 !== void 0 ? o2 : 0, this.dragForce = (s2 = n2.dragForce) !== null && s2 !== void 0 ? s2 : 0.4, this.colliders = (a2 = n2.colliders) !== null && a2 !== void 0 ? a2 : [], this._centerSpacePosition.setFromMatrixPosition(this.bone.matrixWorld), this._initialLocalMatrix.copy(this.bone.matrix), this._initialLocalRotation.copy(this.bone.quaternion), this.bone.children.length === 0)
+      var i2, r2, o2, s3, a2, l2;
+      if (this._currentTail = new Vector3(), this._prevTail = new Vector3(), this._nextTail = new Vector3(), this._boneAxis = new Vector3(), this._centerSpacePosition = new Vector3(), this._center = null, this._parentWorldRotation = new Quaternion(), this._initialLocalMatrix = new Matrix4(), this._initialLocalRotation = new Quaternion(), this._initialLocalChildPosition = new Vector3(), this.bone = t, this.bone.matrixAutoUpdate = false, this.radius = (i2 = n2.radius) !== null && i2 !== void 0 ? i2 : 0.02, this.stiffnessForce = (r2 = n2.stiffnessForce) !== null && r2 !== void 0 ? r2 : 1, this.gravityDir = n2.gravityDir ? new Vector3().copy(n2.gravityDir) : new Vector3().set(0, -1, 0), this.gravityPower = (o2 = n2.gravityPower) !== null && o2 !== void 0 ? o2 : 0, this.dragForce = (s3 = n2.dragForce) !== null && s3 !== void 0 ? s3 : 0.4, this.colliders = (a2 = n2.colliders) !== null && a2 !== void 0 ? a2 : [], this._centerSpacePosition.setFromMatrixPosition(this.bone.matrixWorld), this._initialLocalMatrix.copy(this.bone.matrix), this._initialLocalRotation.copy(this.bone.quaternion), this.bone.children.length === 0)
         this._initialLocalChildPosition.copy(this.bone.position).normalize().multiplyScalar(0.07);
       else {
         const e = this.bone.children[0];
@@ -32661,7 +32607,7 @@ reset scout color to green, persists
     }
     _importSpringBoneGroupList(t, i2, r2) {
       return n(this, void 0, void 0, function* () {
-        const o2 = i2.boneGroups || [], s2 = [];
+        const o2 = i2.boneGroups || [], s3 = [];
         return yield Promise.all(o2.map((i3) => n(this, void 0, void 0, function* () {
           if (i3.stiffiness === void 0 || i3.gravityDir === void 0 || i3.gravityDir.x === void 0 || i3.gravityDir.y === void 0 || i3.gravityDir.z === void 0 || i3.gravityPower === void 0 || i3.dragForce === void 0 || i3.hitRadius === void 0 || i3.colliderGroups === void 0 || i3.bones === void 0 || i3.center === void 0)
             return;
@@ -32676,8 +32622,8 @@ reset scout color to green, persists
               const t2 = this._createSpringBone(e2, { radius: h2, stiffnessForce: o3, gravityDir: a2, gravityPower: l2, dragForce: d2, colliders: u2, center: r3 });
               c2.push(t2);
             });
-          }))), s2.push(c2);
-        }))), s2;
+          }))), s3.push(c2);
+        }))), s3;
       });
     }
     _importColliderMeshGroups(e, t) {
@@ -32718,8 +32664,8 @@ reset scout color to green, persists
         t.updateMatrixWorld(false), t.traverse((e2) => {
           e2.isMesh && (e2.frustumCulled = false);
         });
-        const n2 = (yield this._metaImporter.import(e)) || void 0, i2 = (yield this._materialImporter.convertGLTFMaterials(e)) || void 0, r2 = (yield this._humanoidImporter.import(e)) || void 0, o2 = r2 && (yield this._firstPersonImporter.import(e, r2)) || void 0, s2 = (yield this._blendShapeImporter.import(e)) || void 0, a2 = o2 && s2 && r2 && (yield this._lookAtImporter.import(e, o2, s2, r2)) || void 0, l2 = (yield this._springBoneImporter.import(e)) || void 0;
-        return new xe({ scene: e.scene, meta: n2, materials: i2, humanoid: r2, firstPerson: o2, blendShapeProxy: s2, lookAt: a2, springBoneManager: l2 });
+        const n2 = (yield this._metaImporter.import(e)) || void 0, i2 = (yield this._materialImporter.convertGLTFMaterials(e)) || void 0, r2 = (yield this._humanoidImporter.import(e)) || void 0, o2 = r2 && (yield this._firstPersonImporter.import(e, r2)) || void 0, s3 = (yield this._blendShapeImporter.import(e)) || void 0, a2 = o2 && s3 && r2 && (yield this._lookAtImporter.import(e, o2, s3, r2)) || void 0, l2 = (yield this._springBoneImporter.import(e)) || void 0;
+        return new xe({ scene: e.scene, meta: n2, materials: i2, humanoid: r2, firstPerson: o2, blendShapeProxy: s3, lookAt: a2, springBoneManager: l2 });
       });
     }
   };
@@ -32761,12 +32707,12 @@ reset scout color to green, persists
       throw new Error("extractThumbnailBlob: This VRM does not have a thumbnail");
     const o2 = e.getContext().canvas;
     e.getSize(Se);
-    const s2 = Se.x, a2 = Se.y;
+    const s3 = Se.x, a2 = Se.y;
     return e.setSize(n2, n2, false), Ee.map = r2, e.render(Re, Me), Ee.map = null, o2 instanceof OffscreenCanvas ? o2.convertToBlob().finally(() => {
-      e.setSize(s2, a2, false);
+      e.setSize(s3, a2, false);
     }) : new Promise((t2, n3) => {
       o2.toBlob((i3) => {
-        e.setSize(s2, a2, false), i3 == null ? n3("extractThumbnailBlob: Failed to create a blob") : t2(i3);
+        e.setSize(s3, a2, false), i3 == null ? n3("extractThumbnailBlob: Failed to create a blob") : t2(i3);
       });
     });
   }, we.removeUnnecessaryJoints = function(t) {
@@ -32777,19 +32723,19 @@ reset scout color to green, persists
       const i2 = t2, r2 = i2.geometry.getAttribute("skinIndex");
       let o2 = n2.get(r2);
       if (!o2) {
-        const t3 = [], s2 = [], a2 = {}, l2 = r2.array;
+        const t3 = [], s3 = [], a2 = {}, l2 = r2.array;
         for (let e = 0; e < l2.length; e++) {
           const n3 = l2[e];
-          a2[n3] === void 0 && (a2[n3] = t3.length, t3.push(i2.skeleton.bones[n3]), s2.push(i2.skeleton.boneInverses[n3])), l2[e] = a2[n3];
+          a2[n3] === void 0 && (a2[n3] = t3.length, t3.push(i2.skeleton.bones[n3]), s3.push(i2.skeleton.boneInverses[n3])), l2[e] = a2[n3];
         }
-        r2.copyArray(l2), r2.needsUpdate = true, o2 = new Skeleton(t3, s2), n2.set(r2, o2);
+        r2.copyArray(l2), r2.needsUpdate = true, o2 = new Skeleton(t3, s3), n2.set(r2, o2);
       }
       i2.bind(o2, new Matrix4());
     });
   }, we.removeUnnecessaryVertices = function(n2) {
     const i2 = /* @__PURE__ */ new Map();
     n2.traverse((n3) => {
-      var r2, o2, s2, a2;
+      var r2, o2, s3, a2;
       if (!n3.isMesh)
         return;
       const l2 = n3, d2 = l2.geometry, h2 = d2.index;
@@ -32801,15 +32747,15 @@ reset scout color to green, persists
       const c2 = new BufferGeometry();
       c2.name = d2.name, c2.morphTargetsRelative = d2.morphTargetsRelative, d2.groups.forEach((e) => {
         c2.addGroup(e.start, e.count, e.materialIndex);
-      }), c2.boundingBox = (o2 = (r2 = d2.boundingBox) === null || r2 === void 0 ? void 0 : r2.clone()) !== null && o2 !== void 0 ? o2 : null, c2.boundingSphere = (a2 = (s2 = d2.boundingSphere) === null || s2 === void 0 ? void 0 : s2.clone()) !== null && a2 !== void 0 ? a2 : null, c2.setDrawRange(d2.drawRange.start, d2.drawRange.count), c2.userData = d2.userData, i2.set(d2, c2);
-      const p2 = [], m2 = [];
+      }), c2.boundingBox = (o2 = (r2 = d2.boundingBox) === null || r2 === void 0 ? void 0 : r2.clone()) !== null && o2 !== void 0 ? o2 : null, c2.boundingSphere = (a2 = (s3 = d2.boundingSphere) === null || s3 === void 0 ? void 0 : s3.clone()) !== null && a2 !== void 0 ? a2 : null, c2.setDrawRange(d2.drawRange.start, d2.drawRange.count), c2.userData = d2.userData, i2.set(d2, c2);
+      const p3 = [], m2 = [];
       {
         const e = h2.array, n4 = new e.constructor(e.length);
         let i3 = 0;
         for (let t = 0; t < e.length; t++) {
           const r3 = e[t];
-          let o3 = p2[r3];
-          o3 == null && (p2[r3] = i3, m2[i3] = r3, o3 = i3, i3++), n4[t] = o3;
+          let o3 = p3[r3];
+          o3 == null && (p3[r3] = i3, m2[i3] = r3, o3 = i3, i3++), n4[t] = o3;
         }
         c2.setIndex(new BufferAttribute(n4, 1, false));
       }
@@ -32817,11 +32763,11 @@ reset scout color to green, persists
         const n4 = d2.attributes[e];
         if (n4.isInterleavedBufferAttribute)
           throw new Error("removeUnnecessaryVertices: InterleavedBufferAttribute is not supported");
-        const i3 = n4.array, { itemSize: r3, normalized: o3 } = n4, s3 = new i3.constructor(m2.length * r3);
+        const i3 = n4.array, { itemSize: r3, normalized: o3 } = n4, s4 = new i3.constructor(m2.length * r3);
         m2.forEach((e2, t) => {
           for (let n5 = 0; n5 < r3; n5++)
-            s3[t * r3 + n5] = i3[e2 * r3 + n5];
-        }), c2.setAttribute(e, new BufferAttribute(s3, r3, o3));
+            s4[t * r3 + n5] = i3[e2 * r3 + n5];
+        }), c2.setAttribute(e, new BufferAttribute(s4, r3, o3));
       });
       let f2 = true;
       Object.keys(d2.morphAttributes).forEach((e) => {
@@ -32831,11 +32777,11 @@ reset scout color to green, persists
           const r3 = n4[i3];
           if (r3.isInterleavedBufferAttribute)
             throw new Error("removeUnnecessaryVertices: InterleavedBufferAttribute is not supported");
-          const o3 = r3.array, { itemSize: s3, normalized: a3 } = r3, l3 = new o3.constructor(m2.length * s3);
+          const o3 = r3.array, { itemSize: s4, normalized: a3 } = r3, l3 = new o3.constructor(m2.length * s4);
           m2.forEach((e2, t) => {
-            for (let n5 = 0; n5 < s3; n5++)
-              l3[t * s3 + n5] = o3[e2 * s3 + n5];
-          }), f2 = f2 && l3.every((e2) => e2 === 0), c2.morphAttributes[e][i3] = new BufferAttribute(l3, s3, a3);
+            for (let n5 = 0; n5 < s4; n5++)
+              l3[t * s4 + n5] = o3[e2 * s4 + n5];
+          }), f2 = f2 && l3.every((e2) => e2 === 0), c2.morphAttributes[e][i3] = new BufferAttribute(l3, s4, a3);
         }
       }), f2 && (c2.morphAttributes = {}), l2.geometry = c2;
     }), Array.from(i2.keys()).forEach((e) => {
@@ -32938,6 +32884,201 @@ reset scout color to green, persists
     }
   });
 
+  // src/component/net.ts
+  var host = new Value(args.$.has("host"));
+  var guest = new Value(args.$.has("join"));
+  var room = new Value(args.$.get("join"));
+  var passcode = new Value("").save("passcode");
+  var scene;
+  var paths = {};
+  var state = {};
+  var update2 = {};
+  var interop = 0;
+  AFRAME.registerSystem("net", {
+    init() {
+      scene = this.el.object3D;
+      this.tick = AFRAME.utils.throttleTick(this.tick, 200, this);
+      guest.on(() => {
+        if (!guest.$)
+          return;
+        this.connect();
+        console.log(scene.components);
+      });
+      host.on(() => {
+        if (!host.$)
+          return;
+        this.connect();
+      });
+    },
+    process() {
+      for (let entry of Object.entries(update2)) {
+        const [path, value] = entry;
+        if (state[path]) {
+          Object.assign(state[path], value);
+        } else {
+          state[path] = value;
+        }
+      }
+    },
+    tick() {
+      if (!host.$)
+        return;
+      this.process();
+      if (!this.ready) {
+        update2 = {};
+        return;
+      }
+      this.ws.send("UPD" /* UPDATE */ + this.password + JSON.stringify(update2));
+      update2 = {};
+    },
+    fullUpdate() {
+      this.ws.send("UPD" /* UPDATE */ + this.password + JSON.stringify(state));
+    },
+    connect() {
+      if (this.ws)
+        return;
+      console.log("connecting");
+      const ws = new WebSocket(`${window.location.protocol === "https" ? "wss" : "ws"}://${window.location.host}/`);
+      this.ws = ws;
+      ws.addEventListener("close", () => {
+        console.log("closed");
+        this.ws = void 0;
+        setTimeout(() => {
+          this.connect();
+        }, 1e4);
+      });
+      ws.addEventListener("open", () => {
+        console.log("connected");
+        if (host.$) {
+          console.log("send host");
+          this.ws.send("HST" /* HOST */ + room.$);
+        }
+        if (guest.$) {
+          this.ws.send("JON" /* JOIN */ + room.$);
+          this.ready = true;
+        }
+      });
+      ws.addEventListener("message", (e) => {
+        switch ("" + e.data.slice(0, 3)) {
+          default:
+            console.log(e.data.slice(0, 3));
+            break;
+          case "ERR" /* ERROR */:
+            console.log("ERROR", e.data.slice(3));
+            break;
+          case "UPD" /* UPDATE */:
+            if (host.$)
+              return;
+            interop = 0;
+            const update3 = JSON.parse(e.data.slice(3));
+            for (let entry of Object.entries(update3)) {
+              const [path, value] = entry;
+              if (!paths[path])
+                continue;
+              if (!state[path]) {
+                state[path] = value;
+              } else {
+                Object.assign(state[path], value);
+              }
+              paths[path].components.host.netUpdate(value);
+            }
+            break;
+          case "HST" /* HOST */:
+            console.log("got host");
+            this.password = "" + e.data.slice(3, 39);
+            passcode.set(this.password);
+            room.set("" + e.data.slice(39));
+            this.ready = true;
+            this.fullUpdate();
+            break;
+        }
+      });
+    }
+  });
+  function Mixins(el) {
+    return el.mixinEls.map((el2) => el2.id).join(".");
+  }
+  function MakePath(el) {
+    if (el.tagName === "A-SCENE") {
+      return "";
+    } else {
+      const target = el.parentNode;
+      const p3 = MakePath(target);
+      const host2 = el.components.host?.data !== void 0 && typeof el.components.host.data === "string" ? el.components.host.data : false;
+      return (p3 !== "" ? p3 + "/" : "") + (host2 || el.id || Mixins(el)) || "";
+    }
+  }
+  var p2 = new AFRAME.THREE.Vector3();
+  var s2 = new AFRAME.THREE.Vector3();
+  var q2 = new AFRAME.THREE.Quaternion();
+  AFRAME.registerComponent("host", {
+    schema: {
+      type: "string"
+    },
+    init() {
+      this.slowtick = AFRAME.utils.throttleTick(this.slowtick, 200, this);
+      this.netpath = MakePath(this.el);
+      let i2 = 2;
+      const og = this.netpath;
+      while (paths[this.netpath]) {
+        this.netpath = og + i2;
+        i2++;
+      }
+      paths[this.netpath] = this.el;
+      this.cancel = host.on(($h) => {
+        if (!$h)
+          return;
+        this.markUpdate();
+        state[this.netpath] = update2[this.netpath];
+      });
+    },
+    markUpdate() {
+      const u2 = update2[this.netpath] = update2[this.netpath] || {};
+      const o3d = this.el.object3D;
+      u2.p = o3d.position.toArray(u2.p);
+      u2.q = o3d.quaternion.toArray(u2.q);
+      u2.s = o3d.scale.toArray(u2.s);
+      u2.v = o3d.visible ? 1 : 0;
+    },
+    slowtick() {
+      let type = this.el.components["ammo-body"].data.type;
+      if (guest.$ && (type === "kinematic" || type === "dynamic")) {
+        type = this.el.components["ammo-body"].data.type = "static";
+      }
+      if (!host.$ || type === "static")
+        return;
+      this.markUpdate();
+    },
+    tick(_2, dt) {
+      this.slowtick();
+      interop += dt / 1e3;
+      if (guest.$ && state[this.netpath] && this.lastUpdate > interop) {
+        const i2 = Math.min(1, interop / 350);
+        const o3d = this.el.object3D;
+        q2.fromArray(state[this.netpath].q);
+        if (Math.abs(o3d.quaternion.angleTo(q2)) > 1e-3)
+          o3d.quaternion.slerp(q2, i2);
+        p2.fromArray(state[this.netpath].p);
+        if (o3d.position.distanceTo(p2) > 1e-3)
+          o3d.position.lerp(p2, i2);
+      }
+    },
+    netUpdate(update3) {
+      this.lastUpdate = interop + 250;
+      const o3d = this.el.object3D;
+      if (update3.s !== void 0) {
+        o3d.scale.set(...update3.s);
+      }
+      if (update3.v !== void 0) {
+        o3d.visible = update3.v;
+      }
+    },
+    remove() {
+      delete paths[this.netpath];
+      this.cancel();
+    }
+  });
+
   // src/control.ts
   var binds = new Value(clone(state_default.binds)).save("binds");
   var vars = new Value(clone(state_default.vars)).save("vars");
@@ -32951,10 +33092,10 @@ reset scout color to green, persists
       selfie: toggle_selfie.$
     }, null, "	"));
   }
-  function loadState(state) {
-    binds.set(state.binds);
-    vars.set(state.vars);
-    toggle_selfie.set(state.selfie);
+  function loadState(state2) {
+    binds.set(state2.binds);
+    vars.set(state2.vars);
+    toggle_selfie.set(state2.selfie);
   }
   window.loadState = loadState;
   var controls = {
@@ -33033,13 +33174,11 @@ reset scout color to green, persists
     ["voice" /* Voice */]: (items) => {
       voice_current.set(items.slice(2).join(" "));
     },
-    ["guest" /* Guest */]: (items) => {
-    },
-    ["notguest" /* NotGuest */]: (items) => {
-    },
     ["host" /* Host */]: (items) => {
+      host.set(true);
     },
     ["nothost" /* NotHost */]: (items) => {
+      host.set(false);
     },
     ["target" /* Target */]: (items) => {
       open_targeting.set(true);
@@ -33074,6 +33213,20 @@ reset scout color to green, persists
     ["pos" /* Pos */]: (items) => {
     },
     ["notpos" /* NotPos */]: (items) => {
+    },
+    ["room" /* Room */]: (items) => {
+      open_hostid.set(true);
+    },
+    ["notroom" /* NotRoom */]: (items) => {
+      open_hostid.set(false);
+    },
+    ["join" /* Join */]: (items) => {
+      guest.set(true);
+      room.set(items.slice(2).join(" "));
+    },
+    ["notjoin" /* NotJoin */]: (items) => {
+      guest.set(false);
+      room.set("");
     }
   };
 
@@ -33087,7 +33240,6 @@ reset scout color to green, persists
   window.addEventListener("keydown", (e) => {
     if (bounce(e))
       return;
-    e.preventDefault();
     const k2 = e.key.toLowerCase();
     key_down.set(k2);
     key_map.$[k2] = true;
@@ -33401,7 +33553,7 @@ reset scout color to green, persists
   talk.on(async ($talk) => {
     if (!$talk)
       return;
-    const s2 = Math.sin(Math.PI * tick.$);
+    const s3 = Math.sin(Math.PI * tick.$);
     const spl = $talk.split(" ");
     spl.push("pop");
     const intv = setInterval(() => {
@@ -33410,7 +33562,7 @@ reset scout color to green, persists
         clearInterval(intv);
         return;
       }
-      mirrorVRM.$?.blendShapeProxy.setValue(u.BlendShapePresetName[Random("OEIAU")], 0.5 + 2 * s2);
+      mirrorVRM.$?.blendShapeProxy.setValue(u.BlendShapePresetName[Random("OEIAU")], 0.5 + 2 * s3);
     }, 1 / 3.5 * 1e3);
   });
 
@@ -33578,6 +33730,8 @@ reset scout color to green, persists
       this.el.emit("jump");
     },
     tick(_2, delta) {
+      if (guest.$)
+        return;
       if (!this.el.body)
         return;
       const o3d = this.el.object3D;
@@ -33679,7 +33833,7 @@ reset scout color to green, persists
       if (!this.audio) {
         this.audio = new SoundEffect(this.data).generate();
       }
-      this.audio.getAudio().setVolume(0.5).play();
+      this.audio.getAudio().play();
     },
     remove() {
       if (this.cancel)
@@ -33738,12 +33892,14 @@ reset scout color to green, persists
         set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value = "src: " + ctx[0] + "; current: true");
         set_custom_element_data(a_entity0, "look-controls", "");
         set_custom_element_data(a_entity0, "scale", a_entity0_scale_value = ctx[1].x + " " + ctx[1].y + " " + ctx[1].z);
-        set_custom_element_data(a_entity0, "id", "focus");
+        set_custom_element_data(a_entity0, "host", "current");
         set_custom_element_data(a_entity0, "wasd-controller", "");
         set_custom_element_data(a_entity0, "sfxr__jump", a_entity0_sfxr__jump_value = AFRAME.utils.styleParser.stringify(sfx_jump));
+        set_custom_element_data(a_entity0, "networked", "template:#forest;attachTemplateToLocal:false;");
         set_custom_element_data(a_entity1, "mixin", "shadow character");
         set_custom_element_data(a_entity1, "position", "0 0.25 14");
         set_custom_element_data(a_entity1, "rotation", "0 180 0");
+        set_custom_element_data(a_entity1, "host", "doer");
         set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[2] + "; mirror: true");
       },
       m(target, anchor) {
@@ -34582,7 +34738,7 @@ gl_Position = mvPosition;
         this[this.data.type]();
     },
     random() {
-      if (!this.el.body)
+      if (!this.el.body || guest.$)
         return;
       const speed = 250;
       const x2 = (Math.random() - 0.5) * speed, y2 = (Math.random() - 0.5) * speed, z2 = (Math.random() - 0.5) * speed;
@@ -34617,70 +34773,33 @@ gl_Position = mvPosition;
     let t7;
     let a_entity1;
     let t8;
-    let a_sky;
-    let a_sky_animate_value;
-    let t9;
     let a_mixin7;
-    let t10;
+    let t9;
     let a_entity2;
-    let t11;
+    let t10;
     let a_entity3;
-    let t12;
+    let t11;
     let a_mixin8;
-    let t13;
+    let t12;
     let a_entity4;
-    let t14;
+    let t13;
     let a_entity5;
-    let t15;
+    let t14;
     let a_entity6;
-    let t16;
+    let t15;
     let a_entity7;
-    let t17;
-    let a_entity8;
-    let a_sphere;
-    let a_entity8_position_value;
-    let a_entity8_light_value;
-    let t18;
-    let a_entity9;
-    let a_entity9_position_value;
-    let a_entity9_light_value;
-    let t19;
-    let a_entity10;
-    let t20;
-    let a_plane;
-    let a_plane_width_value;
-    let a_plane_height_value;
-    let t21;
+    let t16;
     let a_mixin9;
-    let t22;
-    let a_entity11;
-    let a_entity11_position_value;
-    let a_entity11_animation_value;
-    let a_entity11_animation__scale_value;
-    let t23;
-    let a_entity12;
-    let t24;
+    let t17;
     let a_mixin10;
-    let a_mixin10_vary_value;
-    let t25;
-    let a_entity13;
-    let t26;
+    let t18;
     let a_mixin11;
-    let a_mixin11_vary_value;
-    let t27;
-    let a_entity14;
-    let t28;
-    let a_mixin12;
-    let t29;
-    let a_mixin13;
-    let t30;
-    let a_mixin14;
-    let t31;
-    let a_entity15;
-    let t32;
-    let a_entity16;
-    let t33;
-    let a_entity17;
+    let t19;
+    let a_entity8;
+    let t20;
+    let a_entity9;
+    let t21;
+    let a_entity10;
     return {
       c() {
         a_mixin0 = element("a-mixin");
@@ -34701,58 +34820,33 @@ gl_Position = mvPosition;
         t7 = space();
         a_entity1 = element("a-entity");
         t8 = space();
-        a_sky = element("a-sky");
-        t9 = space();
         a_mixin7 = element("a-mixin");
-        t10 = space();
+        t9 = space();
         a_entity2 = element("a-entity");
-        t11 = space();
+        t10 = space();
         a_entity3 = element("a-entity");
-        t12 = space();
+        t11 = space();
         a_mixin8 = element("a-mixin");
-        t13 = space();
+        t12 = space();
         a_entity4 = element("a-entity");
-        t14 = space();
+        t13 = space();
         a_entity5 = element("a-entity");
-        t15 = space();
+        t14 = space();
         a_entity6 = element("a-entity");
-        t16 = space();
+        t15 = space();
         a_entity7 = element("a-entity");
-        t17 = space();
-        a_entity8 = element("a-entity");
-        a_sphere = element("a-sphere");
-        t18 = space();
-        a_entity9 = element("a-entity");
-        t19 = space();
-        a_entity10 = element("a-entity");
-        t20 = space();
-        a_plane = element("a-plane");
-        t21 = space();
+        t16 = space();
         a_mixin9 = element("a-mixin");
-        t22 = space();
-        a_entity11 = element("a-entity");
-        t23 = space();
-        a_entity12 = element("a-entity");
-        t24 = space();
+        t17 = space();
         a_mixin10 = element("a-mixin");
-        t25 = space();
-        a_entity13 = element("a-entity");
-        t26 = space();
+        t18 = space();
         a_mixin11 = element("a-mixin");
-        t27 = space();
-        a_entity14 = element("a-entity");
-        t28 = space();
-        a_mixin12 = element("a-mixin");
-        t29 = space();
-        a_mixin13 = element("a-mixin");
-        t30 = space();
-        a_mixin14 = element("a-mixin");
-        t31 = space();
-        a_entity15 = element("a-entity");
-        t32 = space();
-        a_entity16 = element("a-entity");
-        t33 = space();
-        a_entity17 = element("a-entity");
+        t19 = space();
+        a_entity8 = element("a-entity");
+        t20 = space();
+        a_entity9 = element("a-entity");
+        t21 = space();
+        a_entity10 = element("a-entity");
         set_custom_element_data(a_mixin0, "id", "smolitem");
         set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;collisionFilterGroup: 2;");
         set_custom_element_data(a_mixin0, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
@@ -34762,33 +34856,33 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin2, "mixin", "smolitem smolfix");
         set_custom_element_data(a_mixin2, "shadow", "");
         set_custom_element_data(a_mixin2, "gltf-model", "./glb/flowers.glb");
-        set_custom_element_data(a_mixin2, "host", "");
         set_custom_element_data(a_mixin2, "windy", "");
-        set_custom_element_data(a_mixin2, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin2, "scatter", ctx[1]);
         set_custom_element_data(a_mixin2, "vary", vary);
+        set_custom_element_data(a_mixin2, "host", "flowers");
         set_custom_element_data(a_mixin3, "id", "mushroom");
         set_custom_element_data(a_mixin3, "mixin", "smolitem smolfix");
         set_custom_element_data(a_mixin3, "shadow", "");
         set_custom_element_data(a_mixin3, "gltf-model", "./glb/mushrooms.glb");
-        set_custom_element_data(a_mixin3, "host", "");
         set_custom_element_data(a_mixin3, "windy", "");
-        set_custom_element_data(a_mixin3, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin3, "scatter", ctx[1]);
         set_custom_element_data(a_mixin3, "vary", vary);
+        set_custom_element_data(a_mixin3, "host", "mushroom");
         set_custom_element_data(a_mixin4, "id", "flowersLow");
         set_custom_element_data(a_mixin4, "mixin", "smolitem smolfix");
         set_custom_element_data(a_mixin4, "shadow", "");
         set_custom_element_data(a_mixin4, "gltf-model", "./glb/flowersLow.glb");
-        set_custom_element_data(a_mixin4, "host", "");
         set_custom_element_data(a_mixin4, "windy", "");
-        set_custom_element_data(a_mixin4, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin4, "scatter", ctx[1]);
         set_custom_element_data(a_mixin4, "vary", vary);
+        set_custom_element_data(a_mixin4, "host", "flowersLow");
         set_custom_element_data(a_mixin5, "id", "rock");
         set_custom_element_data(a_mixin5, "shadow", "");
-        set_custom_element_data(a_mixin5, "host", "");
         set_custom_element_data(a_mixin5, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
-        set_custom_element_data(a_mixin5, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin5, "scatter", ctx[1]);
         set_custom_element_data(a_mixin5, "gltf-model", "./glb/rockB.glb");
         set_custom_element_data(a_mixin5, "ammo-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin5, "host", "");
         set_custom_element_data(a_mixin5, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
         set_custom_element_data(a_entity0, "id", "mountain-model");
         set_custom_element_data(a_entity0, "gltf-model", "./glb/rockC.glb");
@@ -34803,16 +34897,13 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
         set_custom_element_data(a_entity1, "pool__mountains", "mixin: mountains; size: 50");
         set_custom_element_data(a_entity1, "activate__mountains", "");
-        set_custom_element_data(a_sky, "color", sky);
-        set_custom_element_data(a_sky, "host", "");
-        set_custom_element_data(a_sky, "animate", a_sky_animate_value = "property: color; to: " + sky_dark + "; easing: easeInOut; dur: 6000 ");
         set_custom_element_data(a_mixin7, "id", "tree");
         set_custom_element_data(a_mixin7, "class", "climbable");
         set_custom_element_data(a_mixin7, "shadow", "");
-        set_custom_element_data(a_mixin7, "host", "");
         set_custom_element_data(a_mixin7, "windy", "");
         set_custom_element_data(a_mixin7, "gltf-model", "./glb/tree.glb");
-        set_custom_element_data(a_mixin7, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin7, "scatter", ctx[1]);
+        set_custom_element_data(a_mixin7, "host", "");
         set_custom_element_data(a_mixin7, "vary", "property: scale; range: 1 0.5 1 2 3 2");
         set_custom_element_data(a_mixin7, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_mixin7, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
@@ -34821,12 +34912,12 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity3, "pool__mushroom", "mixin: mushroom; size: 20");
         set_custom_element_data(a_entity3, "activate__mushroom", "");
         set_custom_element_data(a_mixin8, "id", "grass");
-        set_custom_element_data(a_mixin8, "host", "");
         set_custom_element_data(a_mixin8, "windy", "");
         set_custom_element_data(a_mixin8, "mixin", "smolitem");
         set_custom_element_data(a_mixin8, "gltf-model", "./glb/grass.glb");
         set_custom_element_data(a_mixin8, "shadow", "");
-        set_custom_element_data(a_mixin8, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin8, "scatter", ctx[1]);
+        set_custom_element_data(a_mixin8, "host", "grass");
         set_custom_element_data(a_mixin8, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
         set_custom_element_data(a_entity4, "pool__grass", "mixin: grass; size: 50");
         set_custom_element_data(a_entity4, "activate__grass", "");
@@ -34836,93 +34927,30 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity6, "activate__flowers", "");
         set_custom_element_data(a_entity7, "pool__flowerslow", "mixin: flowersLow; size: 50");
         set_custom_element_data(a_entity7, "activate__flowerslow", "");
-        set_custom_element_data(a_sphere, "position", "0 100 0");
-        set_custom_element_data(a_sphere, "radius", "10");
-        set_custom_element_data(a_sphere, "material", "color: yellow; shader: flat;");
-        set_custom_element_data(a_entity8, "host", "");
-        set_custom_element_data(a_entity8, "position", a_entity8_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
-        set_custom_element_data(a_entity8, "light", a_entity8_light_value = ctx[1]({
-          type: "directional",
-          color: light,
-          castShadow: true,
-          shadowCameraTop: ctx[0],
-          shadowCameraLeft: -ctx[0],
-          shadowCameraRight: ctx[0],
-          shadowCameraBottom: -ctx[0],
-          shadowBias: -1e-4,
-          shadowMapHeight: 1024 * 4,
-          shadowMapWidth: 1024 * 4,
-          intensity: 0.75
-        }));
-        set_custom_element_data(a_entity9, "host", "");
-        set_custom_element_data(a_entity9, "position", a_entity9_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
-        set_custom_element_data(a_entity9, "light", a_entity9_light_value = ctx[1]({
-          type: "directional",
-          color: light,
-          intensity: 0.75
-        }));
-        set_custom_element_data(a_entity10, "host", "");
-        set_custom_element_data(a_entity10, "light", "type:ambient; color:white; intensity:1;");
-        set_custom_element_data(a_plane, "shadow", "");
-        set_custom_element_data(a_plane, "id", "ground");
-        set_custom_element_data(a_plane, "host", "");
-        set_custom_element_data(a_plane, "position", "0 0 0");
-        set_custom_element_data(a_plane, "rotation", "-90 0 0");
-        set_custom_element_data(a_plane, "width", a_plane_width_value = ctx[0] * 1.5);
-        set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 1.5);
-        set_custom_element_data(a_plane, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_plane, "ammo-shape", "type:box");
-        set_custom_element_data(a_plane, "color", "#334411");
-        set_custom_element_data(a_mixin9, "id", "cloud");
-        set_custom_element_data(a_mixin9, "scatter", ctx[3]);
-        set_custom_element_data(a_mixin9, "material", "color: #ffffff; shader: flat; ");
-        set_custom_element_data(a_mixin9, "geometry", "");
-        set_custom_element_data(a_mixin9, "host", "");
-        set_custom_element_data(a_mixin9, "scale", "15 5 10");
-        set_custom_element_data(a_mixin9, "vary", "property: scale; range: 1 1 1 1.5 1.5 1.5");
-        set_custom_element_data(a_entity11, "pool__cloud", "mixin: shadow cloud; size: 30");
-        set_custom_element_data(a_entity11, "activate__cloud", "");
-        set_custom_element_data(a_entity11, "position", a_entity11_position_value = "0 35 " + ctx[0]);
-        set_custom_element_data(a_entity11, "animation", a_entity11_animation_value = "property:object3D.position.z; to:-" + ctx[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;");
-        set_custom_element_data(a_entity11, "animation__scale", a_entity11_animation__scale_value = "property:object3D.scale; from: 0 0 0; to:1 1 1; dur: " + 400 * 300 / 2 + "; loop: true; dir: alternate");
-        set_custom_element_data(a_entity12, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
-        set_custom_element_data(a_mixin10, "id", "floof");
-        set_custom_element_data(a_mixin10, "geometry", "");
-        set_custom_element_data(a_mixin10, "scale", "0.05 0.05 0.05");
-        set_custom_element_data(a_mixin10, "material", "color: white; shader: flat;");
-        set_custom_element_data(a_mixin10, "vary", a_mixin10_vary_value = "property: position; range: -" + ctx[0] * 0.75 + " 0 -" + ctx[0] * 0.75 + " " + ctx[0] * 0.75 + " 4 " + ctx[0] * 0.75);
-        set_custom_element_data(a_mixin10, "floaty", "");
-        set_custom_element_data(a_entity13, "pool__floof", "mixin: floof; size: 300;");
-        set_custom_element_data(a_entity13, "activate__floof", "");
-        set_custom_element_data(a_mixin11, "id", "birds");
-        set_custom_element_data(a_mixin11, "geometry", "");
-        set_custom_element_data(a_mixin11, "scale", "0.25 0.15 0.15");
-        set_custom_element_data(a_mixin11, "material", "color: yellow; shader: flat;");
-        set_custom_element_data(a_mixin11, "vary", a_mixin11_vary_value = "property: position; range: -" + ctx[0] * 0.75 + " 10.5 -" + ctx[0] * 0.75 + " " + ctx[0] * 0.75 + " 40 " + ctx[0] * 0.75);
-        set_custom_element_data(a_mixin11, "floaty", "");
-        set_custom_element_data(a_entity14, "pool__birds", "mixin: birds; size: 50;");
-        set_custom_element_data(a_entity14, "activate__birds", "");
-        set_custom_element_data(a_mixin12, "id", "animal");
-        set_custom_element_data(a_mixin12, "gltf-model", "./char/Horse.glb");
-        set_custom_element_data(a_mixin12, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
-        set_custom_element_data(a_mixin12, "scale", "0.35 0.35 0.35");
-        set_custom_element_data(a_mixin12, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; offset: 0 1 0");
-        set_custom_element_data(a_mixin12, "shadow", "cast: true; receive: false;");
-        set_custom_element_data(a_mixin12, "ai", "type: random;");
-        set_custom_element_data(a_mixin12, "motion-events", "");
-        set_custom_element_data(a_mixin12, "gltf-events", "");
-        set_custom_element_data(a_mixin12, "material", "shader: flat;");
-        set_custom_element_data(a_mixin12, "scatter", ctx[2]);
-        set_custom_element_data(a_mixin13, "id", "sheep");
-        set_custom_element_data(a_mixin13, "gltf-model", "./char/Sheep.glb");
-        set_custom_element_data(a_mixin14, "id", "cow");
-        set_custom_element_data(a_mixin14, "gltf-model", "./char/Cow.glb");
-        set_custom_element_data(a_entity15, "pool__horse", "mixin: animal; size: 5;");
-        set_custom_element_data(a_entity15, "activate__horse", "");
-        set_custom_element_data(a_entity16, "pool__animal", "mixin: animal sheep; size: 5;");
-        set_custom_element_data(a_entity16, "activate__animal", "");
-        set_custom_element_data(a_entity17, "pool__animal", "mixin: animal cow; size: 5;");
-        set_custom_element_data(a_entity17, "activate__animal", "");
+        set_custom_element_data(a_mixin9, "id", "animal");
+        set_custom_element_data(a_mixin9, "gltf-model", "./char/Horse.glb");
+        set_custom_element_data(a_mixin9, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin9, "scale", "0.35 0.35 0.35");
+        set_custom_element_data(a_mixin9, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; offset: 0 1 0");
+        set_custom_element_data(a_mixin9, "shadow", "cast: true; receive: false;");
+        set_custom_element_data(a_mixin9, "ai", "type: random;");
+        set_custom_element_data(a_mixin9, "motion-events", "");
+        set_custom_element_data(a_mixin9, "gltf-events", "");
+        set_custom_element_data(a_mixin9, "material", "shader: flat;");
+        set_custom_element_data(a_mixin9, "host", "horse");
+        set_custom_element_data(a_mixin9, "scatter", ctx[1]);
+        set_custom_element_data(a_mixin10, "id", "sheep");
+        set_custom_element_data(a_mixin10, "host", "sheep");
+        set_custom_element_data(a_mixin10, "gltf-model", "./char/Sheep.glb");
+        set_custom_element_data(a_mixin11, "id", "cow");
+        set_custom_element_data(a_mixin11, "host", "cow");
+        set_custom_element_data(a_mixin11, "gltf-model", "./char/Cow.glb");
+        set_custom_element_data(a_entity8, "pool__horse", "mixin: animal; size: 5;");
+        set_custom_element_data(a_entity8, "activate__horse", "");
+        set_custom_element_data(a_entity9, "pool__sheep", "mixin: animal sheep; size: 5;");
+        set_custom_element_data(a_entity9, "activate__sheep", "");
+        set_custom_element_data(a_entity10, "pool__animal", "mixin: animal cow; size: 5;");
+        set_custom_element_data(a_entity10, "activate__animal", "");
       },
       m(target, anchor) {
         insert(target, a_mixin0, anchor);
@@ -34943,101 +34971,37 @@ gl_Position = mvPosition;
         insert(target, t7, anchor);
         insert(target, a_entity1, anchor);
         insert(target, t8, anchor);
-        insert(target, a_sky, anchor);
-        insert(target, t9, anchor);
         insert(target, a_mixin7, anchor);
-        insert(target, t10, anchor);
+        insert(target, t9, anchor);
         insert(target, a_entity2, anchor);
-        insert(target, t11, anchor);
+        insert(target, t10, anchor);
         insert(target, a_entity3, anchor);
-        insert(target, t12, anchor);
+        insert(target, t11, anchor);
         insert(target, a_mixin8, anchor);
-        insert(target, t13, anchor);
+        insert(target, t12, anchor);
         insert(target, a_entity4, anchor);
-        insert(target, t14, anchor);
+        insert(target, t13, anchor);
         insert(target, a_entity5, anchor);
-        insert(target, t15, anchor);
+        insert(target, t14, anchor);
         insert(target, a_entity6, anchor);
-        insert(target, t16, anchor);
+        insert(target, t15, anchor);
         insert(target, a_entity7, anchor);
-        insert(target, t17, anchor);
-        insert(target, a_entity8, anchor);
-        append(a_entity8, a_sphere);
-        insert(target, t18, anchor);
-        insert(target, a_entity9, anchor);
-        insert(target, t19, anchor);
-        insert(target, a_entity10, anchor);
-        insert(target, t20, anchor);
-        insert(target, a_plane, anchor);
-        insert(target, t21, anchor);
+        insert(target, t16, anchor);
         insert(target, a_mixin9, anchor);
-        insert(target, t22, anchor);
-        insert(target, a_entity11, anchor);
-        insert(target, t23, anchor);
-        insert(target, a_entity12, anchor);
-        insert(target, t24, anchor);
+        insert(target, t17, anchor);
         insert(target, a_mixin10, anchor);
-        insert(target, t25, anchor);
-        insert(target, a_entity13, anchor);
-        insert(target, t26, anchor);
+        insert(target, t18, anchor);
         insert(target, a_mixin11, anchor);
-        insert(target, t27, anchor);
-        insert(target, a_entity14, anchor);
-        insert(target, t28, anchor);
-        insert(target, a_mixin12, anchor);
-        insert(target, t29, anchor);
-        insert(target, a_mixin13, anchor);
-        insert(target, t30, anchor);
-        insert(target, a_mixin14, anchor);
-        insert(target, t31, anchor);
-        insert(target, a_entity15, anchor);
-        insert(target, t32, anchor);
-        insert(target, a_entity16, anchor);
-        insert(target, t33, anchor);
-        insert(target, a_entity17, anchor);
+        insert(target, t19, anchor);
+        insert(target, a_entity8, anchor);
+        insert(target, t20, anchor);
+        insert(target, a_entity9, anchor);
+        insert(target, t21, anchor);
+        insert(target, a_entity10, anchor);
       },
       p(ctx2, [dirty]) {
         if (dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
           set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value);
-        }
-        if (dirty & 1 && a_entity8_position_value !== (a_entity8_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity8, "position", a_entity8_position_value);
-        }
-        if (dirty & 1 && a_entity8_light_value !== (a_entity8_light_value = ctx2[1]({
-          type: "directional",
-          color: light,
-          castShadow: true,
-          shadowCameraTop: ctx2[0],
-          shadowCameraLeft: -ctx2[0],
-          shadowCameraRight: ctx2[0],
-          shadowCameraBottom: -ctx2[0],
-          shadowBias: -1e-4,
-          shadowMapHeight: 1024 * 4,
-          shadowMapWidth: 1024 * 4,
-          intensity: 0.75
-        }))) {
-          set_custom_element_data(a_entity8, "light", a_entity8_light_value);
-        }
-        if (dirty & 1 && a_entity9_position_value !== (a_entity9_position_value = "-" + ctx2[0] / 4 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 4)) {
-          set_custom_element_data(a_entity9, "position", a_entity9_position_value);
-        }
-        if (dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 1.5)) {
-          set_custom_element_data(a_plane, "width", a_plane_width_value);
-        }
-        if (dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 1.5)) {
-          set_custom_element_data(a_plane, "height", a_plane_height_value);
-        }
-        if (dirty & 1 && a_entity11_position_value !== (a_entity11_position_value = "0 35 " + ctx2[0])) {
-          set_custom_element_data(a_entity11, "position", a_entity11_position_value);
-        }
-        if (dirty & 1 && a_entity11_animation_value !== (a_entity11_animation_value = "property:object3D.position.z; to:-" + ctx2[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
-          set_custom_element_data(a_entity11, "animation", a_entity11_animation_value);
-        }
-        if (dirty & 1 && a_mixin10_vary_value !== (a_mixin10_vary_value = "property: position; range: -" + ctx2[0] * 0.75 + " 0 -" + ctx2[0] * 0.75 + " " + ctx2[0] * 0.75 + " 4 " + ctx2[0] * 0.75)) {
-          set_custom_element_data(a_mixin10, "vary", a_mixin10_vary_value);
-        }
-        if (dirty & 1 && a_mixin11_vary_value !== (a_mixin11_vary_value = "property: position; range: -" + ctx2[0] * 0.75 + " 10.5 -" + ctx2[0] * 0.75 + " " + ctx2[0] * 0.75 + " 40 " + ctx2[0] * 0.75)) {
-          set_custom_element_data(a_mixin11, "vary", a_mixin11_vary_value);
         }
       },
       i: noop,
@@ -35080,124 +35044,71 @@ gl_Position = mvPosition;
         if (detaching)
           detach(t8);
         if (detaching)
-          detach(a_sky);
+          detach(a_mixin7);
         if (detaching)
           detach(t9);
         if (detaching)
-          detach(a_mixin7);
+          detach(a_entity2);
         if (detaching)
           detach(t10);
         if (detaching)
-          detach(a_entity2);
+          detach(a_entity3);
         if (detaching)
           detach(t11);
         if (detaching)
-          detach(a_entity3);
+          detach(a_mixin8);
         if (detaching)
           detach(t12);
         if (detaching)
-          detach(a_mixin8);
+          detach(a_entity4);
         if (detaching)
           detach(t13);
         if (detaching)
-          detach(a_entity4);
+          detach(a_entity5);
         if (detaching)
           detach(t14);
         if (detaching)
-          detach(a_entity5);
+          detach(a_entity6);
         if (detaching)
           detach(t15);
         if (detaching)
-          detach(a_entity6);
+          detach(a_entity7);
         if (detaching)
           detach(t16);
         if (detaching)
-          detach(a_entity7);
+          detach(a_mixin9);
         if (detaching)
           detach(t17);
         if (detaching)
-          detach(a_entity8);
+          detach(a_mixin10);
         if (detaching)
           detach(t18);
         if (detaching)
-          detach(a_entity9);
+          detach(a_mixin11);
         if (detaching)
           detach(t19);
         if (detaching)
-          detach(a_entity10);
+          detach(a_entity8);
         if (detaching)
           detach(t20);
         if (detaching)
-          detach(a_plane);
+          detach(a_entity9);
         if (detaching)
           detach(t21);
         if (detaching)
-          detach(a_mixin9);
-        if (detaching)
-          detach(t22);
-        if (detaching)
-          detach(a_entity11);
-        if (detaching)
-          detach(t23);
-        if (detaching)
-          detach(a_entity12);
-        if (detaching)
-          detach(t24);
-        if (detaching)
-          detach(a_mixin10);
-        if (detaching)
-          detach(t25);
-        if (detaching)
-          detach(a_entity13);
-        if (detaching)
-          detach(t26);
-        if (detaching)
-          detach(a_mixin11);
-        if (detaching)
-          detach(t27);
-        if (detaching)
-          detach(a_entity14);
-        if (detaching)
-          detach(t28);
-        if (detaching)
-          detach(a_mixin12);
-        if (detaching)
-          detach(t29);
-        if (detaching)
-          detach(a_mixin13);
-        if (detaching)
-          detach(t30);
-        if (detaching)
-          detach(a_mixin14);
-        if (detaching)
-          detach(t31);
-        if (detaching)
-          detach(a_entity15);
-        if (detaching)
-          detach(t32);
-        if (detaching)
-          detach(a_entity16);
-        if (detaching)
-          detach(t33);
-        if (detaching)
-          detach(a_entity17);
+          detach(a_entity10);
       }
     };
   }
-  var light = "#FEE";
-  var sky = "#336";
-  var sky_dark = "#003";
   var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
   function instance5($$self, $$props, $$invalidate) {
-    const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize: groundSize2 = 100 } = $$props;
     const scatter = [-groundSize2 / 2, 0, -groundSize2 / 2, groundSize2 / 2, 0, groundSize2 / 2].join(" ");
-    const scatterBig = [-groundSize2, 0, -groundSize2, groundSize2, 0, groundSize2].join(" ");
     $$self.$$set = ($$props2) => {
       if ("groundSize" in $$props2)
         $$invalidate(0, groundSize2 = $$props2.groundSize);
     };
-    return [groundSize2, str, scatter, scatterBig];
+    return [groundSize2, scatter];
   }
   var Forest = class extends SvelteComponent {
     constructor(options) {
@@ -35388,45 +35299,396 @@ gl_Position = mvPosition;
   };
   var house_default = House;
 
-  // src/template/host.svelte
+  // src/ui/netdata.svelte
+  function create_if_block3(ctx) {
+    let div;
+    let t;
+    return {
+      c() {
+        div = element("div");
+        t = text(ctx[1]);
+        attr(div, "class", "netdata svelte-l8j1y5");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, t);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 2)
+          set_data(t, ctx2[1]);
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div);
+      }
+    };
+  }
   function create_fragment9(ctx) {
+    let if_block_anchor;
+    let if_block = ctx[0] && create_if_block3(ctx);
+    return {
+      c() {
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (ctx2[0]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block3(ctx2);
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(if_block_anchor);
+      }
+    };
+  }
+  function instance7($$self, $$props, $$invalidate) {
+    let $open_hostid;
+    let $room;
+    component_subscribe($$self, open_hostid, ($$value) => $$invalidate(0, $open_hostid = $$value));
+    component_subscribe($$self, room, ($$value) => $$invalidate(1, $room = $$value));
+    return [$open_hostid, $room];
+  }
+  var Netdata = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance7, create_fragment9, safe_not_equal, {});
+    }
+  };
+  var netdata_default = Netdata;
+
+  // src/template/environmental.svelte
+  function create_fragment10(ctx) {
+    let a_plane;
+    let a_plane_width_value;
+    let a_plane_height_value;
+    let t0;
+    let a_entity0;
+    let a_sphere;
+    let a_entity0_position_value;
+    let a_entity0_light_value;
+    let t1;
+    let a_entity1;
+    let a_entity1_position_value;
+    let a_entity1_light_value;
+    let t2;
+    let a_entity2;
+    let t3;
+    let a_mixin0;
+    let t4;
+    let a_entity3;
+    let a_entity3_position_value;
+    let a_entity3_animation_value;
+    let a_entity3_animation__scale_value;
+    let t5;
+    let a_entity4;
+    let t6;
+    let a_mixin1;
+    let a_mixin1_vary_value;
+    let t7;
+    let a_entity5;
+    let t8;
+    let a_mixin2;
+    let a_mixin2_vary_value;
+    let t9;
+    let a_entity6;
+    let t10;
+    let a_sky;
+    let a_sky_animate_value;
+    return {
+      c() {
+        a_plane = element("a-plane");
+        t0 = space();
+        a_entity0 = element("a-entity");
+        a_sphere = element("a-sphere");
+        t1 = space();
+        a_entity1 = element("a-entity");
+        t2 = space();
+        a_entity2 = element("a-entity");
+        t3 = space();
+        a_mixin0 = element("a-mixin");
+        t4 = space();
+        a_entity3 = element("a-entity");
+        t5 = space();
+        a_entity4 = element("a-entity");
+        t6 = space();
+        a_mixin1 = element("a-mixin");
+        t7 = space();
+        a_entity5 = element("a-entity");
+        t8 = space();
+        a_mixin2 = element("a-mixin");
+        t9 = space();
+        a_entity6 = element("a-entity");
+        t10 = space();
+        a_sky = element("a-sky");
+        set_custom_element_data(a_plane, "shadow", "");
+        set_custom_element_data(a_plane, "id", "ground");
+        set_custom_element_data(a_plane, "position", "0 0 0");
+        set_custom_element_data(a_plane, "rotation", "-90 0 0");
+        set_custom_element_data(a_plane, "width", a_plane_width_value = ctx[0] * 1.5);
+        set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 1.5);
+        set_custom_element_data(a_plane, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_plane, "ammo-shape", "type:box");
+        set_custom_element_data(a_plane, "color", "#334411");
+        set_custom_element_data(a_sphere, "position", "0 100 0");
+        set_custom_element_data(a_sphere, "radius", "10");
+        set_custom_element_data(a_sphere, "material", "color: yellow; shader: flat;");
+        set_custom_element_data(a_entity0, "position", a_entity0_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
+        set_custom_element_data(a_entity0, "light", a_entity0_light_value = ctx[1]({
+          type: "directional",
+          color: light,
+          castShadow: true,
+          shadowCameraTop: ctx[0],
+          shadowCameraLeft: -ctx[0],
+          shadowCameraRight: ctx[0],
+          shadowCameraBottom: -ctx[0],
+          shadowBias: -1e-4,
+          shadowMapHeight: 1024 * 4,
+          shadowMapWidth: 1024 * 4,
+          intensity: 0.75
+        }));
+        set_custom_element_data(a_entity1, "position", a_entity1_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
+        set_custom_element_data(a_entity1, "light", a_entity1_light_value = ctx[1]({
+          type: "directional",
+          color: light,
+          intensity: 0.75
+        }));
+        set_custom_element_data(a_entity2, "light", "type:ambient; color:white; intensity:1;");
+        set_custom_element_data(a_mixin0, "id", "cloud");
+        set_custom_element_data(a_mixin0, "scatter", ctx[2]);
+        set_custom_element_data(a_mixin0, "material", "color: #ffffff; shader: flat; ");
+        set_custom_element_data(a_mixin0, "geometry", "");
+        set_custom_element_data(a_mixin0, "scale", "15 5 10");
+        set_custom_element_data(a_mixin0, "vary", "property: scale; range: 1 1 1 1.5 1.5 1.5");
+        set_custom_element_data(a_entity3, "pool__cloud", "mixin: shadow cloud; size: 30");
+        set_custom_element_data(a_entity3, "activate__cloud", "");
+        set_custom_element_data(a_entity3, "position", a_entity3_position_value = "0 35 " + ctx[0]);
+        set_custom_element_data(a_entity3, "animation", a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;");
+        set_custom_element_data(a_entity3, "animation__scale", a_entity3_animation__scale_value = "property:object3D.scale; from: 0 0 0; to:1 1 1; dur: " + 400 * 300 / 2 + "; loop: true; dir: alternate");
+        set_custom_element_data(a_entity4, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
+        set_custom_element_data(a_mixin1, "id", "floof");
+        set_custom_element_data(a_mixin1, "geometry", "");
+        set_custom_element_data(a_mixin1, "scale", "0.05 0.05 0.05");
+        set_custom_element_data(a_mixin1, "material", "color: white; shader: flat;");
+        set_custom_element_data(a_mixin1, "vary", a_mixin1_vary_value = "property: position; range: -" + ctx[0] * 0.75 + " 0 -" + ctx[0] * 0.75 + " " + ctx[0] * 0.75 + " 4 " + ctx[0] * 0.75);
+        set_custom_element_data(a_mixin1, "floaty", "");
+        set_custom_element_data(a_entity5, "pool__floof", "mixin: floof; size: 300;");
+        set_custom_element_data(a_entity5, "activate__floof", "");
+        set_custom_element_data(a_mixin2, "id", "birds");
+        set_custom_element_data(a_mixin2, "geometry", "");
+        set_custom_element_data(a_mixin2, "scale", "0.25 0.15 0.15");
+        set_custom_element_data(a_mixin2, "material", "color: yellow; shader: flat;");
+        set_custom_element_data(a_mixin2, "vary", a_mixin2_vary_value = "property: position; range: -" + ctx[0] * 0.75 + " 10.5 -" + ctx[0] * 0.75 + " " + ctx[0] * 0.75 + " 40 " + ctx[0] * 0.75);
+        set_custom_element_data(a_mixin2, "floaty", "");
+        set_custom_element_data(a_entity6, "pool__birds", "mixin: birds; size: 50;");
+        set_custom_element_data(a_entity6, "activate__birds", "");
+        set_custom_element_data(a_sky, "color", sky);
+        set_custom_element_data(a_sky, "animate", a_sky_animate_value = "property: color; to: " + sky_dark + "; easing: easeInOut; dur: 6000 ");
+      },
+      m(target, anchor) {
+        insert(target, a_plane, anchor);
+        insert(target, t0, anchor);
+        insert(target, a_entity0, anchor);
+        append(a_entity0, a_sphere);
+        insert(target, t1, anchor);
+        insert(target, a_entity1, anchor);
+        insert(target, t2, anchor);
+        insert(target, a_entity2, anchor);
+        insert(target, t3, anchor);
+        insert(target, a_mixin0, anchor);
+        insert(target, t4, anchor);
+        insert(target, a_entity3, anchor);
+        insert(target, t5, anchor);
+        insert(target, a_entity4, anchor);
+        insert(target, t6, anchor);
+        insert(target, a_mixin1, anchor);
+        insert(target, t7, anchor);
+        insert(target, a_entity5, anchor);
+        insert(target, t8, anchor);
+        insert(target, a_mixin2, anchor);
+        insert(target, t9, anchor);
+        insert(target, a_entity6, anchor);
+        insert(target, t10, anchor);
+        insert(target, a_sky, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 1.5)) {
+          set_custom_element_data(a_plane, "width", a_plane_width_value);
+        }
+        if (dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 1.5)) {
+          set_custom_element_data(a_plane, "height", a_plane_height_value);
+        }
+        if (dirty & 1 && a_entity0_position_value !== (a_entity0_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity0, "position", a_entity0_position_value);
+        }
+        if (dirty & 1 && a_entity0_light_value !== (a_entity0_light_value = ctx2[1]({
+          type: "directional",
+          color: light,
+          castShadow: true,
+          shadowCameraTop: ctx2[0],
+          shadowCameraLeft: -ctx2[0],
+          shadowCameraRight: ctx2[0],
+          shadowCameraBottom: -ctx2[0],
+          shadowBias: -1e-4,
+          shadowMapHeight: 1024 * 4,
+          shadowMapWidth: 1024 * 4,
+          intensity: 0.75
+        }))) {
+          set_custom_element_data(a_entity0, "light", a_entity0_light_value);
+        }
+        if (dirty & 1 && a_entity1_position_value !== (a_entity1_position_value = "-" + ctx2[0] / 4 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 4)) {
+          set_custom_element_data(a_entity1, "position", a_entity1_position_value);
+        }
+        if (dirty & 1 && a_entity3_position_value !== (a_entity3_position_value = "0 35 " + ctx2[0])) {
+          set_custom_element_data(a_entity3, "position", a_entity3_position_value);
+        }
+        if (dirty & 1 && a_entity3_animation_value !== (a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx2[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
+          set_custom_element_data(a_entity3, "animation", a_entity3_animation_value);
+        }
+        if (dirty & 1 && a_mixin1_vary_value !== (a_mixin1_vary_value = "property: position; range: -" + ctx2[0] * 0.75 + " 0 -" + ctx2[0] * 0.75 + " " + ctx2[0] * 0.75 + " 4 " + ctx2[0] * 0.75)) {
+          set_custom_element_data(a_mixin1, "vary", a_mixin1_vary_value);
+        }
+        if (dirty & 1 && a_mixin2_vary_value !== (a_mixin2_vary_value = "property: position; range: -" + ctx2[0] * 0.75 + " 10.5 -" + ctx2[0] * 0.75 + " " + ctx2[0] * 0.75 + " 40 " + ctx2[0] * 0.75)) {
+          set_custom_element_data(a_mixin2, "vary", a_mixin2_vary_value);
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_plane);
+        if (detaching)
+          detach(t0);
+        if (detaching)
+          detach(a_entity0);
+        if (detaching)
+          detach(t1);
+        if (detaching)
+          detach(a_entity1);
+        if (detaching)
+          detach(t2);
+        if (detaching)
+          detach(a_entity2);
+        if (detaching)
+          detach(t3);
+        if (detaching)
+          detach(a_mixin0);
+        if (detaching)
+          detach(t4);
+        if (detaching)
+          detach(a_entity3);
+        if (detaching)
+          detach(t5);
+        if (detaching)
+          detach(a_entity4);
+        if (detaching)
+          detach(t6);
+        if (detaching)
+          detach(a_mixin1);
+        if (detaching)
+          detach(t7);
+        if (detaching)
+          detach(a_entity5);
+        if (detaching)
+          detach(t8);
+        if (detaching)
+          detach(a_mixin2);
+        if (detaching)
+          detach(t9);
+        if (detaching)
+          detach(a_entity6);
+        if (detaching)
+          detach(t10);
+        if (detaching)
+          detach(a_sky);
+      }
+    };
+  }
+  var light = "#FEE";
+  var sky = "#336";
+  var sky_dark = "#003";
+  function instance8($$self, $$props, $$invalidate) {
+    const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
+    let { groundSize: groundSize2 = 100 } = $$props;
+    const scatterBig = [-groundSize2, 0, -groundSize2, groundSize2, 0, groundSize2].join(" ");
+    $$self.$$set = ($$props2) => {
+      if ("groundSize" in $$props2)
+        $$invalidate(0, groundSize2 = $$props2.groundSize);
+    };
+    return [groundSize2, str, scatterBig];
+  }
+  var Environmental = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance8, create_fragment10, safe_not_equal, { groundSize: 0 });
+    }
+  };
+  var environmental_default = Environmental;
+
+  // src/template/host.svelte
+  function create_fragment11(ctx) {
     let webcam;
     let t0;
     let heard;
     let t1;
     let live;
     let t2;
+    let netdata;
+    let t3;
     let a_scene;
     let a_assets;
+    let a_sphere;
+    let t4;
     let audio;
     let audio_src_value;
-    let t3;
-    let a_mixin0;
-    let t4;
-    let a_mixin1;
     let t5;
-    let charactersmixins;
+    let a_mixin;
     let t6;
-    let camerafps;
+    let charactersmixins;
     let t7;
-    let characters;
+    let camerafps;
     let t8;
-    let forest;
+    let characters;
     let t9;
-    let house;
+    let forest;
     let t10;
+    let house;
+    let t11;
     let debug_1;
+    let t12;
+    let environmental;
     let a_scene_physics_value;
     let current;
     webcam = new webcam_default({});
     heard = new heard_default({});
     live = new live_default({});
+    netdata = new netdata_default({});
     charactersmixins = new characters_assets_default({});
     camerafps = new camera_fps_default({});
     characters = new characters_default({});
     forest = new forest_default({});
     house = new house_default({});
     debug_1 = new debug_default({});
+    environmental = new environmental_default({});
     return {
       c() {
         create_component(webcam.$$.fragment);
@@ -35435,32 +35697,36 @@ gl_Position = mvPosition;
         t1 = space();
         create_component(live.$$.fragment);
         t2 = space();
+        create_component(netdata.$$.fragment);
+        t3 = space();
         a_scene = element("a-scene");
         a_assets = element("a-assets");
-        audio = element("audio");
-        t3 = space();
-        a_mixin0 = element("a-mixin");
+        a_sphere = element("a-sphere");
         t4 = space();
-        a_mixin1 = element("a-mixin");
+        audio = element("audio");
         t5 = space();
-        create_component(charactersmixins.$$.fragment);
+        a_mixin = element("a-mixin");
         t6 = space();
-        create_component(camerafps.$$.fragment);
+        create_component(charactersmixins.$$.fragment);
         t7 = space();
-        create_component(characters.$$.fragment);
+        create_component(camerafps.$$.fragment);
         t8 = space();
-        create_component(forest.$$.fragment);
+        create_component(characters.$$.fragment);
         t9 = space();
-        create_component(house.$$.fragment);
+        create_component(forest.$$.fragment);
         t10 = space();
+        create_component(house.$$.fragment);
+        t11 = space();
         create_component(debug_1.$$.fragment);
+        t12 = space();
+        create_component(environmental.$$.fragment);
+        set_custom_element_data(a_sphere, "color", "blue");
+        set_custom_element_data(a_sphere, "radius", "5");
         attr(audio, "id", "sound-bg");
         if (!src_url_equal(audio.src, audio_src_value = "./sound/bg-ocean.mp3"))
           attr(audio, "src", audio_src_value);
-        set_custom_element_data(a_mixin0, "id", "shadow");
-        set_custom_element_data(a_mixin0, "shadow", "cast: true");
-        set_custom_element_data(a_mixin1, "id", "toon");
-        set_custom_element_data(a_mixin1, "material", "roughness: 1;dithering: false;");
+        set_custom_element_data(a_mixin, "id", "shadow");
+        set_custom_element_data(a_mixin, "shadow", "cast: true");
         set_custom_element_data(a_scene, "keyboard-shortcuts", "enterVR: false");
         set_custom_element_data(a_scene, "stats", ctx[0]);
         set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: low;");
@@ -35468,6 +35734,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_scene, "fog", "type: exponential; color: #555");
         set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[1]);
         set_custom_element_data(a_scene, "uniforms", "");
+        set_custom_element_data(a_scene, "net", "");
       },
       m(target, anchor) {
         mount_component(webcam, target, anchor);
@@ -35476,25 +35743,29 @@ gl_Position = mvPosition;
         insert(target, t1, anchor);
         mount_component(live, target, anchor);
         insert(target, t2, anchor);
+        mount_component(netdata, target, anchor);
+        insert(target, t3, anchor);
         insert(target, a_scene, anchor);
         append(a_scene, a_assets);
-        append(a_assets, audio);
-        append(a_assets, t3);
-        append(a_assets, a_mixin0);
+        append(a_assets, a_sphere);
         append(a_assets, t4);
-        append(a_assets, a_mixin1);
+        append(a_assets, audio);
         append(a_assets, t5);
+        append(a_assets, a_mixin);
+        append(a_assets, t6);
         mount_component(charactersmixins, a_assets, null);
-        append(a_scene, t6);
-        mount_component(camerafps, a_scene, null);
         append(a_scene, t7);
-        mount_component(characters, a_scene, null);
+        mount_component(camerafps, a_scene, null);
         append(a_scene, t8);
-        mount_component(forest, a_scene, null);
+        mount_component(characters, a_scene, null);
         append(a_scene, t9);
-        mount_component(house, a_scene, null);
+        mount_component(forest, a_scene, null);
         append(a_scene, t10);
+        mount_component(house, a_scene, null);
+        append(a_scene, t11);
         mount_component(debug_1, a_scene, null);
+        append(a_scene, t12);
+        mount_component(environmental, a_scene, null);
         current = true;
       },
       p(ctx2, [dirty]) {
@@ -35511,24 +35782,28 @@ gl_Position = mvPosition;
         transition_in(webcam.$$.fragment, local);
         transition_in(heard.$$.fragment, local);
         transition_in(live.$$.fragment, local);
+        transition_in(netdata.$$.fragment, local);
         transition_in(charactersmixins.$$.fragment, local);
         transition_in(camerafps.$$.fragment, local);
         transition_in(characters.$$.fragment, local);
         transition_in(forest.$$.fragment, local);
         transition_in(house.$$.fragment, local);
         transition_in(debug_1.$$.fragment, local);
+        transition_in(environmental.$$.fragment, local);
         current = true;
       },
       o(local) {
         transition_out(webcam.$$.fragment, local);
         transition_out(heard.$$.fragment, local);
         transition_out(live.$$.fragment, local);
+        transition_out(netdata.$$.fragment, local);
         transition_out(charactersmixins.$$.fragment, local);
         transition_out(camerafps.$$.fragment, local);
         transition_out(characters.$$.fragment, local);
         transition_out(forest.$$.fragment, local);
         transition_out(house.$$.fragment, local);
         transition_out(debug_1.$$.fragment, local);
+        transition_out(environmental.$$.fragment, local);
         current = false;
       },
       d(detaching) {
@@ -35541,6 +35816,9 @@ gl_Position = mvPosition;
         destroy_component(live, detaching);
         if (detaching)
           detach(t2);
+        destroy_component(netdata, detaching);
+        if (detaching)
+          detach(t3);
         if (detaching)
           detach(a_scene);
         destroy_component(charactersmixins);
@@ -35549,31 +35827,27 @@ gl_Position = mvPosition;
         destroy_component(forest);
         destroy_component(house);
         destroy_component(debug_1);
+        destroy_component(environmental);
       }
     };
   }
-  function instance7($$self, $$props, $$invalidate) {
+  function instance9($$self, $$props, $$invalidate) {
     let $open_stats;
     let $open_debug;
     component_subscribe($$self, open_stats, ($$value) => $$invalidate(0, $open_stats = $$value));
     component_subscribe($$self, open_debug, ($$value) => $$invalidate(1, $open_debug = $$value));
-    let { groundSize: groundSize2 = 100 } = $$props;
-    $$self.$$set = ($$props2) => {
-      if ("groundSize" in $$props2)
-        $$invalidate(2, groundSize2 = $$props2.groundSize);
-    };
-    return [$open_stats, $open_debug, groundSize2];
+    return [$open_stats, $open_debug];
   }
   var Host = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance7, create_fragment9, safe_not_equal, { groundSize: 2 });
+      init(this, options, instance9, create_fragment11, safe_not_equal, {});
     }
   };
   var host_default = Host;
 
   // src/ui/title.svelte
-  function create_fragment10(ctx) {
+  function create_fragment12(ctx) {
     let div3;
     let t8;
     let center;
@@ -35611,13 +35885,13 @@ gl_Position = mvPosition;
   var Title = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment10, safe_not_equal, {});
+      init(this, options, null, create_fragment12, safe_not_equal, {});
     }
   };
   var title_default = Title;
 
   // src/ui/video.svelte
-  function create_fragment11(ctx) {
+  function create_fragment13(ctx) {
     let iframe;
     let iframe_width_value;
     let iframe_src_value;
@@ -35652,7 +35926,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function instance8($$self, $$props, $$invalidate) {
+  function instance10($$self, $$props, $$invalidate) {
     let $videos;
     component_subscribe($$self, videos, ($$value) => $$invalidate(1, $videos = $$value));
     let { src = "MePBW53Rtpw" } = $$props;
@@ -35665,7 +35939,7 @@ gl_Position = mvPosition;
   var Video = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance8, create_fragment11, safe_not_equal, { src: 0 });
+      init(this, options, instance10, create_fragment13, safe_not_equal, { src: 0 });
     }
   };
   var video_default = Video;
@@ -35709,7 +35983,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function create_fragment12(ctx) {
+  function create_fragment14(ctx) {
     let div10;
     let div0;
     let t0;
@@ -35886,12 +36160,12 @@ gl_Position = mvPosition;
   };
   var keydown_handler = (e) => {
   };
-  function instance9($$self, $$props, $$invalidate) {
+  function instance11($$self, $$props, $$invalidate) {
     let $motd;
     let $videos;
     component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
     component_subscribe($$self, videos, ($$value) => $$invalidate(1, $videos = $$value));
-    if (location.search === "?go") {
+    if (args.$.has("go")) {
       open_game.set(true);
       open_home.set(false);
     }
@@ -35904,13 +36178,13 @@ gl_Position = mvPosition;
   var Home = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance9, create_fragment12, safe_not_equal, {});
+      init(this, options, instance11, create_fragment14, safe_not_equal, {});
     }
   };
   var home_default = Home;
 
   // src/ui/text.svelte
-  function create_if_block3(ctx) {
+  function create_if_block4(ctx) {
     let div;
     let input;
     let mounted;
@@ -35951,9 +36225,9 @@ gl_Position = mvPosition;
       }
     };
   }
-  function create_fragment13(ctx) {
+  function create_fragment15(ctx) {
     let if_block_anchor;
-    let if_block = ctx[1] !== void 0 && create_if_block3(ctx);
+    let if_block = ctx[1] !== void 0 && create_if_block4(ctx);
     return {
       c() {
         if (if_block)
@@ -35970,7 +36244,7 @@ gl_Position = mvPosition;
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
-            if_block = create_if_block3(ctx2);
+            if_block = create_if_block4(ctx2);
             if_block.c();
             if_block.m(if_block_anchor.parentNode, if_block_anchor);
           }
@@ -35989,7 +36263,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function instance10($$self, $$props, $$invalidate) {
+  function instance12($$self, $$props, $$invalidate) {
     let $open_text;
     component_subscribe($$self, open_text, ($$value) => $$invalidate(1, $open_text = $$value));
     let ele;
@@ -36051,13 +36325,13 @@ gl_Position = mvPosition;
   var Text = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance10, create_fragment13, safe_not_equal, {});
+      init(this, options, instance12, create_fragment15, safe_not_equal, {});
     }
   };
   var text_default = Text;
 
   // src/ui/loading.svelte
-  function create_fragment14(ctx) {
+  function create_fragment16(ctx) {
     let div5;
     let div0;
     let t0;
@@ -36135,7 +36409,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function instance11($$self, $$props, $$invalidate) {
+  function instance13($$self, $$props, $$invalidate) {
     let $loading;
     component_subscribe($$self, loading, ($$value) => $$invalidate(0, $loading = $$value));
     return [$loading];
@@ -36143,13 +36417,13 @@ gl_Position = mvPosition;
   var Loading = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance11, create_fragment14, safe_not_equal, {});
+      init(this, options, instance13, create_fragment16, safe_not_equal, {});
     }
   };
   var loading_default = Loading;
 
   // src/ui/help.svelte
-  function create_fragment15(ctx) {
+  function create_fragment17(ctx) {
     let div5;
     let div0;
     let t0;
@@ -36220,7 +36494,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function instance12($$self, $$props, $$invalidate) {
+  function instance14($$self, $$props, $$invalidate) {
     let $helptext;
     component_subscribe($$self, helptext, ($$value) => $$invalidate(0, $helptext = $$value));
     function close() {
@@ -36231,7 +36505,7 @@ gl_Position = mvPosition;
   var Help = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance12, create_fragment15, safe_not_equal, {});
+      init(this, options, instance14, create_fragment17, safe_not_equal, {});
     }
   };
   var help_default = Help;
@@ -36318,7 +36592,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function create_if_block4(ctx) {
+  function create_if_block5(ctx) {
     let host2;
     let current;
     host2 = new host_default({ props: { groundSize } });
@@ -36346,7 +36620,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function create_fragment16(ctx) {
+  function create_fragment18(ctx) {
     let text_1;
     let t0;
     let t1;
@@ -36358,7 +36632,7 @@ gl_Position = mvPosition;
     let if_block0 = ctx[0] && create_if_block_3(ctx);
     let if_block1 = ctx[1] && create_if_block_2(ctx);
     let if_block2 = ctx[2] && create_if_block_1(ctx);
-    let if_block3 = ctx[3] && create_if_block4(ctx);
+    let if_block3 = ctx[3] && create_if_block5(ctx);
     return {
       c() {
         create_component(text_1.$$.fragment);
@@ -36455,7 +36729,7 @@ gl_Position = mvPosition;
               transition_in(if_block3, 1);
             }
           } else {
-            if_block3 = create_if_block4(ctx2);
+            if_block3 = create_if_block5(ctx2);
             if_block3.c();
             transition_in(if_block3, 1);
             if_block3.m(if_block3_anchor.parentNode, if_block3_anchor);
@@ -36510,7 +36784,7 @@ gl_Position = mvPosition;
     };
   }
   var groundSize = 100;
-  function instance13($$self, $$props, $$invalidate) {
+  function instance15($$self, $$props, $$invalidate) {
     let $open_help;
     let $open_loading;
     let $open_home;
@@ -36524,7 +36798,7 @@ gl_Position = mvPosition;
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance13, create_fragment16, safe_not_equal, {});
+      init(this, options, instance15, create_fragment18, safe_not_equal, {});
     }
   };
   var main_default = Main;
