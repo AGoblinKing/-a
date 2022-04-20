@@ -91,3 +91,4 @@ https://rawcdn.githack.com/kripken/ammo.js/99d0ec0b1e26d7ccc13e013caba8e8a5c98d9
 - random public host (like chat roullette)
 - toggable public status
 - kick people 
+- avatar spawning

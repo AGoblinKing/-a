@@ -5647,7 +5647,8 @@ reset scout color to green, persists
       if (this.ws)
         return;
       console.log("connecting");
-      const ws = new WebSocket(`${window.location.protocol === "https" ? "wss" : "ws"}://${window.location.host}/`);
+      const lhost = window.location.host === "a.goblin.life" ? "ws.goblin.life" : window.location.host;
+      const ws = new WebSocket(`${window.location.protocol === "https" ? "wss" : "ws"}://${lhost}/`);
       this.ws = ws;
       ws.addEventListener("close", () => {
         console.log("closed");
@@ -5770,14 +5771,14 @@ reset scout color to green, persists
         p.fromArray(state[this.netpath].p);
         if (o3d.position.distanceTo(p) > 1e-3)
           o3d.position.lerp(p, i2);
+        s.fromArray(state[this.netpath].s);
+        if (o3d.scale.distanceTo(s) > 1e-3)
+          o3d.scale.lerp(s, i2);
       }
     },
     netUpdate(update3) {
       this.lastUpdate = interop + 250;
       const o3d = this.el.object3D;
-      if (update3.s !== void 0) {
-        o3d.scale.set(...update3.s);
-      }
       if (update3.v !== void 0) {
         o3d.visible = update3.v;
       }
@@ -5785,6 +5786,10 @@ reset scout color to green, persists
     remove() {
       delete paths[this.netpath];
       this.cancel();
+    }
+  });
+  AFRAME.registerComponent("avatar", {
+    init() {
     }
   });
 
@@ -31618,6 +31623,8 @@ reset scout color to green, persists
       open_hostid.set(false);
     },
     ["join" /* Join */]: (items) => {
+      if (host.$)
+        host.set(false);
       guest.set(true);
       room.set(items.slice(2).join(" "));
     },
@@ -34214,15 +34221,21 @@ reset scout color to green, persists
   function create_if_block3(ctx) {
     let div;
     let t;
+    let mounted;
+    let dispose;
     return {
       c() {
         div = element("div");
         t = text(ctx[1]);
-        attr(div, "class", "netdata svelte-l8j1y5");
+        attr(div, "class", "netdata svelte-1beqevp");
       },
       m(target, anchor) {
         insert(target, div, anchor);
         append(div, t);
+        if (!mounted) {
+          dispose = listen(div, "click", ctx[2]);
+          mounted = true;
+        }
       },
       p(ctx2, dirty) {
         if (dirty & 2)
@@ -34231,12 +34244,14 @@ reset scout color to green, persists
       d(detaching) {
         if (detaching)
           detach(div);
+        mounted = false;
+        dispose();
       }
     };
   }
   function create_fragment7(ctx) {
     let if_block_anchor;
-    let if_block = ctx[0] && create_if_block3(ctx);
+    let if_block = ctx[0] && ctx[1] && create_if_block3(ctx);
     return {
       c() {
         if (if_block)
@@ -34249,7 +34264,7 @@ reset scout color to green, persists
         insert(target, if_block_anchor, anchor);
       },
       p(ctx2, [dirty]) {
-        if (ctx2[0]) {
+        if (ctx2[0] && ctx2[1]) {
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
@@ -34277,7 +34292,11 @@ reset scout color to green, persists
     let $room;
     component_subscribe($$self, open_hostid, ($$value) => $$invalidate(0, $open_hostid = $$value));
     component_subscribe($$self, room, ($$value) => $$invalidate(1, $room = $$value));
-    return [$open_hostid, $room];
+    const click_handler = () => {
+      const p3 = `${location.protocol}//${location.host}/?go&join=${$room}`;
+      navigator.clipboard.writeText(p3);
+    };
+    return [$open_hostid, $room, click_handler];
   }
   var Netdata = class extends SvelteComponent {
     constructor(options) {
@@ -34574,7 +34593,7 @@ reset scout color to green, persists
       direction = this.data.reverseMouseDrag ? 1 : -1;
       yawObject.rotation.y += movementX * 2e-3 * direction;
       pitchObject.rotation.x += movementY * 2e-3 * direction;
-      pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
+      pitchObject.rotation.x = Math.max(-PI_2 / 3, Math.min(PI_2 / 3, pitchObject.rotation.x));
     },
     onMouseDown: function(evt) {
       var sceneEl = this.el.sceneEl;
@@ -34952,7 +34971,8 @@ reset scout color to green, persists
       if (!pool)
         return;
       let ent;
-      while (ent = pool.requestEntity()) {
+      for (let i2 = 0; i2 < pool.data.size; i2++) {
+        ent = pool.requestEntity();
         ent.play();
       }
     }
@@ -35222,7 +35242,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity3, "pool__cloud", "mixin: shadow cloud; size: 30");
         set_custom_element_data(a_entity3, "activate__cloud", "");
         set_custom_element_data(a_entity3, "position", a_entity3_position_value = "0 35 " + ctx[0]);
-        set_custom_element_data(a_entity3, "animation", a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;");
+        set_custom_element_data(a_entity3, "animation", a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx[0] * 2 + "; dur: " + 400 * 300 * 2 + "; loop: true;");
         set_custom_element_data(a_entity3, "animation__scale", a_entity3_animation__scale_value = "property:object3D.scale; from: 0 0 0; to:1 1 1; dur: " + 400 * 300 / 2 + "; loop: true; dir: alternate");
         set_custom_element_data(a_entity4, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
         set_custom_element_data(a_mixin1, "id", "floof");
@@ -35301,7 +35321,7 @@ gl_Position = mvPosition;
         if (dirty & 1 && a_entity3_position_value !== (a_entity3_position_value = "0 35 " + ctx2[0])) {
           set_custom_element_data(a_entity3, "position", a_entity3_position_value);
         }
-        if (dirty & 1 && a_entity3_animation_value !== (a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx2[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
+        if (dirty & 1 && a_entity3_animation_value !== (a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx2[0] * 2 + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
           set_custom_element_data(a_entity3, "animation", a_entity3_animation_value);
         }
         if (dirty & 1 && a_mixin1_vary_value !== (a_mixin1_vary_value = "property: position; range: -" + ctx2[0] * 0.75 + " 0 -" + ctx2[0] * 0.75 + " " + ctx2[0] * 0.75 + " 4 " + ctx2[0] * 0.75)) {
@@ -35369,7 +35389,7 @@ gl_Position = mvPosition;
   function instance9($$self, $$props, $$invalidate) {
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize = 100 } = $$props;
-    const scatterBig = [-groundSize, 0, -groundSize, groundSize, 0, groundSize].join(" ");
+    const scatterBig = [-groundSize * 2, 0, -groundSize * 2, groundSize * 2, 0, groundSize * 2].join(" ");
     $$self.$$set = ($$props2) => {
       if ("groundSize" in $$props2)
         $$invalidate(0, groundSize = $$props2.groundSize);

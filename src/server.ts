@@ -44,6 +44,7 @@ class Room {
 
     state = {}
 
+    lastUpdate = Date.now()
     timeout
 
     constructor(host: WebSocket.WebSocket) {
@@ -72,6 +73,7 @@ class Room {
                 Object.assign(this.state[key], value)
             }
         }
+        this.lastUpdate = Date.now()
     }
 
     remove() {
@@ -111,6 +113,10 @@ wss.on('connection', function connection(ws) {
                     ws.send(ECommand.ERROR + "UPDATE 404Room does not exist")
                     return
                 }
+                // if (Date.now() - room.lastUpdate < 150) {
+                //     ws.send(ECommand.ERROR + "UPDATE 500You'reUpdatingTooFast")
+                //     return
+                // }
                 room.update("" + data.slice(39))
                 break
             }

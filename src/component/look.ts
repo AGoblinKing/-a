@@ -278,8 +278,9 @@ registerComponent('look', {
         // Calculate rotation.
         direction = this.data.reverseMouseDrag ? 1 : -1;
         yawObject.rotation.y += movementX * 0.002 * direction;
+        // yawObject.rotation.y = Math.max(-PI_2 / 2, Math.min(PI_2 / 2, pitchObject.rotation.y));
         pitchObject.rotation.x += movementY * 0.002 * direction;
-        pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
+        pitchObject.rotation.x = Math.max(-PI_2 / 3, Math.min(PI_2 / 3, pitchObject.rotation.x));
     },
 
     /**

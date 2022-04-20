@@ -3598,6 +3598,7 @@ var Room = class {
     this.name = RandomName();
     this.password = (0, import_uuidv4.uuid)();
     this.state = {};
+    this.lastUpdate = Date.now();
     this.host = host;
     rooms[this.name] = this;
     passbook[this.password] = this;
@@ -3619,6 +3620,7 @@ var Room = class {
         Object.assign(this.state[key], value);
       }
     }
+    this.lastUpdate = Date.now();
   }
   remove() {
     console.log("ROOM", "REMOVED", this.name);

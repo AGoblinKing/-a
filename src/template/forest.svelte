@@ -68,12 +68,11 @@
 	ammo-shape="type: sphere; fit: manual; sphereRadius: 1.5 "
 />
 
-<a-entity id="mountain-model" gltf-model="./glb/rockC.glb" instanced-mesh="capacity: 50" />
 <a-mixin
 	id="mountains"
 	shadow
 	host
-	instanced-mesh-member="mesh:#mountain-model"
+	gltf-model="./glb/rockC.glb"
 	ring="radius: {groundSize * 0.7}; count: 50"
 	ammo-body="type: static; mass: 0;"
 	vary="property: scale; range: 12 2 12 15 20 15"
@@ -89,13 +88,14 @@
 	windy
 	gltf-model="./glb/tree.glb"
 	{scatter}
-	host
 	vary="property: scale; range: 1 0.5 1 2 3 2"
 	ammo-body="type: static; mass: 0;"
 	ammo-shape="type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0"
+	host
 />
 
 <a-entity pool__tree="mixin: tree; size: 50" activate__tree />
+
 <a-entity pool__mushroom="mixin: mushroom; size: 20" activate__mushroom />
 
 <a-mixin
@@ -124,6 +124,7 @@
 	ai="type: random;"
 	motion-events
 	gltf-events
+	animate="property:scale; from: 1 1 1; to: 1.1 1.1 1.1; dir: alternate; loop: true;"
 	material="shader: flat;"
 	host="horse"
 	{scatter}

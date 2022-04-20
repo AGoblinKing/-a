@@ -5718,7 +5718,8 @@
       if (!pool)
         return;
       let ent;
-      while (ent = pool.requestEntity()) {
+      for (let i2 = 0; i2 < pool.data.size; i2++) {
+        ent = pool.requestEntity();
         ent.play();
       }
     }
@@ -32938,7 +32939,8 @@ reset scout color to green, persists
       if (this.ws)
         return;
       console.log("connecting");
-      const ws = new WebSocket(`${window.location.protocol === "https" ? "wss" : "ws"}://${window.location.host}/`);
+      const lhost = window.location.host === "a.goblin.life" ? "ws.goblin.life" : window.location.host;
+      const ws = new WebSocket(`${window.location.protocol === "https" ? "wss" : "ws"}://${lhost}/`);
       this.ws = ws;
       ws.addEventListener("close", () => {
         console.log("closed");
@@ -33061,14 +33063,14 @@ reset scout color to green, persists
         p2.fromArray(state[this.netpath].p);
         if (o3d.position.distanceTo(p2) > 1e-3)
           o3d.position.lerp(p2, i2);
+        s2.fromArray(state[this.netpath].s);
+        if (o3d.scale.distanceTo(s2) > 1e-3)
+          o3d.scale.lerp(s2, i2);
       }
     },
     netUpdate(update3) {
       this.lastUpdate = interop + 250;
       const o3d = this.el.object3D;
-      if (update3.s !== void 0) {
-        o3d.scale.set(...update3.s);
-      }
       if (update3.v !== void 0) {
         o3d.visible = update3.v;
       }
@@ -33076,6 +33078,10 @@ reset scout color to green, persists
     remove() {
       delete paths[this.netpath];
       this.cancel();
+    }
+  });
+  AFRAME.registerComponent("avatar", {
+    init() {
     }
   });
 
@@ -33221,6 +33227,8 @@ reset scout color to green, persists
       open_hostid.set(false);
     },
     ["join" /* Join */]: (items) => {
+      if (host.$)
+        host.set(false);
       guest.set(true);
       room.set(items.slice(2).join(" "));
     },
@@ -33894,12 +33902,13 @@ reset scout color to green, persists
         set_custom_element_data(a_entity0, "scale", a_entity0_scale_value = ctx[1].x + " " + ctx[1].y + " " + ctx[1].z);
         set_custom_element_data(a_entity0, "host", "current");
         set_custom_element_data(a_entity0, "wasd-controller", "");
+        set_custom_element_data(a_entity0, "avatar", "");
         set_custom_element_data(a_entity0, "sfxr__jump", a_entity0_sfxr__jump_value = AFRAME.utils.styleParser.stringify(sfx_jump));
-        set_custom_element_data(a_entity0, "networked", "template:#forest;attachTemplateToLocal:false;");
         set_custom_element_data(a_entity1, "mixin", "shadow character");
         set_custom_element_data(a_entity1, "position", "0 0.25 14");
         set_custom_element_data(a_entity1, "rotation", "0 180 0");
         set_custom_element_data(a_entity1, "host", "doer");
+        set_custom_element_data(a_entity1, "avatar", "");
         set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[2] + "; mirror: true");
       },
       m(target, anchor) {
@@ -34234,7 +34243,7 @@ reset scout color to green, persists
       direction = this.data.reverseMouseDrag ? 1 : -1;
       yawObject.rotation.y += movementX * 2e-3 * direction;
       pitchObject.rotation.x += movementY * 2e-3 * direction;
-      pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
+      pitchObject.rotation.x = Math.max(-PI_2 / 3, Math.min(PI_2 / 3, pitchObject.rotation.x));
     },
     onMouseDown: function(evt) {
       var sceneEl = this.el.sceneEl;
@@ -34766,20 +34775,20 @@ gl_Position = mvPosition;
     let t4;
     let a_mixin5;
     let t5;
-    let a_entity0;
-    let t6;
     let a_mixin6;
     let a_mixin6_ring_value;
+    let t6;
+    let a_entity0;
     let t7;
-    let a_entity1;
-    let t8;
     let a_mixin7;
+    let t8;
+    let a_entity1;
     let t9;
     let a_entity2;
     let t10;
-    let a_entity3;
-    let t11;
     let a_mixin8;
+    let t11;
+    let a_entity3;
     let t12;
     let a_entity4;
     let t13;
@@ -34787,19 +34796,17 @@ gl_Position = mvPosition;
     let t14;
     let a_entity6;
     let t15;
-    let a_entity7;
-    let t16;
     let a_mixin9;
-    let t17;
+    let t16;
     let a_mixin10;
-    let t18;
+    let t17;
     let a_mixin11;
+    let t18;
+    let a_entity7;
     let t19;
     let a_entity8;
     let t20;
     let a_entity9;
-    let t21;
-    let a_entity10;
     return {
       c() {
         a_mixin0 = element("a-mixin");
@@ -34814,19 +34821,19 @@ gl_Position = mvPosition;
         t4 = space();
         a_mixin5 = element("a-mixin");
         t5 = space();
-        a_entity0 = element("a-entity");
-        t6 = space();
         a_mixin6 = element("a-mixin");
+        t6 = space();
+        a_entity0 = element("a-entity");
         t7 = space();
-        a_entity1 = element("a-entity");
-        t8 = space();
         a_mixin7 = element("a-mixin");
+        t8 = space();
+        a_entity1 = element("a-entity");
         t9 = space();
         a_entity2 = element("a-entity");
         t10 = space();
-        a_entity3 = element("a-entity");
-        t11 = space();
         a_mixin8 = element("a-mixin");
+        t11 = space();
+        a_entity3 = element("a-entity");
         t12 = space();
         a_entity4 = element("a-entity");
         t13 = space();
@@ -34834,19 +34841,17 @@ gl_Position = mvPosition;
         t14 = space();
         a_entity6 = element("a-entity");
         t15 = space();
-        a_entity7 = element("a-entity");
-        t16 = space();
         a_mixin9 = element("a-mixin");
-        t17 = space();
+        t16 = space();
         a_mixin10 = element("a-mixin");
-        t18 = space();
+        t17 = space();
         a_mixin11 = element("a-mixin");
+        t18 = space();
+        a_entity7 = element("a-entity");
         t19 = space();
         a_entity8 = element("a-entity");
         t20 = space();
         a_entity9 = element("a-entity");
-        t21 = space();
-        a_entity10 = element("a-entity");
         set_custom_element_data(a_mixin0, "id", "smolitem");
         set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;collisionFilterGroup: 2;");
         set_custom_element_data(a_mixin0, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
@@ -34884,33 +34889,30 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin5, "ammo-body", "type: static; mass: 0");
         set_custom_element_data(a_mixin5, "host", "");
         set_custom_element_data(a_mixin5, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
-        set_custom_element_data(a_entity0, "id", "mountain-model");
-        set_custom_element_data(a_entity0, "gltf-model", "./glb/rockC.glb");
-        set_custom_element_data(a_entity0, "instanced-mesh", "capacity: 50");
         set_custom_element_data(a_mixin6, "id", "mountains");
         set_custom_element_data(a_mixin6, "shadow", "");
         set_custom_element_data(a_mixin6, "host", "");
-        set_custom_element_data(a_mixin6, "instanced-mesh-member", "mesh:#mountain-model");
+        set_custom_element_data(a_mixin6, "gltf-model", "./glb/rockC.glb");
         set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 50");
         set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_mixin6, "vary", "property: scale; range: 12 2 12 15 20 15");
         set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
-        set_custom_element_data(a_entity1, "pool__mountains", "mixin: mountains; size: 50");
-        set_custom_element_data(a_entity1, "activate__mountains", "");
+        set_custom_element_data(a_entity0, "pool__mountains", "mixin: mountains; size: 50");
+        set_custom_element_data(a_entity0, "activate__mountains", "");
         set_custom_element_data(a_mixin7, "id", "tree");
         set_custom_element_data(a_mixin7, "class", "climbable");
         set_custom_element_data(a_mixin7, "shadow", "");
         set_custom_element_data(a_mixin7, "windy", "");
         set_custom_element_data(a_mixin7, "gltf-model", "./glb/tree.glb");
         set_custom_element_data(a_mixin7, "scatter", ctx[1]);
-        set_custom_element_data(a_mixin7, "host", "");
         set_custom_element_data(a_mixin7, "vary", "property: scale; range: 1 0.5 1 2 3 2");
         set_custom_element_data(a_mixin7, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_mixin7, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
-        set_custom_element_data(a_entity2, "pool__tree", "mixin: tree; size: 50");
-        set_custom_element_data(a_entity2, "activate__tree", "");
-        set_custom_element_data(a_entity3, "pool__mushroom", "mixin: mushroom; size: 20");
-        set_custom_element_data(a_entity3, "activate__mushroom", "");
+        set_custom_element_data(a_mixin7, "host", "");
+        set_custom_element_data(a_entity1, "pool__tree", "mixin: tree; size: 50");
+        set_custom_element_data(a_entity1, "activate__tree", "");
+        set_custom_element_data(a_entity2, "pool__mushroom", "mixin: mushroom; size: 20");
+        set_custom_element_data(a_entity2, "activate__mushroom", "");
         set_custom_element_data(a_mixin8, "id", "grass");
         set_custom_element_data(a_mixin8, "windy", "");
         set_custom_element_data(a_mixin8, "mixin", "smolitem");
@@ -34919,14 +34921,14 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin8, "scatter", ctx[1]);
         set_custom_element_data(a_mixin8, "host", "grass");
         set_custom_element_data(a_mixin8, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
-        set_custom_element_data(a_entity4, "pool__grass", "mixin: grass; size: 50");
-        set_custom_element_data(a_entity4, "activate__grass", "");
-        set_custom_element_data(a_entity5, "pool__rock", "mixin: rock; size: 50");
-        set_custom_element_data(a_entity5, "activate__rock", "");
-        set_custom_element_data(a_entity6, "pool__flowers", "mixin: flowers; size: 50");
-        set_custom_element_data(a_entity6, "activate__flowers", "");
-        set_custom_element_data(a_entity7, "pool__flowerslow", "mixin: flowersLow; size: 50");
-        set_custom_element_data(a_entity7, "activate__flowerslow", "");
+        set_custom_element_data(a_entity3, "pool__grass", "mixin: grass; size: 50");
+        set_custom_element_data(a_entity3, "activate__grass", "");
+        set_custom_element_data(a_entity4, "pool__rock", "mixin: rock; size: 50");
+        set_custom_element_data(a_entity4, "activate__rock", "");
+        set_custom_element_data(a_entity5, "pool__flowers", "mixin: flowers; size: 50");
+        set_custom_element_data(a_entity5, "activate__flowers", "");
+        set_custom_element_data(a_entity6, "pool__flowerslow", "mixin: flowersLow; size: 50");
+        set_custom_element_data(a_entity6, "activate__flowerslow", "");
         set_custom_element_data(a_mixin9, "id", "animal");
         set_custom_element_data(a_mixin9, "gltf-model", "./char/Horse.glb");
         set_custom_element_data(a_mixin9, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
@@ -34936,6 +34938,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin9, "ai", "type: random;");
         set_custom_element_data(a_mixin9, "motion-events", "");
         set_custom_element_data(a_mixin9, "gltf-events", "");
+        set_custom_element_data(a_mixin9, "animate", "property:scale; from: 1 1 1; to: 1.1 1.1 1.1; dir: alternate; loop: true;");
         set_custom_element_data(a_mixin9, "material", "shader: flat;");
         set_custom_element_data(a_mixin9, "host", "horse");
         set_custom_element_data(a_mixin9, "scatter", ctx[1]);
@@ -34945,12 +34948,12 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin11, "id", "cow");
         set_custom_element_data(a_mixin11, "host", "cow");
         set_custom_element_data(a_mixin11, "gltf-model", "./char/Cow.glb");
-        set_custom_element_data(a_entity8, "pool__horse", "mixin: animal; size: 5;");
-        set_custom_element_data(a_entity8, "activate__horse", "");
-        set_custom_element_data(a_entity9, "pool__sheep", "mixin: animal sheep; size: 5;");
-        set_custom_element_data(a_entity9, "activate__sheep", "");
-        set_custom_element_data(a_entity10, "pool__animal", "mixin: animal cow; size: 5;");
-        set_custom_element_data(a_entity10, "activate__animal", "");
+        set_custom_element_data(a_entity7, "pool__horse", "mixin: animal; size: 5;");
+        set_custom_element_data(a_entity7, "activate__horse", "");
+        set_custom_element_data(a_entity8, "pool__sheep", "mixin: animal sheep; size: 5;");
+        set_custom_element_data(a_entity8, "activate__sheep", "");
+        set_custom_element_data(a_entity9, "pool__animal", "mixin: animal cow; size: 5;");
+        set_custom_element_data(a_entity9, "activate__animal", "");
       },
       m(target, anchor) {
         insert(target, a_mixin0, anchor);
@@ -34965,19 +34968,19 @@ gl_Position = mvPosition;
         insert(target, t4, anchor);
         insert(target, a_mixin5, anchor);
         insert(target, t5, anchor);
-        insert(target, a_entity0, anchor);
-        insert(target, t6, anchor);
         insert(target, a_mixin6, anchor);
+        insert(target, t6, anchor);
+        insert(target, a_entity0, anchor);
         insert(target, t7, anchor);
-        insert(target, a_entity1, anchor);
-        insert(target, t8, anchor);
         insert(target, a_mixin7, anchor);
+        insert(target, t8, anchor);
+        insert(target, a_entity1, anchor);
         insert(target, t9, anchor);
         insert(target, a_entity2, anchor);
         insert(target, t10, anchor);
-        insert(target, a_entity3, anchor);
-        insert(target, t11, anchor);
         insert(target, a_mixin8, anchor);
+        insert(target, t11, anchor);
+        insert(target, a_entity3, anchor);
         insert(target, t12, anchor);
         insert(target, a_entity4, anchor);
         insert(target, t13, anchor);
@@ -34985,19 +34988,17 @@ gl_Position = mvPosition;
         insert(target, t14, anchor);
         insert(target, a_entity6, anchor);
         insert(target, t15, anchor);
-        insert(target, a_entity7, anchor);
-        insert(target, t16, anchor);
         insert(target, a_mixin9, anchor);
-        insert(target, t17, anchor);
+        insert(target, t16, anchor);
         insert(target, a_mixin10, anchor);
-        insert(target, t18, anchor);
+        insert(target, t17, anchor);
         insert(target, a_mixin11, anchor);
+        insert(target, t18, anchor);
+        insert(target, a_entity7, anchor);
         insert(target, t19, anchor);
         insert(target, a_entity8, anchor);
         insert(target, t20, anchor);
         insert(target, a_entity9, anchor);
-        insert(target, t21, anchor);
-        insert(target, a_entity10, anchor);
       },
       p(ctx2, [dirty]) {
         if (dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
@@ -35032,19 +35033,19 @@ gl_Position = mvPosition;
         if (detaching)
           detach(t5);
         if (detaching)
-          detach(a_entity0);
+          detach(a_mixin6);
         if (detaching)
           detach(t6);
         if (detaching)
-          detach(a_mixin6);
+          detach(a_entity0);
         if (detaching)
           detach(t7);
         if (detaching)
-          detach(a_entity1);
+          detach(a_mixin7);
         if (detaching)
           detach(t8);
         if (detaching)
-          detach(a_mixin7);
+          detach(a_entity1);
         if (detaching)
           detach(t9);
         if (detaching)
@@ -35052,11 +35053,11 @@ gl_Position = mvPosition;
         if (detaching)
           detach(t10);
         if (detaching)
-          detach(a_entity3);
+          detach(a_mixin8);
         if (detaching)
           detach(t11);
         if (detaching)
-          detach(a_mixin8);
+          detach(a_entity3);
         if (detaching)
           detach(t12);
         if (detaching)
@@ -35072,19 +35073,19 @@ gl_Position = mvPosition;
         if (detaching)
           detach(t15);
         if (detaching)
-          detach(a_entity7);
+          detach(a_mixin9);
         if (detaching)
           detach(t16);
         if (detaching)
-          detach(a_mixin9);
+          detach(a_mixin10);
         if (detaching)
           detach(t17);
         if (detaching)
-          detach(a_mixin10);
+          detach(a_mixin11);
         if (detaching)
           detach(t18);
         if (detaching)
-          detach(a_mixin11);
+          detach(a_entity7);
         if (detaching)
           detach(t19);
         if (detaching)
@@ -35093,10 +35094,6 @@ gl_Position = mvPosition;
           detach(t20);
         if (detaching)
           detach(a_entity9);
-        if (detaching)
-          detach(t21);
-        if (detaching)
-          detach(a_entity10);
       }
     };
   }
@@ -35303,15 +35300,21 @@ gl_Position = mvPosition;
   function create_if_block3(ctx) {
     let div;
     let t;
+    let mounted;
+    let dispose;
     return {
       c() {
         div = element("div");
         t = text(ctx[1]);
-        attr(div, "class", "netdata svelte-l8j1y5");
+        attr(div, "class", "netdata svelte-1beqevp");
       },
       m(target, anchor) {
         insert(target, div, anchor);
         append(div, t);
+        if (!mounted) {
+          dispose = listen(div, "click", ctx[2]);
+          mounted = true;
+        }
       },
       p(ctx2, dirty) {
         if (dirty & 2)
@@ -35320,12 +35323,14 @@ gl_Position = mvPosition;
       d(detaching) {
         if (detaching)
           detach(div);
+        mounted = false;
+        dispose();
       }
     };
   }
   function create_fragment9(ctx) {
     let if_block_anchor;
-    let if_block = ctx[0] && create_if_block3(ctx);
+    let if_block = ctx[0] && ctx[1] && create_if_block3(ctx);
     return {
       c() {
         if (if_block)
@@ -35338,7 +35343,7 @@ gl_Position = mvPosition;
         insert(target, if_block_anchor, anchor);
       },
       p(ctx2, [dirty]) {
-        if (ctx2[0]) {
+        if (ctx2[0] && ctx2[1]) {
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
@@ -35366,7 +35371,11 @@ gl_Position = mvPosition;
     let $room;
     component_subscribe($$self, open_hostid, ($$value) => $$invalidate(0, $open_hostid = $$value));
     component_subscribe($$self, room, ($$value) => $$invalidate(1, $room = $$value));
-    return [$open_hostid, $room];
+    const click_handler = () => {
+      const p3 = `${location.protocol}//${location.host}/?go&join=${$room}`;
+      navigator.clipboard.writeText(p3);
+    };
+    return [$open_hostid, $room, click_handler];
   }
   var Netdata = class extends SvelteComponent {
     constructor(options) {
@@ -35482,7 +35491,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity3, "pool__cloud", "mixin: shadow cloud; size: 30");
         set_custom_element_data(a_entity3, "activate__cloud", "");
         set_custom_element_data(a_entity3, "position", a_entity3_position_value = "0 35 " + ctx[0]);
-        set_custom_element_data(a_entity3, "animation", a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;");
+        set_custom_element_data(a_entity3, "animation", a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx[0] * 2 + "; dur: " + 400 * 300 * 2 + "; loop: true;");
         set_custom_element_data(a_entity3, "animation__scale", a_entity3_animation__scale_value = "property:object3D.scale; from: 0 0 0; to:1 1 1; dur: " + 400 * 300 / 2 + "; loop: true; dir: alternate");
         set_custom_element_data(a_entity4, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
         set_custom_element_data(a_mixin1, "id", "floof");
@@ -35561,7 +35570,7 @@ gl_Position = mvPosition;
         if (dirty & 1 && a_entity3_position_value !== (a_entity3_position_value = "0 35 " + ctx2[0])) {
           set_custom_element_data(a_entity3, "position", a_entity3_position_value);
         }
-        if (dirty & 1 && a_entity3_animation_value !== (a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx2[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
+        if (dirty & 1 && a_entity3_animation_value !== (a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx2[0] * 2 + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
           set_custom_element_data(a_entity3, "animation", a_entity3_animation_value);
         }
         if (dirty & 1 && a_mixin1_vary_value !== (a_mixin1_vary_value = "property: position; range: -" + ctx2[0] * 0.75 + " 0 -" + ctx2[0] * 0.75 + " " + ctx2[0] * 0.75 + " 4 " + ctx2[0] * 0.75)) {
@@ -35629,7 +35638,7 @@ gl_Position = mvPosition;
   function instance8($$self, $$props, $$invalidate) {
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize: groundSize2 = 100 } = $$props;
-    const scatterBig = [-groundSize2, 0, -groundSize2, groundSize2, 0, groundSize2].join(" ");
+    const scatterBig = [-groundSize2 * 2, 0, -groundSize2 * 2, groundSize2 * 2, 0, groundSize2 * 2].join(" ");
     $$self.$$set = ($$props2) => {
       if ("groundSize" in $$props2)
         $$invalidate(0, groundSize2 = $$props2.groundSize);

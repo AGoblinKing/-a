@@ -409,14 +409,14 @@ textarea.svelte-7z92og {
 }
 
 /* fakecss:/workspaces/-a/src/ui/netdata.esbuild-svelte-fake-css */
-.netdata.svelte-l8j1y5 {
+.netdata.svelte-1beqevp {
   position: absolute;
   top: 0vh;
   left: 1vh;
   z-index: 15;
   color: white;
   font-size: 4vh;
-  user-select: all;
+  cursor: pointer;
   opacity: 0.75;
   text-shadow:
     -0.15rem -0.15rem 0 #000,

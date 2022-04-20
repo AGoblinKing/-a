@@ -217,6 +217,8 @@ export const controls = {
         open_hostid.set(false)
     },
     [EControl.Join]: (items: string[]) => {
+        // TODO: daisy chain might be okay?
+        if (host.$) host.set(false)
         guest.set(true)
         room.set(items.slice(2).join(" "))
     },

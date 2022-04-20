@@ -82,7 +82,9 @@ AFRAME.registerSystem("net", {
         if (this.ws) return
         console.log("connecting")
 
-        const ws = new WebSocket(`${window.location.protocol === "https" ? "wss" : "ws"}://${window.location.host}/`);
+        const lhost = window.location.host === "a.goblin.life" ? "ws.goblin.life" : window.location.host
+
+        const ws = new WebSocket(`${window.location.protocol === "https" ? "wss" : "ws"}://${lhost}/`);
 
         this.ws = ws
 
@@ -232,10 +234,11 @@ AFRAME.registerComponent("host", {
             q.fromArray(state[this.netpath].q)
             if (Math.abs(o3d.quaternion.angleTo(q)) > 0.001) o3d.quaternion.slerp(q, i)
 
-
             p.fromArray(state[this.netpath].p)
             if (o3d.position.distanceTo(p) > 0.001) o3d.position.lerp(p, i)
 
+            s.fromArray(state[this.netpath].s)
+            if (o3d.scale.distanceTo(s) > 0.001) o3d.scale.lerp(s, i)
         }
     },
 
@@ -245,16 +248,6 @@ AFRAME.registerComponent("host", {
         // TODO: Lerp this
         const o3d = this.el.object3D
 
-        // if (update.p !== undefined) {
-        //     o3d.position.set(...update.p)
-        // }
-        // if (update.q !== undefined) {
-        //     o3d.quaternion.set(...update.q)
-        // }
-
-        if (update.s !== undefined) {
-            o3d.scale.set(...update.s)
-        }
         if (update.v !== undefined) {
             o3d.visible = update.v
         }
@@ -263,5 +256,13 @@ AFRAME.registerComponent("host", {
     remove() {
         delete paths[this.netpath]
         this.cancel()
+    }
+})
+
+
+AFRAME.registerComponent("avatar", {
+    init() {
+        // when as a guest, we connect, the host spawns duplicate of these that we send updates on
+        // attach our camera to the dupe if its current vrm
     }
 })

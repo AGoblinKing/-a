@@ -15,18 +15,15 @@
 	scale="{$size.x} {$size.y} {$size.z}"
 	host="current"
 	wasd-controller
+	avatar
 	sfxr__jump={AFRAME.utils.styleParser.stringify(sfx_jump)}
-	networked="template:#forest;attachTemplateToLocal:false;"
 />
 
-<!--
-	sfxr__collide
--->
-<!-- <a-entity mixin="shadow" position="0 0 -5"  rotation="0 180 0" vrm="src: /vrm/femgoblin.vrm; mirror: true" scatter="-5 0 -5 5 0 5"  /> -->
 <a-entity
 	mixin="shadow character"
 	position="0 0.25 14"
 	rotation="0 180 0"
 	host="doer"
+	avatar
 	vrm="src: {$avatar_doer}; mirror: true"
 />

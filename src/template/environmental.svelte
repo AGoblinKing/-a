@@ -17,7 +17,9 @@
 	const light = '#FEE'
 	const sky = '#336'
 	const sky_dark = '#003'
-	const scatterBig = [-groundSize, 0, -groundSize, groundSize, 0, groundSize].join(' ')
+	const scatterBig = [-groundSize * 2, 0, -groundSize * 2, groundSize * 2, 0, groundSize * 2].join(
+		' '
+	)
 
 	// look-controls="enabled: false;" wasd-controls="enabled;false;"
 </script>
@@ -78,7 +80,7 @@
 	pool__cloud="mixin: shadow cloud; size: 30"
 	activate__cloud
 	position="0 35 {groundSize}"
-	animation="property:object3D.position.z; to:-{groundSize}; dur: {400 * 300 * 2}; loop: true;"
+	animation="property:object3D.position.z; to:-{groundSize * 2}; dur: {400 * 300 * 2}; loop: true;"
 	animation__scale="property:object3D.scale; from: 0 0 0; to:1 1 1; dur: {(400 * 300) /
 		2}; loop: true; dir: alternate"
 />
