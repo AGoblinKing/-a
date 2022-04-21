@@ -1,4 +1,5 @@
 <script>
+	import Volleyball from 'src/node/volleyball.svelte'
 	import '../component/grid'
 	// static collider that removes other static colliders found
 
@@ -28,3 +29,7 @@
 
 <!--a pool of floor tiles-->
 <a-entity id="floor" />
+
+<a-entity position="15 0 15">
+	<Volleyball />
+</a-entity>

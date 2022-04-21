@@ -5448,6 +5448,7 @@
   var scouter = new Value("green").save("scouter");
   var videos = new Value(["BzIeSMDe85U", "MePBW53Rtpw", "lyDJOPuanO0"]);
   var video = new Value("doer1.8").save("video_2");
+  var open_ui = new Value(true).save("ui");
   var open_home = new Value(true);
   var open_game = new Value(false);
   var open_text = new Value(void 0);
@@ -31631,6 +31632,12 @@ reset scout color to green, persists
     ["notjoin" /* NotJoin */]: (items) => {
       guest.set(false);
       room.set("");
+    },
+    ["ui" /* UI */]: (items) => {
+      open_ui.set(true);
+    },
+    ["notui" /* NotUI */]: (items) => {
+      open_ui.set(false);
     }
   };
 
@@ -35062,7 +35069,7 @@ gl_Position = mvPosition;
   });
 
   // src/shader/windy.vert
-  var windy_default = "vec4 Windy(in vec4 v) {\n    float t = -time * 0.001 + v.x*v.y*v.z*100.;\n    float dst = 0.025;\n    v.x += sin(t) * dst;\n    v.y += cos(t) * dst/10.;\n    v.z += sin(t) * dst;\n    return v; \n}";
+  var windy_default = "vec4 Windy(in vec4 v) {\n    float t = -time * 0.0005 + v.x*v.y*v.z*100.;\n    float dst = 0.025;\n    v.x += sin(t) * dst;\n    v.y += cos(t) * dst/10.;\n    v.z += sin(t) * dst;\n    return v; \n}";
 
   // src/component/windy.ts
   var main2 = `
@@ -35239,10 +35246,10 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin0, "geometry", "");
         set_custom_element_data(a_mixin0, "scale", "15 5 10");
         set_custom_element_data(a_mixin0, "vary", "property: scale; range: 1 1 1 1.5 1.5 1.5");
-        set_custom_element_data(a_entity3, "pool__cloud", "mixin: shadow cloud; size: 30");
+        set_custom_element_data(a_entity3, "pool__cloud", "mixin: shadow cloud; size: 50");
         set_custom_element_data(a_entity3, "activate__cloud", "");
         set_custom_element_data(a_entity3, "position", a_entity3_position_value = "0 35 " + ctx[0]);
-        set_custom_element_data(a_entity3, "animation", a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx[0] * 2 + "; dur: " + 400 * 300 * 2 + "; loop: true;");
+        set_custom_element_data(a_entity3, "animation", a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;");
         set_custom_element_data(a_entity3, "animation__scale", a_entity3_animation__scale_value = "property:object3D.scale; from: 0 0 0; to:1 1 1; dur: " + 400 * 300 / 2 + "; loop: true; dir: alternate");
         set_custom_element_data(a_entity4, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
         set_custom_element_data(a_mixin1, "id", "floof");
@@ -35321,7 +35328,7 @@ gl_Position = mvPosition;
         if (dirty & 1 && a_entity3_position_value !== (a_entity3_position_value = "0 35 " + ctx2[0])) {
           set_custom_element_data(a_entity3, "position", a_entity3_position_value);
         }
-        if (dirty & 1 && a_entity3_animation_value !== (a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx2[0] * 2 + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
+        if (dirty & 1 && a_entity3_animation_value !== (a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx2[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
           set_custom_element_data(a_entity3, "animation", a_entity3_animation_value);
         }
         if (dirty & 1 && a_mixin1_vary_value !== (a_mixin1_vary_value = "property: position; range: -" + ctx2[0] * 0.75 + " 0 -" + ctx2[0] * 0.75 + " " + ctx2[0] * 0.75 + " 4 " + ctx2[0] * 0.75)) {
@@ -35389,7 +35396,7 @@ gl_Position = mvPosition;
   function instance9($$self, $$props, $$invalidate) {
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize = 100 } = $$props;
-    const scatterBig = [-groundSize * 2, 0, -groundSize * 2, groundSize * 2, 0, groundSize * 2].join(" ");
+    const scatterBig = [-groundSize, 0, -groundSize, groundSize, 0, groundSize].join(" ");
     $$self.$$set = ($$props2) => {
       if ("groundSize" in $$props2)
         $$invalidate(0, groundSize = $$props2.groundSize);

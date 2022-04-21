@@ -1,12 +1,10 @@
 <script lang="ts">
-	import Host from './template/host.svelte'
-	import Home from './ui/home.svelte'
-	import { open_home, open_game, open_loading, open_help } from './timing'
-	import Text from './ui/text.svelte'
-	import Loading from './ui/loading.svelte'
-	import Help from './ui/help.svelte'
-
-	let groundSize = 100
+	import Game from 'src/game.svelte'
+	import Home from 'src/ui/home.svelte'
+	import { open_home, open_game, open_loading, open_help } from 'src/timing'
+	import Text from 'src/ui/text.svelte'
+	import Loading from 'src/ui/loading.svelte'
+	import Help from 'src/ui/help.svelte'
 </script>
 
 <Text />
@@ -22,5 +20,5 @@
 {/if}
 
 {#if $open_game}
-	<Host {groundSize} />
+	<Game />
 {/if}

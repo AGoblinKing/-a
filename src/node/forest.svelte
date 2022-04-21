@@ -16,6 +16,17 @@
 
 	const vary = 'property: scale; range: 1.5 1.25 1.5 3 2 3'
 
+	const trunkVary = 'property:scale; range: 2 1 2 5 2 5'
+
+	const boxBlocker = {
+		'ammo-body': 'type: static; mass: 0;',
+		'ammo-shape': 'type: box; fit: manual; halfExtents: 1 2.5 1; offset: 0 2.5 0'
+	}
+
+	const smolBoxBlocker = {
+		'ammo-body': 'type: static; mass: 0;',
+		'ammo-shape': 'type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0'
+	}
 	// look-controls="enabled: false;" wasd-controls="enabled;false;"
 </script>
 
@@ -88,13 +99,12 @@
 	windy
 	gltf-model="./glb/tree.glb"
 	{scatter}
-	vary="property: scale; range: 1 0.5 1 2 3 2"
-	ammo-body="type: static; mass: 0;"
-	ammo-shape="type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0"
+	vary="property: scale; range: 4 2 4 8 10 8"
+	{...boxBlocker}
 	host
 />
 
-<a-entity pool__tree="mixin: tree; size: 50" activate__tree />
+<a-entity pool__tree="mixin: tree; size: 150" activate__tree />
 
 <a-entity pool__mushroom="mixin: mushroom; size: 20" activate__mushroom />
 
@@ -119,7 +129,7 @@
 	gltf-model="./char/Horse.glb"
 	ammo-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;"
 	scale="0.35 0.35 0.35"
-	ammo-shape="type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; offset: 0 1 0"
+	ammo-shape="type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.5 0"
 	shadow="cast: true; receive: false;"
 	ai="type: random;"
 	motion-events
@@ -132,6 +142,38 @@
 
 <a-mixin id="sheep" host="sheep" gltf-model="./char/Sheep.glb" />
 <a-mixin id="cow" host="cow" gltf-model="./char/Cow.glb" />
+<a-mixin id="frog" host="frog" gltf-model="./char/easy_Frog.glb" color="white" />
 <a-entity pool__horse="mixin: animal; size: 5;" activate__horse />
 <a-entity pool__sheep="mixin: animal sheep; size: 5;" activate__sheep />
 <a-entity pool__animal="mixin: animal cow; size: 5;" activate__animal />
+<a-entity pool__animal="mixin: animal frog; size: 5;" activate__animal />
+
+<a-mixin
+	id="road"
+	gltf-model="./glb/road.glb"
+	vary="property:scale; range: 3 0.5 3 6 0.5 6"
+	mixin="smolitem"
+	{scatter}
+/>
+<a-entity pool__road="mixin: road; size: 10" activate__road />
+
+<a-mixin id="trunk" {...smolBoxBlocker} gltf-model="./glb/trunk.glb" vary={trunkVary} {scatter} />
+<a-entity pool__trunk="mixin: trunk; size: 20" activate__trunk />
+
+<a-mixin
+	id="trunkLong"
+	{...smolBoxBlocker}
+	gltf-model="./glb/trunkLong.glb"
+	vary={trunkVary}
+	{scatter}
+/>
+<a-entity pool__trunkLong="mixin: trunkLong; size: 20" activate__trunkLong />
+
+<a-mixin
+	id="pillarObelisk"
+	gltf-model="./glb/pillarObelisk.glb"
+	{...smolBoxBlocker}
+	vary={trunkVary}
+	{scatter}
+/>
+<a-entity pool__pillarObelisk="mixin: pillarObelisk; size: 5" activate__pillarObelisk />

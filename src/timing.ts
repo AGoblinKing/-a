@@ -11,6 +11,7 @@ export const scouter = new Value("green").save("scouter")
 export const videos = new Value(["BzIeSMDe85U", "MePBW53Rtpw", "lyDJOPuanO0"])
 export const video = new Value("doer1.8").save("video_2")
 
+export const open_ui = new Value(true).save("ui")
 export const open_home = new Value(true)
 export const open_game = new Value(false)
 export const open_text = new Value<string>(undefined)
@@ -42,10 +43,11 @@ open_game.on(($g) => {
     }
 })
 
-export const motd = new Value(`🎊v0.2.2🎊
+export const motd = new Value(`🎊v0.3.0🎊
 
-✅ WebSocket MMO
-❌ Recording Mode
+❌ Online MP ✅ Forest 
+❌ Cabin ✅ Animals
+❌ Recording Mode ❌ Mobile UI
 
 ❌ Targeting
 ❌ AI DOER ❌ Gameplay 

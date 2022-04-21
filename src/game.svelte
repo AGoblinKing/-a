@@ -1,27 +1,26 @@
 <script>
-	import '../component/scatter'
-	import '../component/activate'
-	import '../component/ring'
+	import 'src/component/scatter'
+	import 'src/component/activate'
+	import 'src/component/ring'
+	import 'src/component/webcam-vrm'
+	import 'src/component/vrm'
+	import 'src/component/uniforms'
+	import 'src/component/vary'
+	import 'src/component/random'
 
-	import '../component/webcam-vrm'
-	import '../component/vrm'
-	import '../component/uniforms'
-	import '../component/vary'
-	import '../component/random'
-
-	import Webcam from './webcam.svelte'
-	import CharactersMixins from './characters-assets.svelte'
-	import Characters from './characters.svelte'
-	import CameraFps from './camera-fps.svelte'
+	import Webcam from 'src/ui/webcam.svelte'
+	import CharactersMixins from 'src/node/characters-assets.svelte'
+	import Characters from 'src/node/characters.svelte'
+	import Camera from 'src/camera.svelte'
 
 	import Heard from 'src/ui/heard.svelte'
 	import { open_debug, open_stats } from 'src/timing'
-	import Forest from './forest.svelte'
+	import Forest from 'src/node/forest.svelte'
 	import Live from 'src/ui/live.svelte'
-	import Debug from './debug.svelte'
-	import House from './house.svelte'
+	import Debug from 'src/node/debug.svelte'
+	import House from 'src/node/house.svelte'
 	import Netdata from 'src/ui/netdata.svelte'
-	import Environmental from './environmental.svelte'
+	import Environmental from 'src/node/environmental.svelte'
 </script>
 
 <Webcam />
@@ -49,10 +48,10 @@
 		<CharactersMixins />
 	</a-assets>
 
-	<CameraFps />
+	<Camera />
 	<Characters />
-	<Forest />
+	<Forest groundSize={200} />
 	<House />
 	<Debug />
-	<Environmental />
+	<Environmental groundSize={200} />
 </a-scene>

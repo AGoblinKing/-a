@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { open_targeting } from 'src/timing'
 
-	import '../component/character-camera'
-	import '../component/copy'
-	import '../component/look'
+	import 'src/component/character-camera'
+	import 'src/component/copy'
+	import 'src/component/look'
 
 	let el
 	// change color on targets
@@ -59,7 +59,7 @@
 	id="bbs"
 	geometry
 	material=" opacity: 0.15; color: #00ff00; transparent: true; shader: flat;"
-	text="value: targeting info"
+	text="font: ./Roboto-msdf.json; value: targeting info"
 />
 
 <a-camera

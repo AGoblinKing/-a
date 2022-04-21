@@ -5343,6 +5343,11 @@
   // node_modules/svelte/internal/index.mjs
   function noop() {
   }
+  function assign(tar, src) {
+    for (const k2 in src)
+      tar[k2] = src[k2];
+    return tar;
+  }
   function run(fn) {
     return fn();
   }
@@ -5422,6 +5427,22 @@
       node.removeAttribute(attribute);
     else if (node.getAttribute(attribute) !== value)
       node.setAttribute(attribute, value);
+  }
+  function set_attributes(node, attributes) {
+    const descriptors = Object.getOwnPropertyDescriptors(node.__proto__);
+    for (const key in attributes) {
+      if (attributes[key] == null) {
+        node.removeAttribute(key);
+      } else if (key === "style") {
+        node.style.cssText = attributes[key];
+      } else if (key === "__value") {
+        node.value = node[key] = attributes[key];
+      } else if (descriptors[key] && descriptors[key].set) {
+        node[key] = attributes[key];
+      } else {
+        attr(node, key, attributes[key]);
+      }
+    }
   }
   function set_custom_element_data(node, prop, value) {
     if (prop in node) {
@@ -5540,6 +5561,38 @@
     }
   }
   var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
+  function get_spread_update(levels, updates) {
+    const update3 = {};
+    const to_null_out = {};
+    const accounted_for = { $$scope: 1 };
+    let i2 = levels.length;
+    while (i2--) {
+      const o2 = levels[i2];
+      const n2 = updates[i2];
+      if (n2) {
+        for (const key in o2) {
+          if (!(key in n2))
+            to_null_out[key] = 1;
+        }
+        for (const key in n2) {
+          if (!accounted_for[key]) {
+            update3[key] = n2[key];
+            accounted_for[key] = 1;
+          }
+        }
+        levels[i2] = n2;
+      } else {
+        for (const key in o2) {
+          accounted_for[key] = 1;
+        }
+      }
+    }
+    for (const key in to_null_out) {
+      if (!(key in update3))
+        update3[key] = void 0;
+    }
+    return update3;
+  }
   function create_component(block) {
     block && block.c();
   }
@@ -7052,6 +7105,7 @@
   var scouter = new Value("green").save("scouter");
   var videos = new Value(["BzIeSMDe85U", "MePBW53Rtpw", "lyDJOPuanO0"]);
   var video = new Value("doer1.8").save("video_2");
+  var open_ui = new Value(true).save("ui");
   var open_home = new Value(true);
   var open_game = new Value(false);
   var open_text = new Value(void 0);
@@ -7078,10 +7132,11 @@
       open_loading.set(true);
     }
   });
-  var motd = new Value(`\u{1F38A}v0.2.2\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.3.0\u{1F38A}
 
-\u2705 WebSocket MMO
-\u274C Recording Mode
+\u274C Online MP \u2705 Forest 
+\u274C Cabin \u2705 Animals
+\u274C Recording Mode \u274C Mobile UI
 
 \u274C Targeting
 \u274C AI DOER \u274C Gameplay 
@@ -33235,6 +33290,12 @@ reset scout color to green, persists
     ["notjoin" /* NotJoin */]: (items) => {
       guest.set(false);
       room.set("");
+    },
+    ["ui" /* UI */]: (items) => {
+      open_ui.set(true);
+    },
+    ["notui" /* NotUI */]: (items) => {
+      open_ui.set(false);
     }
   };
 
@@ -33617,7 +33678,7 @@ reset scout color to green, persists
     }
   });
 
-  // src/template/webcam.svelte
+  // src/ui/webcam.svelte
   function create_fragment(ctx) {
     let div;
     let video2;
@@ -33687,7 +33748,7 @@ reset scout color to green, persists
   };
   var webcam_default = Webcam;
 
-  // src/template/characters-assets.svelte
+  // src/node/characters-assets.svelte
   function create_fragment2(ctx) {
     let a_mixin;
     return {
@@ -33881,7 +33942,7 @@ reset scout color to green, persists
     "sample_size": 8
   };
 
-  // src/template/characters.svelte
+  // src/node/characters.svelte
   function create_fragment3(ctx) {
     let a_entity0;
     let a_entity0_vrm_value;
@@ -34376,7 +34437,7 @@ reset scout color to green, persists
     }
   });
 
-  // src/template/camera-fps.svelte
+  // src/camera.svelte
   function create_if_block(ctx) {
     let a_entity;
     let a_entity_material_value;
@@ -34434,7 +34495,7 @@ reset scout color to green, persists
         set_custom_element_data(a_mixin, "id", "bbs");
         set_custom_element_data(a_mixin, "geometry", "");
         set_custom_element_data(a_mixin, "material", " opacity: 0.15; color: #00ff00; transparent: true; shader: flat;");
-        set_custom_element_data(a_mixin, "text", "value: targeting info");
+        set_custom_element_data(a_mixin, "text", "font: ./Roboto-msdf.json; value: targeting info");
         set_custom_element_data(a_camera, "active", "");
         set_custom_element_data(a_camera, "fov", "75");
         set_custom_element_data(a_camera, "id", "camera");
@@ -34541,13 +34602,13 @@ reset scout color to green, persists
     }
     return [el, $open_targeting, collidestart, collideend, a_entity_binding];
   }
-  var Camera_fps = class extends SvelteComponent {
+  var Camera3 = class extends SvelteComponent {
     constructor(options) {
       super();
       init(this, options, instance3, create_fragment4, safe_not_equal, {});
     }
   };
-  var camera_fps_default = Camera_fps;
+  var camera_default = Camera3;
 
   // src/ui/heard.svelte
   function create_if_block2(ctx) {
@@ -34687,7 +34748,7 @@ gl_Position = mvPosition;
   });
 
   // src/shader/windy.vert
-  var windy_default = "vec4 Windy(in vec4 v) {\n    float t = -time * 0.001 + v.x*v.y*v.z*100.;\n    float dst = 0.025;\n    v.x += sin(t) * dst;\n    v.y += cos(t) * dst/10.;\n    v.z += sin(t) * dst;\n    return v; \n}";
+  var windy_default = "vec4 Windy(in vec4 v) {\n    float t = -time * 0.0005 + v.x*v.y*v.z*100.;\n    float dst = 0.025;\n    v.x += sin(t) * dst;\n    v.y += cos(t) * dst/10.;\n    v.z += sin(t) * dst;\n    return v; \n}";
 
   // src/component/windy.ts
   var main2 = `
@@ -34761,7 +34822,7 @@ gl_Position = mvPosition;
     }
   });
 
-  // src/template/forest.svelte
+  // src/node/forest.svelte
   function create_fragment6(ctx) {
     let a_mixin0;
     let t0;
@@ -34802,11 +34863,81 @@ gl_Position = mvPosition;
     let t17;
     let a_mixin11;
     let t18;
-    let a_entity7;
+    let a_mixin12;
     let t19;
-    let a_entity8;
+    let a_entity7;
     let t20;
+    let a_entity8;
+    let t21;
     let a_entity9;
+    let t22;
+    let a_entity10;
+    let t23;
+    let a_mixin13;
+    let t24;
+    let a_entity11;
+    let t25;
+    let a_mixin14;
+    let t26;
+    let a_entity12;
+    let t27;
+    let a_mixin15;
+    let t28;
+    let a_entity13;
+    let t29;
+    let a_mixin16;
+    let t30;
+    let a_entity14;
+    let a_mixin7_levels = [
+      { id: "tree" },
+      { class: "climbable" },
+      { shadow: "" },
+      { windy: "" },
+      { "gltf-model": "./glb/tree.glb" },
+      { scatter: ctx[1] },
+      {
+        vary: "property: scale; range: 4 2 4 8 10 8"
+      },
+      ctx[2],
+      { host: "" }
+    ];
+    let a_mixin7_data = {};
+    for (let i2 = 0; i2 < a_mixin7_levels.length; i2 += 1) {
+      a_mixin7_data = assign(a_mixin7_data, a_mixin7_levels[i2]);
+    }
+    let a_mixin14_levels = [
+      { id: "trunk" },
+      ctx[3],
+      { "gltf-model": "./glb/trunk.glb" },
+      { vary: trunkVary },
+      { scatter: ctx[1] }
+    ];
+    let a_mixin14_data = {};
+    for (let i2 = 0; i2 < a_mixin14_levels.length; i2 += 1) {
+      a_mixin14_data = assign(a_mixin14_data, a_mixin14_levels[i2]);
+    }
+    let a_mixin15_levels = [
+      { id: "trunkLong" },
+      ctx[3],
+      { "gltf-model": "./glb/trunkLong.glb" },
+      { vary: trunkVary },
+      { scatter: ctx[1] }
+    ];
+    let a_mixin15_data = {};
+    for (let i2 = 0; i2 < a_mixin15_levels.length; i2 += 1) {
+      a_mixin15_data = assign(a_mixin15_data, a_mixin15_levels[i2]);
+    }
+    let a_mixin16_levels = [
+      { id: "pillarObelisk" },
+      { "gltf-model": "./glb/pillarObelisk.glb" },
+      ctx[3],
+      { vary: trunkVary },
+      { scatter: ctx[1] }
+    ];
+    let a_mixin16_data = {};
+    for (let i2 = 0; i2 < a_mixin16_levels.length; i2 += 1) {
+      a_mixin16_data = assign(a_mixin16_data, a_mixin16_levels[i2]);
+    }
     return {
       c() {
         a_mixin0 = element("a-mixin");
@@ -34847,11 +34978,31 @@ gl_Position = mvPosition;
         t17 = space();
         a_mixin11 = element("a-mixin");
         t18 = space();
-        a_entity7 = element("a-entity");
+        a_mixin12 = element("a-mixin");
         t19 = space();
-        a_entity8 = element("a-entity");
+        a_entity7 = element("a-entity");
         t20 = space();
+        a_entity8 = element("a-entity");
+        t21 = space();
         a_entity9 = element("a-entity");
+        t22 = space();
+        a_entity10 = element("a-entity");
+        t23 = space();
+        a_mixin13 = element("a-mixin");
+        t24 = space();
+        a_entity11 = element("a-entity");
+        t25 = space();
+        a_mixin14 = element("a-mixin");
+        t26 = space();
+        a_entity12 = element("a-entity");
+        t27 = space();
+        a_mixin15 = element("a-mixin");
+        t28 = space();
+        a_entity13 = element("a-entity");
+        t29 = space();
+        a_mixin16 = element("a-mixin");
+        t30 = space();
+        a_entity14 = element("a-entity");
         set_custom_element_data(a_mixin0, "id", "smolitem");
         set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;collisionFilterGroup: 2;");
         set_custom_element_data(a_mixin0, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
@@ -34899,17 +35050,8 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
         set_custom_element_data(a_entity0, "pool__mountains", "mixin: mountains; size: 50");
         set_custom_element_data(a_entity0, "activate__mountains", "");
-        set_custom_element_data(a_mixin7, "id", "tree");
-        set_custom_element_data(a_mixin7, "class", "climbable");
-        set_custom_element_data(a_mixin7, "shadow", "");
-        set_custom_element_data(a_mixin7, "windy", "");
-        set_custom_element_data(a_mixin7, "gltf-model", "./glb/tree.glb");
-        set_custom_element_data(a_mixin7, "scatter", ctx[1]);
-        set_custom_element_data(a_mixin7, "vary", "property: scale; range: 1 0.5 1 2 3 2");
-        set_custom_element_data(a_mixin7, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin7, "ammo-shape", "type: box; fit: manual; halfExtents: 0.5 2.5 0.5; offset: 0 2.5 0");
-        set_custom_element_data(a_mixin7, "host", "");
-        set_custom_element_data(a_entity1, "pool__tree", "mixin: tree; size: 50");
+        set_attributes(a_mixin7, a_mixin7_data);
+        set_custom_element_data(a_entity1, "pool__tree", "mixin: tree; size: 150");
         set_custom_element_data(a_entity1, "activate__tree", "");
         set_custom_element_data(a_entity2, "pool__mushroom", "mixin: mushroom; size: 20");
         set_custom_element_data(a_entity2, "activate__mushroom", "");
@@ -34933,7 +35075,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin9, "gltf-model", "./char/Horse.glb");
         set_custom_element_data(a_mixin9, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
         set_custom_element_data(a_mixin9, "scale", "0.35 0.35 0.35");
-        set_custom_element_data(a_mixin9, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; offset: 0 1 0");
+        set_custom_element_data(a_mixin9, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.5 0");
         set_custom_element_data(a_mixin9, "shadow", "cast: true; receive: false;");
         set_custom_element_data(a_mixin9, "ai", "type: random;");
         set_custom_element_data(a_mixin9, "motion-events", "");
@@ -34948,12 +35090,34 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin11, "id", "cow");
         set_custom_element_data(a_mixin11, "host", "cow");
         set_custom_element_data(a_mixin11, "gltf-model", "./char/Cow.glb");
+        set_custom_element_data(a_mixin12, "id", "frog");
+        set_custom_element_data(a_mixin12, "host", "frog");
+        set_custom_element_data(a_mixin12, "gltf-model", "./char/easy_Frog.glb");
+        set_custom_element_data(a_mixin12, "color", "white");
         set_custom_element_data(a_entity7, "pool__horse", "mixin: animal; size: 5;");
         set_custom_element_data(a_entity7, "activate__horse", "");
         set_custom_element_data(a_entity8, "pool__sheep", "mixin: animal sheep; size: 5;");
         set_custom_element_data(a_entity8, "activate__sheep", "");
         set_custom_element_data(a_entity9, "pool__animal", "mixin: animal cow; size: 5;");
         set_custom_element_data(a_entity9, "activate__animal", "");
+        set_custom_element_data(a_entity10, "pool__animal", "mixin: animal frog; size: 5;");
+        set_custom_element_data(a_entity10, "activate__animal", "");
+        set_custom_element_data(a_mixin13, "id", "road");
+        set_custom_element_data(a_mixin13, "gltf-model", "./glb/road.glb");
+        set_custom_element_data(a_mixin13, "vary", "property:scale; range: 3 0.5 3 6 0.5 6");
+        set_custom_element_data(a_mixin13, "mixin", "smolitem");
+        set_custom_element_data(a_mixin13, "scatter", ctx[1]);
+        set_custom_element_data(a_entity11, "pool__road", "mixin: road; size: 10");
+        set_custom_element_data(a_entity11, "activate__road", "");
+        set_attributes(a_mixin14, a_mixin14_data);
+        set_custom_element_data(a_entity12, "pool__trunk", "mixin: trunk; size: 20");
+        set_custom_element_data(a_entity12, "activate__trunk", "");
+        set_attributes(a_mixin15, a_mixin15_data);
+        set_custom_element_data(a_entity13, "pool__trunklong", "mixin: trunkLong; size: 20");
+        set_custom_element_data(a_entity13, "activate__trunklong", "");
+        set_attributes(a_mixin16, a_mixin16_data);
+        set_custom_element_data(a_entity14, "pool__pillarobelisk", "mixin: pillarObelisk; size: 5");
+        set_custom_element_data(a_entity14, "activate__pillarobelisk", "");
       },
       m(target, anchor) {
         insert(target, a_mixin0, anchor);
@@ -34994,16 +35158,70 @@ gl_Position = mvPosition;
         insert(target, t17, anchor);
         insert(target, a_mixin11, anchor);
         insert(target, t18, anchor);
-        insert(target, a_entity7, anchor);
+        insert(target, a_mixin12, anchor);
         insert(target, t19, anchor);
-        insert(target, a_entity8, anchor);
+        insert(target, a_entity7, anchor);
         insert(target, t20, anchor);
+        insert(target, a_entity8, anchor);
+        insert(target, t21, anchor);
         insert(target, a_entity9, anchor);
+        insert(target, t22, anchor);
+        insert(target, a_entity10, anchor);
+        insert(target, t23, anchor);
+        insert(target, a_mixin13, anchor);
+        insert(target, t24, anchor);
+        insert(target, a_entity11, anchor);
+        insert(target, t25, anchor);
+        insert(target, a_mixin14, anchor);
+        insert(target, t26, anchor);
+        insert(target, a_entity12, anchor);
+        insert(target, t27, anchor);
+        insert(target, a_mixin15, anchor);
+        insert(target, t28, anchor);
+        insert(target, a_entity13, anchor);
+        insert(target, t29, anchor);
+        insert(target, a_mixin16, anchor);
+        insert(target, t30, anchor);
+        insert(target, a_entity14, anchor);
       },
       p(ctx2, [dirty]) {
         if (dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
           set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value);
         }
+        set_attributes(a_mixin7, a_mixin7_data = get_spread_update(a_mixin7_levels, [
+          { id: "tree" },
+          { class: "climbable" },
+          { shadow: "" },
+          { windy: "" },
+          { "gltf-model": "./glb/tree.glb" },
+          { scatter: ctx2[1] },
+          {
+            vary: "property: scale; range: 4 2 4 8 10 8"
+          },
+          ctx2[2],
+          { host: "" }
+        ]));
+        set_attributes(a_mixin14, a_mixin14_data = get_spread_update(a_mixin14_levels, [
+          { id: "trunk" },
+          ctx2[3],
+          { "gltf-model": "./glb/trunk.glb" },
+          { vary: trunkVary },
+          { scatter: ctx2[1] }
+        ]));
+        set_attributes(a_mixin15, a_mixin15_data = get_spread_update(a_mixin15_levels, [
+          { id: "trunkLong" },
+          ctx2[3],
+          { "gltf-model": "./glb/trunkLong.glb" },
+          { vary: trunkVary },
+          { scatter: ctx2[1] }
+        ]));
+        set_attributes(a_mixin16, a_mixin16_data = get_spread_update(a_mixin16_levels, [
+          { id: "pillarObelisk" },
+          { "gltf-model": "./glb/pillarObelisk.glb" },
+          ctx2[3],
+          { vary: trunkVary },
+          { scatter: ctx2[1] }
+        ]));
       },
       i: noop,
       o: noop,
@@ -35085,27 +35303,76 @@ gl_Position = mvPosition;
         if (detaching)
           detach(t18);
         if (detaching)
-          detach(a_entity7);
+          detach(a_mixin12);
         if (detaching)
           detach(t19);
         if (detaching)
-          detach(a_entity8);
+          detach(a_entity7);
         if (detaching)
           detach(t20);
         if (detaching)
+          detach(a_entity8);
+        if (detaching)
+          detach(t21);
+        if (detaching)
           detach(a_entity9);
+        if (detaching)
+          detach(t22);
+        if (detaching)
+          detach(a_entity10);
+        if (detaching)
+          detach(t23);
+        if (detaching)
+          detach(a_mixin13);
+        if (detaching)
+          detach(t24);
+        if (detaching)
+          detach(a_entity11);
+        if (detaching)
+          detach(t25);
+        if (detaching)
+          detach(a_mixin14);
+        if (detaching)
+          detach(t26);
+        if (detaching)
+          detach(a_entity12);
+        if (detaching)
+          detach(t27);
+        if (detaching)
+          detach(a_mixin15);
+        if (detaching)
+          detach(t28);
+        if (detaching)
+          detach(a_entity13);
+        if (detaching)
+          detach(t29);
+        if (detaching)
+          detach(a_mixin16);
+        if (detaching)
+          detach(t30);
+        if (detaching)
+          detach(a_entity14);
       }
     };
   }
   var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
+  var trunkVary = "property:scale; range: 2 1 2 5 2 5";
   function instance5($$self, $$props, $$invalidate) {
-    let { groundSize: groundSize2 = 100 } = $$props;
-    const scatter = [-groundSize2 / 2, 0, -groundSize2 / 2, groundSize2 / 2, 0, groundSize2 / 2].join(" ");
+    let { groundSize = 100 } = $$props;
+    const scatter = [-groundSize / 2, 0, -groundSize / 2, groundSize / 2, 0, groundSize / 2].join(" ");
+    const boxBlocker = {
+      "ammo-body": "type: static; mass: 0;",
+      "ammo-shape": "type: box; fit: manual; halfExtents: 1 2.5 1; offset: 0 2.5 0"
+    };
+    const smolBoxBlocker = {
+      "ammo-body": "type: static; mass: 0;",
+      "ammo-shape": "type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0"
+    };
     $$self.$$set = ($$props2) => {
       if ("groundSize" in $$props2)
-        $$invalidate(0, groundSize2 = $$props2.groundSize);
+        $$invalidate(0, groundSize = $$props2.groundSize);
     };
-    return [groundSize2, scatter];
+    return [groundSize, scatter, boxBlocker, smolBoxBlocker];
   }
   var Forest = class extends SvelteComponent {
     constructor(options) {
@@ -35164,7 +35431,7 @@ gl_Position = mvPosition;
   };
   var live_default = Live;
 
-  // src/template/debug.svelte
+  // src/node/debug.svelte
   var Debug = class extends SvelteComponent {
     constructor(options) {
       super();
@@ -35172,6 +35439,15 @@ gl_Position = mvPosition;
     }
   };
   var debug_default = Debug;
+
+  // src/node/volleyball.svelte
+  var Volleyball = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, null, safe_not_equal, {});
+    }
+  };
+  var volleyball_default = Volleyball;
 
   // src/component/grid.ts
   AFRAME.registerComponent("grid", {
@@ -35193,7 +35469,7 @@ gl_Position = mvPosition;
     }
   });
 
-  // src/template/house.svelte
+  // src/node/house.svelte
   function create_fragment8(ctx) {
     let a_entity0;
     let t0;
@@ -35206,8 +35482,13 @@ gl_Position = mvPosition;
     let a_entity2;
     let t4;
     let a_entity3;
+    let t5;
+    let a_entity4;
+    let volleyball;
+    let current;
     let mounted;
     let dispose;
+    volleyball = new volleyball_default({});
     return {
       c() {
         a_entity0 = element("a-entity");
@@ -35221,6 +35502,9 @@ gl_Position = mvPosition;
         a_entity2 = element("a-entity");
         t4 = space();
         a_entity3 = element("a-entity");
+        t5 = space();
+        a_entity4 = element("a-entity");
+        create_component(volleyball.$$.fragment);
         set_custom_element_data(a_entity0, "id", "foundation");
         set_custom_element_data(a_entity0, "ammo-shape", "type: box; fit: manual; halfExtents: 10 10 10; offset: 0 0 0");
         set_custom_element_data(a_mixin0, "id", "floor");
@@ -35237,6 +35521,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity2, "pool__walls", "");
         set_custom_element_data(a_entity2, "activate__walls", "");
         set_custom_element_data(a_entity3, "id", "floor");
+        set_custom_element_data(a_entity4, "position", "15 0 15");
       },
       m(target, anchor) {
         insert(target, a_entity0, anchor);
@@ -35250,14 +35535,26 @@ gl_Position = mvPosition;
         insert(target, a_entity2, anchor);
         insert(target, t4, anchor);
         insert(target, a_entity3, anchor);
+        insert(target, t5, anchor);
+        insert(target, a_entity4, anchor);
+        mount_component(volleyball, a_entity4, null);
+        current = true;
         if (!mounted) {
           dispose = listen(a_entity0, "collisionstart", collideStart);
           mounted = true;
         }
       },
       p: noop,
-      i: noop,
-      o: noop,
+      i(local) {
+        if (current)
+          return;
+        transition_in(volleyball.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(volleyball.$$.fragment, local);
+        current = false;
+      },
       d(detaching) {
         if (detaching)
           detach(a_entity0);
@@ -35281,6 +35578,11 @@ gl_Position = mvPosition;
           detach(t4);
         if (detaching)
           detach(a_entity3);
+        if (detaching)
+          detach(t5);
+        if (detaching)
+          detach(a_entity4);
+        destroy_component(volleyball);
         mounted = false;
         dispose();
       }
@@ -35385,7 +35687,7 @@ gl_Position = mvPosition;
   };
   var netdata_default = Netdata;
 
-  // src/template/environmental.svelte
+  // src/node/environmental.svelte
   function create_fragment10(ctx) {
     let a_plane;
     let a_plane_width_value;
@@ -35488,10 +35790,10 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin0, "geometry", "");
         set_custom_element_data(a_mixin0, "scale", "15 5 10");
         set_custom_element_data(a_mixin0, "vary", "property: scale; range: 1 1 1 1.5 1.5 1.5");
-        set_custom_element_data(a_entity3, "pool__cloud", "mixin: shadow cloud; size: 30");
+        set_custom_element_data(a_entity3, "pool__cloud", "mixin: shadow cloud; size: 50");
         set_custom_element_data(a_entity3, "activate__cloud", "");
         set_custom_element_data(a_entity3, "position", a_entity3_position_value = "0 35 " + ctx[0]);
-        set_custom_element_data(a_entity3, "animation", a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx[0] * 2 + "; dur: " + 400 * 300 * 2 + "; loop: true;");
+        set_custom_element_data(a_entity3, "animation", a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;");
         set_custom_element_data(a_entity3, "animation__scale", a_entity3_animation__scale_value = "property:object3D.scale; from: 0 0 0; to:1 1 1; dur: " + 400 * 300 / 2 + "; loop: true; dir: alternate");
         set_custom_element_data(a_entity4, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
         set_custom_element_data(a_mixin1, "id", "floof");
@@ -35570,7 +35872,7 @@ gl_Position = mvPosition;
         if (dirty & 1 && a_entity3_position_value !== (a_entity3_position_value = "0 35 " + ctx2[0])) {
           set_custom_element_data(a_entity3, "position", a_entity3_position_value);
         }
-        if (dirty & 1 && a_entity3_animation_value !== (a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx2[0] * 2 + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
+        if (dirty & 1 && a_entity3_animation_value !== (a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx2[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
           set_custom_element_data(a_entity3, "animation", a_entity3_animation_value);
         }
         if (dirty & 1 && a_mixin1_vary_value !== (a_mixin1_vary_value = "property: position; range: -" + ctx2[0] * 0.75 + " 0 -" + ctx2[0] * 0.75 + " " + ctx2[0] * 0.75 + " 4 " + ctx2[0] * 0.75)) {
@@ -35637,13 +35939,13 @@ gl_Position = mvPosition;
   var sky_dark = "#003";
   function instance8($$self, $$props, $$invalidate) {
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
-    let { groundSize: groundSize2 = 100 } = $$props;
-    const scatterBig = [-groundSize2 * 2, 0, -groundSize2 * 2, groundSize2 * 2, 0, groundSize2 * 2].join(" ");
+    let { groundSize = 100 } = $$props;
+    const scatterBig = [-groundSize, 0, -groundSize, groundSize, 0, groundSize].join(" ");
     $$self.$$set = ($$props2) => {
       if ("groundSize" in $$props2)
-        $$invalidate(0, groundSize2 = $$props2.groundSize);
+        $$invalidate(0, groundSize = $$props2.groundSize);
     };
-    return [groundSize2, str, scatterBig];
+    return [groundSize, str, scatterBig];
   }
   var Environmental = class extends SvelteComponent {
     constructor(options) {
@@ -35653,7 +35955,7 @@ gl_Position = mvPosition;
   };
   var environmental_default = Environmental;
 
-  // src/template/host.svelte
+  // src/game.svelte
   function create_fragment11(ctx) {
     let webcam;
     let t0;
@@ -35674,7 +35976,7 @@ gl_Position = mvPosition;
     let t6;
     let charactersmixins;
     let t7;
-    let camerafps;
+    let camera3;
     let t8;
     let characters;
     let t9;
@@ -35692,12 +35994,12 @@ gl_Position = mvPosition;
     live = new live_default({});
     netdata = new netdata_default({});
     charactersmixins = new characters_assets_default({});
-    camerafps = new camera_fps_default({});
+    camera3 = new camera_default({});
     characters = new characters_default({});
-    forest = new forest_default({});
+    forest = new forest_default({ props: { groundSize: 200 } });
     house = new house_default({});
     debug_1 = new debug_default({});
-    environmental = new environmental_default({});
+    environmental = new environmental_default({ props: { groundSize: 200 } });
     return {
       c() {
         create_component(webcam.$$.fragment);
@@ -35718,7 +36020,7 @@ gl_Position = mvPosition;
         t6 = space();
         create_component(charactersmixins.$$.fragment);
         t7 = space();
-        create_component(camerafps.$$.fragment);
+        create_component(camera3.$$.fragment);
         t8 = space();
         create_component(characters.$$.fragment);
         t9 = space();
@@ -35764,7 +36066,7 @@ gl_Position = mvPosition;
         append(a_assets, t6);
         mount_component(charactersmixins, a_assets, null);
         append(a_scene, t7);
-        mount_component(camerafps, a_scene, null);
+        mount_component(camera3, a_scene, null);
         append(a_scene, t8);
         mount_component(characters, a_scene, null);
         append(a_scene, t9);
@@ -35793,7 +36095,7 @@ gl_Position = mvPosition;
         transition_in(live.$$.fragment, local);
         transition_in(netdata.$$.fragment, local);
         transition_in(charactersmixins.$$.fragment, local);
-        transition_in(camerafps.$$.fragment, local);
+        transition_in(camera3.$$.fragment, local);
         transition_in(characters.$$.fragment, local);
         transition_in(forest.$$.fragment, local);
         transition_in(house.$$.fragment, local);
@@ -35807,7 +36109,7 @@ gl_Position = mvPosition;
         transition_out(live.$$.fragment, local);
         transition_out(netdata.$$.fragment, local);
         transition_out(charactersmixins.$$.fragment, local);
-        transition_out(camerafps.$$.fragment, local);
+        transition_out(camera3.$$.fragment, local);
         transition_out(characters.$$.fragment, local);
         transition_out(forest.$$.fragment, local);
         transition_out(house.$$.fragment, local);
@@ -35831,7 +36133,7 @@ gl_Position = mvPosition;
         if (detaching)
           detach(a_scene);
         destroy_component(charactersmixins);
-        destroy_component(camerafps);
+        destroy_component(camera3);
         destroy_component(characters);
         destroy_component(forest);
         destroy_component(house);
@@ -35847,13 +36149,13 @@ gl_Position = mvPosition;
     component_subscribe($$self, open_debug, ($$value) => $$invalidate(1, $open_debug = $$value));
     return [$open_stats, $open_debug];
   }
-  var Host = class extends SvelteComponent {
+  var Game = class extends SvelteComponent {
     constructor(options) {
       super();
       init(this, options, instance9, create_fragment11, safe_not_equal, {});
     }
   };
-  var host_default = Host;
+  var game_default = Game;
 
   // src/ui/title.svelte
   function create_fragment12(ctx) {
@@ -35869,7 +36171,7 @@ gl_Position = mvPosition;
 			<offset class="svelte-1uatlh0"><b class="svelte-1uatlh0">L</b>ife</offset></div></div>`;
         t8 = space();
         center = element("center");
-        center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-1uatlh0"><img style="border:0px;height:4vh;" src="https://cdn.ko-fi.com/cdn/kofi1.png?v=3" border="0" alt="Buy Me a Coffee at ko-fi.com"/></a> 
+        center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-1uatlh0"><img style="border:0px;height:4vh;" src="./kofi1.png" alt="Buy Me a Coffee at ko-fi.com"/></a> 
 	<a href="https://discord.gg/8tkEQwsmwM" target="_blank" class="svelte-1uatlh0">\u{1F4AC}</a>`;
         attr(div3, "class", "intro svelte-1uatlh0");
       },
@@ -36602,30 +36904,29 @@ gl_Position = mvPosition;
     };
   }
   function create_if_block5(ctx) {
-    let host2;
+    let game;
     let current;
-    host2 = new host_default({ props: { groundSize } });
+    game = new game_default({});
     return {
       c() {
-        create_component(host2.$$.fragment);
+        create_component(game.$$.fragment);
       },
       m(target, anchor) {
-        mount_component(host2, target, anchor);
+        mount_component(game, target, anchor);
         current = true;
       },
-      p: noop,
       i(local) {
         if (current)
           return;
-        transition_in(host2.$$.fragment, local);
+        transition_in(game.$$.fragment, local);
         current = true;
       },
       o(local) {
-        transition_out(host2.$$.fragment, local);
+        transition_out(game.$$.fragment, local);
         current = false;
       },
       d(detaching) {
-        destroy_component(host2, detaching);
+        destroy_component(game, detaching);
       }
     };
   }
@@ -36733,7 +37034,6 @@ gl_Position = mvPosition;
         }
         if (ctx2[3]) {
           if (if_block3) {
-            if_block3.p(ctx2, dirty);
             if (dirty & 8) {
               transition_in(if_block3, 1);
             }
@@ -36792,7 +37092,6 @@ gl_Position = mvPosition;
       }
     };
   }
-  var groundSize = 100;
   function instance15($$self, $$props, $$invalidate) {
     let $open_help;
     let $open_loading;

@@ -1,7 +1,7 @@
 import { guest, guests, host, room } from "./component/net"
 import { currentVRM, mirrorVRM } from "./component/vrm"
 import state from "./state"
-import { avatar_current, avatar_doer, camera, camera_el, do_echo, do_vary, open_debug, open_heard, open_help, open_hostid, open_stats, open_targeting, scouter, size, toggle_selfie, toggle_visible, voice_current } from "./timing"
+import { avatar_current, avatar_doer, camera, camera_el, do_echo, do_vary, open_debug, open_heard, open_help, open_hostid, open_stats, open_targeting, open_ui, scouter, size, toggle_selfie, toggle_visible, voice_current } from "./timing"
 import { Value } from "./value"
 
 export const binds = new Value<{ [key: string]: string }>(clone(state.binds)).save("binds")
@@ -85,6 +85,9 @@ export enum EControl {
 
     Room = "room",
     NotRoom = "notroom",
+
+    UI = "ui",
+    NotUI = "notui",
 }
 
 
@@ -225,6 +228,13 @@ export const controls = {
     [EControl.NotJoin]: (items: string[]) => {
         guest.set(false)
         room.set("")
+    },
+    [EControl.UI]: (items: string[]) => {
+        open_ui.set(true)
+    },
+    [EControl.NotUI]: (items: string[]) => {
+        open_ui.set(false)
     }
+
 }
 
