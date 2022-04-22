@@ -65,8 +65,6 @@
 
 	// reset analog to 50%
 	function stop_interact(e) {
-		x = 0.5
-		y = 0.5
 		e.preventDefault()
 		e.stopPropagation()
 
@@ -88,7 +86,9 @@
 <div class="bind-bar">
 	{#each bound as b}
 		<div
-			class="button bound {$key_down === '' + b ? 'down' : 'inactive'} {$binds[b] ? 'active' : ''}"
+			class="button bounce bound {$key_down === '' + b ? 'down' : 'inactive'} {$binds[b]
+				? 'active'
+				: ''}"
 			on:click={() => {
 				key_down.set('' + b)
 				key_up.set('' + b)
@@ -101,7 +101,7 @@
 
 <div class="motion">
 	<div
-		class="speak button"
+		class="speak button bounce"
 		on:click={() => {
 			open_text.set('')
 			requestAnimationFrame(() => {
@@ -112,7 +112,7 @@
 		💬
 	</div>
 	<div
-		class="jump button"
+		class="jump button bounce"
 		on:click={() => {
 			key_down.set(' ')
 			setTimeout(() => {
@@ -123,7 +123,7 @@
 		🦘
 	</div>
 	<div
-		class="move button"
+		class="move button bounce"
 		on:touchmove={update}
 		on:touchend={stop_interact}
 		on:mousemove={update}
@@ -215,6 +215,10 @@
 	.move.button {
 		width: 10vh;
 		height: 10vh;
+	}
+	.button:hover,
+	.button:active {
+		transform: none;
 	}
 	.active {
 		opacity: 0.65;

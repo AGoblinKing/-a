@@ -7012,7 +7012,12 @@
       "h": "hi! | hey ! | hey you! | hello...",
       "i": "it's doer 1 | it's me, doer 1 | doer 1 that's me",
       "f1": "control help",
-      "f2": "control not help"
+      "f2": "control not help",
+      "1": "welcome to a.goblin.life",
+      "2": "these are keybinds",
+      "3": "press ~ or enter then type ~ bind 3 to change this bind",
+      "4": "press f1 to explore other commands",
+      "5": "good luck, have fun"
     },
     "vars": {},
     "selfie": false,
@@ -35801,7 +35806,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin1, "material", "color: white; shader: flat;");
         set_custom_element_data(a_mixin1, "vary", a_mixin1_vary_value = "property: position; range: -" + ctx[0] * 0.75 + " 0 -" + ctx[0] * 0.75 + " " + ctx[0] * 0.75 + " 4 " + ctx[0] * 0.75);
         set_custom_element_data(a_mixin1, "floaty", "");
-        set_custom_element_data(a_entity5, "pool__floof", "mixin: floof; size: 500;");
+        set_custom_element_data(a_entity5, "pool__floof", "mixin: floof; size: 100;");
         set_custom_element_data(a_entity5, "activate__floof", "");
         set_custom_element_data(a_mixin2, "id", "birds");
         set_custom_element_data(a_mixin2, "geometry", "");
@@ -35976,7 +35981,7 @@ gl_Position = mvPosition;
         div = element("div");
         t0 = text(t0_value);
         t1 = space();
-        attr(div, "class", div_class_value = "button bound " + (ctx[3] === "" + ctx[15] ? "down" : "inactive") + " " + (ctx[4][ctx[15]] ? "active" : "") + " svelte-1fz5yc8");
+        attr(div, "class", div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[15] ? "down" : "inactive") + " " + (ctx[4][ctx[15]] ? "active" : "") + " svelte-1mz97uq");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -35991,7 +35996,7 @@ gl_Position = mvPosition;
         ctx = new_ctx;
         if (dirty & 32 && t0_value !== (t0_value = (ctx[5][ctx[15]] || ctx[15]) + ""))
           set_data(t0, t0_value);
-        if (dirty & 24 && div_class_value !== (div_class_value = "button bound " + (ctx[3] === "" + ctx[15] ? "down" : "inactive") + " " + (ctx[4][ctx[15]] ? "active" : "") + " svelte-1fz5yc8")) {
+        if (dirty & 24 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[15] ? "down" : "inactive") + " " + (ctx[4][ctx[15]] ? "active" : "") + " svelte-1mz97uq")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -36036,14 +36041,14 @@ gl_Position = mvPosition;
         t4 = space();
         div4 = element("div");
         div3 = element("div");
-        attr(div0, "class", "bind-bar svelte-1fz5yc8");
-        attr(div1, "class", "speak button svelte-1fz5yc8");
-        attr(div2, "class", "jump button svelte-1fz5yc8");
-        attr(div3, "class", "dot svelte-1fz5yc8");
+        attr(div0, "class", "bind-bar svelte-1mz97uq");
+        attr(div1, "class", "speak button bounce svelte-1mz97uq");
+        attr(div2, "class", "jump button bounce svelte-1mz97uq");
+        attr(div3, "class", "dot svelte-1mz97uq");
         set_style(div3, "margin-top", ctx[2] * 100 + "%");
         set_style(div3, "margin-left", ctx[1] * 100 + "%");
-        attr(div4, "class", "move button svelte-1fz5yc8");
-        attr(div5, "class", "motion svelte-1fz5yc8");
+        attr(div4, "class", "move button bounce svelte-1mz97uq");
+        attr(div5, "class", "motion svelte-1mz97uq");
       },
       m(target, anchor) {
         insert(target, div0, anchor);
@@ -36173,8 +36178,6 @@ gl_Position = mvPosition;
       }
     }
     function stop_interact(e) {
-      $$invalidate(1, x2 = 0.5);
-      $$invalidate(2, y2 = 0.5);
       e.preventDefault();
       e.stopPropagation();
       interacting = false;
