@@ -206,6 +206,9 @@
 		right: 0;
 		z-index: 5;
 		bottom: 0;
+	}
+
+	.motion .button {
 		opacity: 0.65;
 	}
 	.motion .button {
@@ -216,9 +219,12 @@
 		width: 10vh;
 		height: 10vh;
 	}
+	.motion .button:active,
 	.button:hover,
+	.motion .button:hover,
 	.button:active {
 		transform: none;
+		opacity: 1;
 	}
 	.active {
 		opacity: 0.65;

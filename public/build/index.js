@@ -33834,7 +33834,7 @@ reset back to 1 for size
   }
   AFRAME.registerComponent("wasd-controller", {
     schema: {
-      speed: { type: "number", default: 0.25 },
+      speed: { type: "number", default: 0.2 },
       rot: { type: "number", default: 25e-4 }
     },
     init() {
@@ -33857,8 +33857,9 @@ reset back to 1 for size
       if (key_map.$["shift"]) {
         intensity = 1.5;
       }
+      vec32.y = 5;
       if (key_map.$[" "] && o3d.position.y < 0.5) {
-        hop = 3 * delta;
+        hop = delta;
         this.jump();
         vec32.y = hop;
       }
@@ -35981,7 +35982,7 @@ gl_Position = mvPosition;
         div = element("div");
         t0 = text(t0_value);
         t1 = space();
-        attr(div, "class", div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[15] ? "down" : "inactive") + " " + (ctx[4][ctx[15]] ? "active" : "") + " svelte-1mz97uq");
+        attr(div, "class", div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[15] ? "down" : "inactive") + " " + (ctx[4][ctx[15]] ? "active" : "") + " svelte-dpgq5h");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -35996,7 +35997,7 @@ gl_Position = mvPosition;
         ctx = new_ctx;
         if (dirty & 32 && t0_value !== (t0_value = (ctx[5][ctx[15]] || ctx[15]) + ""))
           set_data(t0, t0_value);
-        if (dirty & 24 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[15] ? "down" : "inactive") + " " + (ctx[4][ctx[15]] ? "active" : "") + " svelte-1mz97uq")) {
+        if (dirty & 24 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[15] ? "down" : "inactive") + " " + (ctx[4][ctx[15]] ? "active" : "") + " svelte-dpgq5h")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -36041,14 +36042,14 @@ gl_Position = mvPosition;
         t4 = space();
         div4 = element("div");
         div3 = element("div");
-        attr(div0, "class", "bind-bar svelte-1mz97uq");
-        attr(div1, "class", "speak button bounce svelte-1mz97uq");
-        attr(div2, "class", "jump button bounce svelte-1mz97uq");
-        attr(div3, "class", "dot svelte-1mz97uq");
+        attr(div0, "class", "bind-bar svelte-dpgq5h");
+        attr(div1, "class", "speak button bounce svelte-dpgq5h");
+        attr(div2, "class", "jump button bounce svelte-dpgq5h");
+        attr(div3, "class", "dot svelte-dpgq5h");
         set_style(div3, "margin-top", ctx[2] * 100 + "%");
         set_style(div3, "margin-left", ctx[1] * 100 + "%");
-        attr(div4, "class", "move button bounce svelte-1mz97uq");
-        attr(div5, "class", "motion svelte-1mz97uq");
+        attr(div4, "class", "move button bounce svelte-dpgq5h");
+        attr(div5, "class", "motion svelte-dpgq5h");
       },
       m(target, anchor) {
         insert(target, div0, anchor);

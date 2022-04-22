@@ -16,7 +16,7 @@ function getRoot(o3d: Object3D) {
 }
 AFRAME.registerComponent("wasd-controller", {
     schema: {
-        speed: { type: "number", default: 0.25 },
+        speed: { type: "number", default: 0.2 },
         rot: { type: "number", default: 0.0025 },
     },
 
@@ -43,10 +43,10 @@ AFRAME.registerComponent("wasd-controller", {
         if (key_map.$["shift"]) {
             intensity = 1.5
         }
-
+        vec3.y = 5
         // TODO: or if colliding with a climbable
         if (key_map.$[" "] && o3d.position.y < 0.5) {
-            hop = 3 * delta
+            hop = delta
             // we're jumping 
             this.jump()
 
