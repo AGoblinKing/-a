@@ -1,9 +1,9 @@
 <script>
-	import { open_live } from 'src/timing'
+	import { ismobile, open_live } from 'src/timing'
 </script>
 
 <div
-	class="action {$open_live ? 'live' : ''}"
+	class="action {$open_live ? 'live' : ''} {$ismobile ? 'mobile' : ''}"
 	on:click={() => {
 		open_live.set(!open_live.$)
 	}}
@@ -29,7 +29,9 @@
 	.action:hover {
 		box-shadow: 0 0 5vh #0f0;
 	}
-
+	.mobile.action {
+		transform: none !important;
+	}
 	.action.live {
 		background-color: red;
 		box-shadow: 0 0 5vh #f00;

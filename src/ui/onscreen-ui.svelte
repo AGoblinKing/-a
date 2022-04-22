@@ -3,7 +3,7 @@
 
 	import { binds, binds_icon } from 'src/control'
 	import { key_down, key_map, key_up } from 'src/input'
-	import { open_text } from 'src/timing'
+	import { ismobile, open_text } from 'src/timing'
 
 	let bound = [1, 2, 3, 4, 5]
 	let holder
@@ -83,7 +83,7 @@
 	}
 </script>
 
-<div class="bind-bar">
+<div class="bind-bar {$ismobile ? 'mobile' : ''}">
 	{#each bound as b}
 		<div
 			class="button bounce bound {$key_down === '' + b ? 'down' : 'inactive'} {$binds[b]
@@ -99,7 +99,7 @@
 	{/each}
 </div>
 
-<div class="motion">
+<div class="motion {$ismobile ? 'mobile' : ''}">
 	<div
 		class="speak button bounce"
 		on:click={() => {
@@ -228,5 +228,9 @@
 	}
 	.active {
 		opacity: 0.65;
+	}
+
+	.mobile .button {
+		transform: none !important;
 	}
 </style>

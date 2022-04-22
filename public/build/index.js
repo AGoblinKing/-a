@@ -5340,6 +5340,36 @@
     }
   });
 
+  // node_modules/is-mobile/index.js
+  var require_is_mobile = __commonJS({
+    "node_modules/is-mobile/index.js"(exports, module) {
+      "use strict";
+      module.exports = isMobile;
+      module.exports.isMobile = isMobile;
+      module.exports.default = isMobile;
+      var mobileRE = /(android|bb\d+|meego).+mobile|armv7l|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series[46]0|samsungbrowser|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i;
+      var notMobileRE = /CrOS/;
+      var tabletRE = /android|ipad|playbook|silk/i;
+      function isMobile(opts) {
+        if (!opts)
+          opts = {};
+        let ua = opts.ua;
+        if (!ua && typeof navigator !== "undefined")
+          ua = navigator.userAgent;
+        if (ua && ua.headers && typeof ua.headers["user-agent"] === "string") {
+          ua = ua.headers["user-agent"];
+        }
+        if (typeof ua !== "string")
+          return false;
+        let result = mobileRE.test(ua) && !notMobileRE.test(ua) || !!opts.tablet && tabletRE.test(ua);
+        if (!result && opts.tablet && opts.featureDetect && navigator && navigator.maxTouchPoints > 1 && ua.indexOf("Macintosh") !== -1 && ua.indexOf("Safari") !== -1) {
+          result = true;
+        }
+        return result;
+      }
+    }
+  });
+
   // node_modules/svelte/internal/index.mjs
   function noop() {
   }
@@ -7116,6 +7146,7 @@
   };
 
   // src/timing.ts
+  var import_is_mobile = __toESM(require_is_mobile());
   var tick = new Value(0);
   var avatar_current = new Value(state_default.avatar.current).save("avatar_current_2");
   var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
@@ -7143,6 +7174,7 @@
   var toggle_visible = new Value(state_default.visible).save("visible");
   var do_echo = new Value(true).save("do_echo");
   var do_vary = new Value(true);
+  var ismobile = new Value((0, import_is_mobile.default)());
   var time = new Value(new AFRAME.THREE.Uniform(0));
   var size = new Value(new AFRAME.THREE.Vector3(1, 1, 1));
   open_game.on(($g) => {
@@ -7150,15 +7182,14 @@
       open_loading.set(true);
     }
   });
-  var motd = new Value(`\u{1F38A}v0.3.0\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.3.2\u{1F38A}
 
 \u274C Online MP \u2705 Forest 
 \u274C Cabin \u2705 Animals
-\u274C Recording Mode \u274C Mobile UI
+\u274C Recording Mode
 
 \u274C Targeting
-\u274C AI DOER \u274C Gameplay 
-\u274C Factions \u274C Rules 
+\u274C AI  \u274C Gameplay 
 
 Camera data is processed by mediapipe via tensorflow locally.
 
@@ -34684,31 +34715,38 @@ reset back to 1 for size
   function create_fragment5(ctx) {
     let div;
     let input;
+    let div_class_value;
     return {
       c() {
         div = element("div");
         input = element("input");
         attr(input, "type", "text");
-        attr(input, "class", "entry svelte-fyhv1x");
+        attr(input, "class", "entry svelte-rqoyr3");
         input.readOnly = true;
-        attr(div, "class", "lofi svelte-fyhv1x");
+        attr(div, "class", div_class_value = "lofi " + (ctx[1] ? "mobile" : "") + " svelte-rqoyr3");
       },
       m(target, anchor) {
         insert(target, div, anchor);
         append(div, input);
-        ctx[1](input);
+        ctx[2](input);
       },
-      p: noop,
+      p(ctx2, [dirty]) {
+        if (dirty & 2 && div_class_value !== (div_class_value = "lofi " + (ctx2[1] ? "mobile" : "") + " svelte-rqoyr3")) {
+          attr(div, "class", div_class_value);
+        }
+      },
       i: noop,
       o: noop,
       d(detaching) {
         if (detaching)
           detach(div);
-        ctx[1](null);
+        ctx[2](null);
       }
     };
   }
   function instance4($$self, $$props, $$invalidate) {
+    let $ismobile;
+    component_subscribe($$self, ismobile, ($$value) => $$invalidate(1, $ismobile = $$value));
     let text2;
     talk.on(() => {
       if (!text2 || !talk.$)
@@ -34721,7 +34759,7 @@ reset back to 1 for size
         $$invalidate(0, text2);
       });
     }
-    return [text2, input_binding];
+    return [text2, $ismobile, input_binding];
   }
   var Heard = class extends SvelteComponent {
     constructor(options) {
@@ -35396,17 +35434,17 @@ gl_Position = mvPosition;
     return {
       c() {
         div = element("div");
-        attr(div, "class", div_class_value = "action " + (ctx[0] ? "live" : "") + " svelte-1tjqpdx");
+        attr(div, "class", div_class_value = "action " + (ctx[0] ? "live" : "") + " " + (ctx[1] ? "mobile" : "") + " svelte-67wfs3");
       },
       m(target, anchor) {
         insert(target, div, anchor);
         if (!mounted) {
-          dispose = listen(div, "click", ctx[1]);
+          dispose = listen(div, "click", ctx[2]);
           mounted = true;
         }
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1 && div_class_value !== (div_class_value = "action " + (ctx2[0] ? "live" : "") + " svelte-1tjqpdx")) {
+        if (dirty & 3 && div_class_value !== (div_class_value = "action " + (ctx2[0] ? "live" : "") + " " + (ctx2[1] ? "mobile" : "") + " svelte-67wfs3")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -35422,11 +35460,13 @@ gl_Position = mvPosition;
   }
   function instance6($$self, $$props, $$invalidate) {
     let $open_live;
+    let $ismobile;
     component_subscribe($$self, open_live, ($$value) => $$invalidate(0, $open_live = $$value));
+    component_subscribe($$self, ismobile, ($$value) => $$invalidate(1, $ismobile = $$value));
     const click_handler = () => {
       open_live.set(!open_live.$);
     };
-    return [$open_live, click_handler];
+    return [$open_live, $ismobile, click_handler];
   }
   var Live = class extends SvelteComponent {
     constructor(options) {
@@ -35963,26 +36003,26 @@ gl_Position = mvPosition;
   // src/ui/onscreen-ui.svelte
   function get_each_context(ctx, list, i2) {
     const child_ctx = ctx.slice();
-    child_ctx[15] = list[i2];
+    child_ctx[16] = list[i2];
     return child_ctx;
   }
   function create_each_block(ctx) {
     let div;
-    let t0_value = (ctx[5][ctx[15]] || ctx[15]) + "";
+    let t0_value = (ctx[6][ctx[16]] || ctx[16]) + "";
     let t0;
     let t1;
     let div_class_value;
     let mounted;
     let dispose;
     function click_handler() {
-      return ctx[10](ctx[15]);
+      return ctx[11](ctx[16]);
     }
     return {
       c() {
         div = element("div");
         t0 = text(t0_value);
         t1 = space();
-        attr(div, "class", div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[15] ? "down" : "inactive") + " " + (ctx[4][ctx[15]] ? "active" : "") + " svelte-dpgq5h");
+        attr(div, "class", div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[16] ? "down" : "inactive") + " " + (ctx[5][ctx[16]] ? "active" : "") + " svelte-17160hh");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -35995,9 +36035,9 @@ gl_Position = mvPosition;
       },
       p(new_ctx, dirty) {
         ctx = new_ctx;
-        if (dirty & 32 && t0_value !== (t0_value = (ctx[5][ctx[15]] || ctx[15]) + ""))
+        if (dirty & 64 && t0_value !== (t0_value = (ctx[6][ctx[16]] || ctx[16]) + ""))
           set_data(t0, t0_value);
-        if (dirty & 24 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[15] ? "down" : "inactive") + " " + (ctx[4][ctx[15]] ? "active" : "") + " svelte-dpgq5h")) {
+        if (dirty & 48 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[16] ? "down" : "inactive") + " " + (ctx[5][ctx[16]] ? "active" : "") + " svelte-17160hh")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -36011,6 +36051,7 @@ gl_Position = mvPosition;
   }
   function create_fragment11(ctx) {
     let div0;
+    let div0_class_value;
     let t0;
     let div5;
     let div1;
@@ -36019,9 +36060,10 @@ gl_Position = mvPosition;
     let t4;
     let div4;
     let div3;
+    let div5_class_value;
     let mounted;
     let dispose;
-    let each_value = ctx[6];
+    let each_value = ctx[7];
     let each_blocks = [];
     for (let i2 = 0; i2 < each_value.length; i2 += 1) {
       each_blocks[i2] = create_each_block(get_each_context(ctx, each_value, i2));
@@ -36042,14 +36084,14 @@ gl_Position = mvPosition;
         t4 = space();
         div4 = element("div");
         div3 = element("div");
-        attr(div0, "class", "bind-bar svelte-dpgq5h");
-        attr(div1, "class", "speak button bounce svelte-dpgq5h");
-        attr(div2, "class", "jump button bounce svelte-dpgq5h");
-        attr(div3, "class", "dot svelte-dpgq5h");
+        attr(div0, "class", div0_class_value = "bind-bar " + (ctx[3] ? "mobile" : "") + " svelte-17160hh");
+        attr(div1, "class", "speak button bounce svelte-17160hh");
+        attr(div2, "class", "jump button bounce svelte-17160hh");
+        attr(div3, "class", "dot svelte-17160hh");
         set_style(div3, "margin-top", ctx[2] * 100 + "%");
         set_style(div3, "margin-left", ctx[1] * 100 + "%");
-        attr(div4, "class", "move button bounce svelte-dpgq5h");
-        attr(div5, "class", "motion svelte-dpgq5h");
+        attr(div4, "class", "move button bounce svelte-17160hh");
+        attr(div5, "class", div5_class_value = "motion " + (ctx[3] ? "mobile" : "") + " svelte-17160hh");
       },
       m(target, anchor) {
         insert(target, div0, anchor);
@@ -36064,25 +36106,25 @@ gl_Position = mvPosition;
         append(div5, t4);
         append(div5, div4);
         append(div4, div3);
-        ctx[13](div4);
+        ctx[14](div4);
         if (!mounted) {
           dispose = [
-            listen(div1, "click", ctx[11]),
-            listen(div2, "click", ctx[12]),
-            listen(div4, "touchmove", ctx[7]),
-            listen(div4, "touchend", ctx[8]),
-            listen(div4, "mousemove", ctx[7]),
-            listen(div4, "mousedown", ctx[9]),
-            listen(div4, "touchstart", ctx[9]),
-            listen(div4, "mouseleave", ctx[8]),
-            listen(div4, "mouseup", ctx[8])
+            listen(div1, "click", ctx[12]),
+            listen(div2, "click", ctx[13]),
+            listen(div4, "touchmove", ctx[8]),
+            listen(div4, "touchend", ctx[9]),
+            listen(div4, "mousemove", ctx[8]),
+            listen(div4, "mousedown", ctx[10]),
+            listen(div4, "touchstart", ctx[10]),
+            listen(div4, "mouseleave", ctx[9]),
+            listen(div4, "mouseup", ctx[9])
           ];
           mounted = true;
         }
       },
       p(ctx2, [dirty]) {
-        if (dirty & 120) {
-          each_value = ctx2[6];
+        if (dirty & 240) {
+          each_value = ctx2[7];
           let i2;
           for (i2 = 0; i2 < each_value.length; i2 += 1) {
             const child_ctx = get_each_context(ctx2, each_value, i2);
@@ -36099,11 +36141,17 @@ gl_Position = mvPosition;
           }
           each_blocks.length = each_value.length;
         }
+        if (dirty & 8 && div0_class_value !== (div0_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-17160hh")) {
+          attr(div0, "class", div0_class_value);
+        }
         if (dirty & 4) {
           set_style(div3, "margin-top", ctx2[2] * 100 + "%");
         }
         if (dirty & 2) {
           set_style(div3, "margin-left", ctx2[1] * 100 + "%");
+        }
+        if (dirty & 8 && div5_class_value !== (div5_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-17160hh")) {
+          attr(div5, "class", div5_class_value);
         }
       },
       i: noop,
@@ -36116,19 +36164,21 @@ gl_Position = mvPosition;
           detach(t0);
         if (detaching)
           detach(div5);
-        ctx[13](null);
+        ctx[14](null);
         mounted = false;
         run_all(dispose);
       }
     };
   }
   function instance9($$self, $$props, $$invalidate) {
+    let $ismobile;
     let $key_down;
     let $binds;
     let $binds_icon;
-    component_subscribe($$self, key_down, ($$value) => $$invalidate(3, $key_down = $$value));
-    component_subscribe($$self, binds, ($$value) => $$invalidate(4, $binds = $$value));
-    component_subscribe($$self, binds_icon, ($$value) => $$invalidate(5, $binds_icon = $$value));
+    component_subscribe($$self, ismobile, ($$value) => $$invalidate(3, $ismobile = $$value));
+    component_subscribe($$self, key_down, ($$value) => $$invalidate(4, $key_down = $$value));
+    component_subscribe($$self, binds, ($$value) => $$invalidate(5, $binds = $$value));
+    component_subscribe($$self, binds_icon, ($$value) => $$invalidate(6, $binds_icon = $$value));
     let bound = [1, 2, 3, 4, 5];
     let holder;
     let x2 = 0.5;
@@ -36219,6 +36269,7 @@ gl_Position = mvPosition;
       holder,
       x2,
       y2,
+      $ismobile,
       $key_down,
       $binds,
       $binds_icon,
@@ -36846,6 +36897,7 @@ gl_Position = mvPosition;
   function create_if_block4(ctx) {
     let div;
     let input;
+    let div_class_value;
     let mounted;
     let dispose;
     return {
@@ -36854,19 +36906,19 @@ gl_Position = mvPosition;
         input = element("input");
         attr(input, "id", "text");
         attr(input, "type", "text");
-        attr(input, "class", "entry svelte-1uxq3x0");
-        attr(div, "class", "lofi svelte-1uxq3x0");
+        attr(input, "class", "entry svelte-3kaq8e");
+        attr(div, "class", div_class_value = "lofi " + (ctx[2] ? "mobile" : "") + " svelte-3kaq8e");
       },
       m(target, anchor) {
         insert(target, div, anchor);
         append(div, input);
         set_input_value(input, ctx[1]);
-        ctx[5](input);
+        ctx[6](input);
         if (!mounted) {
           dispose = [
-            listen(input, "input", ctx[4]),
-            listen(input, "blur", ctx[3]),
-            listen(input, "keydown", ctx[6])
+            listen(input, "input", ctx[5]),
+            listen(input, "blur", ctx[4]),
+            listen(input, "keydown", ctx[7])
           ];
           mounted = true;
         }
@@ -36875,11 +36927,14 @@ gl_Position = mvPosition;
         if (dirty & 2 && input.value !== ctx2[1]) {
           set_input_value(input, ctx2[1]);
         }
+        if (dirty & 4 && div_class_value !== (div_class_value = "lofi " + (ctx2[2] ? "mobile" : "") + " svelte-3kaq8e")) {
+          attr(div, "class", div_class_value);
+        }
       },
       d(detaching) {
         if (detaching)
           detach(div);
-        ctx[5](null);
+        ctx[6](null);
         mounted = false;
         run_all(dispose);
       }
@@ -36925,7 +36980,9 @@ gl_Position = mvPosition;
   }
   function instance13($$self, $$props, $$invalidate) {
     let $open_text;
+    let $ismobile;
     component_subscribe($$self, open_text, ($$value) => $$invalidate(1, $open_text = $$value));
+    component_subscribe($$self, ismobile, ($$value) => $$invalidate(2, $ismobile = $$value));
     let ele;
     function send() {
       talk.set(open_text.$);
@@ -36975,6 +37032,7 @@ gl_Position = mvPosition;
     return [
       ele,
       $open_text,
+      $ismobile,
       send,
       escape2,
       input_input_handler,

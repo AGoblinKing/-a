@@ -2,6 +2,8 @@ import type { Object3D } from "three";
 import state from "./state";
 import { Value } from "./value";
 
+import mobile from "is-mobile"
+
 export const tick = new Value(0)
 export const avatar_current = new Value<string>(state.avatar.current).save("avatar_current_2")
 export const avatar_doer = new Value<string>(state.avatar.doer).save("avatar_doer_1")
@@ -32,6 +34,7 @@ export const toggle_selfie = new Value(state.selfie).save("selfie")
 export const toggle_visible = new Value(state.visible).save("visible")
 export const do_echo = new Value(true).save("do_echo")
 export const do_vary = new Value(true)
+export const ismobile = new Value(mobile())
 
 export const time = new Value(new AFRAME.THREE.Uniform(0))
 
@@ -42,15 +45,14 @@ open_game.on(($g) => {
     }
 })
 
-export const motd = new Value(`🎊v0.3.0🎊
+export const motd = new Value(`🎊v0.3.2🎊
 
 ❌ Online MP ✅ Forest 
 ❌ Cabin ✅ Animals
-❌ Recording Mode ❌ Mobile UI
+❌ Recording Mode
 
 ❌ Targeting
-❌ AI DOER ❌ Gameplay 
-❌ Factions ❌ Rules 
+❌ AI  ❌ Gameplay 
 
 Camera data is processed by mediapipe via tensorflow locally.
 

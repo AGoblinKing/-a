@@ -3,7 +3,7 @@
 
 	import { key_down } from 'src/input'
 
-	import { open_text } from 'src/timing'
+	import { ismobile, open_text } from 'src/timing'
 	let ele
 	function send() {
 		// send to text system
@@ -33,7 +33,7 @@
 </script>
 
 {#if $open_text !== undefined}
-	<div class="lofi">
+	<div class="lofi {$ismobile ? 'mobile' : ''}">
 		<input
 			id="text"
 			type="text"
@@ -98,5 +98,8 @@
 		transform: perspective(400px) rotateX(30deg);
 		pointer-events: all;
 		z-index: 15;
+	}
+	.mobile.lofi {
+		transform: translate(-50%, 0) !important;
 	}
 </style>

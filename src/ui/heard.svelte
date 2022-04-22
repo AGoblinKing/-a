@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { talk } from 'src/chat'
+	import { ismobile } from 'src/timing'
 
 	let text
 
@@ -10,7 +11,7 @@
 	})
 </script>
 
-<div class="lofi">
+<div class="lofi {$ismobile ? 'mobile' : ''}">
 	<input type="text" class="entry" bind:this={text} readonly />
 </div>
 
@@ -52,5 +53,9 @@
 		transform: translate(-50%, 0) perspective(400px) rotateX(-20deg);
 		pointer-events: all;
 		z-index: 2;
+	}
+
+	.mobile.lofi {
+		transform: translate(-50%, 0) !important;
 	}
 </style>
