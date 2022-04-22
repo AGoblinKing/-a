@@ -14,19 +14,24 @@
 	import Camera from 'src/camera.svelte'
 
 	import Heard from 'src/ui/heard.svelte'
-	import { open_debug, open_stats } from 'src/timing'
+	import { open_debug, open_stats, open_ui } from 'src/timing'
 	import Forest from 'src/node/forest.svelte'
 	import Live from 'src/ui/live.svelte'
 	import Debug from 'src/node/debug.svelte'
 	import House from 'src/node/house.svelte'
 	import Netdata from 'src/ui/netdata.svelte'
 	import Environmental from 'src/node/environmental.svelte'
+	import OnscreenUi from './ui/onscreen-ui.svelte'
 </script>
 
 <Webcam />
-<Heard />
-<Live />
 <Netdata />
+
+{#if $open_ui}
+	<Live />
+	<Heard />
+	<OnscreenUi />
+{/if}
 
 <a-scene
 	keyboard-shortcuts="enterVR: false"

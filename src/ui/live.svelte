@@ -13,7 +13,7 @@
 	.action {
 		cursor: pointer;
 		top: 1vh;
-		right: 1vh;
+		right: 0vh;
 		position: absolute;
 
 		width: 3vh;
@@ -23,9 +23,15 @@
 		border: 1vh solid #222;
 		opacity: 0.75;
 		z-index: 5;
+		box-shadow: 0 0 5vh rgb(0 65 150);
+		transform: translate(-50%, 0) perspective(400px) rotateX(-20deg) rotateY(-20deg);
+	}
+	.action:hover {
+		box-shadow: 0 0 5vh #0f0;
 	}
 
 	.action.live {
 		background-color: red;
+		box-shadow: 0 0 5vh #f00;
 	}
 </style>

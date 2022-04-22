@@ -1,11 +1,12 @@
-import { guest, guests, host, room } from "./component/net"
-import { currentVRM, mirrorVRM } from "./component/vrm"
+import { guest, host, room } from "./component/net"
+
 import state from "./state"
-import { avatar_current, avatar_doer, camera, camera_el, do_echo, do_vary, open_debug, open_heard, open_help, open_hostid, open_stats, open_targeting, open_ui, scouter, size, toggle_selfie, toggle_visible, voice_current } from "./timing"
+import { avatar_current, avatar_doer, do_echo, do_vary, open_debug, open_help, open_hostid, open_stats, open_targeting, open_ui, scouter, size, toggle_selfie, toggle_visible, voice_current } from "./timing"
 import { Value } from "./value"
 
 export const binds = new Value<{ [key: string]: string }>(clone(state.binds)).save("binds")
 export const vars = new Value<{ [key: string]: string }>(clone(state.vars)).save("vars")
+export const binds_icon = new Value<{ [key: string]: string }>(clone(state.binds_icon)).save("binds_icon")
 
 function clone(target: any) {
     return Object.fromEntries(Object.entries(target)) as { [key: string]: any }
@@ -88,6 +89,9 @@ export enum EControl {
 
     UI = "ui",
     NotUI = "notui",
+
+    Icon = "icon",
+    NotIcon = "noticon",
 }
 
 
@@ -160,12 +164,6 @@ export const controls = {
     [EControl.NotStats]: (items: string[]) => {
         open_stats.set(false)
     },
-    [EControl.Heard]: (items: string[]) => {
-        open_heard.set(true)
-    },
-    [EControl.NotHeard]: (items: string[]) => {
-        open_heard.set(false)
-    },
     [EControl.Voice]: (items: string[]) => {
         voice_current.set(items.slice(2).join(" "))
     },
@@ -234,7 +232,14 @@ export const controls = {
     },
     [EControl.NotUI]: (items: string[]) => {
         open_ui.set(false)
+    },
+    [EControl.Icon]: (items: string[]) => {
+        binds_icon.$[items[2]] = items.slice(3).join(" ")
+    },
+    [EControl.NotIcon]: (items: string[]) => {
+        delete binds_icon.$[items[2]]
     }
+
 
 }
 

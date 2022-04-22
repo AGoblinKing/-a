@@ -1,6 +1,6 @@
 
 import { binds, controls, vars } from "./control";
-import { key_down } from "./keyboard";
+import { key_down } from "./input";
 
 import { do_echo, open_live, voice_current } from "./timing";
 import { Value } from "./value";

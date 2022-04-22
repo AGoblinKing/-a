@@ -20,10 +20,6 @@
 </div>
 
 <style>
-	.broadcast {
-		position: absolute;
-		z-index: 5;
-	}
 	.hidden {
 		display: none;
 	}

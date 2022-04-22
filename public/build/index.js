@@ -5462,6 +5462,13 @@
   function set_input_value(input, value) {
     input.value = value == null ? "" : value;
   }
+  function set_style(node, key, value, important) {
+    if (value === null) {
+      node.style.removeProperty(key);
+    } else {
+      node.style.setProperty(key, value, important ? "important" : "");
+    }
+  }
   var current_component;
   function set_current_component(component) {
     current_component = component;
@@ -5629,7 +5636,7 @@
     }
     component.$$.dirty[i2 / 31 | 0] |= 1 << i2 % 31;
   }
-  function init(component, options, instance16, create_fragment19, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance17, create_fragment20, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5652,7 +5659,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance16 ? instance16(component, options.props || {}, (i2, ret, ...rest) => {
+    $$.ctx = instance17 ? instance17(component, options.props || {}, (i2, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i2], $$.ctx[i2] = value)) {
         if (!$$.skip_bound && $$.bound[i2])
@@ -5665,7 +5672,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment19 ? create_fragment19($$.ctx) : false;
+    $$.fragment = create_fragment20 ? create_fragment20($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -7013,6 +7020,13 @@
       doer: "./vrm/doer.2.vrm",
       current: "./vrm/doer.2.vrm"
     },
+    binds_icon: {
+      1: "\u{1F525}",
+      2: "\u{1F3F4}\u200D\u2620\uFE0F",
+      3: "\u{1F495}",
+      4: "\u{1F3DC}\uFE0F",
+      5: "\u{1F32A}\uFE0F"
+    },
     visible: true
   };
 
@@ -7103,7 +7117,7 @@
   var voice_current = new Value("Guy | UK English").save("voice_current");
   var voice_doer = new Value("Aus | UK English").save("voice_doer");
   var scouter = new Value("green").save("scouter");
-  var videos = new Value(["BzIeSMDe85U", "MePBW53Rtpw", "lyDJOPuanO0"]);
+  var videos = new Value(["ntV3RbQmLAU", "BzIeSMDe85U", "MePBW53Rtpw"]);
   var video = new Value("doer1.8").save("video_2");
   var open_ui = new Value(true).save("ui");
   var open_home = new Value(true);
@@ -7112,7 +7126,6 @@
   var open_loading = new Value(false);
   var open_help = new Value(false);
   var open_stats = new Value(false).save("stats");
-  var open_heard = new Value(true).save("heard");
   var open_debug = new Value(false).save("debugger");
   var open_targeting = new Value(false).save("targeting_3");
   var open_live = new Value(false);
@@ -7208,11 +7221,6 @@ show fps stats
 ~ not stats
 hide fps stats
 
-~ heard
-show top heard messages
-
-~ not heard
-hide top heard messages
 
 ~ help
 show this help
@@ -7250,6 +7258,28 @@ set your targeting UI to be that color, persists
 
 ~ not scouter
 reset scout color to green, persists
+
+~ ui
+show onscreen UI
+
+~ not ui
+hide onscreen UI
+
+~ icon bindkey ...icon
+show icon on onscreen ui for that bindkey (1-5)
+
+~ not icon bindkey
+remove icon from onscreen ui for that bindkey (1-5)
+
+~ size number
+set size of your avatar
+
+~ not size
+reset back to 1 for size
+
+~ join ...room
+~ host
+
 `);
 
   // node_modules/three/build/three.module.js
@@ -9781,11 +9811,11 @@ reset scout color to green, persists
       this.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
       return this;
     }
-    project(camera3) {
-      return this.applyMatrix4(camera3.matrixWorldInverse).applyMatrix4(camera3.projectionMatrix);
+    project(camera2) {
+      return this.applyMatrix4(camera2.matrixWorldInverse).applyMatrix4(camera2.projectionMatrix);
     }
-    unproject(camera3) {
-      return this.applyMatrix4(camera3.projectionMatrixInverse).applyMatrix4(camera3.matrixWorld);
+    unproject(camera2) {
+      return this.applyMatrix4(camera2.projectionMatrixInverse).applyMatrix4(camera2.matrixWorld);
     }
     transformDirection(m2) {
       const x2 = this.x, y2 = this.y, z2 = this.z;
@@ -14178,8 +14208,8 @@ reset scout color to green, persists
       const currentMinFilter = texture.minFilter;
       if (texture.minFilter === LinearMipmapLinearFilter)
         texture.minFilter = LinearFilter;
-      const camera3 = new CubeCamera(1, 10, this);
-      camera3.update(renderer, mesh);
+      const camera2 = new CubeCamera(1, 10, this);
+      camera2.update(renderer, mesh);
       texture.minFilter = currentMinFilter;
       mesh.geometry.dispose();
       mesh.material.dispose();
@@ -15265,8 +15295,8 @@ reset scout color to green, persists
           }));
           boxMesh.geometry.deleteAttribute("normal");
           boxMesh.geometry.deleteAttribute("uv");
-          boxMesh.onBeforeRender = function(renderer2, scene3, camera3) {
-            this.matrixWorld.copyPosition(camera3.matrixWorld);
+          boxMesh.onBeforeRender = function(renderer2, scene3, camera2) {
+            this.matrixWorld.copyPosition(camera2.matrixWorld);
           };
           Object.defineProperty(boxMesh.material, "envMap", {
             get: function() {
@@ -15777,10 +15807,10 @@ reset scout color to green, persists
     this.uniform = uniform;
     this.numPlanes = 0;
     this.numIntersection = 0;
-    this.init = function(planes, enableLocalClipping, camera3) {
+    this.init = function(planes, enableLocalClipping, camera2) {
       const enabled = planes.length !== 0 || enableLocalClipping || numGlobalPlanes !== 0 || localClippingEnabled;
       localClippingEnabled = enableLocalClipping;
-      globalState = projectPlanes(planes, camera3, 0);
+      globalState = projectPlanes(planes, camera2, 0);
       numGlobalPlanes = planes.length;
       return enabled;
     };
@@ -15792,7 +15822,7 @@ reset scout color to green, persists
       renderingShadows = false;
       resetGlobalState();
     };
-    this.setState = function(material, camera3, useCache) {
+    this.setState = function(material, camera2, useCache) {
       const planes = material.clippingPlanes, clipIntersection = material.clipIntersection, clipShadows = material.clipShadows;
       const materialProperties = properties.get(material);
       if (!localClippingEnabled || planes === null || planes.length === 0 || renderingShadows && !clipShadows) {
@@ -15805,7 +15835,7 @@ reset scout color to green, persists
         const nGlobal = renderingShadows ? 0 : numGlobalPlanes, lGlobal = nGlobal * 4;
         let dstArray = materialProperties.clippingState || null;
         uniform.value = dstArray;
-        dstArray = projectPlanes(planes, camera3, lGlobal, useCache);
+        dstArray = projectPlanes(planes, camera2, lGlobal, useCache);
         for (let i2 = 0; i2 !== lGlobal; ++i2) {
           dstArray[i2] = globalState[i2];
         }
@@ -15822,13 +15852,13 @@ reset scout color to green, persists
       scope.numPlanes = numGlobalPlanes;
       scope.numIntersection = 0;
     }
-    function projectPlanes(planes, camera3, dstOffset, skipTransform) {
+    function projectPlanes(planes, camera2, dstOffset, skipTransform) {
       const nPlanes = planes !== null ? planes.length : 0;
       let dstArray = null;
       if (nPlanes !== 0) {
         dstArray = uniform.value;
         if (skipTransform !== true || dstArray === null) {
-          const flatSize = dstOffset + nPlanes * 4, viewMatrix = camera3.matrixWorldInverse;
+          const flatSize = dstOffset + nPlanes * 4, viewMatrix = camera2.matrixWorldInverse;
           viewNormalMatrix.getNormalMatrix(viewMatrix);
           if (dstArray === null || dstArray.length < flatSize) {
             dstArray = new Float32Array(flatSize);
@@ -19033,13 +19063,13 @@ reset scout color to green, persists
         state2.version = nextVersion++;
       }
     }
-    function setupView(lights, camera3) {
+    function setupView(lights, camera2) {
       let directionalLength = 0;
       let pointLength = 0;
       let spotLength = 0;
       let rectAreaLength = 0;
       let hemiLength = 0;
-      const viewMatrix = camera3.matrixWorldInverse;
+      const viewMatrix = camera2.matrixWorldInverse;
       for (let i2 = 0, l2 = lights.length; i2 < l2; i2++) {
         const light2 = lights[i2];
         if (light2.isDirectionalLight) {
@@ -19108,8 +19138,8 @@ reset scout color to green, persists
     function setupLights(physicallyCorrectLights) {
       lights.setup(lightsArray, physicallyCorrectLights);
     }
-    function setupLightsView(camera3) {
-      lights.setupView(lightsArray, camera3);
+    function setupLightsView(camera2) {
+      lights.setupView(lightsArray, camera2);
     }
     const state2 = {
       lightsArray,
@@ -19236,7 +19266,7 @@ reset scout color to green, persists
     this.autoUpdate = true;
     this.needsUpdate = false;
     this.type = PCFShadowMap;
-    this.render = function(lights, scene2, camera3) {
+    this.render = function(lights, scene2, camera2) {
       if (scope.enabled === false)
         return;
       if (scope.autoUpdate === false && scope.needsUpdate === false)
@@ -19298,17 +19328,17 @@ reset scout color to green, persists
           _state.viewport(_viewport);
           shadow.updateMatrices(light2, vp);
           _frustum = shadow.getFrustum();
-          renderObject(scene2, camera3, shadow.camera, light2, this.type);
+          renderObject(scene2, camera2, shadow.camera, light2, this.type);
         }
         if (!shadow.isPointLightShadow && this.type === VSMShadowMap) {
-          VSMPass(shadow, camera3);
+          VSMPass(shadow, camera2);
         }
         shadow.needsUpdate = false;
       }
       scope.needsUpdate = false;
       _renderer.setRenderTarget(currentRenderTarget, activeCubeFace, activeMipmapLevel);
     };
-    function VSMPass(shadow, camera3) {
+    function VSMPass(shadow, camera2) {
       const geometry = _objects.update(fullScreenMesh);
       if (shadowMaterialVertical.defines.VSM_SAMPLES !== shadow.blurSamples) {
         shadowMaterialVertical.defines.VSM_SAMPLES = shadow.blurSamples;
@@ -19321,13 +19351,13 @@ reset scout color to green, persists
       shadowMaterialVertical.uniforms.radius.value = shadow.radius;
       _renderer.setRenderTarget(shadow.mapPass);
       _renderer.clear();
-      _renderer.renderBufferDirect(camera3, null, geometry, shadowMaterialVertical, fullScreenMesh, null);
+      _renderer.renderBufferDirect(camera2, null, geometry, shadowMaterialVertical, fullScreenMesh, null);
       shadowMaterialHorizontal.uniforms.shadow_pass.value = shadow.mapPass.texture;
       shadowMaterialHorizontal.uniforms.resolution.value = shadow.mapSize;
       shadowMaterialHorizontal.uniforms.radius.value = shadow.radius;
       _renderer.setRenderTarget(shadow.map);
       _renderer.clear();
-      _renderer.renderBufferDirect(camera3, null, geometry, shadowMaterialHorizontal, fullScreenMesh, null);
+      _renderer.renderBufferDirect(camera2, null, geometry, shadowMaterialHorizontal, fullScreenMesh, null);
     }
     function getDepthMaterial(object, geometry, material, light2, shadowCameraNear, shadowCameraFar, type) {
       let result = null;
@@ -19375,10 +19405,10 @@ reset scout color to green, persists
       }
       return result;
     }
-    function renderObject(object, camera3, shadowCamera, light2, type) {
+    function renderObject(object, camera2, shadowCamera, light2, type) {
       if (object.visible === false)
         return;
-      const visible = object.layers.test(camera3.layers);
+      const visible = object.layers.test(camera2.layers);
       if (visible && (object.isMesh || object.isLine || object.isPoints)) {
         if ((object.castShadow || object.receiveShadow && type === VSMShadowMap) && (!object.frustumCulled || _frustum.intersectsObject(object))) {
           object.modelViewMatrix.multiplyMatrices(shadowCamera.matrixWorldInverse, object.matrixWorld);
@@ -19402,7 +19432,7 @@ reset scout color to green, persists
       }
       const children2 = object.children;
       for (let i2 = 0, l2 = children2.length; i2 < l2; i2++) {
-        renderObject(children2[i2], camera3, shadowCamera, light2, type);
+        renderObject(children2[i2], camera2, shadowCamera, light2, type);
       }
     }
   }
@@ -21612,7 +21642,7 @@ reset scout color to green, persists
       }
       const cameraLPos = new Vector3();
       const cameraRPos = new Vector3();
-      function setProjectionFromUnion(camera3, cameraL2, cameraR2) {
+      function setProjectionFromUnion(camera2, cameraL2, cameraR2) {
         cameraLPos.setFromMatrixPosition(cameraL2.matrixWorld);
         cameraRPos.setFromMatrixPosition(cameraR2.matrixWorld);
         const ipd = cameraLPos.distanceTo(cameraRPos);
@@ -21628,32 +21658,32 @@ reset scout color to green, persists
         const right = near * rightFov;
         const zOffset = ipd / (-leftFov + rightFov);
         const xOffset = zOffset * -leftFov;
-        cameraL2.matrixWorld.decompose(camera3.position, camera3.quaternion, camera3.scale);
-        camera3.translateX(xOffset);
-        camera3.translateZ(zOffset);
-        camera3.matrixWorld.compose(camera3.position, camera3.quaternion, camera3.scale);
-        camera3.matrixWorldInverse.copy(camera3.matrixWorld).invert();
+        cameraL2.matrixWorld.decompose(camera2.position, camera2.quaternion, camera2.scale);
+        camera2.translateX(xOffset);
+        camera2.translateZ(zOffset);
+        camera2.matrixWorld.compose(camera2.position, camera2.quaternion, camera2.scale);
+        camera2.matrixWorldInverse.copy(camera2.matrixWorld).invert();
         const near2 = near + zOffset;
         const far2 = far + zOffset;
         const left2 = left - xOffset;
         const right2 = right + (ipd - xOffset);
         const top2 = topFov * far / far2 * near2;
         const bottom2 = bottomFov * far / far2 * near2;
-        camera3.projectionMatrix.makePerspective(left2, right2, top2, bottom2, near2, far2);
+        camera2.projectionMatrix.makePerspective(left2, right2, top2, bottom2, near2, far2);
       }
-      function updateCamera(camera3, parent) {
+      function updateCamera(camera2, parent) {
         if (parent === null) {
-          camera3.matrixWorld.copy(camera3.matrix);
+          camera2.matrixWorld.copy(camera2.matrix);
         } else {
-          camera3.matrixWorld.multiplyMatrices(parent.matrixWorld, camera3.matrix);
+          camera2.matrixWorld.multiplyMatrices(parent.matrixWorld, camera2.matrix);
         }
-        camera3.matrixWorldInverse.copy(camera3.matrixWorld).invert();
+        camera2.matrixWorldInverse.copy(camera2.matrixWorld).invert();
       }
-      this.updateCamera = function(camera3) {
+      this.updateCamera = function(camera2) {
         if (session === null)
           return;
-        cameraVR.near = cameraR.near = cameraL.near = camera3.near;
-        cameraVR.far = cameraR.far = cameraL.far = camera3.far;
+        cameraVR.near = cameraR.near = cameraL.near = camera2.near;
+        cameraVR.far = cameraR.far = cameraL.far = camera2.far;
         if (_currentDepthNear !== cameraVR.near || _currentDepthFar !== cameraVR.far) {
           session.updateRenderState({
             depthNear: cameraVR.near,
@@ -21662,19 +21692,19 @@ reset scout color to green, persists
           _currentDepthNear = cameraVR.near;
           _currentDepthFar = cameraVR.far;
         }
-        const parent = camera3.parent;
+        const parent = camera2.parent;
         const cameras2 = cameraVR.cameras;
         updateCamera(cameraVR, parent);
         for (let i2 = 0; i2 < cameras2.length; i2++) {
           updateCamera(cameras2[i2], parent);
         }
         cameraVR.matrixWorld.decompose(cameraVR.position, cameraVR.quaternion, cameraVR.scale);
-        camera3.position.copy(cameraVR.position);
-        camera3.quaternion.copy(cameraVR.quaternion);
-        camera3.scale.copy(cameraVR.scale);
-        camera3.matrix.copy(cameraVR.matrix);
-        camera3.matrixWorld.copy(cameraVR.matrixWorld);
-        const children2 = camera3.children;
+        camera2.position.copy(cameraVR.position);
+        camera2.quaternion.copy(cameraVR.quaternion);
+        camera2.scale.copy(cameraVR.scale);
+        camera2.matrix.copy(cameraVR.matrix);
+        camera2.matrixWorld.copy(cameraVR.matrixWorld);
+        const children2 = camera2.children;
         for (let i2 = 0, l2 = children2.length; i2 < l2; i2++) {
           children2[i2].updateMatrixWorld(true);
         }
@@ -21732,15 +21762,15 @@ reset scout color to green, persists
                 renderer.setRenderTarget(newRenderTarget);
               }
             }
-            const camera3 = cameras[i2];
-            camera3.matrix.fromArray(view.transform.matrix);
-            camera3.projectionMatrix.fromArray(view.projectionMatrix);
-            camera3.viewport.set(viewport.x, viewport.y, viewport.width, viewport.height);
+            const camera2 = cameras[i2];
+            camera2.matrix.fromArray(view.transform.matrix);
+            camera2.projectionMatrix.fromArray(view.projectionMatrix);
+            camera2.viewport.set(viewport.x, viewport.y, viewport.width, viewport.height);
             if (i2 === 0) {
-              cameraVR.matrix.copy(camera3.matrix);
+              cameraVR.matrix.copy(camera2.matrix);
             }
             if (cameraVRNeedsUpdate === true) {
-              cameraVR.cameras.push(camera3);
+              cameraVR.cameras.push(camera2);
             }
           }
         }
@@ -22511,11 +22541,11 @@ reset scout color to green, persists
         }
       }
     }
-    this.renderBufferDirect = function(camera3, scene2, geometry, material, object, group) {
+    this.renderBufferDirect = function(camera2, scene2, geometry, material, object, group) {
       if (scene2 === null)
         scene2 = _emptyScene;
       const frontFaceCW = object.isMesh && object.matrixWorld.determinant() < 0;
-      const program = setProgram(camera3, scene2, geometry, material, object);
+      const program = setProgram(camera2, scene2, geometry, material, object);
       state2.setMaterial(material, frontFaceCW);
       let index = geometry.index;
       const position = geometry.attributes.position;
@@ -22581,12 +22611,12 @@ reset scout color to green, persists
         renderer.render(drawStart, drawCount);
       }
     };
-    this.compile = function(scene2, camera3) {
+    this.compile = function(scene2, camera2) {
       currentRenderState = renderStates.get(scene2);
       currentRenderState.init();
       renderStateStack.push(currentRenderState);
       scene2.traverseVisible(function(object) {
-        if (object.isLight && object.layers.test(camera3.layers)) {
+        if (object.isLight && object.layers.test(camera2.layers)) {
           currentRenderState.pushLight(object);
           if (object.castShadow) {
             currentRenderState.pushShadow(object);
@@ -22632,8 +22662,8 @@ reset scout color to green, persists
     };
     xr.addEventListener("sessionstart", onXRSessionStart);
     xr.addEventListener("sessionend", onXRSessionEnd);
-    this.render = function(scene2, camera3) {
-      if (camera3 !== void 0 && camera3.isCamera !== true) {
+    this.render = function(scene2, camera2) {
+      if (camera2 !== void 0 && camera2.isCamera !== true) {
         console.error("THREE.WebGLRenderer.render: camera is not an instance of THREE.Camera.");
         return;
       }
@@ -22641,26 +22671,26 @@ reset scout color to green, persists
         return;
       if (scene2.autoUpdate === true)
         scene2.updateMatrixWorld();
-      if (camera3.parent === null)
-        camera3.updateMatrixWorld();
+      if (camera2.parent === null)
+        camera2.updateMatrixWorld();
       if (xr.enabled === true && xr.isPresenting === true) {
         if (xr.cameraAutoUpdate === true)
-          xr.updateCamera(camera3);
-        camera3 = xr.getCamera();
+          xr.updateCamera(camera2);
+        camera2 = xr.getCamera();
       }
       if (scene2.isScene === true)
-        scene2.onBeforeRender(_this, scene2, camera3, _currentRenderTarget);
+        scene2.onBeforeRender(_this, scene2, camera2, _currentRenderTarget);
       currentRenderState = renderStates.get(scene2, renderStateStack.length);
       currentRenderState.init();
       renderStateStack.push(currentRenderState);
-      _projScreenMatrix2.multiplyMatrices(camera3.projectionMatrix, camera3.matrixWorldInverse);
+      _projScreenMatrix2.multiplyMatrices(camera2.projectionMatrix, camera2.matrixWorldInverse);
       _frustum.setFromProjectionMatrix(_projScreenMatrix2);
       _localClippingEnabled = this.localClippingEnabled;
-      _clippingEnabled = clipping.init(this.clippingPlanes, _localClippingEnabled, camera3);
+      _clippingEnabled = clipping.init(this.clippingPlanes, _localClippingEnabled, camera2);
       currentRenderList = renderLists.get(scene2, renderListStack.length);
       currentRenderList.init();
       renderListStack.push(currentRenderList);
-      projectObject(scene2, camera3, 0, _this.sortObjects);
+      projectObject(scene2, camera2, 0, _this.sortObjects);
       currentRenderList.finish();
       if (_this.sortObjects === true) {
         currentRenderList.sort(_opaqueSort, _transparentSort);
@@ -22668,28 +22698,28 @@ reset scout color to green, persists
       if (_clippingEnabled === true)
         clipping.beginShadows();
       const shadowsArray = currentRenderState.state.shadowsArray;
-      shadowMap.render(shadowsArray, scene2, camera3);
+      shadowMap.render(shadowsArray, scene2, camera2);
       if (_clippingEnabled === true)
         clipping.endShadows();
       if (this.info.autoReset === true)
         this.info.reset();
       background.render(currentRenderList, scene2);
       currentRenderState.setupLights(_this.physicallyCorrectLights);
-      if (camera3.isArrayCamera) {
-        const cameras = camera3.cameras;
+      if (camera2.isArrayCamera) {
+        const cameras = camera2.cameras;
         for (let i2 = 0, l2 = cameras.length; i2 < l2; i2++) {
           const camera22 = cameras[i2];
           renderScene(currentRenderList, scene2, camera22, camera22.viewport);
         }
       } else {
-        renderScene(currentRenderList, scene2, camera3);
+        renderScene(currentRenderList, scene2, camera2);
       }
       if (_currentRenderTarget !== null) {
         textures.updateMultisampleRenderTarget(_currentRenderTarget);
         textures.updateRenderTargetMipmap(_currentRenderTarget);
       }
       if (scene2.isScene === true)
-        scene2.onAfterRender(_this, scene2, camera3);
+        scene2.onAfterRender(_this, scene2, camera2);
       state2.buffers.depth.setTest(true);
       state2.buffers.depth.setMask(true);
       state2.buffers.color.setMask(true);
@@ -22710,16 +22740,16 @@ reset scout color to green, persists
         currentRenderList = null;
       }
     };
-    function projectObject(object, camera3, groupOrder, sortObjects) {
+    function projectObject(object, camera2, groupOrder, sortObjects) {
       if (object.visible === false)
         return;
-      const visible = object.layers.test(camera3.layers);
+      const visible = object.layers.test(camera2.layers);
       if (visible) {
         if (object.isGroup) {
           groupOrder = object.renderOrder;
         } else if (object.isLOD) {
           if (object.autoUpdate === true)
-            object.update(camera3);
+            object.update(camera2);
         } else if (object.isLight) {
           currentRenderState.pushLight(object);
           if (object.castShadow) {
@@ -22766,26 +22796,26 @@ reset scout color to green, persists
       }
       const children2 = object.children;
       for (let i2 = 0, l2 = children2.length; i2 < l2; i2++) {
-        projectObject(children2[i2], camera3, groupOrder, sortObjects);
+        projectObject(children2[i2], camera2, groupOrder, sortObjects);
       }
     }
-    function renderScene(currentRenderList2, scene2, camera3, viewport) {
+    function renderScene(currentRenderList2, scene2, camera2, viewport) {
       const opaqueObjects = currentRenderList2.opaque;
       const transmissiveObjects = currentRenderList2.transmissive;
       const transparentObjects = currentRenderList2.transparent;
-      currentRenderState.setupLightsView(camera3);
+      currentRenderState.setupLightsView(camera2);
       if (transmissiveObjects.length > 0)
-        renderTransmissionPass(opaqueObjects, scene2, camera3);
+        renderTransmissionPass(opaqueObjects, scene2, camera2);
       if (viewport)
         state2.viewport(_currentViewport.copy(viewport));
       if (opaqueObjects.length > 0)
-        renderObjects(opaqueObjects, scene2, camera3);
+        renderObjects(opaqueObjects, scene2, camera2);
       if (transmissiveObjects.length > 0)
-        renderObjects(transmissiveObjects, scene2, camera3);
+        renderObjects(transmissiveObjects, scene2, camera2);
       if (transparentObjects.length > 0)
-        renderObjects(transparentObjects, scene2, camera3);
+        renderObjects(transparentObjects, scene2, camera2);
     }
-    function renderTransmissionPass(opaqueObjects, scene2, camera3) {
+    function renderTransmissionPass(opaqueObjects, scene2, camera2) {
       if (_transmissionRenderTarget === null) {
         const needsAntialias = _antialias === true && capabilities.isWebGL2 === true;
         const renderTargetType = needsAntialias ? WebGLMultisampleRenderTarget : WebGLRenderTarget;
@@ -22804,13 +22834,13 @@ reset scout color to green, persists
       _this.clear();
       const currentToneMapping = _this.toneMapping;
       _this.toneMapping = NoToneMapping;
-      renderObjects(opaqueObjects, scene2, camera3);
+      renderObjects(opaqueObjects, scene2, camera2);
       _this.toneMapping = currentToneMapping;
       textures.updateMultisampleRenderTarget(_transmissionRenderTarget);
       textures.updateRenderTargetMipmap(_transmissionRenderTarget);
       _this.setRenderTarget(currentRenderTarget);
     }
-    function renderObjects(renderList, scene2, camera3) {
+    function renderObjects(renderList, scene2, camera2) {
       const overrideMaterial = scene2.isScene === true ? scene2.overrideMaterial : null;
       for (let i2 = 0, l2 = renderList.length; i2 < l2; i2++) {
         const renderItem = renderList[i2];
@@ -22818,28 +22848,28 @@ reset scout color to green, persists
         const geometry = renderItem.geometry;
         const material = overrideMaterial === null ? renderItem.material : overrideMaterial;
         const group = renderItem.group;
-        if (object.layers.test(camera3.layers)) {
-          renderObject(object, scene2, camera3, geometry, material, group);
+        if (object.layers.test(camera2.layers)) {
+          renderObject(object, scene2, camera2, geometry, material, group);
         }
       }
     }
-    function renderObject(object, scene2, camera3, geometry, material, group) {
-      object.onBeforeRender(_this, scene2, camera3, geometry, material, group);
-      object.modelViewMatrix.multiplyMatrices(camera3.matrixWorldInverse, object.matrixWorld);
+    function renderObject(object, scene2, camera2, geometry, material, group) {
+      object.onBeforeRender(_this, scene2, camera2, geometry, material, group);
+      object.modelViewMatrix.multiplyMatrices(camera2.matrixWorldInverse, object.matrixWorld);
       object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
-      material.onBeforeRender(_this, scene2, camera3, geometry, object, group);
+      material.onBeforeRender(_this, scene2, camera2, geometry, object, group);
       if (material.transparent === true && material.side === DoubleSide) {
         material.side = BackSide;
         material.needsUpdate = true;
-        _this.renderBufferDirect(camera3, scene2, geometry, material, object, group);
+        _this.renderBufferDirect(camera2, scene2, geometry, material, object, group);
         material.side = FrontSide;
         material.needsUpdate = true;
-        _this.renderBufferDirect(camera3, scene2, geometry, material, object, group);
+        _this.renderBufferDirect(camera2, scene2, geometry, material, object, group);
         material.side = DoubleSide;
       } else {
-        _this.renderBufferDirect(camera3, scene2, geometry, material, object, group);
+        _this.renderBufferDirect(camera2, scene2, geometry, material, object, group);
       }
-      object.onAfterRender(_this, scene2, camera3, geometry, material, group);
+      object.onAfterRender(_this, scene2, camera2, geometry, material, group);
     }
     function getProgram(material, scene2, object) {
       if (scene2.isScene !== true)
@@ -22920,7 +22950,7 @@ reset scout color to green, persists
       materialProperties.vertexTangents = parameters2.vertexTangents;
       materialProperties.toneMapping = parameters2.toneMapping;
     }
-    function setProgram(camera3, scene2, geometry, material, object) {
+    function setProgram(camera2, scene2, geometry, material, object) {
       if (scene2.isScene !== true)
         scene2 = _emptyScene;
       textures.resetTextureUnits();
@@ -22937,9 +22967,9 @@ reset scout color to green, persists
       const materialProperties = properties.get(material);
       const lights = currentRenderState.state.lights;
       if (_clippingEnabled === true) {
-        if (_localClippingEnabled === true || camera3 !== _currentCamera) {
-          const useCache = camera3 === _currentCamera && material.id === _currentMaterialId;
-          clipping.setState(material, camera3, useCache);
+        if (_localClippingEnabled === true || camera2 !== _currentCamera) {
+          const useCache = camera2 === _currentCamera && material.id === _currentMaterialId;
+          clipping.setState(material, camera2, useCache);
         }
       }
       let needsProgramChange = false;
@@ -22996,27 +23026,27 @@ reset scout color to green, persists
         _currentMaterialId = material.id;
         refreshMaterial = true;
       }
-      if (refreshProgram || _currentCamera !== camera3) {
-        p_uniforms.setValue(_gl, "projectionMatrix", camera3.projectionMatrix);
+      if (refreshProgram || _currentCamera !== camera2) {
+        p_uniforms.setValue(_gl, "projectionMatrix", camera2.projectionMatrix);
         if (capabilities.logarithmicDepthBuffer) {
-          p_uniforms.setValue(_gl, "logDepthBufFC", 2 / (Math.log(camera3.far + 1) / Math.LN2));
+          p_uniforms.setValue(_gl, "logDepthBufFC", 2 / (Math.log(camera2.far + 1) / Math.LN2));
         }
-        if (_currentCamera !== camera3) {
-          _currentCamera = camera3;
+        if (_currentCamera !== camera2) {
+          _currentCamera = camera2;
           refreshMaterial = true;
           refreshLights = true;
         }
         if (material.isShaderMaterial || material.isMeshPhongMaterial || material.isMeshToonMaterial || material.isMeshStandardMaterial || material.envMap) {
           const uCamPos = p_uniforms.map.cameraPosition;
           if (uCamPos !== void 0) {
-            uCamPos.setValue(_gl, _vector3.setFromMatrixPosition(camera3.matrixWorld));
+            uCamPos.setValue(_gl, _vector3.setFromMatrixPosition(camera2.matrixWorld));
           }
         }
         if (material.isMeshPhongMaterial || material.isMeshToonMaterial || material.isMeshLambertMaterial || material.isMeshBasicMaterial || material.isMeshStandardMaterial || material.isShaderMaterial) {
-          p_uniforms.setValue(_gl, "isOrthographic", camera3.isOrthographicCamera === true);
+          p_uniforms.setValue(_gl, "isOrthographic", camera2.isOrthographicCamera === true);
         }
         if (material.isMeshPhongMaterial || material.isMeshToonMaterial || material.isMeshLambertMaterial || material.isMeshBasicMaterial || material.isMeshStandardMaterial || material.isShaderMaterial || material.isShadowMaterial || object.isSkinnedMesh) {
-          p_uniforms.setValue(_gl, "viewMatrix", camera3.matrixWorldInverse);
+          p_uniforms.setValue(_gl, "viewMatrix", camera2.matrixWorldInverse);
         }
       }
       if (object.isSkinnedMesh) {
@@ -28231,8 +28261,8 @@ reset scout color to green, persists
   var _lightPositionWorld$1 = /* @__PURE__ */ new Vector3();
   var _lookTarget$1 = /* @__PURE__ */ new Vector3();
   var LightShadow = class {
-    constructor(camera3) {
-      this.camera = camera3;
+    constructor(camera2) {
+      this.camera = camera2;
       this.bias = 0;
       this.normalBias = 0;
       this.radius = 1;
@@ -28315,15 +28345,15 @@ reset scout color to green, persists
       this.focus = 1;
     }
     updateMatrices(light2) {
-      const camera3 = this.camera;
+      const camera2 = this.camera;
       const fov2 = RAD2DEG * 2 * light2.angle * this.focus;
       const aspect2 = this.mapSize.width / this.mapSize.height;
-      const far = light2.distance || camera3.far;
-      if (fov2 !== camera3.fov || aspect2 !== camera3.aspect || far !== camera3.far) {
-        camera3.fov = fov2;
-        camera3.aspect = aspect2;
-        camera3.far = far;
-        camera3.updateProjectionMatrix();
+      const far = light2.distance || camera2.far;
+      if (fov2 !== camera2.fov || aspect2 !== camera2.aspect || far !== camera2.far) {
+        camera2.fov = fov2;
+        camera2.aspect = aspect2;
+        camera2.far = far;
+        camera2.updateProjectionMatrix();
       }
       super.updateMatrices(light2);
     }
@@ -28402,22 +28432,22 @@ reset scout color to green, persists
       ];
     }
     updateMatrices(light2, viewportIndex = 0) {
-      const camera3 = this.camera;
+      const camera2 = this.camera;
       const shadowMatrix = this.matrix;
-      const far = light2.distance || camera3.far;
-      if (far !== camera3.far) {
-        camera3.far = far;
-        camera3.updateProjectionMatrix();
+      const far = light2.distance || camera2.far;
+      if (far !== camera2.far) {
+        camera2.far = far;
+        camera2.updateProjectionMatrix();
       }
       _lightPositionWorld.setFromMatrixPosition(light2.matrixWorld);
-      camera3.position.copy(_lightPositionWorld);
-      _lookTarget.copy(camera3.position);
+      camera2.position.copy(_lightPositionWorld);
+      _lookTarget.copy(camera2.position);
       _lookTarget.add(this._cubeDirections[viewportIndex]);
-      camera3.up.copy(this._cubeUps[viewportIndex]);
-      camera3.lookAt(_lookTarget);
-      camera3.updateMatrixWorld();
+      camera2.up.copy(this._cubeUps[viewportIndex]);
+      camera2.lookAt(_lookTarget);
+      camera2.updateMatrixWorld();
       shadowMatrix.makeTranslation(-_lightPositionWorld.x, -_lightPositionWorld.y, -_lightPositionWorld.z);
-      _projScreenMatrix.multiplyMatrices(camera3.projectionMatrix, camera3.matrixWorldInverse);
+      _projScreenMatrix.multiplyMatrices(camera2.projectionMatrix, camera2.matrixWorldInverse);
       this._frustum.setFromProjectionMatrix(_projScreenMatrix);
     }
   };
@@ -33143,6 +33173,7 @@ reset scout color to green, persists
   // src/control.ts
   var binds = new Value(clone(state_default.binds)).save("binds");
   var vars = new Value(clone(state_default.vars)).save("vars");
+  var binds_icon = new Value(clone(state_default.binds_icon)).save("binds_icon");
   function clone(target) {
     return Object.fromEntries(Object.entries(target));
   }
@@ -33226,12 +33257,6 @@ reset scout color to green, persists
     ["notstats" /* NotStats */]: (items) => {
       open_stats.set(false);
     },
-    ["heard" /* Heard */]: (items) => {
-      open_heard.set(true);
-    },
-    ["notheard" /* NotHeard */]: (items) => {
-      open_heard.set(false);
-    },
     ["voice" /* Voice */]: (items) => {
       voice_current.set(items.slice(2).join(" "));
     },
@@ -33296,10 +33321,16 @@ reset scout color to green, persists
     },
     ["notui" /* NotUI */]: (items) => {
       open_ui.set(false);
+    },
+    ["icon" /* Icon */]: (items) => {
+      binds_icon.$[items[2]] = items.slice(3).join(" ");
+    },
+    ["noticon" /* NotIcon */]: (items) => {
+      delete binds_icon.$[items[2]];
     }
   };
 
-  // src/keyboard.ts
+  // src/input.ts
   var key_down = new Value("");
   var key_up = new Value("");
   var key_map = new Value({});
@@ -33309,9 +33340,12 @@ reset scout color to green, persists
   window.addEventListener("keydown", (e) => {
     if (bounce(e))
       return;
+    e.preventDefault();
     const k2 = e.key.toLowerCase();
     key_down.set(k2);
-    key_map.$[k2] = true;
+  });
+  key_down.on(($k) => {
+    key_map.$[$k] = true;
     key_map.poke();
   });
   window.addEventListener("keyup", (e) => {
@@ -33319,9 +33353,15 @@ reset scout color to green, persists
       return;
     const k2 = e.key.toLowerCase();
     key_up.set(k2);
-    key_map.$[k2] = false;
+  });
+  key_up.on(($k) => {
+    key_map.$[$k] = false;
     key_map.poke();
   });
+  var analog_left_y = new Value(0);
+  var analog_left_x = new Value(0);
+  var analog_right_y = new Value(0);
+  var analog_right_x = new Value(0);
 
   // src/chat.ts
   var recog = new Value();
@@ -33590,10 +33630,10 @@ reset scout color to green, persists
     const ctx = canvasElement.$.getContext("2d");
     ctx.translate(width, 0);
     ctx.scale(-1, 1);
-    let camera3;
+    let camera2;
     open_live.on(($l) => {
-      if (!camera3 && $l) {
-        camera3 = new import_camera_utils.Camera($ve, {
+      if (!camera2 && $l) {
+        camera2 = new import_camera_utils.Camera($ve, {
           onFrame: async () => {
             ctx.drawImage($ve, 0, 0, width, height);
             await holistic.send({ image: canvasElement.$ });
@@ -33603,9 +33643,9 @@ reset scout color to green, persists
         });
       }
       if ($l)
-        camera3.start();
-      if (!$l && camera3)
-        camera3.stop();
+        camera2.start();
+      if (!$l && camera2)
+        camera2.stop();
     });
   });
   tick.on(() => {
@@ -33690,7 +33730,7 @@ reset scout color to green, persists
         video2 = element("video");
         t = space();
         canvas = element("canvas");
-        attr(div, "class", "hidden svelte-oofj5h");
+        attr(div, "class", "hidden svelte-2e2o1w");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -33789,7 +33829,7 @@ reset scout color to green, persists
   }
   AFRAME.registerComponent("wasd-controller", {
     schema: {
-      speed: { type: "number", default: 0.3 },
+      speed: { type: "number", default: 0.25 },
       rot: { type: "number", default: 25e-4 }
     },
     init() {
@@ -33815,21 +33855,18 @@ reset scout color to green, persists
       if (key_map.$[" "] && o3d.position.y < 0.5) {
         hop = 3 * delta;
         this.jump();
+        vec32.y = hop;
       }
       if (key_map.$["w"]) {
-        vec32.y = hop;
         vec32.z += -this.data.speed * delta * intensity;
       }
       if (key_map.$["s"]) {
-        vec32.y = hop;
         vec32.z += this.data.speed * delta * intensity;
       }
       if (key_map.$["a"]) {
-        vec32.y = hop;
         vec32.x += -this.data.speed * delta * intensity;
       }
       if (key_map.$["d"]) {
-        vec32.y = hop;
         vec32.x += this.data.speed * delta * intensity;
       }
       if (key_map.$["q"]) {
@@ -34447,7 +34484,7 @@ reset scout color to green, persists
       c() {
         a_entity = element("a-entity");
         set_custom_element_data(a_entity, "geometry", "");
-        set_custom_element_data(a_entity, "material", a_entity_material_value = "wireframe: true; opacity: 0.05s;color: #0F0; shader: flat;transparent: true; visible: " + ctx[1] + " };");
+        set_custom_element_data(a_entity, "material", a_entity_material_value = "wireframe: true; opacity: 0.05s;color: #0F0; shader: flat;transparent: true; visible: " + ctx[3] + " };");
         set_custom_element_data(a_entity, "scale", "0.1 0.1 20");
         set_custom_element_data(a_entity, "position", "0 0 -1");
         set_custom_element_data(a_entity, "ammo-body", "type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;");
@@ -34457,14 +34494,14 @@ reset scout color to green, persists
         insert(target, a_entity, anchor);
         if (!mounted) {
           dispose = [
-            listen(a_entity, "collidestart", ctx[2]),
-            listen(a_entity, "collideend", ctx[3])
+            listen(a_entity, "collidestart", ctx[4]),
+            listen(a_entity, "collideend", ctx[5])
           ];
           mounted = true;
         }
       },
       p(ctx2, dirty) {
-        if (dirty & 2 && a_entity_material_value !== (a_entity_material_value = "wireframe: true; opacity: 0.05s;color: #0F0; shader: flat;transparent: true; visible: " + ctx2[1] + " };")) {
+        if (dirty & 8 && a_entity_material_value !== (a_entity_material_value = "wireframe: true; opacity: 0.05s;color: #0F0; shader: flat;transparent: true; visible: " + ctx2[3] + " };")) {
           set_custom_element_data(a_entity, "material", a_entity_material_value);
         }
       },
@@ -34480,22 +34517,32 @@ reset scout color to green, persists
     let a_mixin;
     let t0;
     let a_camera;
+    let a_entity0;
+    let a_entity0_visible_value;
     let t1;
-    let a_entity;
-    let if_block = ctx[1] && create_if_block(ctx);
+    let t2;
+    let a_entity1;
+    let if_block = ctx[3] && create_if_block(ctx);
     return {
       c() {
         a_mixin = element("a-mixin");
         t0 = space();
         a_camera = element("a-camera");
+        a_entity0 = element("a-entity");
+        t1 = space();
         if (if_block)
           if_block.c();
-        t1 = space();
-        a_entity = element("a-entity");
+        t2 = space();
+        a_entity1 = element("a-entity");
         set_custom_element_data(a_mixin, "id", "bbs");
         set_custom_element_data(a_mixin, "geometry", "");
         set_custom_element_data(a_mixin, "material", " opacity: 0.15; color: #00ff00; transparent: true; shader: flat;");
         set_custom_element_data(a_mixin, "text", "font: ./Roboto-msdf.json; value: targeting info");
+        set_custom_element_data(a_entity0, "geometry", "primitive: box; width: 0.4; height: 0.4; depth: 0.1");
+        set_custom_element_data(a_entity0, "material", "shader: flat; transparent: true; opacity: 0.5; color: #006ace");
+        set_custom_element_data(a_entity0, "position", "0 -0.2 -0.5");
+        set_custom_element_data(a_entity0, "rotation", "-40 0 0");
+        set_custom_element_data(a_entity0, "visible", a_entity0_visible_value = ctx[1] || ctx[2]);
         set_custom_element_data(a_camera, "active", "");
         set_custom_element_data(a_camera, "fov", "75");
         set_custom_element_data(a_camera, "id", "camera");
@@ -34504,23 +34551,28 @@ reset scout color to green, persists
         set_custom_element_data(a_camera, "wasd-controls", "enabled: false;");
         set_custom_element_data(a_camera, "look", "enabled: true;pointerLockEnabled: true;");
         set_custom_element_data(a_camera, "look-controls", "enabled: false;");
-        set_custom_element_data(a_entity, "geometry", "");
-        set_custom_element_data(a_entity, "material", "color: blue; opacity: 0.15; shader: flat; visible: false;");
-        set_custom_element_data(a_entity, "position", "0 0 -1");
-        set_custom_element_data(a_entity, "pool__targeting", "mixin: bbs; size: 10");
+        set_custom_element_data(a_entity1, "geometry", "");
+        set_custom_element_data(a_entity1, "material", "color: blue; opacity: 0.15; shader: flat; visible: false;");
+        set_custom_element_data(a_entity1, "position", "0 0 -1");
+        set_custom_element_data(a_entity1, "pool__targeting", "mixin: bbs; size: 10");
       },
       m(target, anchor) {
         insert(target, a_mixin, anchor);
         insert(target, t0, anchor);
         insert(target, a_camera, anchor);
+        append(a_camera, a_entity0);
+        append(a_camera, t1);
         if (if_block)
           if_block.m(a_camera, null);
-        insert(target, t1, anchor);
-        insert(target, a_entity, anchor);
-        ctx[4](a_entity);
+        insert(target, t2, anchor);
+        insert(target, a_entity1, anchor);
+        ctx[6](a_entity1);
       },
       p(ctx2, [dirty]) {
-        if (ctx2[1]) {
+        if (dirty & 6 && a_entity0_visible_value !== (a_entity0_visible_value = ctx2[1] || ctx2[2])) {
+          set_custom_element_data(a_entity0, "visible", a_entity0_visible_value);
+        }
+        if (ctx2[3]) {
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
@@ -34545,16 +34597,20 @@ reset scout color to green, persists
         if (if_block)
           if_block.d();
         if (detaching)
-          detach(t1);
+          detach(t2);
         if (detaching)
-          detach(a_entity);
-        ctx[4](null);
+          detach(a_entity1);
+        ctx[6](null);
       }
     };
   }
   function instance3($$self, $$props, $$invalidate) {
+    let $open_loading;
+    let $open_help;
     let $open_targeting;
-    component_subscribe($$self, open_targeting, ($$value) => $$invalidate(1, $open_targeting = $$value));
+    component_subscribe($$self, open_loading, ($$value) => $$invalidate(1, $open_loading = $$value));
+    component_subscribe($$self, open_help, ($$value) => $$invalidate(2, $open_help = $$value));
+    component_subscribe($$self, open_targeting, ($$value) => $$invalidate(3, $open_targeting = $$value));
     let el;
     open_targeting.on(($t) => {
       if (!$t)
@@ -34594,13 +34650,21 @@ reset scout color to green, persists
       el.components.pool__targeting.returnEntity(ents[who.object3D.uuid]);
       delete ents[who.object3D.uuid];
     }
-    function a_entity_binding($$value) {
+    function a_entity1_binding($$value) {
       binding_callbacks[$$value ? "unshift" : "push"](() => {
         el = $$value;
         $$invalidate(0, el);
       });
     }
-    return [el, $open_targeting, collidestart, collideend, a_entity_binding];
+    return [
+      el,
+      $open_loading,
+      $open_help,
+      $open_targeting,
+      collidestart,
+      collideend,
+      a_entity1_binding
+    ];
   }
   var Camera3 = class extends SvelteComponent {
     constructor(options) {
@@ -34611,7 +34675,7 @@ reset scout color to green, persists
   var camera_default = Camera3;
 
   // src/ui/heard.svelte
-  function create_if_block2(ctx) {
+  function create_fragment5(ctx) {
     let div;
     let input;
     return {
@@ -34619,64 +34683,26 @@ reset scout color to green, persists
         div = element("div");
         input = element("input");
         attr(input, "type", "text");
-        attr(input, "class", "entry svelte-pqe1v5");
+        attr(input, "class", "entry svelte-fyhv1x");
         input.readOnly = true;
-        attr(div, "class", "lofi svelte-pqe1v5");
+        attr(div, "class", "lofi svelte-fyhv1x");
       },
       m(target, anchor) {
         insert(target, div, anchor);
         append(div, input);
-        ctx[2](input);
+        ctx[1](input);
       },
       p: noop,
-      d(detaching) {
-        if (detaching)
-          detach(div);
-        ctx[2](null);
-      }
-    };
-  }
-  function create_fragment5(ctx) {
-    let if_block_anchor;
-    let if_block = ctx[1] && create_if_block2(ctx);
-    return {
-      c() {
-        if (if_block)
-          if_block.c();
-        if_block_anchor = empty();
-      },
-      m(target, anchor) {
-        if (if_block)
-          if_block.m(target, anchor);
-        insert(target, if_block_anchor, anchor);
-      },
-      p(ctx2, [dirty]) {
-        if (ctx2[1]) {
-          if (if_block) {
-            if_block.p(ctx2, dirty);
-          } else {
-            if_block = create_if_block2(ctx2);
-            if_block.c();
-            if_block.m(if_block_anchor.parentNode, if_block_anchor);
-          }
-        } else if (if_block) {
-          if_block.d(1);
-          if_block = null;
-        }
-      },
       i: noop,
       o: noop,
       d(detaching) {
-        if (if_block)
-          if_block.d(detaching);
         if (detaching)
-          detach(if_block_anchor);
+          detach(div);
+        ctx[1](null);
       }
     };
   }
   function instance4($$self, $$props, $$invalidate) {
-    let $open_heard;
-    component_subscribe($$self, open_heard, ($$value) => $$invalidate(1, $open_heard = $$value));
     let text2;
     talk.on(() => {
       if (!text2 || !talk.$)
@@ -34689,7 +34715,7 @@ reset scout color to green, persists
         $$invalidate(0, text2);
       });
     }
-    return [text2, $open_heard, input_binding];
+    return [text2, input_binding];
   }
   var Heard = class extends SvelteComponent {
     constructor(options) {
@@ -34884,10 +34910,6 @@ gl_Position = mvPosition;
     let a_mixin15;
     let t28;
     let a_entity13;
-    let t29;
-    let a_mixin16;
-    let t30;
-    let a_entity14;
     let a_mixin7_levels = [
       { id: "tree" },
       { class: "climbable" },
@@ -34905,10 +34927,21 @@ gl_Position = mvPosition;
     for (let i2 = 0; i2 < a_mixin7_levels.length; i2 += 1) {
       a_mixin7_data = assign(a_mixin7_data, a_mixin7_levels[i2]);
     }
-    let a_mixin14_levels = [
+    let a_mixin13_levels = [
       { id: "trunk" },
       ctx[3],
       { "gltf-model": "./glb/trunk.glb" },
+      { vary: trunkVary },
+      { scatter: ctx[1] }
+    ];
+    let a_mixin13_data = {};
+    for (let i2 = 0; i2 < a_mixin13_levels.length; i2 += 1) {
+      a_mixin13_data = assign(a_mixin13_data, a_mixin13_levels[i2]);
+    }
+    let a_mixin14_levels = [
+      { id: "trunkLong" },
+      ctx[3],
+      { "gltf-model": "./glb/trunkLong.glb" },
       { vary: trunkVary },
       { scatter: ctx[1] }
     ];
@@ -34917,26 +34950,15 @@ gl_Position = mvPosition;
       a_mixin14_data = assign(a_mixin14_data, a_mixin14_levels[i2]);
     }
     let a_mixin15_levels = [
-      { id: "trunkLong" },
-      ctx[3],
-      { "gltf-model": "./glb/trunkLong.glb" },
-      { vary: trunkVary },
-      { scatter: ctx[1] }
-    ];
-    let a_mixin15_data = {};
-    for (let i2 = 0; i2 < a_mixin15_levels.length; i2 += 1) {
-      a_mixin15_data = assign(a_mixin15_data, a_mixin15_levels[i2]);
-    }
-    let a_mixin16_levels = [
       { id: "pillarObelisk" },
       { "gltf-model": "./glb/pillarObelisk.glb" },
       ctx[3],
       { vary: trunkVary },
       { scatter: ctx[1] }
     ];
-    let a_mixin16_data = {};
-    for (let i2 = 0; i2 < a_mixin16_levels.length; i2 += 1) {
-      a_mixin16_data = assign(a_mixin16_data, a_mixin16_levels[i2]);
+    let a_mixin15_data = {};
+    for (let i2 = 0; i2 < a_mixin15_levels.length; i2 += 1) {
+      a_mixin15_data = assign(a_mixin15_data, a_mixin15_levels[i2]);
     }
     return {
       c() {
@@ -34999,10 +35021,6 @@ gl_Position = mvPosition;
         a_mixin15 = element("a-mixin");
         t28 = space();
         a_entity13 = element("a-entity");
-        t29 = space();
-        a_mixin16 = element("a-mixin");
-        t30 = space();
-        a_entity14 = element("a-entity");
         set_custom_element_data(a_mixin0, "id", "smolitem");
         set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;collisionFilterGroup: 2;");
         set_custom_element_data(a_mixin0, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
@@ -35102,22 +35120,15 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity9, "activate__animal", "");
         set_custom_element_data(a_entity10, "pool__animal", "mixin: animal frog; size: 5;");
         set_custom_element_data(a_entity10, "activate__animal", "");
-        set_custom_element_data(a_mixin13, "id", "road");
-        set_custom_element_data(a_mixin13, "gltf-model", "./glb/road.glb");
-        set_custom_element_data(a_mixin13, "vary", "property:scale; range: 3 0.5 3 6 0.5 6");
-        set_custom_element_data(a_mixin13, "mixin", "smolitem");
-        set_custom_element_data(a_mixin13, "scatter", ctx[1]);
-        set_custom_element_data(a_entity11, "pool__road", "mixin: road; size: 10");
-        set_custom_element_data(a_entity11, "activate__road", "");
+        set_attributes(a_mixin13, a_mixin13_data);
+        set_custom_element_data(a_entity11, "pool__trunk", "mixin: trunk; size: 20");
+        set_custom_element_data(a_entity11, "activate__trunk", "");
         set_attributes(a_mixin14, a_mixin14_data);
-        set_custom_element_data(a_entity12, "pool__trunk", "mixin: trunk; size: 20");
-        set_custom_element_data(a_entity12, "activate__trunk", "");
+        set_custom_element_data(a_entity12, "pool__trunklong", "mixin: trunkLong; size: 20");
+        set_custom_element_data(a_entity12, "activate__trunklong", "");
         set_attributes(a_mixin15, a_mixin15_data);
-        set_custom_element_data(a_entity13, "pool__trunklong", "mixin: trunkLong; size: 20");
-        set_custom_element_data(a_entity13, "activate__trunklong", "");
-        set_attributes(a_mixin16, a_mixin16_data);
-        set_custom_element_data(a_entity14, "pool__pillarobelisk", "mixin: pillarObelisk; size: 5");
-        set_custom_element_data(a_entity14, "activate__pillarobelisk", "");
+        set_custom_element_data(a_entity13, "pool__pillarobelisk", "mixin: pillarObelisk; size: 5");
+        set_custom_element_data(a_entity13, "activate__pillarobelisk", "");
       },
       m(target, anchor) {
         insert(target, a_mixin0, anchor);
@@ -35179,10 +35190,6 @@ gl_Position = mvPosition;
         insert(target, a_mixin15, anchor);
         insert(target, t28, anchor);
         insert(target, a_entity13, anchor);
-        insert(target, t29, anchor);
-        insert(target, a_mixin16, anchor);
-        insert(target, t30, anchor);
-        insert(target, a_entity14, anchor);
       },
       p(ctx2, [dirty]) {
         if (dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
@@ -35201,21 +35208,21 @@ gl_Position = mvPosition;
           ctx2[2],
           { host: "" }
         ]));
-        set_attributes(a_mixin14, a_mixin14_data = get_spread_update(a_mixin14_levels, [
+        set_attributes(a_mixin13, a_mixin13_data = get_spread_update(a_mixin13_levels, [
           { id: "trunk" },
           ctx2[3],
           { "gltf-model": "./glb/trunk.glb" },
           { vary: trunkVary },
           { scatter: ctx2[1] }
         ]));
-        set_attributes(a_mixin15, a_mixin15_data = get_spread_update(a_mixin15_levels, [
+        set_attributes(a_mixin14, a_mixin14_data = get_spread_update(a_mixin14_levels, [
           { id: "trunkLong" },
           ctx2[3],
           { "gltf-model": "./glb/trunkLong.glb" },
           { vary: trunkVary },
           { scatter: ctx2[1] }
         ]));
-        set_attributes(a_mixin16, a_mixin16_data = get_spread_update(a_mixin16_levels, [
+        set_attributes(a_mixin15, a_mixin15_data = get_spread_update(a_mixin15_levels, [
           { id: "pillarObelisk" },
           { "gltf-model": "./glb/pillarObelisk.glb" },
           ctx2[3],
@@ -35344,14 +35351,6 @@ gl_Position = mvPosition;
           detach(t28);
         if (detaching)
           detach(a_entity13);
-        if (detaching)
-          detach(t29);
-        if (detaching)
-          detach(a_mixin16);
-        if (detaching)
-          detach(t30);
-        if (detaching)
-          detach(a_entity14);
       }
     };
   }
@@ -35391,7 +35390,7 @@ gl_Position = mvPosition;
     return {
       c() {
         div = element("div");
-        attr(div, "class", div_class_value = "action " + (ctx[0] ? "live" : "") + " svelte-1898r5o");
+        attr(div, "class", div_class_value = "action " + (ctx[0] ? "live" : "") + " svelte-1tjqpdx");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -35401,7 +35400,7 @@ gl_Position = mvPosition;
         }
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1 && div_class_value !== (div_class_value = "action " + (ctx2[0] ? "live" : "") + " svelte-1898r5o")) {
+        if (dirty & 1 && div_class_value !== (div_class_value = "action " + (ctx2[0] ? "live" : "") + " svelte-1tjqpdx")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -35599,7 +35598,7 @@ gl_Position = mvPosition;
   var house_default = House;
 
   // src/ui/netdata.svelte
-  function create_if_block3(ctx) {
+  function create_if_block2(ctx) {
     let div;
     let t;
     let mounted;
@@ -35632,7 +35631,7 @@ gl_Position = mvPosition;
   }
   function create_fragment9(ctx) {
     let if_block_anchor;
-    let if_block = ctx[0] && ctx[1] && create_if_block3(ctx);
+    let if_block = ctx[0] && ctx[1] && create_if_block2(ctx);
     return {
       c() {
         if (if_block)
@@ -35649,7 +35648,7 @@ gl_Position = mvPosition;
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
-            if_block = create_if_block3(ctx2);
+            if_block = create_if_block2(ctx2);
             if_block.c();
             if_block.m(if_block_anchor.parentNode, if_block_anchor);
           }
@@ -35802,7 +35801,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin1, "material", "color: white; shader: flat;");
         set_custom_element_data(a_mixin1, "vary", a_mixin1_vary_value = "property: position; range: -" + ctx[0] * 0.75 + " 0 -" + ctx[0] * 0.75 + " " + ctx[0] * 0.75 + " 4 " + ctx[0] * 0.75);
         set_custom_element_data(a_mixin1, "floaty", "");
-        set_custom_element_data(a_entity5, "pool__floof", "mixin: floof; size: 300;");
+        set_custom_element_data(a_entity5, "pool__floof", "mixin: floof; size: 500;");
         set_custom_element_data(a_entity5, "activate__floof", "");
         set_custom_element_data(a_mixin2, "id", "birds");
         set_custom_element_data(a_mixin2, "geometry", "");
@@ -35955,46 +35954,375 @@ gl_Position = mvPosition;
   };
   var environmental_default = Environmental;
 
-  // src/game.svelte
+  // src/ui/onscreen-ui.svelte
+  function get_each_context(ctx, list, i2) {
+    const child_ctx = ctx.slice();
+    child_ctx[15] = list[i2];
+    return child_ctx;
+  }
+  function create_each_block(ctx) {
+    let div;
+    let t0_value = (ctx[5][ctx[15]] || ctx[15]) + "";
+    let t0;
+    let t1;
+    let div_class_value;
+    let mounted;
+    let dispose;
+    function click_handler() {
+      return ctx[10](ctx[15]);
+    }
+    return {
+      c() {
+        div = element("div");
+        t0 = text(t0_value);
+        t1 = space();
+        attr(div, "class", div_class_value = "button bound " + (ctx[3] === "" + ctx[15] ? "down" : "inactive") + " " + (ctx[4][ctx[15]] ? "active" : "") + " svelte-1fz5yc8");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, t0);
+        append(div, t1);
+        if (!mounted) {
+          dispose = listen(div, "click", click_handler);
+          mounted = true;
+        }
+      },
+      p(new_ctx, dirty) {
+        ctx = new_ctx;
+        if (dirty & 32 && t0_value !== (t0_value = (ctx[5][ctx[15]] || ctx[15]) + ""))
+          set_data(t0, t0_value);
+        if (dirty & 24 && div_class_value !== (div_class_value = "button bound " + (ctx[3] === "" + ctx[15] ? "down" : "inactive") + " " + (ctx[4][ctx[15]] ? "active" : "") + " svelte-1fz5yc8")) {
+          attr(div, "class", div_class_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
   function create_fragment11(ctx) {
-    let webcam;
+    let div0;
+    let t0;
+    let div5;
+    let div1;
+    let t2;
+    let div2;
+    let t4;
+    let div4;
+    let div3;
+    let mounted;
+    let dispose;
+    let each_value = ctx[6];
+    let each_blocks = [];
+    for (let i2 = 0; i2 < each_value.length; i2 += 1) {
+      each_blocks[i2] = create_each_block(get_each_context(ctx, each_value, i2));
+    }
+    return {
+      c() {
+        div0 = element("div");
+        for (let i2 = 0; i2 < each_blocks.length; i2 += 1) {
+          each_blocks[i2].c();
+        }
+        t0 = space();
+        div5 = element("div");
+        div1 = element("div");
+        div1.textContent = "\u{1F4AC}";
+        t2 = space();
+        div2 = element("div");
+        div2.textContent = "\u{1F998}";
+        t4 = space();
+        div4 = element("div");
+        div3 = element("div");
+        attr(div0, "class", "bind-bar svelte-1fz5yc8");
+        attr(div1, "class", "speak button svelte-1fz5yc8");
+        attr(div2, "class", "jump button svelte-1fz5yc8");
+        attr(div3, "class", "dot svelte-1fz5yc8");
+        set_style(div3, "margin-top", ctx[2] * 100 + "%");
+        set_style(div3, "margin-left", ctx[1] * 100 + "%");
+        attr(div4, "class", "move button svelte-1fz5yc8");
+        attr(div5, "class", "motion svelte-1fz5yc8");
+      },
+      m(target, anchor) {
+        insert(target, div0, anchor);
+        for (let i2 = 0; i2 < each_blocks.length; i2 += 1) {
+          each_blocks[i2].m(div0, null);
+        }
+        insert(target, t0, anchor);
+        insert(target, div5, anchor);
+        append(div5, div1);
+        append(div5, t2);
+        append(div5, div2);
+        append(div5, t4);
+        append(div5, div4);
+        append(div4, div3);
+        ctx[13](div4);
+        if (!mounted) {
+          dispose = [
+            listen(div1, "click", ctx[11]),
+            listen(div2, "click", ctx[12]),
+            listen(div4, "touchmove", ctx[7]),
+            listen(div4, "touchend", ctx[8]),
+            listen(div4, "mousemove", ctx[7]),
+            listen(div4, "mousedown", ctx[9]),
+            listen(div4, "touchstart", ctx[9]),
+            listen(div4, "mouseleave", ctx[8]),
+            listen(div4, "mouseup", ctx[8])
+          ];
+          mounted = true;
+        }
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 120) {
+          each_value = ctx2[6];
+          let i2;
+          for (i2 = 0; i2 < each_value.length; i2 += 1) {
+            const child_ctx = get_each_context(ctx2, each_value, i2);
+            if (each_blocks[i2]) {
+              each_blocks[i2].p(child_ctx, dirty);
+            } else {
+              each_blocks[i2] = create_each_block(child_ctx);
+              each_blocks[i2].c();
+              each_blocks[i2].m(div0, null);
+            }
+          }
+          for (; i2 < each_blocks.length; i2 += 1) {
+            each_blocks[i2].d(1);
+          }
+          each_blocks.length = each_value.length;
+        }
+        if (dirty & 4) {
+          set_style(div3, "margin-top", ctx2[2] * 100 + "%");
+        }
+        if (dirty & 2) {
+          set_style(div3, "margin-left", ctx2[1] * 100 + "%");
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div0);
+        destroy_each(each_blocks, detaching);
+        if (detaching)
+          detach(t0);
+        if (detaching)
+          detach(div5);
+        ctx[13](null);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function instance9($$self, $$props, $$invalidate) {
+    let $key_down;
+    let $binds;
+    let $binds_icon;
+    component_subscribe($$self, key_down, ($$value) => $$invalidate(3, $key_down = $$value));
+    component_subscribe($$self, binds, ($$value) => $$invalidate(4, $binds = $$value));
+    component_subscribe($$self, binds_icon, ($$value) => $$invalidate(5, $binds_icon = $$value));
+    let bound = [1, 2, 3, 4, 5];
+    let holder;
+    let x2 = 0.5;
+    let y2 = 0.5;
+    let interacting = false;
+    function update3(e) {
+      if (e.touches) {
+        e.x = e.touches[0].clientX;
+        e.y = e.touches[0].clientY;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      const { x: bx, y: by, width: width2, height: height2 } = holder.getBoundingClientRect();
+      let target_x = 0;
+      let target_y = 0;
+      target_y = e.y - by;
+      target_x = e.x - bx;
+      const ye2 = target_y / height2;
+      const xd = target_x / width2;
+      $$invalidate(1, x2 = xd);
+      $$invalidate(2, y2 = ye2);
+      if (!interacting)
+        return;
+      if (x2 > 0.6) {
+        key_down.set("e");
+      } else {
+        key_up.set("e");
+      }
+      if (x2 < 0.4) {
+        key_down.set("q");
+      } else {
+        key_up.set("q");
+      }
+      if (y2 > 0.6) {
+        key_down.set("s");
+      } else {
+        key_up.set("s");
+      }
+      if (y2 < 0.4) {
+        key_down.set("w");
+      } else {
+        key_up.set("w");
+      }
+      if (y2 < 0.2 || y2 > 0.8) {
+        key_down.set("shift");
+      } else {
+        key_up.set("shift");
+      }
+    }
+    function stop_interact(e) {
+      $$invalidate(1, x2 = 0.5);
+      $$invalidate(2, y2 = 0.5);
+      e.preventDefault();
+      e.stopPropagation();
+      interacting = false;
+      key_up.set("w");
+      key_up.set("s");
+      key_up.set("q");
+      key_up.set("e");
+      key_up.set("shift");
+    }
+    function interact(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      interacting = true;
+    }
+    const click_handler = (b2) => {
+      key_down.set("" + b2);
+      key_up.set("" + b2);
+    };
+    const click_handler_1 = () => {
+      open_text.set("");
+      requestAnimationFrame(() => {
+        document.getElementById("text").focus();
+      });
+    };
+    const click_handler_2 = () => {
+      key_down.set(" ");
+      setTimeout(() => {
+        key_up.set(" ");
+      }, 300);
+    };
+    function div4_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        holder = $$value;
+        $$invalidate(0, holder);
+      });
+    }
+    return [
+      holder,
+      x2,
+      y2,
+      $key_down,
+      $binds,
+      $binds_icon,
+      bound,
+      update3,
+      stop_interact,
+      interact,
+      click_handler,
+      click_handler_1,
+      click_handler_2,
+      div4_binding
+    ];
+  }
+  var Onscreen_ui = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance9, create_fragment11, safe_not_equal, {});
+    }
+  };
+  var onscreen_ui_default = Onscreen_ui;
+
+  // src/game.svelte
+  function create_if_block3(ctx) {
+    let live;
     let t0;
     let heard;
     let t1;
-    let live;
-    let t2;
+    let onscreenui;
+    let current;
+    live = new live_default({});
+    heard = new heard_default({});
+    onscreenui = new onscreen_ui_default({});
+    return {
+      c() {
+        create_component(live.$$.fragment);
+        t0 = space();
+        create_component(heard.$$.fragment);
+        t1 = space();
+        create_component(onscreenui.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(live, target, anchor);
+        insert(target, t0, anchor);
+        mount_component(heard, target, anchor);
+        insert(target, t1, anchor);
+        mount_component(onscreenui, target, anchor);
+        current = true;
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(live.$$.fragment, local);
+        transition_in(heard.$$.fragment, local);
+        transition_in(onscreenui.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(live.$$.fragment, local);
+        transition_out(heard.$$.fragment, local);
+        transition_out(onscreenui.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(live, detaching);
+        if (detaching)
+          detach(t0);
+        destroy_component(heard, detaching);
+        if (detaching)
+          detach(t1);
+        destroy_component(onscreenui, detaching);
+      }
+    };
+  }
+  function create_fragment12(ctx) {
+    let webcam;
+    let t0;
     let netdata;
-    let t3;
+    let t1;
+    let t2;
     let a_scene;
     let a_assets;
     let a_sphere;
-    let t4;
+    let t3;
     let audio;
     let audio_src_value;
-    let t5;
+    let t4;
     let a_mixin;
-    let t6;
+    let t5;
     let charactersmixins;
+    let t6;
+    let camera2;
     let t7;
-    let camera3;
-    let t8;
     let characters;
-    let t9;
+    let t8;
     let forest;
-    let t10;
+    let t9;
     let house;
-    let t11;
+    let t10;
     let debug_1;
-    let t12;
+    let t11;
     let environmental;
     let a_scene_physics_value;
     let current;
     webcam = new webcam_default({});
-    heard = new heard_default({});
-    live = new live_default({});
     netdata = new netdata_default({});
+    let if_block = ctx[0] && create_if_block3(ctx);
     charactersmixins = new characters_assets_default({});
-    camera3 = new camera_default({});
+    camera2 = new camera_default({});
     characters = new characters_default({});
     forest = new forest_default({ props: { groundSize: 200 } });
     house = new house_default({});
@@ -36004,32 +36332,31 @@ gl_Position = mvPosition;
       c() {
         create_component(webcam.$$.fragment);
         t0 = space();
-        create_component(heard.$$.fragment);
-        t1 = space();
-        create_component(live.$$.fragment);
-        t2 = space();
         create_component(netdata.$$.fragment);
-        t3 = space();
+        t1 = space();
+        if (if_block)
+          if_block.c();
+        t2 = space();
         a_scene = element("a-scene");
         a_assets = element("a-assets");
         a_sphere = element("a-sphere");
-        t4 = space();
+        t3 = space();
         audio = element("audio");
-        t5 = space();
+        t4 = space();
         a_mixin = element("a-mixin");
-        t6 = space();
+        t5 = space();
         create_component(charactersmixins.$$.fragment);
+        t6 = space();
+        create_component(camera2.$$.fragment);
         t7 = space();
-        create_component(camera3.$$.fragment);
-        t8 = space();
         create_component(characters.$$.fragment);
-        t9 = space();
+        t8 = space();
         create_component(forest.$$.fragment);
-        t10 = space();
+        t9 = space();
         create_component(house.$$.fragment);
-        t11 = space();
+        t10 = space();
         create_component(debug_1.$$.fragment);
-        t12 = space();
+        t11 = space();
         create_component(environmental.$$.fragment);
         set_custom_element_data(a_sphere, "color", "blue");
         set_custom_element_data(a_sphere, "radius", "5");
@@ -36039,51 +36366,68 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin, "id", "shadow");
         set_custom_element_data(a_mixin, "shadow", "cast: true");
         set_custom_element_data(a_scene, "keyboard-shortcuts", "enterVR: false");
-        set_custom_element_data(a_scene, "stats", ctx[0]);
+        set_custom_element_data(a_scene, "stats", ctx[1]);
         set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: low;");
         set_custom_element_data(a_scene, "shadow", "type:basic;");
         set_custom_element_data(a_scene, "fog", "type: exponential; color: #555");
-        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[1]);
+        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2]);
         set_custom_element_data(a_scene, "uniforms", "");
         set_custom_element_data(a_scene, "net", "");
       },
       m(target, anchor) {
         mount_component(webcam, target, anchor);
         insert(target, t0, anchor);
-        mount_component(heard, target, anchor);
-        insert(target, t1, anchor);
-        mount_component(live, target, anchor);
-        insert(target, t2, anchor);
         mount_component(netdata, target, anchor);
-        insert(target, t3, anchor);
+        insert(target, t1, anchor);
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, t2, anchor);
         insert(target, a_scene, anchor);
         append(a_scene, a_assets);
         append(a_assets, a_sphere);
-        append(a_assets, t4);
+        append(a_assets, t3);
         append(a_assets, audio);
-        append(a_assets, t5);
+        append(a_assets, t4);
         append(a_assets, a_mixin);
-        append(a_assets, t6);
+        append(a_assets, t5);
         mount_component(charactersmixins, a_assets, null);
+        append(a_scene, t6);
+        mount_component(camera2, a_scene, null);
         append(a_scene, t7);
-        mount_component(camera3, a_scene, null);
-        append(a_scene, t8);
         mount_component(characters, a_scene, null);
-        append(a_scene, t9);
+        append(a_scene, t8);
         mount_component(forest, a_scene, null);
-        append(a_scene, t10);
+        append(a_scene, t9);
         mount_component(house, a_scene, null);
-        append(a_scene, t11);
+        append(a_scene, t10);
         mount_component(debug_1, a_scene, null);
-        append(a_scene, t12);
+        append(a_scene, t11);
         mount_component(environmental, a_scene, null);
         current = true;
       },
       p(ctx2, [dirty]) {
-        if (!current || dirty & 1) {
-          set_custom_element_data(a_scene, "stats", ctx2[0]);
+        if (ctx2[0]) {
+          if (if_block) {
+            if (dirty & 1) {
+              transition_in(if_block, 1);
+            }
+          } else {
+            if_block = create_if_block3(ctx2);
+            if_block.c();
+            transition_in(if_block, 1);
+            if_block.m(t2.parentNode, t2);
+          }
+        } else if (if_block) {
+          group_outros();
+          transition_out(if_block, 1, 1, () => {
+            if_block = null;
+          });
+          check_outros();
         }
-        if (!current || dirty & 2 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[1])) {
+        if (!current || dirty & 2) {
+          set_custom_element_data(a_scene, "stats", ctx2[1]);
+        }
+        if (!current || dirty & 4 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[2])) {
           set_custom_element_data(a_scene, "physics", a_scene_physics_value);
         }
       },
@@ -36091,11 +36435,10 @@ gl_Position = mvPosition;
         if (current)
           return;
         transition_in(webcam.$$.fragment, local);
-        transition_in(heard.$$.fragment, local);
-        transition_in(live.$$.fragment, local);
         transition_in(netdata.$$.fragment, local);
+        transition_in(if_block);
         transition_in(charactersmixins.$$.fragment, local);
-        transition_in(camera3.$$.fragment, local);
+        transition_in(camera2.$$.fragment, local);
         transition_in(characters.$$.fragment, local);
         transition_in(forest.$$.fragment, local);
         transition_in(house.$$.fragment, local);
@@ -36105,11 +36448,10 @@ gl_Position = mvPosition;
       },
       o(local) {
         transition_out(webcam.$$.fragment, local);
-        transition_out(heard.$$.fragment, local);
-        transition_out(live.$$.fragment, local);
         transition_out(netdata.$$.fragment, local);
+        transition_out(if_block);
         transition_out(charactersmixins.$$.fragment, local);
-        transition_out(camera3.$$.fragment, local);
+        transition_out(camera2.$$.fragment, local);
         transition_out(characters.$$.fragment, local);
         transition_out(forest.$$.fragment, local);
         transition_out(house.$$.fragment, local);
@@ -36121,19 +36463,17 @@ gl_Position = mvPosition;
         destroy_component(webcam, detaching);
         if (detaching)
           detach(t0);
-        destroy_component(heard, detaching);
-        if (detaching)
-          detach(t1);
-        destroy_component(live, detaching);
-        if (detaching)
-          detach(t2);
         destroy_component(netdata, detaching);
         if (detaching)
-          detach(t3);
+          detach(t1);
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(t2);
         if (detaching)
           detach(a_scene);
         destroy_component(charactersmixins);
-        destroy_component(camera3);
+        destroy_component(camera2);
         destroy_component(characters);
         destroy_component(forest);
         destroy_component(house);
@@ -36142,43 +36482,47 @@ gl_Position = mvPosition;
       }
     };
   }
-  function instance9($$self, $$props, $$invalidate) {
+  function instance10($$self, $$props, $$invalidate) {
+    let $open_ui;
     let $open_stats;
     let $open_debug;
-    component_subscribe($$self, open_stats, ($$value) => $$invalidate(0, $open_stats = $$value));
-    component_subscribe($$self, open_debug, ($$value) => $$invalidate(1, $open_debug = $$value));
-    return [$open_stats, $open_debug];
+    component_subscribe($$self, open_ui, ($$value) => $$invalidate(0, $open_ui = $$value));
+    component_subscribe($$self, open_stats, ($$value) => $$invalidate(1, $open_stats = $$value));
+    component_subscribe($$self, open_debug, ($$value) => $$invalidate(2, $open_debug = $$value));
+    return [$open_ui, $open_stats, $open_debug];
   }
   var Game = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance9, create_fragment11, safe_not_equal, {});
+      init(this, options, instance10, create_fragment12, safe_not_equal, {});
     }
   };
   var game_default = Game;
 
   // src/ui/title.svelte
-  function create_fragment12(ctx) {
+  function create_fragment13(ctx) {
     let div3;
     let t8;
-    let center;
+    let div7;
     return {
       c() {
         div3 = element("div");
-        div3.innerHTML = `<div class="favicon svelte-1uatlh0"></div> 
-	<div class="full svelte-1uatlh0"><div class="title svelte-1uatlh0"><offset class="svelte-1uatlh0"><b class="svelte-1uatlh0">a</b>  <br/></offset> 
-			<b class="svelte-1uatlh0">G</b>oblin
-			<offset class="svelte-1uatlh0"><b class="svelte-1uatlh0">L</b>ife</offset></div></div>`;
+        div3.innerHTML = `<div class="favicon svelte-1u5pxqu"></div> 
+	<div class="full svelte-1u5pxqu"><div class="title svelte-1u5pxqu"><offset class="svelte-1u5pxqu"><b class="svelte-1u5pxqu">a</b>  <br/></offset> 
+			<b class="svelte-1u5pxqu">G</b>oblin
+			<offset class="svelte-1u5pxqu"><b class="svelte-1u5pxqu">L</b>ife</offset></div></div>`;
         t8 = space();
-        center = element("center");
-        center.innerHTML = `<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-1uatlh0"><img style="border:0px;height:4vh;" src="./kofi1.png" alt="Buy Me a Coffee at ko-fi.com"/></a> 
-	<a href="https://discord.gg/8tkEQwsmwM" target="_blank" class="svelte-1uatlh0">\u{1F4AC}</a>`;
-        attr(div3, "class", "intro svelte-1uatlh0");
+        div7 = element("div");
+        div7.innerHTML = `<div class="button kofi svelte-1u5pxqu"><a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-1u5pxqu">\u{1FA99}</a></div> 
+	<div style="width: 40vh;"></div> 
+	<div class="button discord svelte-1u5pxqu"><a href="https://twitter.com/agoblinlife" target="_blank" class="svelte-1u5pxqu">\u{1F426}</a></div>`;
+        attr(div3, "class", "intro svelte-1u5pxqu");
+        attr(div7, "class", "ads svelte-1u5pxqu");
       },
       m(target, anchor) {
         insert(target, div3, anchor);
         insert(target, t8, anchor);
-        insert(target, center, anchor);
+        insert(target, div7, anchor);
       },
       p: noop,
       i: noop,
@@ -36189,20 +36533,20 @@ gl_Position = mvPosition;
         if (detaching)
           detach(t8);
         if (detaching)
-          detach(center);
+          detach(div7);
       }
     };
   }
   var Title = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment12, safe_not_equal, {});
+      init(this, options, null, create_fragment13, safe_not_equal, {});
     }
   };
   var title_default = Title;
 
   // src/ui/video.svelte
-  function create_fragment13(ctx) {
+  function create_fragment14(ctx) {
     let iframe;
     let iframe_width_value;
     let iframe_src_value;
@@ -36237,7 +36581,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function instance10($$self, $$props, $$invalidate) {
+  function instance11($$self, $$props, $$invalidate) {
     let $videos;
     component_subscribe($$self, videos, ($$value) => $$invalidate(1, $videos = $$value));
     let { src = "MePBW53Rtpw" } = $$props;
@@ -36250,18 +36594,18 @@ gl_Position = mvPosition;
   var Video = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance10, create_fragment13, safe_not_equal, { src: 0 });
+      init(this, options, instance11, create_fragment14, safe_not_equal, { src: 0 });
     }
   };
   var video_default = Video;
 
   // src/ui/home.svelte
-  function get_each_context(ctx, list, i2) {
+  function get_each_context2(ctx, list, i2) {
     const child_ctx = ctx.slice();
     child_ctx[3] = list[i2];
     return child_ctx;
   }
-  function create_each_block(ctx) {
+  function create_each_block2(ctx) {
     let video2;
     let current;
     video2 = new video_default({ props: { src: ctx[3] } });
@@ -36294,7 +36638,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function create_fragment14(ctx) {
+  function create_fragment15(ctx) {
     let div10;
     let div0;
     let t0;
@@ -36323,7 +36667,7 @@ gl_Position = mvPosition;
     let each_value = ctx[1];
     let each_blocks = [];
     for (let i2 = 0; i2 < each_value.length; i2 += 1) {
-      each_blocks[i2] = create_each_block(get_each_context(ctx, each_value, i2));
+      each_blocks[i2] = create_each_block2(get_each_context2(ctx, each_value, i2));
     }
     const out = (i2) => transition_out(each_blocks[i2], 1, 1, () => {
       each_blocks[i2] = null;
@@ -36347,7 +36691,7 @@ gl_Position = mvPosition;
         div4 = element("div");
         t5 = space();
         div5 = element("div");
-        div5.textContent = "\u{1F340}";
+        div5.textContent = "\u{1F4DF}";
         t7 = space();
         div6 = element("div");
         t8 = space();
@@ -36355,24 +36699,24 @@ gl_Position = mvPosition;
         for (let i2 = 0; i2 < each_blocks.length; i2 += 1) {
           each_blocks[i2].c();
         }
-        attr(div0, "class", "sprites sprite svelte-f61cw0");
-        attr(div1, "class", "flex svelte-f61cw0");
+        attr(div0, "class", "sprites sprite svelte-wh29xi");
+        attr(div1, "class", "flex svelte-wh29xi");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-f61cw0");
+        attr(textarea, "class", "text button svelte-wh29xi");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-f61cw0");
-        attr(div3, "class", "span2 full svelte-f61cw0");
-        attr(div4, "class", "flex svelte-f61cw0");
+        attr(div2, "class", "flex svelte-wh29xi");
+        attr(div3, "class", "span2 full svelte-wh29xi");
+        attr(div4, "class", "flex svelte-wh29xi");
         attr(div5, "type", "button");
-        attr(div5, "class", "button icon svelte-f61cw0");
+        attr(div5, "class", "button icon svelte-wh29xi");
         attr(div5, "value", "GO");
-        attr(div6, "class", "flex svelte-f61cw0");
-        attr(div7, "class", "span2 full svelte-f61cw0");
-        attr(div8, "class", "vbox svelte-f61cw0");
-        attr(div9, "class", "flex span2 case svelte-f61cw0");
-        attr(div10, "class", "menu svelte-f61cw0");
+        attr(div6, "class", "flex svelte-wh29xi");
+        attr(div7, "class", "span2 full svelte-wh29xi");
+        attr(div8, "class", "vbox svelte-wh29xi");
+        attr(div9, "class", "flex span2 case svelte-wh29xi");
+        attr(div10, "class", "menu svelte-wh29xi");
       },
       m(target, anchor) {
         insert(target, div10, anchor);
@@ -36418,12 +36762,12 @@ gl_Position = mvPosition;
           each_value = ctx2[1];
           let i2;
           for (i2 = 0; i2 < each_value.length; i2 += 1) {
-            const child_ctx = get_each_context(ctx2, each_value, i2);
+            const child_ctx = get_each_context2(ctx2, each_value, i2);
             if (each_blocks[i2]) {
               each_blocks[i2].p(child_ctx, dirty);
               transition_in(each_blocks[i2], 1);
             } else {
-              each_blocks[i2] = create_each_block(child_ctx);
+              each_blocks[i2] = create_each_block2(child_ctx);
               each_blocks[i2].c();
               transition_in(each_blocks[i2], 1);
               each_blocks[i2].m(div9, null);
@@ -36471,7 +36815,7 @@ gl_Position = mvPosition;
   };
   var keydown_handler = (e) => {
   };
-  function instance11($$self, $$props, $$invalidate) {
+  function instance12($$self, $$props, $$invalidate) {
     let $motd;
     let $videos;
     component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
@@ -36489,7 +36833,7 @@ gl_Position = mvPosition;
   var Home = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance11, create_fragment14, safe_not_equal, {});
+      init(this, options, instance12, create_fragment15, safe_not_equal, {});
     }
   };
   var home_default = Home;
@@ -36504,9 +36848,10 @@ gl_Position = mvPosition;
       c() {
         div = element("div");
         input = element("input");
+        attr(input, "id", "text");
         attr(input, "type", "text");
-        attr(input, "class", "entry svelte-kqsr2i");
-        attr(div, "class", "lofi svelte-kqsr2i");
+        attr(input, "class", "entry svelte-1uxq3x0");
+        attr(div, "class", "lofi svelte-1uxq3x0");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -36536,7 +36881,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function create_fragment15(ctx) {
+  function create_fragment16(ctx) {
     let if_block_anchor;
     let if_block = ctx[1] !== void 0 && create_if_block4(ctx);
     return {
@@ -36574,7 +36919,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function instance12($$self, $$props, $$invalidate) {
+  function instance13($$self, $$props, $$invalidate) {
     let $open_text;
     component_subscribe($$self, open_text, ($$value) => $$invalidate(1, $open_text = $$value));
     let ele;
@@ -36636,19 +36981,18 @@ gl_Position = mvPosition;
   var Text = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance12, create_fragment15, safe_not_equal, {});
+      init(this, options, instance13, create_fragment16, safe_not_equal, {});
     }
   };
   var text_default = Text;
 
   // src/ui/loading.svelte
-  function create_fragment16(ctx) {
-    let div5;
+  function create_fragment17(ctx) {
+    let div4;
     let div0;
     let t0;
     let title;
     let t1;
-    let div4;
     let div3;
     let div1;
     let t2;
@@ -36659,37 +37003,34 @@ gl_Position = mvPosition;
     title = new title_default({});
     return {
       c() {
-        div5 = element("div");
+        div4 = element("div");
         div0 = element("div");
         t0 = space();
         create_component(title.$$.fragment);
         t1 = space();
-        div4 = element("div");
         div3 = element("div");
         div1 = element("div");
         t2 = space();
         textarea = element("textarea");
         t3 = space();
         div2 = element("div");
-        attr(div0, "class", "sprites sprite svelte-7z92og");
-        attr(div1, "class", "flex svelte-7z92og");
+        attr(div0, "class", "sprites sprite svelte-45l6q4");
+        attr(div1, "class", "flex svelte-45l6q4");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-7z92og");
+        attr(textarea, "class", "text button svelte-45l6q4");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-7z92og");
-        attr(div3, "class", "span2 full svelte-7z92og");
-        attr(div4, "class", "vbox svelte-7z92og");
-        attr(div5, "class", "menu svelte-7z92og");
+        attr(div2, "class", "flex svelte-45l6q4");
+        attr(div3, "class", "span2 full svelte-45l6q4");
+        attr(div4, "class", "menu svelte-45l6q4");
       },
       m(target, anchor) {
-        insert(target, div5, anchor);
-        append(div5, div0);
-        append(div5, t0);
-        mount_component(title, div5, null);
-        append(div5, t1);
-        append(div5, div4);
+        insert(target, div4, anchor);
+        append(div4, div0);
+        append(div4, t0);
+        mount_component(title, div4, null);
+        append(div4, t1);
         append(div4, div3);
         append(div3, div1);
         append(div3, t2);
@@ -36715,12 +37056,12 @@ gl_Position = mvPosition;
       },
       d(detaching) {
         if (detaching)
-          detach(div5);
+          detach(div4);
         destroy_component(title);
       }
     };
   }
-  function instance13($$self, $$props, $$invalidate) {
+  function instance14($$self, $$props, $$invalidate) {
     let $loading;
     component_subscribe($$self, loading, ($$value) => $$invalidate(0, $loading = $$value));
     return [$loading];
@@ -36728,13 +37069,13 @@ gl_Position = mvPosition;
   var Loading = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance13, create_fragment16, safe_not_equal, {});
+      init(this, options, instance14, create_fragment17, safe_not_equal, {});
     }
   };
   var loading_default = Loading;
 
   // src/ui/help.svelte
-  function create_fragment17(ctx) {
+  function create_fragment18(ctx) {
     let div5;
     let div0;
     let t0;
@@ -36805,7 +37146,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function instance14($$self, $$props, $$invalidate) {
+  function instance15($$self, $$props, $$invalidate) {
     let $helptext;
     component_subscribe($$self, helptext, ($$value) => $$invalidate(0, $helptext = $$value));
     function close() {
@@ -36816,7 +37157,7 @@ gl_Position = mvPosition;
   var Help = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance14, create_fragment17, safe_not_equal, {});
+      init(this, options, instance15, create_fragment18, safe_not_equal, {});
     }
   };
   var help_default = Help;
@@ -36930,7 +37271,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function create_fragment18(ctx) {
+  function create_fragment19(ctx) {
     let text_1;
     let t0;
     let t1;
@@ -37092,7 +37433,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function instance15($$self, $$props, $$invalidate) {
+  function instance16($$self, $$props, $$invalidate) {
     let $open_help;
     let $open_loading;
     let $open_home;
@@ -37106,7 +37447,7 @@ gl_Position = mvPosition;
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance15, create_fragment18, safe_not_equal, {});
+      init(this, options, instance16, create_fragment19, safe_not_equal, {});
     }
   };
   var main_default = Main;

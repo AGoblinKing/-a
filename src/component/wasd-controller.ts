@@ -1,5 +1,5 @@
 import type { Object3D } from "three"
-import { key_map } from "src/keyboard";
+import { key_map } from "src/input";
 import { camera } from "src/timing";
 import { guest } from "./net";
 
@@ -16,7 +16,7 @@ function getRoot(o3d: Object3D) {
 }
 AFRAME.registerComponent("wasd-controller", {
     schema: {
-        speed: { type: "number", default: 0.3 },
+        speed: { type: "number", default: 0.25 },
         rot: { type: "number", default: 0.0025 },
     },
 
@@ -47,23 +47,25 @@ AFRAME.registerComponent("wasd-controller", {
         // TODO: or if colliding with a climbable
         if (key_map.$[" "] && o3d.position.y < 0.5) {
             hop = 3 * delta
-            // we're jumping
+            // we're jumping 
             this.jump()
+
+            vec3.y = hop
         }
         if (key_map.$["w"]) {
-            vec3.y = hop
+
             vec3.z += -this.data.speed * delta * intensity
         }
         if (key_map.$["s"]) {
-            vec3.y = hop
+
             vec3.z += this.data.speed * delta * intensity
         }
         if (key_map.$["a"]) {
-            vec3.y = hop
+
             vec3.x += -this.data.speed * delta * intensity
         }
         if (key_map.$["d"]) {
-            vec3.y = hop
+
             vec3.x += this.data.speed * delta * intensity
         }
         if (key_map.$["q"]) {
@@ -75,6 +77,7 @@ AFRAME.registerComponent("wasd-controller", {
             root.rotation.y -= this.data.rot * delta
 
         }
+
         if (Math.abs(vec3.length()) > 0 && camera.$) {
             camera.$.updateMatrixWorld()
             quat.setFromRotationMatrix(camera.$.matrixWorld)

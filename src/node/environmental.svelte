@@ -95,7 +95,7 @@
 	floaty
 />
 
-<a-entity pool__floof="mixin: floof; size: 300;" activate__floof />
+<a-entity pool__floof="mixin: floof; size: 500;" activate__floof />
 
 <a-mixin
 	id="birds"

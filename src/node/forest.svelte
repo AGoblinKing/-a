@@ -148,15 +148,6 @@
 <a-entity pool__animal="mixin: animal cow; size: 5;" activate__animal />
 <a-entity pool__animal="mixin: animal frog; size: 5;" activate__animal />
 
-<a-mixin
-	id="road"
-	gltf-model="./glb/road.glb"
-	vary="property:scale; range: 3 0.5 3 6 0.5 6"
-	mixin="smolitem"
-	{scatter}
-/>
-<a-entity pool__road="mixin: road; size: 10" activate__road />
-
 <a-mixin id="trunk" {...smolBoxBlocker} gltf-model="./glb/trunk.glb" vary={trunkVary} {scatter} />
 <a-entity pool__trunk="mixin: trunk; size: 20" activate__trunk />
 

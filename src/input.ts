@@ -14,11 +14,15 @@ function bounce(e: KeyboardEvent) {
 window.addEventListener('keydown', (e) => {
 	if (bounce(e)) return
 
-	//e.preventDefault()
+	e.preventDefault()
 	const k = e.key.toLowerCase()
 
 	key_down.set(k)
-	key_map.$[k] = true
+
+})
+
+key_down.on(($k) => {
+	key_map.$[$k] = true
 	key_map.poke()
 })
 
@@ -27,6 +31,15 @@ window.addEventListener('keyup', (e) => {
 	const k = e.key.toLowerCase()
 
 	key_up.set(k)
-	key_map.$[k] = false
+
+})
+
+key_up.on(($k) => {
+	key_map.$[$k] = false
 	key_map.poke()
 })
+
+export const analog_left_y = new Value(0)
+export const analog_left_x = new Value(0)
+export const analog_right_y = new Value(0)
+export const analog_right_x = new Value(0)

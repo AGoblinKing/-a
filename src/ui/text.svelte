@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { talk } from 'src/chat'
 
-	import { key_down } from 'src/keyboard'
+	import { key_down } from 'src/input'
 
 	import { open_text } from 'src/timing'
 	let ele
@@ -35,6 +35,7 @@
 {#if $open_text !== undefined}
 	<div class="lofi">
 		<input
+			id="text"
 			type="text"
 			class="entry"
 			bind:value={$open_text}
@@ -60,7 +61,7 @@
 <style>
 	.entry {
 		cursor: auto;
-		flex: 1;
+
 		background: rgba(12, 8, 240, 0.15);
 		border: 0.6vh solid rgba(0, 0, 0, 0.5);
 		font-size: 4vh;
@@ -78,8 +79,9 @@
 		justify-self: center;
 		font-weight: 500;
 		align-self: center;
-		margin: 1vh;
+		margin: 1vh 10vw;
 		opacity: 0.6;
+
 		box-shadow: 0 0 5vh rgb(0 65 150);
 		text-shadow: -0.15rem -0.15rem 0 #000, 0.15rem -0.15rem 0 #000, -0.15rem 0.15rem 0 #000,
 			0.15rem 0.15rem 0 #000;
@@ -88,9 +90,12 @@
 
 	.lofi {
 		display: flex;
+		align-items: center;
+		justify-content: center;
 		position: absolute;
 		bottom: 2.5vh;
 		width: 100%;
+		transform: perspective(400px) rotateX(30deg);
 		pointer-events: all;
 		z-index: 15;
 	}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { open_targeting } from 'src/timing'
+	import { open_help, open_loading, open_targeting } from 'src/timing'
 
 	import 'src/component/character-camera'
 	import 'src/component/copy'
@@ -72,6 +72,14 @@
 	look="enabled: true;pointerLockEnabled: true;"
 	look-controls="enabled: false;"
 >
+	<a-entity
+		geometry="primitive: box; width: 0.4; height: 0.4; depth: 0.1"
+		material="shader: flat; transparent: true; opacity: 0.5; color: #006ace"
+		position="0 -0.2 -0.5"
+		rotation="-40 0 0"
+		visible={$open_loading || $open_help}
+	/>
+
 	{#if $open_targeting}
 		<a-entity
 			geometry

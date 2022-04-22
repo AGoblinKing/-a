@@ -8,7 +8,7 @@ export const avatar_doer = new Value<string>(state.avatar.doer).save("avatar_doe
 export const voice_current = new Value("Guy | UK English").save("voice_current")
 export const voice_doer = new Value("Aus | UK English").save("voice_doer")
 export const scouter = new Value("green").save("scouter")
-export const videos = new Value(["BzIeSMDe85U", "MePBW53Rtpw", "lyDJOPuanO0"])
+export const videos = new Value(["ntV3RbQmLAU", "BzIeSMDe85U", "MePBW53Rtpw"])
 export const video = new Value("doer1.8").save("video_2")
 
 export const open_ui = new Value(true).save("ui")
@@ -18,7 +18,6 @@ export const open_text = new Value<string>(undefined)
 export const open_loading = new Value(false)
 export const open_help = new Value(false)
 export const open_stats = new Value(false).save("stats")
-export const open_heard = new Value(true).save("heard")
 export const open_debug = new Value(false).save("debugger")
 export const open_targeting = new Value(false).save("targeting_3")
 export const open_live = new Value(false)
@@ -124,11 +123,6 @@ show fps stats
 ~ not stats
 hide fps stats
 
-~ heard
-show top heard messages
-
-~ not heard
-hide top heard messages
 
 ~ help
 show this help
@@ -166,5 +160,27 @@ set your targeting UI to be that color, persists
 
 ~ not scouter
 reset scout color to green, persists
+
+~ ui
+show onscreen UI
+
+~ not ui
+hide onscreen UI
+
+~ icon bindkey ...icon
+show icon on onscreen ui for that bindkey (1-5)
+
+~ not icon bindkey
+remove icon from onscreen ui for that bindkey (1-5)
+
+~ size number
+set size of your avatar
+
+~ not size
+reset back to 1 for size
+
+~ join ...room
+~ host
+
 `
 )

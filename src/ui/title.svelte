@@ -9,14 +9,32 @@
 	</div>
 </div>
 
-<center>
-	<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank"
-		><img style="border:0px;height:4vh;" src="./kofi1.png" alt="Buy Me a Coffee at ko-fi.com" /></a
-	>
-	<a href="https://discord.gg/8tkEQwsmwM" target="_blank">💬 </a>
-</center>
+<div class="ads">
+	<div class="button kofi">
+		<a href="https://ko-fi.com/Z8Z1C37O3" target="_blank"> 🪙 </a>
+	</div>
+	<div style="width: 40vh;" />
+	<div class="button discord">
+		<a href="https://twitter.com/agoblinlife" target="_blank">🐦 </a>
+	</div>
+</div>
 
 <style>
+	.ads {
+		margin-top: -13vh;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
+	.kofi {
+		display: block;
+		transform: perspective(400px) rotateX(-10deg) rotateY(20deg);
+	}
+	.discord {
+		display: block;
+		transform: perspective(400px) rotateX(-10deg) rotateY(-20deg);
+	}
 	a {
 		font-size: 5vh;
 		text-decoration: none;
@@ -72,6 +90,7 @@
 	}
 
 	.intro {
+		transform: perspective(400px) rotateX(-20deg);
 		height: 47vh;
 		background: radial-gradient(
 			circle at center,
@@ -94,5 +113,43 @@
 		100% {
 			opacity: 0.9;
 		}
+	}
+
+	.button {
+		border: 0.5vh solid rgb(0, 106, 206);
+		border-radius: 1vh;
+		color: white;
+		padding: 0.3vh 2.5vh;
+		font-size: 1vh;
+		outline: none;
+		background-color: rgb(0, 110, 255);
+		text-align: center;
+		justify-self: center;
+		font-weight: 500;
+		align-self: center;
+		margin: 1vh;
+		box-shadow: 0 0 5vh rgb(0, 65, 150);
+
+		text-shadow: -0.15rem -0.15rem 0 #000, 0.15rem -0.15rem 0 #000, -0.15rem 0.15rem 0 #000,
+			0.15rem 0.15rem 0 #000;
+		transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
+	}
+	.button:active {
+		background-color: rgb(0, 32, 53) !important;
+	}
+	@keyframes beep {
+		0% {
+			opacity: 95%;
+		}
+		100% {
+			opacity: 100%;
+		}
+	}
+	.button:hover {
+		background-color: #006ace !important;
+		color: rgb(0, 225, 255);
+		cursor: pointer;
+
+		animation: beep 250ms alternate infinite;
 	}
 </style>

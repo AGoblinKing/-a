@@ -15,5 +15,12 @@ export default {
         doer: "./vrm/doer.2.vrm",
         current: "./vrm/doer.2.vrm"
     },
+    binds_icon: {
+        1: "🔥",
+        2: "🏴‍☠️",
+        3: "💕",
+        4: "🏜️",
+        5: "🌪️"
+    },
     visible: true
 }

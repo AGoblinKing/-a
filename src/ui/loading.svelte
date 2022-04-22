@@ -9,19 +9,17 @@
 
 	<Title />
 
-	<!--  -->
-	<div class="vbox">
-		<div class="span2 full">
-			<div class="flex" />
-			<textarea type="text" class="text button" maxlength="200" value={$loading} readonly />
-			<div class="flex" />
-		</div>
+	<div class="span2 full">
+		<div class="flex" />
+		<textarea type="text" class="text button" maxlength="200" value={$loading} readonly />
+		<div class="flex" />
 	</div>
 </div>
 
 <style>
 	.full {
 		width: 90vw;
+		margin-top: -5vh;
 	}
 
 	.menu {
@@ -133,12 +131,15 @@
 		font-family: monospace;
 		font-size: inherit;
 		padding: 0.4em 1rem;
+
 		margin: 0;
+
 		resize: none;
 		text-align: left;
 
 		font-size: 0.8rem;
-		height: 40vh;
+		height: 50vh;
+		transform: perspective(400px) rotateX(20deg);
 		box-sizing: border-box;
 		border: 1px solid rgba(19, 18, 18, 0.836);
 		background-color: rgb(190, 190, 190);

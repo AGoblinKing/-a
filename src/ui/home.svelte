@@ -4,7 +4,7 @@
 	import Title from './title.svelte'
 	import Video from './video.svelte'
 
-	if (args.$.has("go")) {
+	if (args.$.has('go')) {
 		open_game.set(true)
 		open_home.set(false)
 	}
@@ -54,7 +54,7 @@
 					open_game.set(true)
 				}}
 			>
-				🍀
+				📟
 			</div>
 			<div class="flex" />
 		</div>
@@ -69,6 +69,7 @@
 
 <style>
 	.case {
+		transform: perspective(400px) rotateX(20deg);
 	}
 	.full {
 		width: 90vw;
@@ -76,7 +77,9 @@
 	.icon {
 		display: flex;
 		width: 3.5vh;
-		height: 3.5vh;
+		height: 5vh;
+		font-size: 3vh;
+		transform: perspective(400px) rotateX(20deg);
 	}
 
 	.icon:hover {
@@ -133,7 +136,7 @@
 		border-radius: 1vh;
 		color: white;
 		padding: 0.5vh 5vh;
-		font-size: 3vh;
+
 		outline: none;
 		background-color: rgb(0, 110, 255);
 		text-align: center;
@@ -211,17 +214,18 @@
 		-webkit-appearance: none;
 		outline: none !important;
 		font-family: monospace;
-		font-size: inherit;
+
 		padding: 0.4em 1rem;
 		margin: 0;
 		resize: none;
 		text-align: left;
 
-		font-size: 0.8rem;
-		height: 25vh;
+		font-size: 2vh;
+		height: 30vh;
 		box-sizing: border-box;
 		border: 1px solid rgba(19, 18, 18, 0.836);
 		background-color: rgb(190, 190, 190);
 		border-radius: 0;
+		transform: perspective(400px);
 	}
 </style>
