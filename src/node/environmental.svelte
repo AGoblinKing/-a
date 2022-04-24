@@ -1,22 +1,22 @@
 <script>
-	import '../component/scatter'
-	import '../component/activate'
-	import '../component/ring'
+	import 'src/component/scatter'
+	import 'src/component/activate'
+	import 'src/component/ring'
 
-	import '../component/webcam-vrm'
-	import '../component/vrm'
-	import '../component/vary'
-	import '../component/floaty'
-	import '../component/windy'
-	import '../component/ai'
+	import 'src/component/webcam-vrm'
+	import 'src/component/vrm'
+	import 'src/component/vary'
+	import 'src/component/floaty'
+	import 'src/component/windy'
+	import 'src/component/ai'
+
+	import 'src/shader/space'
 
 	const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser)
 
 	export let groundSize = 100
 
 	const light = '#FEE'
-	const sky = '#336'
-	const sky_dark = '#003'
 	const scatterBig = [-groundSize, 0, -groundSize, groundSize, 0, groundSize].join(' ')
 
 	// look-controls="enabled: false;" wasd-controls="enabled;false;"
@@ -32,6 +32,8 @@
 	ammo-body="type: static; mass: 0;"
 	ammo-shape="type:box"
 	color="#334411"
+	location="name: forest; color: green; bb: {-groundSize * 1.5} 0 {-groundSize * 1.5} {groundSize *
+		1.5} 100 {groundSize * 1.5}"
 />
 <a-entity
 	position="{groundSize / 4} {groundSize * 2} {groundSize / 4}"
@@ -63,7 +65,8 @@
 		intensity: 0.75
 	})}
 />
-<a-entity light="type:ambient; color:white; intensity:1;" />
+
+<a-entity light="type:ambient; color:white; intensity:1.5;" />
 
 <a-mixin
 	id="cloud"
@@ -108,4 +111,4 @@
 />
 
 <a-entity pool__birds="mixin: birds; size: 50;" activate__birds />
-<a-sky color={sky} animate="property: color; to: {sky_dark}; easing: easeInOut; dur: 6000 " />
+<a-sky shader="space" />

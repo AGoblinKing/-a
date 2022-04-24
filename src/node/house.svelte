@@ -1,35 +1,114 @@
 <script>
-	import Volleyball from 'src/node/volleyball.svelte'
 	import '../component/grid'
+
 	// static collider that removes other static colliders found
 
 	function collideStart() {}
 	// house frame built from log cabin bits
 </script>
 
-<!--- foundation, remove static any colliders that aren't part of the house-->
-<a-entity
-	id="foundation"
-	ammo-shape="type: box; fit: manual; halfExtents: 10 10 10; offset: 0 0 0"
-	on:collisionstart={collideStart}
+<a-mixin
+	id="wall"
+	ammo-body="type: static; mass: 0; "
+	ammo-shape="type: box; fit: manual; half-extents: 5 4 1; offset: 0 0.5 0.5;"
+	geometry
+	scale="10 4 10"
+	shadow="receive: false"
 />
 
 <a-mixin
-	id="floor"
-	grid="width: 5; length: 2; height: 1;fill: true;"
-	gltf-model="./glb/cabinFloor.glb"
-	ammo-body="type: static; mass: 0;"
-	ammo-shape="type: box; fit: manual; half-extents: 0.5 0.1 0.5;"
+	id="fence"
+	scale="15 2 1"
+	shadow
+	ammo-body="type: static; mass: 0; "
+	ammo-shape="type: box; fit: manual; half-extents: 7 0.5 0.5; offset: 0 0.5 0.5;"
 />
 
-<a-entity class="floors" pool__floors="size: 10; mixin: floor" activate__floors />
-<a-mixin id="walls" grid="width: 5; length: 2; height: 2;" />
-<!-- walls -->
-<a-entity class="walls" pool__walls="" activate__walls />
+<a-entity
+	id="ground"
+	geometry
+	material="color: #281b0d;"
+	ammo-body="type: static; mass: 0; disableCollision: true"
+	ammo-shape="type: box; fit: manual; half-extents: 20 0.1 20; "
+	on:collide={(e) => {
+		console.log(e)
+	}}
+	shadow
+	scale="20 0.1 20"
+	position="0 0 0"
+/>
 
-<!--a pool of floor tiles-->
-<a-entity id="floor" />
+<a-entity mixin="wall" gltf-model="./glb/cabinWindow.glb" position="0 0 -5" />
 
-<a-entity position="15 0 15">
-	<Volleyball />
-</a-entity>
+<a-entity mixin="wall" gltf-model="./glb/cabinWindow.glb" position="0 0 5" />
+<a-entity
+	mixin="wall"
+	gltf-model="./glb/cabinDoor.glb"
+	rotation="0 90 0"
+	position="-5 0 0"
+	ammo-shape="type: box; fit: manual; half-extents: 2 4 1; offset: -4 0.5 0.5;"
+/>
+
+<a-entity
+	mixin="wall"
+	rotation="0 90 0"
+	position="-5 0 0"
+	material="visible: false;"
+	ammo-shape="type: box; fit: manual; half-extents: 2 4 1; offset: 4 0.5 0.5;"
+/>
+
+<a-entity mixin="wall" gltf-model="./glb/cabinWindow.glb" rotation="0 90 0" position="5 0 0" />
+
+<a-entity gltf-model="./glb/fence.glb" mixin="fence" position="0 0 9" />
+<a-entity gltf-model="./glb/fence.glb" mixin="fence" position="0 0 -9" />
+<a-entity
+	shadow
+	gltf-model="./glb/cabinWindow.glb"
+	scale="10 2 10"
+	rotation="0 90 0"
+	position="-5 4 0"
+/>
+
+<a-entity
+	mixin="fence"
+	gltf-model="./glb/fence.glb"
+	scale="4 2 4"
+	rotation="0 90 0"
+	position="-12 0 -4"
+	ammo-shape="type: box; fit: manual; half-extents: 2 0.5 0.5; offset: 0 0.5 1.5;"
+/>
+<a-entity
+	mixin="fence"
+	gltf-model="./glb/fence.glb"
+	scale="4 2 4"
+	rotation="0 90 0"
+	position="-12 0 4"
+	ammo-shape="type: box; fit: manual; half-extents: 2 0.5 0.5; offset: 0 0.5 1.5;"
+/>
+
+<a-entity
+	shadow
+	gltf-model="./glb/cabinWindow.glb"
+	scale="10 2 10"
+	rotation="0 90 0"
+	position="5 4 0"
+/>
+
+<a-entity mixin="fence" gltf-model="./glb/fence.glb" rotation="0 90 0" position="9 0 0" />
+
+<a-entity
+	shadow
+	gltf-model="./glb/cabinRoofCenter.glb"
+	scale="10 4 10"
+	rotation="0 90 0"
+	position="0 3.5 0"
+/>
+<a-entity
+	shadow
+	gltf-model="./glb/cabinFloor.glb"
+	scale="10 4 10"
+	rotation="0 0 0"
+	position="0 0.01 0"
+/>
+<a-entity light="type: point; distance: 12" />
+<!-- <a-entity mixin="building" material="color: #333;" scale="24 0.1 24" /> -->

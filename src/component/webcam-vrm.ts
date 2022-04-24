@@ -1,14 +1,12 @@
-import * as Kalidokit from 'kalidokit'
 import { Holistic } from '@mediapipe/holistic/holistic';
 import { Camera } from '@mediapipe/camera_utils/camera_utils';
 import { open_live, tick } from 'src/timing';
 
-import { VRM, VRMSchema } from "@pixiv/three-vrm"
 import { Value } from 'src/value';
 import { currentVRM, mirrorVRM } from './vrm';
 import { talk } from 'src/chat';
+const { VRMSchema } = THREE_VRM
 
-const remap = Kalidokit.Utils.remap;
 const clamp = Kalidokit.Utils.clamp;
 const lerp = Kalidokit.Vector.lerp;
 

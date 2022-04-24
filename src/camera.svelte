@@ -64,9 +64,10 @@
 
 <a-camera
 	active
-	fov="75"
+	fov="85"
 	id="camera"
 	character-camera
+	far="50000"
 	position="0 4 0"
 	wasd-controls="enabled: false;"
 	look="enabled: true;pointerLockEnabled: true;"

@@ -91,7 +91,6 @@
 />
 <a-entity pool__mountains="mixin: mountains; size: 50" activate__mountains />
 
-<!-- <a-entity id="tree-model" gltf-model="./glb/tree.glb" instanced-mesh="capacity: 300" /> -->
 <a-mixin
 	id="tree"
 	class="climbable"

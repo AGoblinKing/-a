@@ -19,7 +19,7 @@ AFRAME.registerComponent("floaty", {
         this.el.removeEventListener("model-loaded", this.setup)
     },
     setup() {
-
+        // tr 
         // traverse o3d and update the material to have the spiral animation effect
         this.el.object3D.traverse((c) => {
             if (c.material) {

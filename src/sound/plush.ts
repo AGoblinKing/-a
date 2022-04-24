@@ -1,4 +1,4 @@
-export const squeek = {
+export const sfx_squeek = {
     "oldParams": true,
     "wave_type": 0,
     "p_env_attack": -0.03825496773355172,

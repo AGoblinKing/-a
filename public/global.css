@@ -6,6 +6,10 @@
 	font-style: normal;
 }
 
+.a-enter-vr {
+	display: none !important;
+}
+
 body {
 	padding: 0;
 	margin: 0;

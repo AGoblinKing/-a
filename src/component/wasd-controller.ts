@@ -16,7 +16,7 @@ function getRoot(o3d: Object3D) {
 }
 AFRAME.registerComponent("wasd-controller", {
     schema: {
-        speed: { type: "number", default: 0.2 },
+        speed: { type: "number", default: 0.5 },
         rot: { type: "number", default: 0.0025 },
     },
 

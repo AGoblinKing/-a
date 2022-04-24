@@ -7,15 +7,6 @@ export const guest = new Value(args.$.has("join"))
 export const room = new Value(args.$.get("join"))
 export const passcode = new Value("").save("passcode")
 
-const sample = {
-    mushroom5: {
-        // can do full or partial updates
-        p: [0, 0, 0],
-        q: [0, 0, 0, 1],
-        s: [1, 1, 1],
-        v: true
-    }
-}
 let scene
 
 export const paths = {}

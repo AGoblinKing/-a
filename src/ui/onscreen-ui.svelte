@@ -1,5 +1,5 @@
 <script>
-	import { talk } from 'src/chat'
+	import { location } from 'src/component/location'
 
 	import { binds, binds_icon } from 'src/control'
 	import { key_down, key_map, key_up } from 'src/input'
@@ -135,6 +135,12 @@
 	>
 		<div class="dot" style="margin-top:{y * 100}%;margin-left:{x * 100}%;" />
 	</div>
+</div>
+
+<div class="location">
+	{#each $location as loc}
+		<div class="loc">{loc}</div>
+	{/each}
 </div>
 
 <style>
