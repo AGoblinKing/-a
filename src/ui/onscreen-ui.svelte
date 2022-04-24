@@ -1,5 +1,6 @@
 <script>
 	import { location } from 'src/component/location'
+	import { fade } from 'svelte/transition'
 
 	import { binds, binds_icon } from 'src/control'
 	import { key_down, key_map, key_up } from 'src/input'
@@ -139,11 +140,30 @@
 
 <div class="location">
 	{#each $location as loc}
-		<div class="loc">{loc}</div>
+		<div class="loc" in:fade out:fade>{loc}</div>
 	{/each}
 </div>
 
 <style>
+	.location {
+		display: flex;
+		flex-direction: row;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		color: white;
+		font-size: 3vh;
+
+		z-index: 1;
+		pointer-events: none;
+		opacity: 0.5;
+	}
+
+	.loc {
+		text-shadow: -0.15rem -0.15rem 0 #000, 0.15rem -0.15rem 0 #000, -0.15rem 0.15rem 0 #000,
+			0.15rem 0.15rem 0 #000;
+		margin: 1vh;
+	}
 	.dot {
 		width: 3vh;
 		height: 3vh;

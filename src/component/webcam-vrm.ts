@@ -1,6 +1,6 @@
 import { Holistic } from '@mediapipe/holistic/holistic';
 import { Camera } from '@mediapipe/camera_utils/camera_utils';
-import { open_live, tick } from 'src/timing';
+import { camera, open_live, tick } from 'src/timing';
 
 import { Value } from 'src/value';
 import { currentVRM, mirrorVRM } from './vrm';
@@ -288,10 +288,10 @@ videoElement.on(($ve) => {
   // Use `Mediapipe` utils to get camera - lower resolution = higher fps
 
 
-  let camera
+  let c
   open_live.on(($l) => {
-    if (!camera && $l) {
-      camera = new Camera($ve, {
+    if (!c && $l) {
+      c = new Camera($ve, {
         onFrame: async () => {
           // if (!ready) return
 
@@ -305,12 +305,13 @@ videoElement.on(($ve) => {
     }
 
 
-    if ($l) camera.start();
+    if ($l) c.start();
 
-    if (!$l && camera) camera.stop();
-
+    if (!$l && c) {
+      c.stop();
+      // TODO: reset rotation
+    }
   })
-
 })
 
 

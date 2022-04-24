@@ -17,11 +17,11 @@
 		position: absolute;
 
 		width: 3vh;
-		background-color: #444;
+		background-color: rgb(0, 58, 130);
 		height: 3vh;
 		border-radius: 3vh;
-		border: 1vh solid #222;
-		opacity: 0.75;
+		border: 0.5vh solid rgb(0, 106, 206);
+		opacity: 0.9;
 		z-index: 5;
 		box-shadow: 0 0 5vh rgb(0 65 150);
 		transform: translate(-50%, 0) perspective(400px) rotateX(-20deg) rotateY(-20deg);

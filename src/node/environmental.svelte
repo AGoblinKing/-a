@@ -32,7 +32,7 @@
 	ammo-body="type: static; mass: 0;"
 	ammo-shape="type:box"
 	color="#334411"
-	location="name: forest; color: green; bb: {-groundSize * 1.5} 0 {-groundSize * 1.5} {groundSize *
+	location="name: 🌳; color: green; box: {-groundSize * 1.5} 0 {-groundSize * 1.5} {groundSize *
 		1.5} 100 {groundSize * 1.5}"
 />
 <a-entity

@@ -18,9 +18,12 @@ AFRAME.registerSystem("loc", {
             const [key, value] = entry
 
             const n = value.data.name
+
             const l = location.$.indexOf(n)
-            if (value.playerIsIn(camera.$.position)) {
+
+            if (value.playerIsIn(wpos)) {
                 if (l !== -1) continue
+
                 location.$.push(n)
                 location.poke()
 
@@ -54,12 +57,14 @@ AFRAME.registerComponent("location", {
     },
 
     init() {
-        locations[this.data] = this
+        locations[this.data.name] = this
         this.bb = new AFRAME.THREE.Box3() as Box3
         this.bb.setFromArray(this.data.box.split(" ").map(parseFloat))
+
     },
 
     playerIsIn(playerPos: Vector3) {
+
         return this.bb.containsPoint(vec3.copy(playerPos).sub(this.el.object3D.position))
     },
 

@@ -48,28 +48,28 @@
 }
 
 /* fakecss:/workspaces/-a/src/ui/live.esbuild-svelte-fake-css */
-.action.svelte-67wfs3 {
+.action.svelte-1a08ttw {
   cursor: pointer;
   top: 1vh;
   right: 0vh;
   position: absolute;
   width: 3vh;
-  background-color: #444;
+  background-color: rgb(0, 58, 130);
   height: 3vh;
   border-radius: 3vh;
-  border: 1vh solid #222;
-  opacity: 0.75;
+  border: 0.5vh solid rgb(0, 106, 206);
+  opacity: 0.9;
   z-index: 5;
   box-shadow: 0 0 5vh rgb(0 65 150);
   transform: translate(-50%, 0) perspective(400px) rotateX(-20deg) rotateY(-20deg);
 }
-.action.svelte-67wfs3:hover {
+.action.svelte-1a08ttw:hover {
   box-shadow: 0 0 5vh #0f0;
 }
-.mobile.action.svelte-67wfs3 {
+.mobile.action.svelte-1a08ttw {
   transform: none !important;
 }
-.action.live.svelte-67wfs3 {
+.action.live.svelte-1a08ttw {
   background-color: red;
   box-shadow: 0 0 5vh #f00;
 }
@@ -92,7 +92,27 @@
 }
 
 /* fakecss:/workspaces/-a/src/ui/onscreen-ui.esbuild-svelte-fake-css */
-.dot.svelte-17160hh.svelte-17160hh {
+.location.svelte-6qoykx.svelte-6qoykx {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: white;
+  font-size: 3vh;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.5;
+}
+.loc.svelte-6qoykx.svelte-6qoykx {
+  text-shadow:
+    -0.15rem -0.15rem 0 #000,
+    0.15rem -0.15rem 0 #000,
+    -0.15rem 0.15rem 0 #000,
+    0.15rem 0.15rem 0 #000;
+  margin: 1vh;
+}
+.dot.svelte-6qoykx.svelte-6qoykx {
   width: 3vh;
   height: 3vh;
   background-color: rgb(153, 173, 192);
@@ -102,17 +122,17 @@
   cursor: pointer;
   pointer-events: none;
 }
-.bind-bar.svelte-17160hh.svelte-17160hh {
+.bind-bar.svelte-6qoykx.svelte-6qoykx {
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
   z-index: 5;
 }
-.inactive.svelte-17160hh.svelte-17160hh {
+.inactive.svelte-6qoykx.svelte-6qoykx {
   opacity: 0;
 }
-.button.svelte-17160hh.svelte-17160hh {
+.button.svelte-6qoykx.svelte-6qoykx {
   border: 0.5vh solid rgb(0, 106, 206);
   border-radius: 1vh;
   color: white;
@@ -135,16 +155,16 @@
   transform: perspective(400px) rotateY(40deg);
   cursor: pointer;
 }
-.button.svelte-17160hh.svelte-17160hh:active {
+.button.svelte-6qoykx.svelte-6qoykx:active {
   background-color: rgb(0, 32, 53) !important;
 }
-.button.svelte-17160hh.svelte-17160hh:hover {
+.button.svelte-6qoykx.svelte-6qoykx:hover {
   background-color: rgb(0, 106, 206) !important;
   color: rgb(0, 225, 255);
   cursor: pointer;
-  animation: svelte-17160hh-beep 250ms alternate infinite;
+  animation: svelte-6qoykx-beep 250ms alternate infinite;
 }
-@keyframes svelte-17160hh-beep {
+@keyframes svelte-6qoykx-beep {
   0% {
     opacity: 95%;
   }
@@ -152,37 +172,37 @@
     opacity: 100%;
   }
 }
-.button.down.svelte-17160hh.svelte-17160hh {
+.button.down.svelte-6qoykx.svelte-6qoykx {
   box-shadow: 0 0 5vh rgb(0, 65, 150), 0 0 2vh rgb(31, 255, 2);
 }
-.motion.svelte-17160hh.svelte-17160hh {
+.motion.svelte-6qoykx.svelte-6qoykx {
   position: absolute;
   right: 0;
   z-index: 5;
   bottom: 0;
 }
-.motion.svelte-17160hh .button.svelte-17160hh {
+.motion.svelte-6qoykx .button.svelte-6qoykx {
   opacity: 0.65;
 }
-.motion.svelte-17160hh .button.svelte-17160hh {
+.motion.svelte-6qoykx .button.svelte-6qoykx {
   padding: 0.5vh 1vh;
   transform: perspective(400px) rotateY(-40deg);
 }
-.move.button.svelte-17160hh.svelte-17160hh {
+.move.button.svelte-6qoykx.svelte-6qoykx {
   width: 10vh;
   height: 10vh;
 }
-.motion.svelte-17160hh .button.svelte-17160hh:active,
-.button.svelte-17160hh.svelte-17160hh:hover,
-.motion.svelte-17160hh .button.svelte-17160hh:hover,
-.button.svelte-17160hh.svelte-17160hh:active {
+.motion.svelte-6qoykx .button.svelte-6qoykx:active,
+.button.svelte-6qoykx.svelte-6qoykx:hover,
+.motion.svelte-6qoykx .button.svelte-6qoykx:hover,
+.button.svelte-6qoykx.svelte-6qoykx:active {
   transform: none;
   opacity: 1;
 }
-.active.svelte-17160hh.svelte-17160hh {
+.active.svelte-6qoykx.svelte-6qoykx {
   opacity: 0.65;
 }
-.mobile.svelte-17160hh .button.svelte-17160hh {
+.mobile.svelte-6qoykx .button.svelte-6qoykx {
   transform: none !important;
 }
 

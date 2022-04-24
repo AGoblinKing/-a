@@ -1,5 +1,6 @@
 <script>
 	import '../component/grid'
+	import 'src/component/location'
 
 	// static collider that removes other static colliders found
 
@@ -28,14 +29,15 @@
 	id="ground"
 	geometry
 	material="color: #281b0d;"
-	ammo-body="type: static; mass: 0; disableCollision: true"
-	ammo-shape="type: box; fit: manual; half-extents: 20 0.1 20; "
+	ammo-body="type: kinematic; mass: 0; disableCollision: true; emitCollisionEvents: true"
+	ammo-shape="type: box; fit: manual; half-extents: 10 0.1 10; "
 	on:collide={(e) => {
 		console.log(e)
 	}}
 	shadow
 	scale="20 0.1 20"
 	position="0 0 0"
+	location="name: 🏠; box: -10 0 -10 10 100 10; "
 />
 
 <a-entity mixin="wall" gltf-model="./glb/cabinWindow.glb" position="0 0 -5" />
