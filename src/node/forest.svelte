@@ -19,12 +19,12 @@
 	const trunkVary = 'property:scale; range: 2 1 2 5 2 5'
 
 	const boxBlocker = {
-		'ammo-body': 'type: static; mass: 0;',
+		'physx-body': 'type: static; mass: 0;',
 		'ammo-shape': 'type: box; fit: manual; halfExtents: 1 2.5 1; offset: 0 2.5 0'
 	}
 
 	const smolBoxBlocker = {
-		'ammo-body': 'type: static; mass: 0;',
+		'physx-body': 'type: static; mass: 0;',
 		'ammo-shape': 'type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0'
 	}
 	// look-controls="enabled: false;" wasd-controls="enabled;false;"
@@ -32,7 +32,7 @@
 
 <a-mixin
 	id="smolitem"
-	ammo-body="type: static; mass: 0;collisionFilterGroup: 2;"
+	physx-body="type: static; mass: 0;collisionFilterGroup: 2;"
 	ammo-shape="type: sphere; fit: manual; sphereRadius: 1;"
 />
 
@@ -74,7 +74,7 @@
 	vary="property: scale; range: 0.5 0.25 0.5 2 1 2"
 	{scatter}
 	gltf-model="./glb/rockB.glb"
-	ammo-body="type: static; mass: 0"
+	physx-body="type: static; mass: 0"
 	host
 	ammo-shape="type: sphere; fit: manual; sphereRadius: 1.5 "
 />
@@ -85,7 +85,7 @@
 	host
 	gltf-model="./glb/rockC.glb"
 	ring="radius: {groundSize * 0.7}; count: 50"
-	ammo-body="type: static; mass: 0;"
+	physx-body="type: static; mass: 0;"
 	vary="property: scale; range: 12 2 12 15 20 15"
 	ammo-shape="type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0"
 />
@@ -126,7 +126,7 @@
 <a-mixin
 	id="animal"
 	gltf-model="./char/Horse.glb"
-	ammo-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;"
+	physx-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;"
 	scale="0.35 0.35 0.35"
 	ammo-shape="type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.5 0"
 	shadow="cast: true; receive: false;"

@@ -15,7 +15,7 @@
 	scale="{$size.x} {$size.y} {$size.z}"
 	host="current"
 	wasd-controller
-	avatar
+	net-avatar
 	sfxr__jump={AFRAME.utils.styleParser.stringify(sfx_jump)}
 />
 
@@ -24,6 +24,6 @@
 	position="0 1 -1"
 	rotation="0 180 0"
 	host="doer"
-	avatar
+	net-avatar
 	vrm="src: {$avatar_doer}; mirror: true"
 />

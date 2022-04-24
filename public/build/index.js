@@ -6602,9 +6602,9 @@ reset back to 1 for size
       u.v = o3d.visible ? 1 : 0;
     },
     slowtick() {
-      let type = this.el.components["ammo-body"].data.type;
+      let type = this.el.components["physx-body"]?.data.type;
       if (guest.$ && (type === "kinematic" || type === "dynamic")) {
-        type = this.el.components["ammo-body"].data.type = "static";
+        type = this.el.components["physx-body"].data.type = "static";
       }
       if (!host.$ || type === "static")
         return;
@@ -6639,7 +6639,7 @@ reset back to 1 for size
       this.cancel();
     }
   });
-  AFRAME.registerComponent("avatar", {
+  AFRAME.registerComponent("net-avatar", {
     init() {
     }
   });
@@ -7273,7 +7273,7 @@ reset back to 1 for size
       c() {
         a_mixin = element("a-mixin");
         set_custom_element_data(a_mixin, "id", "character");
-        set_custom_element_data(a_mixin, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.95; angularDamping: 1;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin, "physx-body", "type: dynamic; mass: 1; linearDamping: 0.95; angularDamping: 1;angularFactor: 0 1 0;");
         set_custom_element_data(a_mixin, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.2 0.6 0.2; offset: 0 0.75 0");
       },
       m(target, anchor) {
@@ -7479,13 +7479,13 @@ reset back to 1 for size
         set_custom_element_data(a_entity0, "scale", a_entity0_scale_value = ctx[1].x + " " + ctx[1].y + " " + ctx[1].z);
         set_custom_element_data(a_entity0, "host", "current");
         set_custom_element_data(a_entity0, "wasd-controller", "");
-        set_custom_element_data(a_entity0, "avatar", "");
+        set_custom_element_data(a_entity0, "net-avatar", "");
         set_custom_element_data(a_entity0, "sfxr__jump", a_entity0_sfxr__jump_value = AFRAME.utils.styleParser.stringify(sfx_jump));
         set_custom_element_data(a_entity1, "mixin", "shadow character");
         set_custom_element_data(a_entity1, "position", "0 1 -1");
         set_custom_element_data(a_entity1, "rotation", "0 180 0");
         set_custom_element_data(a_entity1, "host", "doer");
-        set_custom_element_data(a_entity1, "avatar", "");
+        set_custom_element_data(a_entity1, "net-avatar", "");
         set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[2] + "; mirror: true");
       },
       m(target, anchor) {
@@ -34120,7 +34120,7 @@ reset back to 1 for size
         set_custom_element_data(a_entity, "material", a_entity_material_value = "wireframe: true; opacity: 0.05s;color: #0F0; shader: flat;transparent: true; visible: " + ctx[3] + " };");
         set_custom_element_data(a_entity, "scale", "0.1 0.1 20");
         set_custom_element_data(a_entity, "position", "0 0 -1");
-        set_custom_element_data(a_entity, "ammo-body", "type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;");
+        set_custom_element_data(a_entity, "physx-body", "type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;");
         set_custom_element_data(a_entity, "ammo-shape", "type: box; halfExtents: 0.05 0.05 6;offset: 0 0 -9.5");
       },
       m(target, anchor) {
@@ -34663,7 +34663,7 @@ gl_Position = mvPosition;
         t28 = space();
         a_entity13 = element("a-entity");
         set_custom_element_data(a_mixin0, "id", "smolitem");
-        set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;collisionFilterGroup: 2;");
+        set_custom_element_data(a_mixin0, "physx-body", "type: static; mass: 0;collisionFilterGroup: 2;");
         set_custom_element_data(a_mixin0, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
         set_custom_element_data(a_mixin1, "id", "smolfix");
         set_custom_element_data(a_mixin1, "ammo-shape", "offset: -1.85 0 0.85;");
@@ -34696,7 +34696,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin5, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
         set_custom_element_data(a_mixin5, "scatter", ctx[1]);
         set_custom_element_data(a_mixin5, "gltf-model", "./glb/rockB.glb");
-        set_custom_element_data(a_mixin5, "ammo-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin5, "physx-body", "type: static; mass: 0");
         set_custom_element_data(a_mixin5, "host", "");
         set_custom_element_data(a_mixin5, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
         set_custom_element_data(a_mixin6, "id", "mountains");
@@ -34704,7 +34704,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin6, "host", "");
         set_custom_element_data(a_mixin6, "gltf-model", "./glb/rockC.glb");
         set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 50");
-        set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin6, "physx-body", "type: static; mass: 0;");
         set_custom_element_data(a_mixin6, "vary", "property: scale; range: 12 2 12 15 20 15");
         set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
         set_custom_element_data(a_entity0, "pool__mountains", "mixin: mountains; size: 50");
@@ -34732,7 +34732,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity6, "activate__flowerslow", "");
         set_custom_element_data(a_mixin9, "id", "animal");
         set_custom_element_data(a_mixin9, "gltf-model", "./char/Horse.glb");
-        set_custom_element_data(a_mixin9, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin9, "physx-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
         set_custom_element_data(a_mixin9, "scale", "0.35 0.35 0.35");
         set_custom_element_data(a_mixin9, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.5 0");
         set_custom_element_data(a_mixin9, "shadow", "cast: true; receive: false;");
@@ -35001,11 +35001,11 @@ gl_Position = mvPosition;
     let { groundSize = 100 } = $$props;
     const scatter = [-groundSize / 2, 0, -groundSize / 2, groundSize / 2, 0, groundSize / 2].join(" ");
     const boxBlocker = {
-      "ammo-body": "type: static; mass: 0;",
+      "physx-body": "type: static; mass: 0;",
       "ammo-shape": "type: box; fit: manual; halfExtents: 1 2.5 1; offset: 0 2.5 0"
     };
     const smolBoxBlocker = {
-      "ammo-body": "type: static; mass: 0;",
+      "physx-body": "type: static; mass: 0;",
       "ammo-shape": "type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0"
     };
     $$self.$$set = ($$props2) => {
@@ -35226,7 +35226,7 @@ gl_Position = mvPosition;
         t16 = space();
         a_entity15 = element("a-entity");
         set_custom_element_data(a_mixin0, "id", "wall");
-        set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0; ");
+        set_custom_element_data(a_mixin0, "physx-body", "type: static; mass: 0; ");
         set_custom_element_data(a_mixin0, "ammo-shape", "type: box; fit: manual; half-extents: 5 4 1; offset: 0 0.5 0.5;");
         set_custom_element_data(a_mixin0, "geometry", "");
         set_custom_element_data(a_mixin0, "scale", "10 4 10");
@@ -35234,12 +35234,12 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin1, "id", "fence");
         set_custom_element_data(a_mixin1, "scale", "15 2 1");
         set_custom_element_data(a_mixin1, "shadow", "");
-        set_custom_element_data(a_mixin1, "ammo-body", "type: static; mass: 0; ");
+        set_custom_element_data(a_mixin1, "physx-body", "type: static; mass: 0; ");
         set_custom_element_data(a_mixin1, "ammo-shape", "type: box; fit: manual; half-extents: 7 0.5 0.5; offset: 0 0.5 0.5;");
         set_custom_element_data(a_entity0, "id", "ground");
         set_custom_element_data(a_entity0, "geometry", "");
         set_custom_element_data(a_entity0, "material", "color: #281b0d;");
-        set_custom_element_data(a_entity0, "ammo-body", "type: kinematic; mass: 0; disableCollision: true; emitCollisionEvents: true");
+        set_custom_element_data(a_entity0, "physx-body", "type: kinematic; mass: 0; disableCollision: true; emitCollisionEvents: true");
         set_custom_element_data(a_entity0, "ammo-shape", "type: box; fit: manual; half-extents: 10 0.1 10; ");
         set_custom_element_data(a_entity0, "shadow", "");
         set_custom_element_data(a_entity0, "scale", "20 0.1 20");
@@ -35673,7 +35673,7 @@ void main() {
         set_custom_element_data(a_plane, "rotation", "-90 0 0");
         set_custom_element_data(a_plane, "width", a_plane_width_value = ctx[0] * 1.5);
         set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 1.5);
-        set_custom_element_data(a_plane, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_plane, "physx-body", "type: static; mass: 0;");
         set_custom_element_data(a_plane, "ammo-shape", "type:box");
         set_custom_element_data(a_plane, "color", "#334411");
         set_custom_element_data(a_plane, "location", a_plane_location_value = "name: \u{1F333}; color: green; box: " + -ctx[0] * 1.5 + " 0 " + -ctx[0] * 1.5 + " " + ctx[0] * 1.5 + " 100 " + ctx[0] * 1.5);
@@ -36371,7 +36371,6 @@ void main() {
     let debug_1;
     let t11;
     let environmental;
-    let a_scene_physics_value;
     let current;
     webcam = new webcam_default({});
     netdata = new netdata_default({});
@@ -36422,10 +36421,10 @@ void main() {
         set_custom_element_data(a_mixin, "shadow", "cast: true");
         set_custom_element_data(a_scene, "keyboard-shortcuts", "enterVR: false");
         set_custom_element_data(a_scene, "stats", ctx[1]);
-        set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: low;");
+        set_custom_element_data(a_scene, "physx", "autoLoad: true");
+        set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: low;colorManagement: true; physicallyCorrectLights: true");
         set_custom_element_data(a_scene, "shadow", "type:basic;");
         set_custom_element_data(a_scene, "fog", "type: exponential; color: #555");
-        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2]);
         set_custom_element_data(a_scene, "uniforms", "");
         set_custom_element_data(a_scene, "net", "");
       },
@@ -36482,9 +36481,6 @@ void main() {
         if (!current || dirty & 2) {
           set_custom_element_data(a_scene, "stats", ctx2[1]);
         }
-        if (!current || dirty & 4 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[2])) {
-          set_custom_element_data(a_scene, "physics", a_scene_physics_value);
-        }
       },
       i(local) {
         if (current)
@@ -36540,11 +36536,9 @@ void main() {
   function instance11($$self, $$props, $$invalidate) {
     let $open_ui;
     let $open_stats;
-    let $open_debug;
     component_subscribe($$self, open_ui, ($$value) => $$invalidate(0, $open_ui = $$value));
     component_subscribe($$self, open_stats, ($$value) => $$invalidate(1, $open_stats = $$value));
-    component_subscribe($$self, open_debug, ($$value) => $$invalidate(2, $open_debug = $$value));
-    return [$open_ui, $open_stats, $open_debug];
+    return [$open_ui, $open_stats];
   }
   var Game = class extends SvelteComponent {
     constructor(options) {

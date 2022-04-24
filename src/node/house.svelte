@@ -10,7 +10,7 @@
 
 <a-mixin
 	id="wall"
-	ammo-body="type: static; mass: 0; "
+	physx-body="type: static; mass: 0; "
 	ammo-shape="type: box; fit: manual; half-extents: 5 4 1; offset: 0 0.5 0.5;"
 	geometry
 	scale="10 4 10"
@@ -21,7 +21,7 @@
 	id="fence"
 	scale="15 2 1"
 	shadow
-	ammo-body="type: static; mass: 0; "
+	physx-body="type: static; mass: 0; "
 	ammo-shape="type: box; fit: manual; half-extents: 7 0.5 0.5; offset: 0 0.5 0.5;"
 />
 
@@ -29,7 +29,7 @@
 	id="ground"
 	geometry
 	material="color: #281b0d;"
-	ammo-body="type: kinematic; mass: 0; disableCollision: true; emitCollisionEvents: true"
+	physx-body="type: kinematic; mass: 0; disableCollision: true; emitCollisionEvents: true"
 	ammo-shape="type: box; fit: manual; half-extents: 10 0.1 10; "
 	on:collide={(e) => {
 		console.log(e)

@@ -29,7 +29,7 @@
 	rotation="-90 0 0"
 	width={groundSize * 1.5}
 	height={groundSize * 1.5}
-	ammo-body="type: static; mass: 0;"
+	physx-body="type: static; mass: 0;"
 	ammo-shape="type:box"
 	color="#334411"
 	location="name: 🌳; color: green; box: {-groundSize * 1.5} 0 {-groundSize * 1.5} {groundSize *

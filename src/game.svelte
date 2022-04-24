@@ -36,10 +36,10 @@
 <a-scene
 	keyboard-shortcuts="enterVR: false"
 	stats={$open_stats}
-	renderer="highRefreshRate: true; alpha: false;precision: low;"
+	physx="autoLoad: true"
+	renderer="highRefreshRate: true; alpha: false;precision: low;colorManagement: true; physicallyCorrectLights: true"
 	shadow="type:basic;"
 	fog="type: exponential; color: #555"
-	physics="driver: ammo; debug: {$open_debug}"
 	uniforms
 	net
 >

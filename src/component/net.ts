@@ -203,9 +203,9 @@ AFRAME.registerComponent("host", {
     },
 
     slowtick() {
-        let type = this.el.components["ammo-body"].data.type
+        let type = this.el.components["physx-body"]?.data.type
         if (guest.$ && (type === "kinematic" || type === "dynamic")) {
-            type = this.el.components["ammo-body"].data.type = "static"
+            type = this.el.components["physx-body"].data.type = "static"
         }
         // || !
         if (!host.$ || type === "static") return
@@ -251,7 +251,7 @@ AFRAME.registerComponent("host", {
 })
 
 
-AFRAME.registerComponent("avatar", {
+AFRAME.registerComponent("net-avatar", {
     init() {
         // when as a guest, we connect, the host spawns duplicate of these that we send updates on
         // attach our camera to the dupe if its current vrm
