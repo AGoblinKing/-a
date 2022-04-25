@@ -156,7 +156,11 @@
 		text-shadow: -0.15rem -0.15rem 0 #000, 0.15rem -0.15rem 0 #000, -0.15rem 0.15rem 0 #000,
 			0.15rem 0.15rem 0 #000;
 		z-index: 1;
+
 		pointer-events: none;
+	}
+	.loc {
+		margin: 2vh;
 	}
 	.dot {
 		width: 3vh;

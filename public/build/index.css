@@ -92,7 +92,7 @@
 }
 
 /* fakecss:/workspaces/-a/src/ui/onscreen-ui.esbuild-svelte-fake-css */
-.location.svelte-11pk8jo.svelte-11pk8jo {
+.location.svelte-1oe86x5.svelte-1oe86x5 {
   display: flex;
   flex-direction: row;
   position: absolute;
@@ -108,7 +108,10 @@
   z-index: 1;
   pointer-events: none;
 }
-.dot.svelte-11pk8jo.svelte-11pk8jo {
+.loc.svelte-1oe86x5.svelte-1oe86x5 {
+  margin: 2vh;
+}
+.dot.svelte-1oe86x5.svelte-1oe86x5 {
   width: 3vh;
   height: 3vh;
   background-color: rgb(153, 173, 192);
@@ -118,17 +121,17 @@
   cursor: pointer;
   pointer-events: none;
 }
-.bind-bar.svelte-11pk8jo.svelte-11pk8jo {
+.bind-bar.svelte-1oe86x5.svelte-1oe86x5 {
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
   z-index: 5;
 }
-.inactive.svelte-11pk8jo.svelte-11pk8jo {
+.inactive.svelte-1oe86x5.svelte-1oe86x5 {
   opacity: 0;
 }
-.button.svelte-11pk8jo.svelte-11pk8jo {
+.button.svelte-1oe86x5.svelte-1oe86x5 {
   border: 0.5vh solid rgb(0, 106, 206);
   border-radius: 1vh;
   color: white;
@@ -151,16 +154,16 @@
   transform: perspective(400px) rotateY(40deg);
   cursor: pointer;
 }
-.button.svelte-11pk8jo.svelte-11pk8jo:active {
+.button.svelte-1oe86x5.svelte-1oe86x5:active {
   background-color: rgb(0, 32, 53) !important;
 }
-.button.svelte-11pk8jo.svelte-11pk8jo:hover {
+.button.svelte-1oe86x5.svelte-1oe86x5:hover {
   background-color: rgb(0, 106, 206) !important;
   color: rgb(0, 225, 255);
   cursor: pointer;
-  animation: svelte-11pk8jo-beep 250ms alternate infinite;
+  animation: svelte-1oe86x5-beep 250ms alternate infinite;
 }
-@keyframes svelte-11pk8jo-beep {
+@keyframes svelte-1oe86x5-beep {
   0% {
     opacity: 95%;
   }
@@ -168,37 +171,37 @@
     opacity: 100%;
   }
 }
-.button.down.svelte-11pk8jo.svelte-11pk8jo {
+.button.down.svelte-1oe86x5.svelte-1oe86x5 {
   box-shadow: 0 0 5vh rgb(0, 65, 150), 0 0 2vh rgb(31, 255, 2);
 }
-.motion.svelte-11pk8jo.svelte-11pk8jo {
+.motion.svelte-1oe86x5.svelte-1oe86x5 {
   position: absolute;
   right: 0;
   z-index: 5;
   bottom: 0;
 }
-.motion.svelte-11pk8jo .button.svelte-11pk8jo {
+.motion.svelte-1oe86x5 .button.svelte-1oe86x5 {
   opacity: 0.65;
 }
-.motion.svelte-11pk8jo .button.svelte-11pk8jo {
+.motion.svelte-1oe86x5 .button.svelte-1oe86x5 {
   padding: 0.5vh 1vh;
   transform: perspective(400px) rotateY(-40deg);
 }
-.move.button.svelte-11pk8jo.svelte-11pk8jo {
+.move.button.svelte-1oe86x5.svelte-1oe86x5 {
   width: 10vh;
   height: 10vh;
 }
-.motion.svelte-11pk8jo .button.svelte-11pk8jo:active,
-.button.svelte-11pk8jo.svelte-11pk8jo:hover,
-.motion.svelte-11pk8jo .button.svelte-11pk8jo:hover,
-.button.svelte-11pk8jo.svelte-11pk8jo:active {
+.motion.svelte-1oe86x5 .button.svelte-1oe86x5:active,
+.button.svelte-1oe86x5.svelte-1oe86x5:hover,
+.motion.svelte-1oe86x5 .button.svelte-1oe86x5:hover,
+.button.svelte-1oe86x5.svelte-1oe86x5:active {
   transform: none;
   opacity: 1;
 }
-.active.svelte-11pk8jo.svelte-11pk8jo {
+.active.svelte-1oe86x5.svelte-1oe86x5 {
   opacity: 0.65;
 }
-.mobile.svelte-11pk8jo .button.svelte-11pk8jo {
+.mobile.svelte-1oe86x5 .button.svelte-1oe86x5 {
   transform: none !important;
 }
 

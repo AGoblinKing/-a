@@ -33568,6 +33568,7 @@ reset back to 1 for size
     setupMagicWindowControls: function() {
       var magicWindowControls;
       var data = this.data;
+      return;
       if (utils.device.isMobile() || utils.device.isMobileDeviceRequestingDesktopSite()) {
         magicWindowControls = this.magicWindowControls = new THREE2.DeviceOrientationControls(this.magicWindowObject);
         if (typeof DeviceOrientationEvent !== "undefined" && DeviceOrientationEvent.requestPermission) {
@@ -35657,7 +35658,7 @@ void main() {
         div = element("div");
         t0 = text(t0_value);
         t1 = space();
-        attr(div, "class", div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[5][ctx[20]] ? "active" : "") + " svelte-11pk8jo");
+        attr(div, "class", div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[5][ctx[20]] ? "active" : "") + " svelte-1oe86x5");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -35672,7 +35673,7 @@ void main() {
         ctx = new_ctx;
         if (dirty & 64 && t0_value !== (t0_value = (ctx[6][ctx[20]] || ctx[20]) + ""))
           set_data(t0, t0_value);
-        if (dirty & 48 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[5][ctx[20]] ? "active" : "") + " svelte-11pk8jo")) {
+        if (dirty & 48 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[5][ctx[20]] ? "active" : "") + " svelte-1oe86x5")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -35692,7 +35693,7 @@ void main() {
       c() {
         div = element("div");
         t = text(t_value);
-        attr(div, "class", "loc");
+        attr(div, "class", "loc svelte-1oe86x5");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -35755,15 +35756,15 @@ void main() {
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
-        attr(div0, "class", div0_class_value = "bind-bar " + (ctx[3] ? "mobile" : "") + " svelte-11pk8jo");
-        attr(div1, "class", "speak button bounce svelte-11pk8jo");
-        attr(div2, "class", "jump button bounce svelte-11pk8jo");
-        attr(div3, "class", "dot svelte-11pk8jo");
+        attr(div0, "class", div0_class_value = "bind-bar " + (ctx[3] ? "mobile" : "") + " svelte-1oe86x5");
+        attr(div1, "class", "speak button bounce svelte-1oe86x5");
+        attr(div2, "class", "jump button bounce svelte-1oe86x5");
+        attr(div3, "class", "dot svelte-1oe86x5");
         set_style(div3, "margin-top", ctx[2] * 100 + "%");
         set_style(div3, "margin-left", ctx[1] * 100 + "%");
-        attr(div4, "class", "move button bounce svelte-11pk8jo");
-        attr(div5, "class", div5_class_value = "motion " + (ctx[3] ? "mobile" : "") + " svelte-11pk8jo");
-        attr(div6, "class", "location svelte-11pk8jo");
+        attr(div4, "class", "move button bounce svelte-1oe86x5");
+        attr(div5, "class", div5_class_value = "motion " + (ctx[3] ? "mobile" : "") + " svelte-1oe86x5");
+        attr(div6, "class", "location svelte-1oe86x5");
       },
       m(target, anchor) {
         insert(target, div0, anchor);
@@ -35818,7 +35819,7 @@ void main() {
           }
           each_blocks_1.length = each_value_1.length;
         }
-        if (dirty & 8 && div0_class_value !== (div0_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-11pk8jo")) {
+        if (dirty & 8 && div0_class_value !== (div0_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-1oe86x5")) {
           attr(div0, "class", div0_class_value);
         }
         if (dirty & 4) {
@@ -35827,7 +35828,7 @@ void main() {
         if (dirty & 2) {
           set_style(div3, "margin-left", ctx2[1] * 100 + "%");
         }
-        if (dirty & 8 && div5_class_value !== (div5_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-11pk8jo")) {
+        if (dirty & 8 && div5_class_value !== (div5_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-1oe86x5")) {
           attr(div5, "class", div5_class_value);
         }
         if (dirty & 128) {
