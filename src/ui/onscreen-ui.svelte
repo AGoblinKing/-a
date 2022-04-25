@@ -160,7 +160,7 @@
 		pointer-events: none;
 	}
 	.loc {
-		margin: 2vh;
+		margin: 1vh;
 	}
 	.dot {
 		width: 3vh;

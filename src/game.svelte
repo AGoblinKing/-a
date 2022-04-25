@@ -38,6 +38,7 @@
 	stats={$open_stats}
 	renderer=" alpha: false; colorManagement: true;"
 	shadow="type:basic;"
+	device-orientation-permission-ui="enabled: false"
 	physics="driver: ammo; debug: {$open_debug};"
 	uniforms
 	net

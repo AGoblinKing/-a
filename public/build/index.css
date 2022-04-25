@@ -92,7 +92,7 @@
 }
 
 /* fakecss:/workspaces/-a/src/ui/onscreen-ui.esbuild-svelte-fake-css */
-.location.svelte-1oe86x5.svelte-1oe86x5 {
+.location.svelte-sbiyru.svelte-sbiyru {
   display: flex;
   flex-direction: row;
   position: absolute;
@@ -108,10 +108,10 @@
   z-index: 1;
   pointer-events: none;
 }
-.loc.svelte-1oe86x5.svelte-1oe86x5 {
-  margin: 2vh;
+.loc.svelte-sbiyru.svelte-sbiyru {
+  margin: 1vh;
 }
-.dot.svelte-1oe86x5.svelte-1oe86x5 {
+.dot.svelte-sbiyru.svelte-sbiyru {
   width: 3vh;
   height: 3vh;
   background-color: rgb(153, 173, 192);
@@ -121,17 +121,17 @@
   cursor: pointer;
   pointer-events: none;
 }
-.bind-bar.svelte-1oe86x5.svelte-1oe86x5 {
+.bind-bar.svelte-sbiyru.svelte-sbiyru {
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
   z-index: 5;
 }
-.inactive.svelte-1oe86x5.svelte-1oe86x5 {
+.inactive.svelte-sbiyru.svelte-sbiyru {
   opacity: 0;
 }
-.button.svelte-1oe86x5.svelte-1oe86x5 {
+.button.svelte-sbiyru.svelte-sbiyru {
   border: 0.5vh solid rgb(0, 106, 206);
   border-radius: 1vh;
   color: white;
@@ -154,16 +154,16 @@
   transform: perspective(400px) rotateY(40deg);
   cursor: pointer;
 }
-.button.svelte-1oe86x5.svelte-1oe86x5:active {
+.button.svelte-sbiyru.svelte-sbiyru:active {
   background-color: rgb(0, 32, 53) !important;
 }
-.button.svelte-1oe86x5.svelte-1oe86x5:hover {
+.button.svelte-sbiyru.svelte-sbiyru:hover {
   background-color: rgb(0, 106, 206) !important;
   color: rgb(0, 225, 255);
   cursor: pointer;
-  animation: svelte-1oe86x5-beep 250ms alternate infinite;
+  animation: svelte-sbiyru-beep 250ms alternate infinite;
 }
-@keyframes svelte-1oe86x5-beep {
+@keyframes svelte-sbiyru-beep {
   0% {
     opacity: 95%;
   }
@@ -171,37 +171,37 @@
     opacity: 100%;
   }
 }
-.button.down.svelte-1oe86x5.svelte-1oe86x5 {
+.button.down.svelte-sbiyru.svelte-sbiyru {
   box-shadow: 0 0 5vh rgb(0, 65, 150), 0 0 2vh rgb(31, 255, 2);
 }
-.motion.svelte-1oe86x5.svelte-1oe86x5 {
+.motion.svelte-sbiyru.svelte-sbiyru {
   position: absolute;
   right: 0;
   z-index: 5;
   bottom: 0;
 }
-.motion.svelte-1oe86x5 .button.svelte-1oe86x5 {
+.motion.svelte-sbiyru .button.svelte-sbiyru {
   opacity: 0.65;
 }
-.motion.svelte-1oe86x5 .button.svelte-1oe86x5 {
+.motion.svelte-sbiyru .button.svelte-sbiyru {
   padding: 0.5vh 1vh;
   transform: perspective(400px) rotateY(-40deg);
 }
-.move.button.svelte-1oe86x5.svelte-1oe86x5 {
+.move.button.svelte-sbiyru.svelte-sbiyru {
   width: 10vh;
   height: 10vh;
 }
-.motion.svelte-1oe86x5 .button.svelte-1oe86x5:active,
-.button.svelte-1oe86x5.svelte-1oe86x5:hover,
-.motion.svelte-1oe86x5 .button.svelte-1oe86x5:hover,
-.button.svelte-1oe86x5.svelte-1oe86x5:active {
+.motion.svelte-sbiyru .button.svelte-sbiyru:active,
+.button.svelte-sbiyru.svelte-sbiyru:hover,
+.motion.svelte-sbiyru .button.svelte-sbiyru:hover,
+.button.svelte-sbiyru.svelte-sbiyru:active {
   transform: none;
   opacity: 1;
 }
-.active.svelte-1oe86x5.svelte-1oe86x5 {
+.active.svelte-sbiyru.svelte-sbiyru {
   opacity: 0.65;
 }
-.mobile.svelte-1oe86x5 .button.svelte-1oe86x5 {
+.mobile.svelte-sbiyru .button.svelte-sbiyru {
   transform: none !important;
 }
 

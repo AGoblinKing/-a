@@ -14,7 +14,6 @@ registerComponent('look', {
 
     schema: {
         enabled: { default: true },
-        magicWindowTrackingEnabled: { default: true },
         pointerLockEnabled: { default: false },
         reverseMouseDrag: { default: false },
         reverseTouchDrag: { default: false },
@@ -26,10 +25,9 @@ registerComponent('look', {
         this.deltaYaw = 0;
         this.previousHMDPosition = new THREE.Vector3();
         this.hmdQuaternion = new THREE.Quaternion();
-        this.magicWindowAbsoluteEuler = new THREE.Euler();
-        this.magicWindowDeltaEuler = new THREE.Euler();
+
         this.position = new THREE.Vector3();
-        this.magicWindowObject = new THREE.Object3D();
+
         this.rotation = {};
         this.deltaRotation = {};
         this.savedPose = null;
@@ -38,7 +36,6 @@ registerComponent('look', {
         this.bindMethods();
         this.previousMouseEvent = {};
 
-        this.setupMagicWindowControls();
 
         // To save / restore camera pose
         this.savedPose = {
@@ -50,25 +47,7 @@ registerComponent('look', {
         if (this.el.sceneEl.is('vr-mode') || this.el.sceneEl.is('ar-mode')) { this.onEnterVR(); }
     },
 
-    setupMagicWindowControls: function () {
-        var magicWindowControls;
-        var data = this.data;
-        return
-        // Only on mobile devices and only enabled if DeviceOrientation permission has been granted.
-        if (utils.device.isMobile() || utils.device.isMobileDeviceRequestingDesktopSite()) {
-            magicWindowControls = this.magicWindowControls = new THREE.DeviceOrientationControls(this.magicWindowObject);
-            if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) {
-                magicWindowControls.enabled = false;
-                if (this.el.sceneEl.components['device-orientation-permission-ui'].permissionGranted) {
-                    magicWindowControls.enabled = data.magicWindowTrackingEnabled;
-                } else {
-                    this.el.sceneEl.addEventListener('deviceorientationpermissiongranted', function () {
-                        magicWindowControls.enabled = data.magicWindowTrackingEnabled;
-                    });
-                }
-            }
-        }
-    },
+
 
     update: function (oldData) {
         var data = this.data;
@@ -78,16 +57,6 @@ registerComponent('look', {
             this.updateGrabCursor(data.enabled);
         }
 
-        // Reset magic window eulers if tracking is disabled.
-        if (oldData && !data.magicWindowTrackingEnabled && oldData.magicWindowTrackingEnabled) {
-            this.magicWindowAbsoluteEuler.set(0, 0, 0);
-            this.magicWindowDeltaEuler.set(0, 0, 0);
-        }
-
-        // Pass on magic window tracking setting to magicWindowControls.
-        if (this.magicWindowControls) {
-            this.magicWindowControls.enabled = data.magicWindowTrackingEnabled;
-        }
 
         if (oldData && !data.pointerLockEnabled !== oldData.pointerLockEnabled) {
             this.removeEventListeners();
@@ -220,32 +189,13 @@ registerComponent('look', {
             return;
         }
 
-        this.updateMagicWindowOrientation();
 
         // On mobile, do camera rotation with touch events and sensors.
-        object3D.rotation.x = this.magicWindowDeltaEuler.x + pitchObject.rotation.x;
-        object3D.rotation.y = this.magicWindowDeltaEuler.y + yawObject.rotation.y;
-        object3D.rotation.z = this.magicWindowDeltaEuler.z;
+        object3D.rotation.x = pitchObject.rotation.x;
+        object3D.rotation.y = yawObject.rotation.y;
+
     },
 
-    updateMagicWindowOrientation: function () {
-        var magicWindowAbsoluteEuler = this.magicWindowAbsoluteEuler;
-        var magicWindowDeltaEuler = this.magicWindowDeltaEuler;
-        // Calculate magic window HMD quaternion.
-        if (this.magicWindowControls && this.magicWindowControls.enabled) {
-            this.magicWindowControls.update();
-            magicWindowAbsoluteEuler.setFromQuaternion(this.magicWindowObject.quaternion, 'YXZ');
-            if (!this.previousMagicWindowYaw && magicWindowAbsoluteEuler.y !== 0) {
-                this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
-            }
-            if (this.previousMagicWindowYaw) {
-                magicWindowDeltaEuler.x = magicWindowAbsoluteEuler.x;
-                magicWindowDeltaEuler.y += magicWindowAbsoluteEuler.y - this.previousMagicWindowYaw;
-                magicWindowDeltaEuler.z = magicWindowAbsoluteEuler.z;
-                this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
-            }
-        }
-    },
 
     /**
      * Translate mouse drag into rotation.

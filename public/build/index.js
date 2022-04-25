@@ -33534,7 +33534,6 @@ reset back to 1 for size
     dependencies: ["position", "rotation"],
     schema: {
       enabled: { default: true },
-      magicWindowTrackingEnabled: { default: true },
       pointerLockEnabled: { default: false },
       reverseMouseDrag: { default: false },
       reverseTouchDrag: { default: false },
@@ -33545,10 +33544,7 @@ reset back to 1 for size
       this.deltaYaw = 0;
       this.previousHMDPosition = new THREE2.Vector3();
       this.hmdQuaternion = new THREE2.Quaternion();
-      this.magicWindowAbsoluteEuler = new THREE2.Euler();
-      this.magicWindowDeltaEuler = new THREE2.Euler();
       this.position = new THREE2.Vector3();
-      this.magicWindowObject = new THREE2.Object3D();
       this.rotation = {};
       this.deltaRotation = {};
       this.savedPose = null;
@@ -33556,7 +33552,6 @@ reset back to 1 for size
       this.setupMouseControls();
       this.bindMethods();
       this.previousMouseEvent = {};
-      this.setupMagicWindowControls();
       this.savedPose = {
         position: new THREE2.Vector3(),
         rotation: new THREE2.Euler()
@@ -33565,35 +33560,10 @@ reset back to 1 for size
         this.onEnterVR();
       }
     },
-    setupMagicWindowControls: function() {
-      var magicWindowControls;
-      var data = this.data;
-      return;
-      if (utils.device.isMobile() || utils.device.isMobileDeviceRequestingDesktopSite()) {
-        magicWindowControls = this.magicWindowControls = new THREE2.DeviceOrientationControls(this.magicWindowObject);
-        if (typeof DeviceOrientationEvent !== "undefined" && DeviceOrientationEvent.requestPermission) {
-          magicWindowControls.enabled = false;
-          if (this.el.sceneEl.components["device-orientation-permission-ui"].permissionGranted) {
-            magicWindowControls.enabled = data.magicWindowTrackingEnabled;
-          } else {
-            this.el.sceneEl.addEventListener("deviceorientationpermissiongranted", function() {
-              magicWindowControls.enabled = data.magicWindowTrackingEnabled;
-            });
-          }
-        }
-      }
-    },
     update: function(oldData) {
       var data = this.data;
       if (data.enabled !== oldData.enabled) {
         this.updateGrabCursor(data.enabled);
-      }
-      if (oldData && !data.magicWindowTrackingEnabled && oldData.magicWindowTrackingEnabled) {
-        this.magicWindowAbsoluteEuler.set(0, 0, 0);
-        this.magicWindowDeltaEuler.set(0, 0, 0);
-      }
-      if (this.magicWindowControls) {
-        this.magicWindowControls.enabled = data.magicWindowTrackingEnabled;
       }
       if (oldData && !data.pointerLockEnabled !== oldData.pointerLockEnabled) {
         this.removeEventListeners();
@@ -33691,27 +33661,8 @@ reset back to 1 for size
       if ((sceneEl.is("vr-mode") || sceneEl.is("ar-mode")) && sceneEl.checkHeadsetConnected()) {
         return;
       }
-      this.updateMagicWindowOrientation();
-      object3D.rotation.x = this.magicWindowDeltaEuler.x + pitchObject.rotation.x;
-      object3D.rotation.y = this.magicWindowDeltaEuler.y + yawObject.rotation.y;
-      object3D.rotation.z = this.magicWindowDeltaEuler.z;
-    },
-    updateMagicWindowOrientation: function() {
-      var magicWindowAbsoluteEuler = this.magicWindowAbsoluteEuler;
-      var magicWindowDeltaEuler = this.magicWindowDeltaEuler;
-      if (this.magicWindowControls && this.magicWindowControls.enabled) {
-        this.magicWindowControls.update();
-        magicWindowAbsoluteEuler.setFromQuaternion(this.magicWindowObject.quaternion, "YXZ");
-        if (!this.previousMagicWindowYaw && magicWindowAbsoluteEuler.y !== 0) {
-          this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
-        }
-        if (this.previousMagicWindowYaw) {
-          magicWindowDeltaEuler.x = magicWindowAbsoluteEuler.x;
-          magicWindowDeltaEuler.y += magicWindowAbsoluteEuler.y - this.previousMagicWindowYaw;
-          magicWindowDeltaEuler.z = magicWindowAbsoluteEuler.z;
-          this.previousMagicWindowYaw = magicWindowAbsoluteEuler.y;
-        }
-      }
+      object3D.rotation.x = pitchObject.rotation.x;
+      object3D.rotation.y = yawObject.rotation.y;
     },
     onMouseMove: function(evt) {
       var direction;
@@ -35658,7 +35609,7 @@ void main() {
         div = element("div");
         t0 = text(t0_value);
         t1 = space();
-        attr(div, "class", div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[5][ctx[20]] ? "active" : "") + " svelte-1oe86x5");
+        attr(div, "class", div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[5][ctx[20]] ? "active" : "") + " svelte-sbiyru");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -35673,7 +35624,7 @@ void main() {
         ctx = new_ctx;
         if (dirty & 64 && t0_value !== (t0_value = (ctx[6][ctx[20]] || ctx[20]) + ""))
           set_data(t0, t0_value);
-        if (dirty & 48 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[5][ctx[20]] ? "active" : "") + " svelte-1oe86x5")) {
+        if (dirty & 48 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[5][ctx[20]] ? "active" : "") + " svelte-sbiyru")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -35693,7 +35644,7 @@ void main() {
       c() {
         div = element("div");
         t = text(t_value);
-        attr(div, "class", "loc svelte-1oe86x5");
+        attr(div, "class", "loc svelte-sbiyru");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -35756,15 +35707,15 @@ void main() {
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
-        attr(div0, "class", div0_class_value = "bind-bar " + (ctx[3] ? "mobile" : "") + " svelte-1oe86x5");
-        attr(div1, "class", "speak button bounce svelte-1oe86x5");
-        attr(div2, "class", "jump button bounce svelte-1oe86x5");
-        attr(div3, "class", "dot svelte-1oe86x5");
+        attr(div0, "class", div0_class_value = "bind-bar " + (ctx[3] ? "mobile" : "") + " svelte-sbiyru");
+        attr(div1, "class", "speak button bounce svelte-sbiyru");
+        attr(div2, "class", "jump button bounce svelte-sbiyru");
+        attr(div3, "class", "dot svelte-sbiyru");
         set_style(div3, "margin-top", ctx[2] * 100 + "%");
         set_style(div3, "margin-left", ctx[1] * 100 + "%");
-        attr(div4, "class", "move button bounce svelte-1oe86x5");
-        attr(div5, "class", div5_class_value = "motion " + (ctx[3] ? "mobile" : "") + " svelte-1oe86x5");
-        attr(div6, "class", "location svelte-1oe86x5");
+        attr(div4, "class", "move button bounce svelte-sbiyru");
+        attr(div5, "class", div5_class_value = "motion " + (ctx[3] ? "mobile" : "") + " svelte-sbiyru");
+        attr(div6, "class", "location svelte-sbiyru");
       },
       m(target, anchor) {
         insert(target, div0, anchor);
@@ -35819,7 +35770,7 @@ void main() {
           }
           each_blocks_1.length = each_value_1.length;
         }
-        if (dirty & 8 && div0_class_value !== (div0_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-1oe86x5")) {
+        if (dirty & 8 && div0_class_value !== (div0_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-sbiyru")) {
           attr(div0, "class", div0_class_value);
         }
         if (dirty & 4) {
@@ -35828,7 +35779,7 @@ void main() {
         if (dirty & 2) {
           set_style(div3, "margin-left", ctx2[1] * 100 + "%");
         }
-        if (dirty & 8 && div5_class_value !== (div5_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-1oe86x5")) {
+        if (dirty & 8 && div5_class_value !== (div5_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-sbiyru")) {
           attr(div5, "class", div5_class_value);
         }
         if (dirty & 128) {
@@ -36128,6 +36079,7 @@ void main() {
         set_custom_element_data(a_scene, "stats", ctx[1]);
         set_custom_element_data(a_scene, "renderer", " alpha: false; colorManagement: true;");
         set_custom_element_data(a_scene, "shadow", "type:basic;");
+        set_custom_element_data(a_scene, "device-orientation-permission-ui", "enabled: false");
         set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2] + ";");
         set_custom_element_data(a_scene, "uniforms", "");
         set_custom_element_data(a_scene, "net", "");
