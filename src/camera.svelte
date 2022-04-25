@@ -57,9 +57,9 @@
 
 <a-mixin
 	id="bbs"
-	geometry
-	material=" opacity: 0.15; color: #00ff00; transparent: true; shader: flat;"
-	text="font: ./Roboto-msdf.json; value: targeting info"
+	geometry="primitive: circle; segments: 4;"
+	animation="property: rotation; to: 0 360 0; loop: true; dur: 1000; easing: linear"
+	material="wireframe: true; color: #00ff00; shader: flat;"
 />
 
 <a-camera
@@ -70,7 +70,7 @@
 	far="50000"
 	position="0 4 0"
 	wasd-controls="enabled: false;"
-	look="enabled: true;pointerLockEnabled: true; magicWindowTrackingEnabled: false; reverseTouchDrag: true;"
+	look="enabled: true;pointerLockEnabled: true;  reverseTouchDrag: true;"
 	look-controls="enabled: false;"
 >
 	<a-entity
@@ -83,22 +83,15 @@
 
 	{#if $open_targeting}
 		<a-entity
-			geometry
-			material="wireframe: true; opacity: 0.05s;color: #0F0; shader: flat;transparent: true; visible: {$open_targeting} };"
 			scale="0.1 0.1 20"
 			position="0 0 -1"
 			on:collidestart={collidestart}
 			on:collideend={collideend}
 			ammo-body="type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;"
-			ammo-shape="type: box; halfExtents: 0.05 0.05 6;offset: 0 0 -9.5"
+			ammo-shape="type: box; halfExtents: 0.05 0.05 6;offset: 0 0 -8; fit: manual;"
 		/>
 	{/if}
 </a-camera>
 
-<a-entity
-	geometry
-	bind:this={el}
-	material="color: blue; opacity: 0.15; shader: flat; visible: false;"
-	position="0 0 -1"
-	pool__targeting="mixin: bbs; size: 10"
-/>
+<!-- <a-entity mixin="bbs" material="color: blue;" position="0 0 -1" /> -->
+<a-entity bind:this={el} pool__targeting="mixin: bbs; size: 10" />

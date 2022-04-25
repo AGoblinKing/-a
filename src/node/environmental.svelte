@@ -8,13 +8,12 @@
 	import 'src/component/vary'
 	import 'src/component/floaty'
 	import 'src/component/windy'
-	import 'src/component/ai'
-
+	import 'src/component/alive'
 	import 'src/shader/space'
 
 	const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser)
 
-	export let groundSize = 100
+	export let groundSize = 300
 
 	const light = '#FEE'
 	const scatterBig = [-groundSize, 0, -groundSize, groundSize, 0, groundSize].join(' ')

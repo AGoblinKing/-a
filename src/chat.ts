@@ -38,7 +38,7 @@ export const assist = new Value('')
 
 const findTilde = /~/g
 
-function say(said: string) {
+export function say(said: string) {
     if (!said) return
 
     said = said.replace(findTilde, "control")
@@ -62,7 +62,7 @@ function say(said: string) {
 }
 
 
-function doControl(said: string) {
+export function doControl(said: string) {
     const items = said.toLowerCase().trim().split(" ")
 
     if (items[0] !== "control") return false

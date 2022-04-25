@@ -1,5 +1,5 @@
 import { time } from "src/timing"
-import { set_input_type } from "svelte/internal"
+
 import windyVert from "../shader/windy.vert"
 
 const main = `

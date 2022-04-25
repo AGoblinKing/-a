@@ -5369,6 +5369,7 @@
   // node_modules/svelte/internal/index.mjs
   function noop() {
   }
+  var identity = (x) => x;
   function assign(tar, src) {
     for (const k in src)
       tar[k] = src[k];
@@ -5410,6 +5411,33 @@
   function component_subscribe(component, store, callback) {
     component.$$.on_destroy.push(subscribe(store, callback));
   }
+  var is_client = typeof window !== "undefined";
+  var now = is_client ? () => window.performance.now() : () => Date.now();
+  var raf = is_client ? (cb) => requestAnimationFrame(cb) : noop;
+  var tasks = /* @__PURE__ */ new Set();
+  function run_tasks(now2) {
+    tasks.forEach((task) => {
+      if (!task.c(now2)) {
+        tasks.delete(task);
+        task.f();
+      }
+    });
+    if (tasks.size !== 0)
+      raf(run_tasks);
+  }
+  function loop(callback) {
+    let task;
+    if (tasks.size === 0)
+      raf(run_tasks);
+    return {
+      promise: new Promise((fulfill) => {
+        tasks.add(task = { c: callback, f: fulfill });
+      }),
+      abort() {
+        tasks.delete(task);
+      }
+    };
+  }
   var is_hydrating = false;
   function start_hydrating() {
     is_hydrating = true;
@@ -5419,6 +5447,23 @@
   }
   function append(target, node) {
     target.appendChild(node);
+  }
+  function get_root_for_style(node) {
+    if (!node)
+      return document;
+    const root = node.getRootNode ? node.getRootNode() : node.ownerDocument;
+    if (root && root.host) {
+      return root;
+    }
+    return node.ownerDocument;
+  }
+  function append_empty_stylesheet(node) {
+    const style_element = element("style");
+    append_stylesheet(get_root_for_style(node), style_element);
+    return style_element.sheet;
+  }
+  function append_stylesheet(node, style) {
+    append(node.head || node, style);
   }
   function insert(target, node, anchor) {
     target.insertBefore(node, anchor || null);
@@ -5495,6 +5540,72 @@
       node.style.setProperty(key, value, important ? "important" : "");
     }
   }
+  function custom_event(type, detail, bubbles = false) {
+    const e = document.createEvent("CustomEvent");
+    e.initCustomEvent(type, bubbles, false, detail);
+    return e;
+  }
+  var managed_styles = /* @__PURE__ */ new Map();
+  var active = 0;
+  function hash(str) {
+    let hash2 = 5381;
+    let i = str.length;
+    while (i--)
+      hash2 = (hash2 << 5) - hash2 ^ str.charCodeAt(i);
+    return hash2 >>> 0;
+  }
+  function create_style_information(doc, node) {
+    const info = { stylesheet: append_empty_stylesheet(node), rules: {} };
+    managed_styles.set(doc, info);
+    return info;
+  }
+  function create_rule(node, a, b, duration, delay, ease, fn, uid = 0) {
+    const step = 16.666 / duration;
+    let keyframes = "{\n";
+    for (let p2 = 0; p2 <= 1; p2 += step) {
+      const t = a + (b - a) * ease(p2);
+      keyframes += p2 * 100 + `%{${fn(t, 1 - t)}}
+`;
+    }
+    const rule = keyframes + `100% {${fn(b, 1 - b)}}
+}`;
+    const name = `__svelte_${hash(rule)}_${uid}`;
+    const doc = get_root_for_style(node);
+    const { stylesheet, rules } = managed_styles.get(doc) || create_style_information(doc, node);
+    if (!rules[name]) {
+      rules[name] = true;
+      stylesheet.insertRule(`@keyframes ${name} ${rule}`, stylesheet.cssRules.length);
+    }
+    const animation = node.style.animation || "";
+    node.style.animation = `${animation ? `${animation}, ` : ""}${name} ${duration}ms linear ${delay}ms 1 both`;
+    active += 1;
+    return name;
+  }
+  function delete_rule(node, name) {
+    const previous = (node.style.animation || "").split(", ");
+    const next = previous.filter(name ? (anim) => anim.indexOf(name) < 0 : (anim) => anim.indexOf("__svelte") === -1);
+    const deleted = previous.length - next.length;
+    if (deleted) {
+      node.style.animation = next.join(", ");
+      active -= deleted;
+      if (!active)
+        clear_rules();
+    }
+  }
+  function clear_rules() {
+    raf(() => {
+      if (active)
+        return;
+      managed_styles.forEach((info) => {
+        const { stylesheet } = info;
+        let i = stylesheet.cssRules.length;
+        while (i--)
+          stylesheet.deleteRule(i);
+        info.rules = {};
+      });
+      managed_styles.clear();
+    });
+  }
   var current_component;
   function set_current_component(component) {
     current_component = component;
@@ -5556,6 +5667,19 @@
       $$.after_update.forEach(add_render_callback);
     }
   }
+  var promise;
+  function wait() {
+    if (!promise) {
+      promise = Promise.resolve();
+      promise.then(() => {
+        promise = null;
+      });
+    }
+    return promise;
+  }
+  function dispatch(node, direction, kind) {
+    node.dispatchEvent(custom_event(`${direction ? "intro" : "outro"}${kind}`));
+  }
   var outroing = /* @__PURE__ */ new Set();
   var outros;
   function group_outros() {
@@ -5592,6 +5716,121 @@
       });
       block.o(local);
     }
+  }
+  var null_transition = { duration: 0 };
+  function create_in_transition(node, fn, params) {
+    let config = fn(node, params);
+    let running = false;
+    let animation_name;
+    let task;
+    let uid = 0;
+    function cleanup() {
+      if (animation_name)
+        delete_rule(node, animation_name);
+    }
+    function go() {
+      const { delay = 0, duration = 300, easing = identity, tick: tick2 = noop, css } = config || null_transition;
+      if (css)
+        animation_name = create_rule(node, 0, 1, duration, delay, easing, css, uid++);
+      tick2(0, 1);
+      const start_time = now() + delay;
+      const end_time = start_time + duration;
+      if (task)
+        task.abort();
+      running = true;
+      add_render_callback(() => dispatch(node, true, "start"));
+      task = loop((now2) => {
+        if (running) {
+          if (now2 >= end_time) {
+            tick2(1, 0);
+            dispatch(node, true, "end");
+            cleanup();
+            return running = false;
+          }
+          if (now2 >= start_time) {
+            const t = easing((now2 - start_time) / duration);
+            tick2(t, 1 - t);
+          }
+        }
+        return running;
+      });
+    }
+    let started = false;
+    return {
+      start() {
+        if (started)
+          return;
+        started = true;
+        delete_rule(node);
+        if (is_function(config)) {
+          config = config();
+          wait().then(go);
+        } else {
+          go();
+        }
+      },
+      invalidate() {
+        started = false;
+      },
+      end() {
+        if (running) {
+          cleanup();
+          running = false;
+        }
+      }
+    };
+  }
+  function create_out_transition(node, fn, params) {
+    let config = fn(node, params);
+    let running = true;
+    let animation_name;
+    const group = outros;
+    group.r += 1;
+    function go() {
+      const { delay = 0, duration = 300, easing = identity, tick: tick2 = noop, css } = config || null_transition;
+      if (css)
+        animation_name = create_rule(node, 1, 0, duration, delay, easing, css);
+      const start_time = now() + delay;
+      const end_time = start_time + duration;
+      add_render_callback(() => dispatch(node, false, "start"));
+      loop((now2) => {
+        if (running) {
+          if (now2 >= end_time) {
+            tick2(0, 1);
+            dispatch(node, false, "end");
+            if (!--group.r) {
+              run_all(group.c);
+            }
+            return false;
+          }
+          if (now2 >= start_time) {
+            const t = easing((now2 - start_time) / duration);
+            tick2(1 - t, t);
+          }
+        }
+        return running;
+      });
+    }
+    if (is_function(config)) {
+      wait().then(() => {
+        config = config();
+        go();
+      });
+    } else {
+      go();
+    }
+    return {
+      end(reset) {
+        if (reset && config.tick) {
+          config.tick(1, 0);
+        }
+        if (running) {
+          if (animation_name)
+            delete_rule(node, animation_name);
+          running = false;
+        }
+      }
+    };
   }
   var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
   function get_spread_update(levels, updates) {
@@ -5957,7 +6196,7 @@
   var open_help = new Value(false);
   var open_stats = new Value(false).save("stats");
   var open_debug = new Value(false).save("debugger");
-  var open_targeting = new Value(false).save("targeting_3");
+  var open_targeting = new Value(false).save("targeting_5");
   var open_live = new Value(false);
   var open_hostid = new Value(true);
   var loc = location.search.slice(1).split("&").map((i) => i.split("="));
@@ -5966,7 +6205,7 @@
   var camera_el = new Value();
   var toggle_selfie = new Value(state_default.selfie).save("selfie");
   var toggle_visible = new Value(state_default.visible).save("visible");
-  var do_echo = new Value(true).save("do_echo");
+  var do_echo = new Value(false).save("do_echo2");
   var do_vary = new Value(true);
   var ismobile = new Value((0, import_is_mobile.default)());
   var time = new Value(new AFRAME.THREE.Uniform(0));
@@ -6562,6 +6801,10 @@ reset back to 1 for size
     },
     ["noticon" /* NotIcon */]: (items) => {
       delete binds_icon.$[items[2]];
+    },
+    ["use" /* Use */]: (items) => {
+    },
+    ["notuse" /* NotUse */]: (items) => {
     }
   };
 
@@ -7026,36 +7269,6 @@ reset back to 1 for size
   };
   var webcam_default = Webcam;
 
-  // src/node/characters-assets.svelte
-  function create_fragment2(ctx) {
-    let a_mixin;
-    return {
-      c() {
-        a_mixin = element("a-mixin");
-        set_custom_element_data(a_mixin, "id", "character");
-        set_custom_element_data(a_mixin, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.95; angularDamping: 1;angularFactor: 0 1 0;");
-        set_custom_element_data(a_mixin, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.2 0.6 0.2; offset: 0 0.75 0");
-      },
-      m(target, anchor) {
-        insert(target, a_mixin, anchor);
-      },
-      p: noop,
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(a_mixin);
-      }
-    };
-  }
-  var Characters_assets = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, null, create_fragment2, safe_not_equal, {});
-    }
-  };
-  var characters_assets_default = Characters_assets;
-
   // src/component/wasd-controller.ts
   var vec32 = new AFRAME.THREE.Vector3();
   var quat2 = new AFRAME.THREE.Quaternion();
@@ -7086,13 +7299,13 @@ reset back to 1 for size
       let torq;
       vec32.set(0, 0, 0);
       let intensity = 1;
-      let hop = 5;
+      let hop = 10;
       if (key_map.$["shift"]) {
         intensity = 1.5;
       }
       vec32.y = 5;
       if (key_map.$[" "] && o3d.position.y < 0.5) {
-        hop = delta;
+        hop *= delta;
         this.jump();
         vec32.y = hop;
       }
@@ -7219,19 +7432,26 @@ reset back to 1 for size
   };
 
   // src/node/characters.svelte
-  function create_fragment3(ctx) {
+  function create_fragment2(ctx) {
+    let a_mixin;
+    let t0;
     let a_entity0;
     let a_entity0_vrm_value;
     let a_entity0_scale_value;
     let a_entity0_sfxr__jump_value;
-    let t;
+    let t1;
     let a_entity1;
     let a_entity1_vrm_value;
     return {
       c() {
+        a_mixin = element("a-mixin");
+        t0 = space();
         a_entity0 = element("a-entity");
-        t = space();
+        t1 = space();
         a_entity1 = element("a-entity");
+        set_custom_element_data(a_mixin, "id", "character");
+        set_custom_element_data(a_mixin, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.95; angularDamping: 1;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.35 0.6 0.35; offset: 0 0.75 0");
         set_custom_element_data(a_entity0, "mixin", "shadow character");
         set_custom_element_data(a_entity0, "position", "0 1 0");
         set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value = "src: " + ctx[0] + "; current: true");
@@ -7249,8 +7469,10 @@ reset back to 1 for size
         set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[2] + "; mirror: true");
       },
       m(target, anchor) {
+        insert(target, a_mixin, anchor);
+        insert(target, t0, anchor);
         insert(target, a_entity0, anchor);
-        insert(target, t, anchor);
+        insert(target, t1, anchor);
         insert(target, a_entity1, anchor);
       },
       p(ctx2, [dirty]) {
@@ -7268,9 +7490,13 @@ reset back to 1 for size
       o: noop,
       d(detaching) {
         if (detaching)
+          detach(a_mixin);
+        if (detaching)
+          detach(t0);
+        if (detaching)
           detach(a_entity0);
         if (detaching)
-          detach(t);
+          detach(t1);
         if (detaching)
           detach(a_entity1);
       }
@@ -7288,7 +7514,7 @@ reset back to 1 for size
   var Characters = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance2, create_fragment3, safe_not_equal, {});
+      init(this, options, instance2, create_fragment2, safe_not_equal, {});
     }
   };
   var characters_default = Characters;
@@ -10620,14 +10846,14 @@ reset back to 1 for size
       this.set(1, y, z, 0, x, 1, z, 0, x, y, 1, 0, 0, 0, 0, 1);
       return this;
     },
-    compose: function(position, quaternion, scale3) {
+    compose: function(position, quaternion, scale4) {
       var te = this.elements;
       var x = quaternion._x, y = quaternion._y, z = quaternion._z, w = quaternion._w;
       var x2 = x + x, y2 = y + y, z2 = z + z;
       var xx = x * x2, xy = x * y2, xz = x * z2;
       var yy = y * y2, yz = y * z2, zz = z * z2;
       var wx = w * x2, wy = w * y2, wz = w * z2;
-      var sx = scale3.x, sy = scale3.y, sz = scale3.z;
+      var sx = scale4.x, sy = scale4.y, sz = scale4.z;
       te[0] = (1 - (yy + zz)) * sx;
       te[1] = (xy + wz) * sx;
       te[2] = (xz - wy) * sx;
@@ -10649,7 +10875,7 @@ reset back to 1 for size
     decompose: function() {
       var vector = new Vector3();
       var matrix = new Matrix4();
-      return function decompose(position, quaternion, scale3) {
+      return function decompose(position, quaternion, scale4) {
         var te = this.elements;
         var sx = vector.set(te[0], te[1], te[2]).length();
         var sy = vector.set(te[4], te[5], te[6]).length();
@@ -10674,9 +10900,9 @@ reset back to 1 for size
         matrix.elements[9] *= invSZ;
         matrix.elements[10] *= invSZ;
         quaternion.setFromRotationMatrix(matrix);
-        scale3.x = sx;
-        scale3.y = sy;
-        scale3.z = sz;
+        scale4.x = sx;
+        scale4.y = sy;
+        scale4.z = sz;
         return this;
       };
     }(),
@@ -12220,7 +12446,7 @@ reset back to 1 for size
     var position = new Vector3();
     var rotation = new Euler();
     var quaternion = new Quaternion();
-    var scale3 = new Vector3(1, 1, 1);
+    var scale4 = new Vector3(1, 1, 1);
     function onRotationChange() {
       quaternion.setFromEuler(rotation, false);
     }
@@ -12248,7 +12474,7 @@ reset back to 1 for size
       scale: {
         configurable: true,
         enumerable: true,
-        value: scale3
+        value: scale4
       },
       modelViewMatrix: {
         value: new Matrix4()
@@ -12460,14 +12686,14 @@ reset back to 1 for size
     },
     getWorldQuaternion: function() {
       var position = new Vector3();
-      var scale3 = new Vector3();
+      var scale4 = new Vector3();
       return function getWorldQuaternion(target) {
         if (target === void 0) {
           console.warn("THREE.Object3D: .getWorldQuaternion() target is now required");
           target = new Quaternion();
         }
         this.updateMatrixWorld(true);
-        this.matrixWorld.decompose(position, target, scale3);
+        this.matrixWorld.decompose(position, target, scale4);
         return target;
       };
     }(),
@@ -12781,7 +13007,7 @@ reset back to 1 for size
     }(),
     scale: function() {
       var m1 = new Matrix4();
-      return function scale3(x, y, z) {
+      return function scale4(x, y, z) {
         m1.makeScale(x, y, z);
         this.applyMatrix(m1);
         return this;
@@ -13268,31 +13494,31 @@ reset back to 1 for size
         return enabled ? value | 1 << position : value & ~(1 << position);
       }
       function getNormalIndex(normal) {
-        var hash = normal.x.toString() + normal.y.toString() + normal.z.toString();
-        if (normalsHash[hash] !== void 0) {
-          return normalsHash[hash];
+        var hash2 = normal.x.toString() + normal.y.toString() + normal.z.toString();
+        if (normalsHash[hash2] !== void 0) {
+          return normalsHash[hash2];
         }
-        normalsHash[hash] = normals.length / 3;
+        normalsHash[hash2] = normals.length / 3;
         normals.push(normal.x, normal.y, normal.z);
-        return normalsHash[hash];
+        return normalsHash[hash2];
       }
       function getColorIndex(color) {
-        var hash = color.r.toString() + color.g.toString() + color.b.toString();
-        if (colorsHash[hash] !== void 0) {
-          return colorsHash[hash];
+        var hash2 = color.r.toString() + color.g.toString() + color.b.toString();
+        if (colorsHash[hash2] !== void 0) {
+          return colorsHash[hash2];
         }
-        colorsHash[hash] = colors.length;
+        colorsHash[hash2] = colors.length;
         colors.push(color.getHex());
-        return colorsHash[hash];
+        return colorsHash[hash2];
       }
       function getUvIndex(uv) {
-        var hash = uv.x.toString() + uv.y.toString();
-        if (uvsHash[hash] !== void 0) {
-          return uvsHash[hash];
+        var hash2 = uv.x.toString() + uv.y.toString();
+        if (uvsHash[hash2] !== void 0) {
+          return uvsHash[hash2];
         }
-        uvsHash[hash] = uvs.length / 2;
+        uvsHash[hash2] = uvs.length / 2;
         uvs.push(uv.x, uv.y);
-        return uvsHash[hash];
+        return uvsHash[hash2];
       }
       data.data = {};
       data.data.vertices = vertices;
@@ -13914,7 +14140,7 @@ reset back to 1 for size
     }(),
     scale: function() {
       var m1 = new Matrix4();
-      return function scale3(x, y, z) {
+      return function scale4(x, y, z) {
         m1.makeScale(x, y, z);
         this.applyMatrix(m1);
         return this;
@@ -18818,15 +19044,15 @@ reset back to 1 for size
       return useOffscreenCanvas ? new OffscreenCanvas(width2, height2) : document.createElementNS("http://www.w3.org/1999/xhtml", "canvas");
     }
     function resizeImage(image, needsPowerOfTwo, needsNewCanvas, maxSize) {
-      var scale3 = 1;
+      var scale4 = 1;
       if (image.width > maxSize || image.height > maxSize) {
-        scale3 = maxSize / Math.max(image.width, image.height);
+        scale4 = maxSize / Math.max(image.width, image.height);
       }
-      if (scale3 < 1 || needsPowerOfTwo === true) {
+      if (scale4 < 1 || needsPowerOfTwo === true) {
         if (typeof HTMLImageElement !== "undefined" && image instanceof HTMLImageElement || typeof HTMLCanvasElement !== "undefined" && image instanceof HTMLCanvasElement || typeof ImageBitmap !== "undefined" && image instanceof ImageBitmap) {
           var floor = needsPowerOfTwo ? _Math.floorPowerOfTwo : Math.floor;
-          var width2 = floor(scale3 * image.width);
-          var height2 = floor(scale3 * image.height);
+          var width2 = floor(scale4 * image.width);
+          var height2 = floor(scale4 * image.height);
           if (_canvas2 === void 0)
             _canvas2 = createCanvas(width2, height2);
           var canvas = needsNewCanvas ? createCanvas(width2, height2) : _canvas2;
@@ -21744,8 +21970,8 @@ reset back to 1 for size
       var uvA = new Vector2();
       var uvB = new Vector2();
       var uvC = new Vector2();
-      function transformVertex(vertexPosition, mvPosition2, center, scale3, sin, cos) {
-        alignedPosition.subVectors(vertexPosition, center).addScalar(0.5).multiply(scale3);
+      function transformVertex(vertexPosition, mvPosition2, center, scale4, sin, cos) {
+        alignedPosition.subVectors(vertexPosition, center).addScalar(0.5).multiply(scale4);
         if (sin !== void 0) {
           rotatedPosition.x = cos * alignedPosition.x - sin * alignedPosition.y;
           rotatedPosition.y = sin * alignedPosition.x + cos * alignedPosition.y;
@@ -21928,9 +22154,9 @@ reset back to 1 for size
         vector.y = skinWeight.getY(i);
         vector.z = skinWeight.getZ(i);
         vector.w = skinWeight.getW(i);
-        var scale3 = 1 / vector.manhattanLength();
-        if (scale3 !== Infinity) {
-          vector.multiplyScalar(scale3);
+        var scale4 = 1 / vector.manhattanLength();
+        if (scale4 !== Infinity) {
+          vector.multiplyScalar(scale4);
         } else {
           vector.set(1, 0, 0, 0);
         }
@@ -29062,8 +29288,8 @@ reset back to 1 for size
   });
   function createPaths(text2, size2, data) {
     var chars = Array.from ? Array.from(text2) : String(text2).split("");
-    var scale3 = size2 / data.resolution;
-    var line_height = (data.boundingBox.yMax - data.boundingBox.yMin + data.underlineThickness) * scale3;
+    var scale4 = size2 / data.resolution;
+    var line_height = (data.boundingBox.yMax - data.boundingBox.yMin + data.underlineThickness) * scale4;
     var paths2 = [];
     var offsetX = 0, offsetY = 0;
     for (var i = 0; i < chars.length; i++) {
@@ -29072,14 +29298,14 @@ reset back to 1 for size
         offsetX = 0;
         offsetY -= line_height;
       } else {
-        var ret = createPath(char, scale3, offsetX, offsetY, data);
+        var ret = createPath(char, scale4, offsetX, offsetY, data);
         offsetX += ret.offsetX;
         paths2.push(ret.path);
       }
     }
     return paths2;
   }
-  function createPath(char, scale3, offsetX, offsetY, data) {
+  function createPath(char, scale4, offsetX, offsetY, data) {
     var glyph = data.glyphs[char] || data.glyphs["?"];
     if (!glyph)
       return;
@@ -29091,35 +29317,35 @@ reset back to 1 for size
         var action = outline[i++];
         switch (action) {
           case "m":
-            x = outline[i++] * scale3 + offsetX;
-            y = outline[i++] * scale3 + offsetY;
+            x = outline[i++] * scale4 + offsetX;
+            y = outline[i++] * scale4 + offsetY;
             path.moveTo(x, y);
             break;
           case "l":
-            x = outline[i++] * scale3 + offsetX;
-            y = outline[i++] * scale3 + offsetY;
+            x = outline[i++] * scale4 + offsetX;
+            y = outline[i++] * scale4 + offsetY;
             path.lineTo(x, y);
             break;
           case "q":
-            cpx = outline[i++] * scale3 + offsetX;
-            cpy = outline[i++] * scale3 + offsetY;
-            cpx1 = outline[i++] * scale3 + offsetX;
-            cpy1 = outline[i++] * scale3 + offsetY;
+            cpx = outline[i++] * scale4 + offsetX;
+            cpy = outline[i++] * scale4 + offsetY;
+            cpx1 = outline[i++] * scale4 + offsetX;
+            cpy1 = outline[i++] * scale4 + offsetY;
             path.quadraticCurveTo(cpx1, cpy1, cpx, cpy);
             break;
           case "b":
-            cpx = outline[i++] * scale3 + offsetX;
-            cpy = outline[i++] * scale3 + offsetY;
-            cpx1 = outline[i++] * scale3 + offsetX;
-            cpy1 = outline[i++] * scale3 + offsetY;
-            cpx2 = outline[i++] * scale3 + offsetX;
-            cpy2 = outline[i++] * scale3 + offsetY;
+            cpx = outline[i++] * scale4 + offsetX;
+            cpy = outline[i++] * scale4 + offsetY;
+            cpx1 = outline[i++] * scale4 + offsetX;
+            cpy1 = outline[i++] * scale4 + offsetY;
+            cpx2 = outline[i++] * scale4 + offsetX;
+            cpy2 = outline[i++] * scale4 + offsetY;
             path.bezierCurveTo(cpx1, cpy1, cpx2, cpy2, cpx, cpy);
             break;
         }
       }
     }
-    return { offsetX: glyph.ha * scale3, path };
+    return { offsetX: glyph.ha * scale4, path };
   }
   function FontLoader(manager) {
     this.manager = manager !== void 0 ? manager : DefaultLoadingManager;
@@ -29638,7 +29864,7 @@ reset back to 1 for size
     updateMatrixWorld: function() {
       var position = new Vector3();
       var quaternion = new Quaternion();
-      var scale3 = new Vector3();
+      var scale4 = new Vector3();
       var orientation = new Vector3();
       var clock = new Clock();
       return function updateMatrixWorld(force) {
@@ -29646,7 +29872,7 @@ reset back to 1 for size
         var listener = this.context.listener;
         var up = this.up;
         this.timeDelta = clock.getDelta();
-        this.matrixWorld.decompose(position, quaternion, scale3);
+        this.matrixWorld.decompose(position, quaternion, scale4);
         orientation.set(0, 0, -1).applyQuaternion(quaternion);
         if (listener.positionX) {
           var endTime = this.context.currentTime + this.timeDelta;
@@ -29903,13 +30129,13 @@ reset back to 1 for size
     updateMatrixWorld: function() {
       var position = new Vector3();
       var quaternion = new Quaternion();
-      var scale3 = new Vector3();
+      var scale4 = new Vector3();
       var orientation = new Vector3();
       return function updateMatrixWorld(force) {
         Object3D.prototype.updateMatrixWorld.call(this, force);
         if (this.hasPlaybackControl === true && this.isPlaying === false)
           return;
-        this.matrixWorld.decompose(position, quaternion, scale3);
+        this.matrixWorld.decompose(position, quaternion, scale4);
         orientation.set(0, 0, 1).applyQuaternion(quaternion);
         var panner = this.panner;
         if (panner.positionX) {
@@ -30643,14 +30869,14 @@ reset back to 1 for size
       return this.warp(this._effectiveTimeScale, 0, duration);
     },
     warp: function(startTimeScale, endTimeScale, duration) {
-      var mixer = this._mixer, now = mixer.time, interpolant = this._timeScaleInterpolant, timeScale = this.timeScale;
+      var mixer = this._mixer, now2 = mixer.time, interpolant = this._timeScaleInterpolant, timeScale = this.timeScale;
       if (interpolant === null) {
         interpolant = mixer._lendControlInterpolant();
         this._timeScaleInterpolant = interpolant;
       }
       var times = interpolant.parameterPositions, values = interpolant.sampleValues;
-      times[0] = now;
-      times[1] = now + duration;
+      times[0] = now2;
+      times[1] = now2 + duration;
       values[0] = startTimeScale / timeScale;
       values[1] = endTimeScale / timeScale;
       return this;
@@ -30741,15 +30967,15 @@ reset back to 1 for size
     _updateTime: function(deltaTime) {
       var time2 = this.time + deltaTime;
       var duration = this._clip.duration;
-      var loop = this.loop;
+      var loop2 = this.loop;
       var loopCount = this._loopCount;
-      var pingPong = loop === LoopPingPong;
+      var pingPong = loop2 === LoopPingPong;
       if (deltaTime === 0) {
         if (loopCount === -1)
           return time2;
         return pingPong && (loopCount & 1) === 1 ? duration - time2 : time2;
       }
-      if (loop === LoopOnce) {
+      if (loop2 === LoopOnce) {
         if (loopCount === -1) {
           this._loopCount = 0;
           this._setEndings(true, true, false);
@@ -30838,15 +31064,15 @@ reset back to 1 for size
       }
     },
     _scheduleFading: function(duration, weightNow, weightThen) {
-      var mixer = this._mixer, now = mixer.time, interpolant = this._weightInterpolant;
+      var mixer = this._mixer, now2 = mixer.time, interpolant = this._weightInterpolant;
       if (interpolant === null) {
         interpolant = mixer._lendControlInterpolant();
         this._weightInterpolant = interpolant;
       }
       var times = interpolant.parameterPositions, values = interpolant.sampleValues;
-      times[0] = now;
+      times[0] = now2;
       values[0] = weightNow;
-      times[1] = now + duration;
+      times[1] = now2 + duration;
       values[1] = weightThen;
       return this;
     }
@@ -32356,11 +32582,11 @@ reset back to 1 for size
   PlaneHelper.prototype = Object.create(Line.prototype);
   PlaneHelper.prototype.constructor = PlaneHelper;
   PlaneHelper.prototype.updateMatrixWorld = function(force) {
-    var scale3 = -this.plane.constant;
-    if (Math.abs(scale3) < 1e-8)
-      scale3 = 1e-8;
-    this.scale.set(0.5 * this.size, 0.5 * this.size, scale3);
-    this.children[0].material.side = scale3 < 0 ? BackSide : FrontSide;
+    var scale4 = -this.plane.constant;
+    if (Math.abs(scale4) < 1e-8)
+      scale4 = 1e-8;
+    this.scale.set(0.5 * this.size, 0.5 * this.size, scale4);
+    this.children[0].material.side = scale4 < 0 ? BackSide : FrontSide;
     this.lookAt(this.plane.normal);
     Object3D.prototype.updateMatrixWorld.call(this, force);
   };
@@ -33693,7 +33919,7 @@ reset back to 1 for size
       if (!this.data.enabled || !this.data.mouseEnabled || (sceneEl.is("vr-mode") || sceneEl.is("ar-mode")) && sceneEl.checkHeadsetConnected()) {
         return;
       }
-      if (evt.button !== 0) {
+      if (evt.button !== 0 && evt.button !== 2) {
         return;
       }
       var canvasEl = sceneEl && sceneEl.canvas;
@@ -33707,6 +33933,8 @@ reset back to 1 for size
         } else if (canvasEl.mozRequestPointerLock) {
           canvasEl.mozRequestPointerLock();
         }
+      } else {
+        doControl("control use " + (evt.button === 0 ? "left" : "right"));
       }
     },
     showGrabbingCursor: function() {
@@ -33715,7 +33943,10 @@ reset back to 1 for size
     hideGrabbingCursor: function() {
       this.el.sceneEl.canvas.style.cursor = "";
     },
-    onMouseUp: function() {
+    onMouseUp: function(evt) {
+      if (this.pointerLocked) {
+        doControl("control not use " + (evt.button === 0 ? "left" : "right"));
+      }
       this.mouseDown = false;
       this.hideGrabbingCursor();
     },
@@ -33754,7 +33985,6 @@ reset back to 1 for size
         return;
       }
       this.saveCameraPose();
-      this.el.object3D.position.set(0, 0, 0);
       this.el.object3D.rotation.set(0, 0, 0);
       if (sceneEl.hasWebXR) {
         this.el.object3D.matrixAutoUpdate = false;
@@ -33766,7 +33996,6 @@ reset back to 1 for size
         return;
       }
       this.restoreCameraPose();
-      this.previousHMDPosition.set(0, 0, 0);
       this.el.object3D.matrixAutoUpdate = true;
     },
     onPointerLockChange: function() {
@@ -33822,18 +34051,15 @@ reset back to 1 for size
   // src/camera.svelte
   function create_if_block(ctx) {
     let a_entity;
-    let a_entity_material_value;
     let mounted;
     let dispose;
     return {
       c() {
         a_entity = element("a-entity");
-        set_custom_element_data(a_entity, "geometry", "");
-        set_custom_element_data(a_entity, "material", a_entity_material_value = "wireframe: true; opacity: 0.05s;color: #0F0; shader: flat;transparent: true; visible: " + ctx[3] + " };");
         set_custom_element_data(a_entity, "scale", "0.1 0.1 20");
         set_custom_element_data(a_entity, "position", "0 0 -1");
         set_custom_element_data(a_entity, "ammo-body", "type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;");
-        set_custom_element_data(a_entity, "ammo-shape", "type: box; halfExtents: 0.05 0.05 6;offset: 0 0 -9.5");
+        set_custom_element_data(a_entity, "ammo-shape", "type: box; halfExtents: 0.05 0.05 6;offset: 0 0 -8; fit: manual;");
       },
       m(target, anchor) {
         insert(target, a_entity, anchor);
@@ -33845,11 +34071,7 @@ reset back to 1 for size
           mounted = true;
         }
       },
-      p(ctx2, dirty) {
-        if (dirty & 8 && a_entity_material_value !== (a_entity_material_value = "wireframe: true; opacity: 0.05s;color: #0F0; shader: flat;transparent: true; visible: " + ctx2[3] + " };")) {
-          set_custom_element_data(a_entity, "material", a_entity_material_value);
-        }
-      },
+      p: noop,
       d(detaching) {
         if (detaching)
           detach(a_entity);
@@ -33858,7 +34080,7 @@ reset back to 1 for size
       }
     };
   }
-  function create_fragment4(ctx) {
+  function create_fragment3(ctx) {
     let a_mixin;
     let t0;
     let a_camera;
@@ -33880,9 +34102,9 @@ reset back to 1 for size
         t2 = space();
         a_entity1 = element("a-entity");
         set_custom_element_data(a_mixin, "id", "bbs");
-        set_custom_element_data(a_mixin, "geometry", "");
-        set_custom_element_data(a_mixin, "material", " opacity: 0.15; color: #00ff00; transparent: true; shader: flat;");
-        set_custom_element_data(a_mixin, "text", "font: ./Roboto-msdf.json; value: targeting info");
+        set_custom_element_data(a_mixin, "geometry", "primitive: circle; segments: 4;");
+        set_custom_element_data(a_mixin, "animation", "property: rotation; to: 0 360 0; loop: true; dur: 1000; easing: linear");
+        set_custom_element_data(a_mixin, "material", "wireframe: true; color: #00ff00; shader: flat;");
         set_custom_element_data(a_entity0, "geometry", "primitive: box; width: 0.4; height: 0.4; depth: 0.1");
         set_custom_element_data(a_entity0, "material", "shader: flat; transparent: true; opacity: 0.5; color: #006ace");
         set_custom_element_data(a_entity0, "position", "0 -0.2 -0.5");
@@ -33895,11 +34117,8 @@ reset back to 1 for size
         set_custom_element_data(a_camera, "far", "50000");
         set_custom_element_data(a_camera, "position", "0 4 0");
         set_custom_element_data(a_camera, "wasd-controls", "enabled: false;");
-        set_custom_element_data(a_camera, "look", "enabled: true;pointerLockEnabled: true; magicWindowTrackingEnabled: false; reverseTouchDrag: true;");
+        set_custom_element_data(a_camera, "look", "enabled: true;pointerLockEnabled: true;  reverseTouchDrag: true;");
         set_custom_element_data(a_camera, "look-controls", "enabled: false;");
-        set_custom_element_data(a_entity1, "geometry", "");
-        set_custom_element_data(a_entity1, "material", "color: blue; opacity: 0.15; shader: flat; visible: false;");
-        set_custom_element_data(a_entity1, "position", "0 0 -1");
         set_custom_element_data(a_entity1, "pool__targeting", "mixin: bbs; size: 10");
       },
       m(target, anchor) {
@@ -34015,13 +34234,13 @@ reset back to 1 for size
   var Camera3 = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance3, create_fragment4, safe_not_equal, {});
+      init(this, options, instance3, create_fragment3, safe_not_equal, {});
     }
   };
   var camera_default = Camera3;
 
   // src/ui/heard.svelte
-  function create_fragment5(ctx) {
+  function create_fragment4(ctx) {
     let div;
     let input;
     let div_class_value;
@@ -34073,7 +34292,7 @@ reset back to 1 for size
   var Heard = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance4, create_fragment5, safe_not_equal, {});
+      init(this, options, instance4, create_fragment4, safe_not_equal, {});
     }
   };
   var heard_default = Heard;
@@ -34127,7 +34346,7 @@ gl_Position = mvPosition;
   });
 
   // src/shader/windy.vert
-  var windy_default = "vec4 Windy(in vec4 v) {\n    float t = -time * 0.0005 + v.x*v.y*v.z*100.;\n    float dst = 0.025;\n    v.x += sin(t) * dst;\n    v.y += cos(t) * dst/10.;\n    v.z += sin(t) * dst;\n    return v; \n}";
+  var windy_default = "vec4 Windy(in vec4 v) {\n    float t = -time * 0.0002 + v.x*v.y*v.z*100.;\n    float dst = 0.02;\n    v.x += sin(t) * dst;\n    v.y += cos(t) * dst/10.;\n    v.z += sin(t) * dst;\n    return v; \n}";
 
   // src/component/windy.ts
   var main2 = `
@@ -34174,10 +34393,11 @@ gl_Position = mvPosition;
     }
   });
 
-  // src/component/ai.ts
-  AFRAME.registerComponent("ai", {
+  // src/component/alive.ts
+  AFRAME.registerComponent("alive", {
     schema: {
-      type: { type: "string", default: "random" }
+      type: { type: "string", default: "random" },
+      hp: { type: "number", default: 10 }
     },
     init() {
       this.tick = AFRAME.utils.throttleTick(this.tick, 250, this);
@@ -34202,7 +34422,7 @@ gl_Position = mvPosition;
   });
 
   // src/node/forest.svelte
-  function create_fragment6(ctx) {
+  function create_fragment5(ctx) {
     let a_mixin0;
     let t0;
     let a_mixin1;
@@ -34269,11 +34489,11 @@ gl_Position = mvPosition;
       { shadow: "receive: false" },
       { windy: "" },
       { "gltf-model": "./glb/tree.glb" },
-      { scatter: ctx[1] },
+      { scatter: ctx[0] },
       {
         vary: "property: scale; range: 4 2 4 8 10 8"
       },
-      ctx[2],
+      ctx[1],
       { host: "" }
     ];
     let a_mixin7_data = {};
@@ -34282,10 +34502,10 @@ gl_Position = mvPosition;
     }
     let a_mixin13_levels = [
       { id: "trunk" },
-      ctx[3],
+      ctx[2],
       { "gltf-model": "./glb/trunk.glb" },
       { vary: trunkVary },
-      { scatter: ctx[1] }
+      { scatter: ctx[0] }
     ];
     let a_mixin13_data = {};
     for (let i = 0; i < a_mixin13_levels.length; i += 1) {
@@ -34293,10 +34513,10 @@ gl_Position = mvPosition;
     }
     let a_mixin14_levels = [
       { id: "trunkLong" },
-      ctx[3],
+      ctx[2],
       { "gltf-model": "./glb/trunkLong.glb" },
       { vary: trunkVary },
-      { scatter: ctx[1] }
+      { scatter: ctx[0] }
     ];
     let a_mixin14_data = {};
     for (let i = 0; i < a_mixin14_levels.length; i += 1) {
@@ -34305,9 +34525,9 @@ gl_Position = mvPosition;
     let a_mixin15_levels = [
       { id: "pillarObelisk" },
       { "gltf-model": "./glb/pillarObelisk.glb" },
-      ctx[3],
+      ctx[2],
       { vary: trunkVary },
-      { scatter: ctx[1] }
+      { scatter: ctx[0] }
     ];
     let a_mixin15_data = {};
     for (let i = 0; i < a_mixin15_levels.length; i += 1) {
@@ -34384,7 +34604,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin2, "shadow", "");
         set_custom_element_data(a_mixin2, "gltf-model", "./glb/flowers.glb");
         set_custom_element_data(a_mixin2, "windy", "");
-        set_custom_element_data(a_mixin2, "scatter", ctx[1]);
+        set_custom_element_data(a_mixin2, "scatter", ctx[0]);
         set_custom_element_data(a_mixin2, "vary", vary);
         set_custom_element_data(a_mixin2, "host", "flowers");
         set_custom_element_data(a_mixin3, "id", "mushroom");
@@ -34392,7 +34612,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin3, "shadow", "");
         set_custom_element_data(a_mixin3, "gltf-model", "./glb/mushrooms.glb");
         set_custom_element_data(a_mixin3, "windy", "");
-        set_custom_element_data(a_mixin3, "scatter", ctx[1]);
+        set_custom_element_data(a_mixin3, "scatter", ctx[0]);
         set_custom_element_data(a_mixin3, "vary", vary);
         set_custom_element_data(a_mixin3, "host", "mushroom");
         set_custom_element_data(a_mixin4, "id", "flowersLow");
@@ -34400,13 +34620,13 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin4, "shadow", "");
         set_custom_element_data(a_mixin4, "gltf-model", "./glb/flowersLow.glb");
         set_custom_element_data(a_mixin4, "windy", "");
-        set_custom_element_data(a_mixin4, "scatter", ctx[1]);
+        set_custom_element_data(a_mixin4, "scatter", ctx[0]);
         set_custom_element_data(a_mixin4, "vary", vary);
         set_custom_element_data(a_mixin4, "host", "flowersLow");
         set_custom_element_data(a_mixin5, "id", "rock");
         set_custom_element_data(a_mixin5, "shadow", "");
         set_custom_element_data(a_mixin5, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
-        set_custom_element_data(a_mixin5, "scatter", ctx[1]);
+        set_custom_element_data(a_mixin5, "scatter", ctx[0]);
         set_custom_element_data(a_mixin5, "gltf-model", "./glb/rockB.glb");
         set_custom_element_data(a_mixin5, "ammo-body", "type: static; mass: 0");
         set_custom_element_data(a_mixin5, "host", "");
@@ -34415,7 +34635,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin6, "shadow", "");
         set_custom_element_data(a_mixin6, "host", "");
         set_custom_element_data(a_mixin6, "gltf-model", "./glb/rockC.glb");
-        set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 50");
+        set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value = "radius: " + groundSize * 0.7 + "; count: 50");
         set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_mixin6, "vary", "property: scale; range: 12 2 12 15 20 15");
         set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
@@ -34431,7 +34651,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin8, "mixin", "smolitem");
         set_custom_element_data(a_mixin8, "gltf-model", "./glb/grass.glb");
         set_custom_element_data(a_mixin8, "shadow", "");
-        set_custom_element_data(a_mixin8, "scatter", ctx[1]);
+        set_custom_element_data(a_mixin8, "scatter", ctx[0]);
         set_custom_element_data(a_mixin8, "host", "grass");
         set_custom_element_data(a_mixin8, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
         set_custom_element_data(a_entity3, "pool__grass", "mixin: grass; size: 50");
@@ -34446,15 +34666,14 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin9, "gltf-model", "./char/Horse.glb");
         set_custom_element_data(a_mixin9, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
         set_custom_element_data(a_mixin9, "scale", "0.35 0.35 0.35");
-        set_custom_element_data(a_mixin9, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.5 0");
+        set_custom_element_data(a_mixin9, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.6 0");
         set_custom_element_data(a_mixin9, "shadow", "cast: true; receive: false;");
-        set_custom_element_data(a_mixin9, "ai", "type: random;");
+        set_custom_element_data(a_mixin9, "alive", "type: random;");
         set_custom_element_data(a_mixin9, "motion-events", "");
         set_custom_element_data(a_mixin9, "gltf-events", "");
-        set_custom_element_data(a_mixin9, "animate", "property:scale; from: 1 1 1; to: 1.1 1.1 1.1; dir: alternate; loop: true;");
         set_custom_element_data(a_mixin9, "material", "shader: flat;");
         set_custom_element_data(a_mixin9, "host", "horse");
-        set_custom_element_data(a_mixin9, "scatter", ctx[1]);
+        set_custom_element_data(a_mixin9, "scatter", ctx[0]);
         set_custom_element_data(a_mixin10, "id", "sheep");
         set_custom_element_data(a_mixin10, "host", "sheep");
         set_custom_element_data(a_mixin10, "gltf-model", "./char/Sheep.glb");
@@ -34545,42 +34764,39 @@ gl_Position = mvPosition;
         insert(target, a_entity13, anchor);
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1 && a_mixin6_ring_value !== (a_mixin6_ring_value = "radius: " + ctx2[0] * 0.7 + "; count: 50")) {
-          set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value);
-        }
         set_attributes(a_mixin7, a_mixin7_data = get_spread_update(a_mixin7_levels, [
           { id: "tree" },
           { class: "climbable" },
           { shadow: "receive: false" },
           { windy: "" },
           { "gltf-model": "./glb/tree.glb" },
-          { scatter: ctx2[1] },
+          { scatter: ctx2[0] },
           {
             vary: "property: scale; range: 4 2 4 8 10 8"
           },
-          ctx2[2],
+          ctx2[1],
           { host: "" }
         ]));
         set_attributes(a_mixin13, a_mixin13_data = get_spread_update(a_mixin13_levels, [
           { id: "trunk" },
-          ctx2[3],
+          ctx2[2],
           { "gltf-model": "./glb/trunk.glb" },
           { vary: trunkVary },
-          { scatter: ctx2[1] }
+          { scatter: ctx2[0] }
         ]));
         set_attributes(a_mixin14, a_mixin14_data = get_spread_update(a_mixin14_levels, [
           { id: "trunkLong" },
-          ctx2[3],
+          ctx2[2],
           { "gltf-model": "./glb/trunkLong.glb" },
           { vary: trunkVary },
-          { scatter: ctx2[1] }
+          { scatter: ctx2[0] }
         ]));
         set_attributes(a_mixin15, a_mixin15_data = get_spread_update(a_mixin15_levels, [
           { id: "pillarObelisk" },
           { "gltf-model": "./glb/pillarObelisk.glb" },
-          ctx2[3],
+          ctx2[2],
           { vary: trunkVary },
-          { scatter: ctx2[1] }
+          { scatter: ctx2[0] }
         ]));
       },
       i: noop,
@@ -34707,10 +34923,10 @@ gl_Position = mvPosition;
       }
     };
   }
+  var groundSize = 200;
   var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
   var trunkVary = "property:scale; range: 2 1 2 5 2 5";
-  function instance5($$self, $$props, $$invalidate) {
-    let { groundSize = 100 } = $$props;
+  function instance5($$self) {
     const scatter = [-groundSize / 2, 0, -groundSize / 2, groundSize / 2, 0, groundSize / 2].join(" ");
     const boxBlocker = {
       "ammo-body": "type: static; mass: 0;",
@@ -34720,22 +34936,18 @@ gl_Position = mvPosition;
       "ammo-body": "type: static; mass: 0;",
       "ammo-shape": "type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0"
     };
-    $$self.$$set = ($$props2) => {
-      if ("groundSize" in $$props2)
-        $$invalidate(0, groundSize = $$props2.groundSize);
-    };
-    return [groundSize, scatter, boxBlocker, smolBoxBlocker];
+    return [scatter, boxBlocker, smolBoxBlocker];
   }
   var Forest = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment6, safe_not_equal, { groundSize: 0 });
+      init(this, options, instance5, create_fragment5, safe_not_equal, {});
     }
   };
   var forest_default = Forest;
 
   // src/ui/live.svelte
-  function create_fragment7(ctx) {
+  function create_fragment6(ctx) {
     let div;
     let div_class_value;
     let mounted;
@@ -34780,7 +34992,7 @@ gl_Position = mvPosition;
   var Live = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment7, safe_not_equal, {});
+      init(this, options, instance6, create_fragment6, safe_not_equal, {});
     }
   };
   var live_default = Live;
@@ -34815,15 +35027,15 @@ gl_Position = mvPosition;
   });
 
   // src/node/house.svelte
-  function create_fragment8(ctx) {
-    let a_mixin0;
-    let t0;
-    let a_mixin1;
-    let t1;
+  function create_fragment7(ctx) {
     let a_entity0;
-    let a_entity0_location_value;
+    let t0;
+    let a_mixin0;
+    let t1;
+    let a_mixin1;
     let t2;
     let a_entity1;
+    let a_entity1_location_value;
     let t3;
     let a_entity2;
     let t4;
@@ -34852,15 +35064,17 @@ gl_Position = mvPosition;
     let a_entity14;
     let t16;
     let a_entity15;
+    let t17;
+    let a_entity16;
     let mounted;
     let dispose;
     return {
       c() {
-        a_mixin0 = element("a-mixin");
-        t0 = space();
-        a_mixin1 = element("a-mixin");
-        t1 = space();
         a_entity0 = element("a-entity");
+        t0 = space();
+        a_mixin0 = element("a-mixin");
+        t1 = space();
+        a_mixin1 = element("a-mixin");
         t2 = space();
         a_entity1 = element("a-entity");
         t3 = space();
@@ -34891,96 +35105,110 @@ gl_Position = mvPosition;
         a_entity14 = element("a-entity");
         t16 = space();
         a_entity15 = element("a-entity");
+        t17 = space();
+        a_entity16 = element("a-entity");
+        set_custom_element_data(a_entity0, "class", "loot drop");
+        set_custom_element_data(a_entity0, "pool__dagger", "mixin: dagger; size: 5;");
+        set_custom_element_data(a_entity0, "activate__dagger", "");
+        set_custom_element_data(a_entity0, "pool__item", "mixin: chest; size: 2;");
+        set_custom_element_data(a_entity0, "activate__item", "");
+        set_custom_element_data(a_entity0, "pool__bow", "mixin: bow; size: 5;");
+        set_custom_element_data(a_entity0, "activate__bow", "");
+        set_custom_element_data(a_entity0, "pool__arrow", "mixin: arrow; size: 5;");
+        set_custom_element_data(a_entity0, "activate__arrow", "");
+        set_custom_element_data(a_entity0, "pool__bag", "mixin: bag; size: 5;");
+        set_custom_element_data(a_entity0, "activate__bag", "");
+        set_custom_element_data(a_entity0, "position", "0 4 0");
         set_custom_element_data(a_mixin0, "id", "wall");
         set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0; ");
-        set_custom_element_data(a_mixin0, "ammo-shape", "type: box; fit: manual; half-extents: 5 4 1; offset: 0 0.5 0.5;");
+        set_custom_element_data(a_mixin0, "ammo-shape", "type: box; fit: manual; half-extents: 5 4 1.5; offset: 0 0.5 0.5;");
         set_custom_element_data(a_mixin0, "geometry", "");
         set_custom_element_data(a_mixin0, "scale", "10 4 10");
         set_custom_element_data(a_mixin0, "shadow", "receive: false");
         set_custom_element_data(a_mixin1, "id", "fence");
-        set_custom_element_data(a_mixin1, "scale", "15 2 1");
+        set_custom_element_data(a_mixin1, "scale", "15 2 4");
         set_custom_element_data(a_mixin1, "shadow", "");
         set_custom_element_data(a_mixin1, "ammo-body", "type: static; mass: 0; ");
-        set_custom_element_data(a_mixin1, "ammo-shape", "type: box; fit: manual; half-extents: 7 0.5 0.5; offset: 0 0.5 0.5;");
-        set_custom_element_data(a_entity0, "id", "ground");
-        set_custom_element_data(a_entity0, "geometry", "");
-        set_custom_element_data(a_entity0, "material", "color: #281b0d;");
-        set_custom_element_data(a_entity0, "ammo-body", "type: static; mass: 0; ");
-        set_custom_element_data(a_entity0, "ammo-shape", "type: box; fit: manual; half-extents: 20 0.1 20; ");
-        set_custom_element_data(a_entity0, "shadow", "");
-        set_custom_element_data(a_entity0, "scale", "20 0.1 20");
-        set_custom_element_data(a_entity0, "position", "0 0 0");
-        set_custom_element_data(a_entity0, "location", a_entity0_location_value = "name: \u{1F6D6}; box:" + -20 + " 0 " + -20 + " " + 20 + " 30 " + 20);
-        set_custom_element_data(a_entity1, "mixin", "wall");
-        set_custom_element_data(a_entity1, "gltf-model", "./glb/cabinWindow.glb");
-        set_custom_element_data(a_entity1, "position", "0 0 -5");
+        set_custom_element_data(a_mixin1, "ammo-shape", "type: box; fit: manual; half-extents: 7 0.5 0.25; offset: 0 0.5 0.5;");
+        set_custom_element_data(a_entity1, "id", "ground");
+        set_custom_element_data(a_entity1, "geometry", "");
+        set_custom_element_data(a_entity1, "material", "color: #281b0d;");
+        set_custom_element_data(a_entity1, "ammo-body", "type: static; mass: 0; ");
+        set_custom_element_data(a_entity1, "ammo-shape", "type: box; fit: manual; half-extents: 20 0.2 20; ");
+        set_custom_element_data(a_entity1, "shadow", "");
+        set_custom_element_data(a_entity1, "scale", "20 0.1 20");
+        set_custom_element_data(a_entity1, "position", "0 0 0");
+        set_custom_element_data(a_entity1, "location", a_entity1_location_value = "name: \u{1F6D6}; box:" + -15 + " 0 " + -15 + " " + 15 + " 30 " + 15);
         set_custom_element_data(a_entity2, "mixin", "wall");
         set_custom_element_data(a_entity2, "gltf-model", "./glb/cabinWindow.glb");
-        set_custom_element_data(a_entity2, "position", "0 0 5");
+        set_custom_element_data(a_entity2, "position", "0 0 -5");
         set_custom_element_data(a_entity3, "mixin", "wall");
-        set_custom_element_data(a_entity3, "gltf-model", "./glb/cabinDoor.glb");
-        set_custom_element_data(a_entity3, "rotation", "0 90 0");
-        set_custom_element_data(a_entity3, "position", "-5 0 0");
-        set_custom_element_data(a_entity3, "ammo-shape", "type: box; fit: manual; half-extents: 2 4 1; offset: -4 0.5 0.5;");
+        set_custom_element_data(a_entity3, "gltf-model", "./glb/cabinWindow.glb");
+        set_custom_element_data(a_entity3, "position", "0 0 5");
         set_custom_element_data(a_entity4, "mixin", "wall");
+        set_custom_element_data(a_entity4, "gltf-model", "./glb/cabinDoor.glb");
         set_custom_element_data(a_entity4, "rotation", "0 90 0");
         set_custom_element_data(a_entity4, "position", "-5 0 0");
-        set_custom_element_data(a_entity4, "material", "visible: false;");
-        set_custom_element_data(a_entity4, "ammo-shape", "type: box; fit: manual; half-extents: 2 4 1; offset: 4 0.5 0.5;");
+        set_custom_element_data(a_entity4, "ammo-shape", "type: box; fit: manual; half-extents: 2 4 1; offset: -4 0.5 0.5;");
         set_custom_element_data(a_entity5, "mixin", "wall");
-        set_custom_element_data(a_entity5, "gltf-model", "./glb/cabinWindow.glb");
         set_custom_element_data(a_entity5, "rotation", "0 90 0");
-        set_custom_element_data(a_entity5, "position", "5 0 0");
-        set_custom_element_data(a_entity6, "gltf-model", "./glb/fence.glb");
-        set_custom_element_data(a_entity6, "mixin", "fence");
-        set_custom_element_data(a_entity6, "position", "0 0 9");
+        set_custom_element_data(a_entity5, "position", "-5 0 0");
+        set_custom_element_data(a_entity5, "material", "visible: false;");
+        set_custom_element_data(a_entity5, "ammo-shape", "type: box; fit: manual; half-extents: 2 4 1; offset: 4 0.5 0.5;");
+        set_custom_element_data(a_entity6, "mixin", "wall");
+        set_custom_element_data(a_entity6, "gltf-model", "./glb/cabinWindow.glb");
+        set_custom_element_data(a_entity6, "rotation", "0 90 0");
+        set_custom_element_data(a_entity6, "position", "5 0 0");
         set_custom_element_data(a_entity7, "gltf-model", "./glb/fence.glb");
         set_custom_element_data(a_entity7, "mixin", "fence");
-        set_custom_element_data(a_entity7, "position", "0 0 -9");
-        set_custom_element_data(a_entity8, "shadow", "");
-        set_custom_element_data(a_entity8, "gltf-model", "./glb/cabinWindow.glb");
-        set_custom_element_data(a_entity8, "scale", "10 2 10");
-        set_custom_element_data(a_entity8, "rotation", "0 90 0");
-        set_custom_element_data(a_entity8, "position", "-5 4 0");
-        set_custom_element_data(a_entity9, "mixin", "fence");
-        set_custom_element_data(a_entity9, "gltf-model", "./glb/fence.glb");
-        set_custom_element_data(a_entity9, "scale", "4 2 4");
+        set_custom_element_data(a_entity7, "position", "0 0 9");
+        set_custom_element_data(a_entity8, "gltf-model", "./glb/fence.glb");
+        set_custom_element_data(a_entity8, "mixin", "fence");
+        set_custom_element_data(a_entity8, "position", "0 0 -9");
+        set_custom_element_data(a_entity9, "shadow", "");
+        set_custom_element_data(a_entity9, "gltf-model", "./glb/cabinWindow.glb");
+        set_custom_element_data(a_entity9, "scale", "10 2 10");
         set_custom_element_data(a_entity9, "rotation", "0 90 0");
-        set_custom_element_data(a_entity9, "position", "-12 0 -4");
-        set_custom_element_data(a_entity9, "ammo-shape", "type: box; fit: manual; half-extents: 2 0.5 0.5; offset: 0 0.5 1.5;");
+        set_custom_element_data(a_entity9, "position", "-5 4 0");
         set_custom_element_data(a_entity10, "mixin", "fence");
         set_custom_element_data(a_entity10, "gltf-model", "./glb/fence.glb");
         set_custom_element_data(a_entity10, "scale", "4 2 4");
         set_custom_element_data(a_entity10, "rotation", "0 90 0");
-        set_custom_element_data(a_entity10, "position", "-12 0 4");
+        set_custom_element_data(a_entity10, "position", "-12 0 -4");
         set_custom_element_data(a_entity10, "ammo-shape", "type: box; fit: manual; half-extents: 2 0.5 0.5; offset: 0 0.5 1.5;");
-        set_custom_element_data(a_entity11, "shadow", "");
-        set_custom_element_data(a_entity11, "gltf-model", "./glb/cabinWindow.glb");
-        set_custom_element_data(a_entity11, "scale", "10 2 10");
+        set_custom_element_data(a_entity11, "mixin", "fence");
+        set_custom_element_data(a_entity11, "gltf-model", "./glb/fence.glb");
+        set_custom_element_data(a_entity11, "scale", "4 2 4");
         set_custom_element_data(a_entity11, "rotation", "0 90 0");
-        set_custom_element_data(a_entity11, "position", "5 4 0");
-        set_custom_element_data(a_entity12, "mixin", "fence");
-        set_custom_element_data(a_entity12, "gltf-model", "./glb/fence.glb");
+        set_custom_element_data(a_entity11, "position", "-12 0 4");
+        set_custom_element_data(a_entity11, "ammo-shape", "type: box; fit: manual; half-extents: 2 0.5 0.5; offset: 0 0.5 1.5;");
+        set_custom_element_data(a_entity12, "shadow", "");
+        set_custom_element_data(a_entity12, "gltf-model", "./glb/cabinWindow.glb");
+        set_custom_element_data(a_entity12, "scale", "10 2 10");
         set_custom_element_data(a_entity12, "rotation", "0 90 0");
-        set_custom_element_data(a_entity12, "position", "9 0 0");
-        set_custom_element_data(a_entity13, "shadow", "receive: false");
-        set_custom_element_data(a_entity13, "gltf-model", "./glb/cabinRoofCenter.glb");
-        set_custom_element_data(a_entity13, "scale", "10 4 10");
+        set_custom_element_data(a_entity12, "position", "5 4 0");
+        set_custom_element_data(a_entity13, "mixin", "fence");
+        set_custom_element_data(a_entity13, "gltf-model", "./glb/fence.glb");
         set_custom_element_data(a_entity13, "rotation", "0 90 0");
-        set_custom_element_data(a_entity13, "position", "0 3.5 0");
-        set_custom_element_data(a_entity14, "shadow", "");
-        set_custom_element_data(a_entity14, "gltf-model", "./glb/cabinFloor.glb");
+        set_custom_element_data(a_entity13, "position", "9 0 0");
+        set_custom_element_data(a_entity14, "shadow", "receive: false");
+        set_custom_element_data(a_entity14, "gltf-model", "./glb/cabinRoofCenter.glb");
         set_custom_element_data(a_entity14, "scale", "10 4 10");
-        set_custom_element_data(a_entity14, "rotation", "0 0 0");
-        set_custom_element_data(a_entity14, "position", "0 0.01 0");
-        set_custom_element_data(a_entity15, "light", "type: point; distance: 12");
+        set_custom_element_data(a_entity14, "rotation", "0 90 0");
+        set_custom_element_data(a_entity14, "position", "0 3.5 0");
+        set_custom_element_data(a_entity15, "shadow", "");
+        set_custom_element_data(a_entity15, "gltf-model", "./glb/cabinFloor.glb");
+        set_custom_element_data(a_entity15, "scale", "10 4 10");
+        set_custom_element_data(a_entity15, "rotation", "0 0 0");
+        set_custom_element_data(a_entity15, "position", "0 0.01 0");
+        set_custom_element_data(a_entity16, "light", "type: point; distance: 12");
       },
       m(target, anchor) {
-        insert(target, a_mixin0, anchor);
-        insert(target, t0, anchor);
-        insert(target, a_mixin1, anchor);
-        insert(target, t1, anchor);
         insert(target, a_entity0, anchor);
+        insert(target, t0, anchor);
+        insert(target, a_mixin0, anchor);
+        insert(target, t1, anchor);
+        insert(target, a_mixin1, anchor);
         insert(target, t2, anchor);
         insert(target, a_entity1, anchor);
         insert(target, t3, anchor);
@@ -35011,8 +35239,10 @@ gl_Position = mvPosition;
         insert(target, a_entity14, anchor);
         insert(target, t16, anchor);
         insert(target, a_entity15, anchor);
+        insert(target, t17, anchor);
+        insert(target, a_entity16, anchor);
         if (!mounted) {
-          dispose = listen(a_entity0, "collide", ctx[0]);
+          dispose = listen(a_entity1, "collide", ctx[0]);
           mounted = true;
         }
       },
@@ -35021,15 +35251,15 @@ gl_Position = mvPosition;
       o: noop,
       d(detaching) {
         if (detaching)
-          detach(a_mixin0);
+          detach(a_entity0);
         if (detaching)
           detach(t0);
         if (detaching)
-          detach(a_mixin1);
+          detach(a_mixin0);
         if (detaching)
           detach(t1);
         if (detaching)
-          detach(a_entity0);
+          detach(a_mixin1);
         if (detaching)
           detach(t2);
         if (detaching)
@@ -35090,6 +35320,10 @@ gl_Position = mvPosition;
           detach(t16);
         if (detaching)
           detach(a_entity15);
+        if (detaching)
+          detach(t17);
+        if (detaching)
+          detach(a_entity16);
         mounted = false;
         dispose();
       }
@@ -35104,7 +35338,7 @@ gl_Position = mvPosition;
   var House = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance7, create_fragment8, safe_not_equal, {});
+      init(this, options, instance7, create_fragment7, safe_not_equal, {});
     }
   };
   var house_default = House;
@@ -35141,7 +35375,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function create_fragment9(ctx) {
+  function create_fragment8(ctx) {
     let if_block_anchor;
     let if_block = ctx[0] && ctx[1] && create_if_block2(ctx);
     return {
@@ -35193,7 +35427,7 @@ gl_Position = mvPosition;
   var Netdata = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance8, create_fragment9, safe_not_equal, {});
+      init(this, options, instance8, create_fragment8, safe_not_equal, {});
     }
   };
   var netdata_default = Netdata;
@@ -35270,7 +35504,7 @@ void main() {
   });
 
   // src/node/environmental.svelte
-  function create_fragment10(ctx) {
+  function create_fragment9(ctx) {
     let a_plane;
     let a_plane_width_value;
     let a_plane_height_value;
@@ -35520,18 +35754,18 @@ void main() {
   var light = "#FEE";
   function instance9($$self, $$props, $$invalidate) {
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
-    let { groundSize = 100 } = $$props;
-    const scatterBig = [-groundSize, 0, -groundSize, groundSize, 0, groundSize].join(" ");
+    let { groundSize: groundSize2 = 300 } = $$props;
+    const scatterBig = [-groundSize2, 0, -groundSize2, groundSize2, 0, groundSize2].join(" ");
     $$self.$$set = ($$props2) => {
       if ("groundSize" in $$props2)
-        $$invalidate(0, groundSize = $$props2.groundSize);
+        $$invalidate(0, groundSize2 = $$props2.groundSize);
     };
-    return [groundSize, str, scatterBig];
+    return [groundSize2, str, scatterBig];
   }
   var Environmental = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance9, create_fragment10, safe_not_equal, { groundSize: 0 });
+      init(this, options, instance9, create_fragment9, safe_not_equal, { groundSize: 0 });
     }
   };
   var environmental_default = Environmental;
@@ -35581,6 +35815,43 @@ void main() {
       delete locations[this.data.name];
     }
   });
+
+  // node_modules/svelte/easing/index.mjs
+  function bounceOut(t) {
+    const a = 4 / 11;
+    const b = 8 / 11;
+    const c = 9 / 10;
+    const ca = 4356 / 361;
+    const cb = 35442 / 1805;
+    const cc = 16061 / 1805;
+    const t2 = t * t;
+    return t < a ? 7.5625 * t2 : t < b ? 9.075 * t2 - 9.9 * t + 3.4 : t < c ? ca * t2 - cb * t + cc : 10.8 * t * t - 20.52 * t + 10.72;
+  }
+  function bounceInOut(t) {
+    return t < 0.5 ? 0.5 * (1 - bounceOut(1 - t * 2)) : 0.5 * bounceOut(t * 2 - 1) + 0.5;
+  }
+  function cubicOut(t) {
+    const f = t - 1;
+    return f * f * f + 1;
+  }
+
+  // node_modules/svelte/transition/index.mjs
+  function scale3(node, { delay = 0, duration = 400, easing = cubicOut, start: start2 = 0, opacity = 0 } = {}) {
+    const style = getComputedStyle(node);
+    const target_opacity = +style.opacity;
+    const transform = style.transform === "none" ? "" : style.transform;
+    const sd = 1 - start2;
+    const od = target_opacity * (1 - opacity);
+    return {
+      delay,
+      duration,
+      easing,
+      css: (_t, u) => `
+			transform: ${transform} scale(${1 - sd * u});
+			opacity: ${target_opacity - od * u}
+		`
+    };
+  }
 
   // src/ui/onscreen-ui.svelte
   function get_each_context(ctx, list, i) {
@@ -35638,29 +35909,56 @@ void main() {
   }
   function create_each_block(ctx) {
     let div;
-    let t_value = ctx[17] + "";
-    let t;
+    let t0_value = ctx[17] + "";
+    let t0;
+    let t1;
+    let div_intro;
+    let div_outro;
+    let current;
     return {
       c() {
         div = element("div");
-        t = text(t_value);
+        t0 = text(t0_value);
+        t1 = space();
         attr(div, "class", "loc svelte-sbiyru");
       },
       m(target, anchor) {
         insert(target, div, anchor);
-        append(div, t);
+        append(div, t0);
+        append(div, t1);
+        current = true;
       },
-      p(ctx2, dirty) {
-        if (dirty & 128 && t_value !== (t_value = ctx2[17] + ""))
-          set_data(t, t_value);
+      p(new_ctx, dirty) {
+        ctx = new_ctx;
+        if ((!current || dirty & 128) && t0_value !== (t0_value = ctx[17] + ""))
+          set_data(t0, t0_value);
+      },
+      i(local) {
+        if (current)
+          return;
+        add_render_callback(() => {
+          if (div_outro)
+            div_outro.end(1);
+          div_intro = create_in_transition(div, scale3, { easing: bounceInOut });
+          div_intro.start();
+        });
+        current = true;
+      },
+      o(local) {
+        if (div_intro)
+          div_intro.invalidate();
+        div_outro = create_out_transition(div, scale3, { easing: bounceInOut });
+        current = false;
       },
       d(detaching) {
         if (detaching)
           detach(div);
+        if (detaching && div_outro)
+          div_outro.end();
       }
     };
   }
-  function create_fragment11(ctx) {
+  function create_fragment10(ctx) {
     let div0;
     let div0_class_value;
     let t0;
@@ -35674,6 +35972,7 @@ void main() {
     let div5_class_value;
     let t5;
     let div6;
+    let current;
     let mounted;
     let dispose;
     let each_value_1 = ctx[8];
@@ -35686,6 +35985,9 @@ void main() {
     for (let i = 0; i < each_value.length; i += 1) {
       each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
     }
+    const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
+      each_blocks[i] = null;
+    });
     return {
       c() {
         div0 = element("div");
@@ -35736,6 +36038,7 @@ void main() {
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].m(div6, null);
         }
+        current = true;
         if (!mounted) {
           dispose = [
             listen(div1, "click", ctx[13]),
@@ -35770,16 +36073,16 @@ void main() {
           }
           each_blocks_1.length = each_value_1.length;
         }
-        if (dirty & 8 && div0_class_value !== (div0_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-sbiyru")) {
+        if (!current || dirty & 8 && div0_class_value !== (div0_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-sbiyru")) {
           attr(div0, "class", div0_class_value);
         }
-        if (dirty & 4) {
+        if (!current || dirty & 4) {
           set_style(div3, "margin-top", ctx2[2] * 100 + "%");
         }
-        if (dirty & 2) {
+        if (!current || dirty & 2) {
           set_style(div3, "margin-left", ctx2[1] * 100 + "%");
         }
-        if (dirty & 8 && div5_class_value !== (div5_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-sbiyru")) {
+        if (!current || dirty & 8 && div5_class_value !== (div5_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-sbiyru")) {
           attr(div5, "class", div5_class_value);
         }
         if (dirty & 128) {
@@ -35789,20 +36092,36 @@ void main() {
             const child_ctx = get_each_context(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
+              transition_in(each_blocks[i], 1);
             } else {
               each_blocks[i] = create_each_block(child_ctx);
               each_blocks[i].c();
+              transition_in(each_blocks[i], 1);
               each_blocks[i].m(div6, null);
             }
           }
-          for (; i < each_blocks.length; i += 1) {
-            each_blocks[i].d(1);
+          group_outros();
+          for (i = each_value.length; i < each_blocks.length; i += 1) {
+            out(i);
           }
-          each_blocks.length = each_value.length;
+          check_outros();
         }
       },
-      i: noop,
-      o: noop,
+      i(local) {
+        if (current)
+          return;
+        for (let i = 0; i < each_value.length; i += 1) {
+          transition_in(each_blocks[i]);
+        }
+        current = true;
+      },
+      o(local) {
+        each_blocks = each_blocks.filter(Boolean);
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          transition_out(each_blocks[i]);
+        }
+        current = false;
+      },
       d(detaching) {
         if (detaching)
           detach(div0);
@@ -35941,10 +36260,123 @@ void main() {
   var Onscreen_ui = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance10, create_fragment11, safe_not_equal, {});
+      init(this, options, instance10, create_fragment10, safe_not_equal, {});
     }
   };
   var onscreen_ui_default = Onscreen_ui;
+
+  // src/node/items.svelte
+  function create_fragment11(ctx) {
+    let a_mixin0;
+    let t0;
+    let a_mixin1;
+    let t1;
+    let a_mixin2;
+    let t2;
+    let a_mixin3;
+    let t3;
+    let a_mixin4;
+    let t4;
+    let a_mixin5;
+    return {
+      c() {
+        a_mixin0 = element("a-mixin");
+        t0 = space();
+        a_mixin1 = element("a-mixin");
+        t1 = space();
+        a_mixin2 = element("a-mixin");
+        t2 = space();
+        a_mixin3 = element("a-mixin");
+        t3 = space();
+        a_mixin4 = element("a-mixin");
+        t4 = space();
+        a_mixin5 = element("a-mixin");
+        set_custom_element_data(a_mixin0, "id", "dagger");
+        set_custom_element_data(a_mixin0, "shadow", "cast; receive: false");
+        set_custom_element_data(a_mixin0, "gltf-model", "./glb/dagger.glb");
+        set_custom_element_data(a_mixin0, "scale", "0.01 0.01 0.01");
+        set_custom_element_data(a_mixin0, "ammo-body", "type: dynamic;scaleAutoUpdate: false; mass: 0.1;");
+        set_custom_element_data(a_mixin0, "ammo-shape", "type:box; fit: manual; halfExtents: 0.1 0.75 0.1; offset: 0 0.45 0");
+        set_custom_element_data(a_mixin1, "id", "armor_black");
+        set_custom_element_data(a_mixin1, "shadow", "cast; receive: false");
+        set_custom_element_data(a_mixin1, "gltf-model", "./glb/armor_black.glb");
+        set_custom_element_data(a_mixin1, "scale", "0.01 0.01 0.01");
+        set_custom_element_data(a_mixin1, "ammo-body", "type: dynamic;scaleAutoUpdate: false;");
+        set_custom_element_data(a_mixin1, "ammo-shape", "type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0");
+        set_custom_element_data(a_mixin2, "id", "chest");
+        set_custom_element_data(a_mixin2, "shadow", "cast; receive: false");
+        set_custom_element_data(a_mixin2, "gltf-model", "./glb/chest.glb");
+        set_custom_element_data(a_mixin2, "scale", "0.01 0.01 0.01");
+        set_custom_element_data(a_mixin2, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 5;");
+        set_custom_element_data(a_mixin2, "ammo-shape", "type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0.5 0");
+        set_custom_element_data(a_mixin3, "id", "bow");
+        set_custom_element_data(a_mixin3, "shadow", "cast; receive: false");
+        set_custom_element_data(a_mixin3, "gltf-model", "./glb/bow.glb");
+        set_custom_element_data(a_mixin3, "scale", "0.01 0.01 0.01");
+        set_custom_element_data(a_mixin3, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.1;");
+        set_custom_element_data(a_mixin3, "ammo-shape", "type:box; fit: manual; halfExtents: 0.25 1 0.4; offset: 0 0 0");
+        set_custom_element_data(a_mixin4, "id", "arrow");
+        set_custom_element_data(a_mixin4, "shadow", "cast; receive: false");
+        set_custom_element_data(a_mixin4, "gltf-model", "./glb/arrow.glb");
+        set_custom_element_data(a_mixin4, "scale", "0.01 0.01 0.01");
+        set_custom_element_data(a_mixin4, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.1;");
+        set_custom_element_data(a_mixin4, "ammo-shape", "type:box; fit: manual; halfExtents: 0.1 1 0.1; offset: 0 0 0");
+        set_custom_element_data(a_mixin5, "id", "bag");
+        set_custom_element_data(a_mixin5, "shadow", "cast; receive: false");
+        set_custom_element_data(a_mixin5, "gltf-model", "./glb/bag.glb");
+        set_custom_element_data(a_mixin5, "scale", "0.01 0.01 0.01");
+        set_custom_element_data(a_mixin5, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.5;");
+        set_custom_element_data(a_mixin5, "ammo-shape", "type:box; fit: manual; halfExtents: 0.25 0.25 0.25; offset: 0 0 0");
+      },
+      m(target, anchor) {
+        insert(target, a_mixin0, anchor);
+        insert(target, t0, anchor);
+        insert(target, a_mixin1, anchor);
+        insert(target, t1, anchor);
+        insert(target, a_mixin2, anchor);
+        insert(target, t2, anchor);
+        insert(target, a_mixin3, anchor);
+        insert(target, t3, anchor);
+        insert(target, a_mixin4, anchor);
+        insert(target, t4, anchor);
+        insert(target, a_mixin5, anchor);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_mixin0);
+        if (detaching)
+          detach(t0);
+        if (detaching)
+          detach(a_mixin1);
+        if (detaching)
+          detach(t1);
+        if (detaching)
+          detach(a_mixin2);
+        if (detaching)
+          detach(t2);
+        if (detaching)
+          detach(a_mixin3);
+        if (detaching)
+          detach(t3);
+        if (detaching)
+          detach(a_mixin4);
+        if (detaching)
+          detach(t4);
+        if (detaching)
+          detach(a_mixin5);
+      }
+    };
+  }
+  var Items = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, create_fragment11, safe_not_equal, {});
+    }
+  };
+  var items_default = Items;
 
   // src/game.svelte
   function create_if_block3(ctx) {
@@ -36013,7 +36445,7 @@ void main() {
     let t4;
     let a_mixin;
     let t5;
-    let charactersmixins;
+    let items;
     let t6;
     let camera2;
     let t7;
@@ -36031,10 +36463,10 @@ void main() {
     webcam = new webcam_default({});
     netdata = new netdata_default({});
     let if_block = ctx[0] && create_if_block3(ctx);
-    charactersmixins = new characters_assets_default({});
+    items = new items_default({});
     camera2 = new camera_default({});
     characters = new characters_default({});
-    forest = new forest_default({ props: { groundSize: 200 } });
+    forest = new forest_default({});
     house = new house_default({});
     debug_1 = new debug_default({});
     environmental = new environmental_default({ props: { groundSize: 200 } });
@@ -36055,7 +36487,7 @@ void main() {
         t4 = space();
         a_mixin = element("a-mixin");
         t5 = space();
-        create_component(charactersmixins.$$.fragment);
+        create_component(items.$$.fragment);
         t6 = space();
         create_component(camera2.$$.fragment);
         t7 = space();
@@ -36074,13 +36506,13 @@ void main() {
         if (!src_url_equal(audio.src, audio_src_value = "./sound/bg-ocean.mp3"))
           attr(audio, "src", audio_src_value);
         set_custom_element_data(a_mixin, "id", "shadow");
-        set_custom_element_data(a_mixin, "shadow", "cast: true");
+        set_custom_element_data(a_mixin, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_scene, "keyboard-shortcuts", "enterVR: false");
         set_custom_element_data(a_scene, "stats", ctx[1]);
         set_custom_element_data(a_scene, "renderer", " alpha: false; colorManagement: true;");
         set_custom_element_data(a_scene, "shadow", "type:basic;");
         set_custom_element_data(a_scene, "device-orientation-permission-ui", "enabled: false");
-        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2] + ";");
+        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2] + "; iterations: 2; fixedTimeStep: 0.01667; maxSubSteps: 2;");
         set_custom_element_data(a_scene, "uniforms", "");
         set_custom_element_data(a_scene, "net", "");
       },
@@ -36100,7 +36532,7 @@ void main() {
         append(a_assets, t4);
         append(a_assets, a_mixin);
         append(a_assets, t5);
-        mount_component(charactersmixins, a_assets, null);
+        mount_component(items, a_assets, null);
         append(a_scene, t6);
         mount_component(camera2, a_scene, null);
         append(a_scene, t7);
@@ -36137,7 +36569,7 @@ void main() {
         if (!current || dirty & 2) {
           set_custom_element_data(a_scene, "stats", ctx2[1]);
         }
-        if (!current || dirty & 4 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[2] + ";")) {
+        if (!current || dirty & 4 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[2] + "; iterations: 2; fixedTimeStep: 0.01667; maxSubSteps: 2;")) {
           set_custom_element_data(a_scene, "physics", a_scene_physics_value);
         }
       },
@@ -36147,7 +36579,7 @@ void main() {
         transition_in(webcam.$$.fragment, local);
         transition_in(netdata.$$.fragment, local);
         transition_in(if_block);
-        transition_in(charactersmixins.$$.fragment, local);
+        transition_in(items.$$.fragment, local);
         transition_in(camera2.$$.fragment, local);
         transition_in(characters.$$.fragment, local);
         transition_in(forest.$$.fragment, local);
@@ -36160,7 +36592,7 @@ void main() {
         transition_out(webcam.$$.fragment, local);
         transition_out(netdata.$$.fragment, local);
         transition_out(if_block);
-        transition_out(charactersmixins.$$.fragment, local);
+        transition_out(items.$$.fragment, local);
         transition_out(camera2.$$.fragment, local);
         transition_out(characters.$$.fragment, local);
         transition_out(forest.$$.fragment, local);
@@ -36182,7 +36614,7 @@ void main() {
           detach(t2);
         if (detaching)
           detach(a_scene);
-        destroy_component(charactersmixins);
+        destroy_component(items);
         destroy_component(camera2);
         destroy_component(characters);
         destroy_component(forest);
@@ -37178,4 +37610,18 @@ void main() {
   });
   window.addEventListener("contextmenu", (e) => e.preventDefault());
 })();
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
 //!\ DECLARE ALIAS AFTER assign prototype !

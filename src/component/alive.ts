@@ -2,9 +2,10 @@
 
 import { guest } from "./net"
 
-AFRAME.registerComponent("ai", {
+AFRAME.registerComponent("alive", {
     schema: {
         type: { type: "string", default: "random" },
+        hp: { type: "number", default: 10 }
     },
     init() {
         this.tick = AFRAME.utils.throttleTick(this.tick, 250, this)

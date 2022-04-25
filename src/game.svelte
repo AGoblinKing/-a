@@ -9,7 +9,7 @@
 	import 'src/component/random'
 
 	import Webcam from 'src/ui/webcam.svelte'
-	import CharactersMixins from 'src/node/characters-assets.svelte'
+
 	import Characters from 'src/node/characters.svelte'
 	import Camera from 'src/camera.svelte'
 
@@ -22,6 +22,7 @@
 	import Netdata from 'src/ui/netdata.svelte'
 	import Environmental from 'src/node/environmental.svelte'
 	import OnscreenUi from './ui/onscreen-ui.svelte'
+	import Items from './node/items.svelte'
 </script>
 
 <Webcam />
@@ -39,7 +40,7 @@
 	renderer=" alpha: false; colorManagement: true;"
 	shadow="type:basic;"
 	device-orientation-permission-ui="enabled: false"
-	physics="driver: ammo; debug: {$open_debug};"
+	physics="driver: ammo; debug: {$open_debug}; iterations: 2; fixedTimeStep: 0.01667; maxSubSteps: 2;"
 	uniforms
 	net
 >
@@ -48,14 +49,13 @@
 			<a-sphere color="blue" radius="5" />
 		</template>
 		<audio id="sound-bg" src="./sound/bg-ocean.mp3" />
-		<a-mixin id="shadow" shadow="cast: true" />
-
-		<CharactersMixins />
+		<a-mixin id="shadow" shadow="cast: true; receive: false" />
+		<Items />
 	</a-assets>
 
 	<Camera />
 	<Characters />
-	<Forest groundSize={200} />
+	<Forest />
 	<House />
 	<Debug />
 	<Environmental groundSize={200} />

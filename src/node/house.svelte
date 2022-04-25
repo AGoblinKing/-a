@@ -7,10 +7,25 @@
 	// house frame built from log cabin bits
 </script>
 
+<a-entity
+	class="loot drop"
+	pool__dagger="mixin: dagger; size: 5;"
+	activate__dagger
+	pool__item="mixin: chest; size: 2;"
+	activate__item
+	pool__bow="mixin: bow; size: 5;"
+	activate__bow
+	pool__arrow="mixin: arrow; size: 5;"
+	activate__arrow
+	pool__bag="mixin: bag; size: 5;"
+	activate__bag
+	position="0 4 0"
+/>
+
 <a-mixin
 	id="wall"
 	ammo-body="type: static; mass: 0; "
-	ammo-shape="type: box; fit: manual; half-extents: 5 4 1; offset: 0 0.5 0.5;"
+	ammo-shape="type: box; fit: manual; half-extents: 5 4 1.5; offset: 0 0.5 0.5;"
 	geometry
 	scale="10 4 10"
 	shadow="receive: false"
@@ -18,10 +33,10 @@
 
 <a-mixin
 	id="fence"
-	scale="15 2 1"
+	scale="15 2 4"
 	shadow
 	ammo-body="type: static; mass: 0; "
-	ammo-shape="type: box; fit: manual; half-extents: 7 0.5 0.5; offset: 0 0.5 0.5;"
+	ammo-shape="type: box; fit: manual; half-extents: 7 0.5 0.25; offset: 0 0.5 0.5;"
 />
 
 <a-entity
@@ -29,14 +44,14 @@
 	geometry
 	material="color: #281b0d;"
 	ammo-body="type: static; mass: 0; "
-	ammo-shape="type: box; fit: manual; half-extents: 20 0.1 20; "
+	ammo-shape="type: box; fit: manual; half-extents: 20 0.2 20; "
 	on:collide={(e) => {
 		console.log(e)
 	}}
 	shadow
 	scale="20 0.1 20"
 	position="0 0 0"
-	location="name: 🛖; box:{-20} 0 {-20} {20} 30 {20}"
+	location="name: 🛖; box:{-15} 0 {-15} {15} 30 {15}"
 />
 
 <a-entity mixin="wall" gltf-model="./glb/cabinWindow.glb" position="0 0 -5" />

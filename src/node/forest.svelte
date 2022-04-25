@@ -1,16 +1,16 @@
 <script>
-	import '../component/scatter'
-	import '../component/activate'
-	import '../component/ring'
+	import 'src/component/scatter'
+	import 'src/component/activate'
+	import 'src/component/ring'
 
-	import '../component/webcam-vrm'
-	import '../component/vrm'
-	import '../component/vary'
-	import '../component/floaty'
-	import '../component/windy'
-	import '../component/ai'
+	import 'src/component/webcam-vrm'
+	import 'src/component/vrm'
+	import 'src/component/vary'
+	import 'src/component/floaty'
+	import 'src/component/windy'
+	import 'src/component/alive'
 
-	export let groundSize = 100
+	const groundSize = 200
 
 	const scatter = [-groundSize / 2, 0, -groundSize / 2, groundSize / 2, 0, groundSize / 2].join(' ')
 
@@ -128,12 +128,11 @@
 	gltf-model="./char/Horse.glb"
 	ammo-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;"
 	scale="0.35 0.35 0.35"
-	ammo-shape="type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.5 0"
+	ammo-shape="type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.6 0"
 	shadow="cast: true; receive: false;"
-	ai="type: random;"
+	alive="type: random;"
 	motion-events
 	gltf-events
-	animate="property:scale; from: 1 1 1; to: 1.1 1.1 1.1; dir: alternate; loop: true;"
 	material="shader: flat;"
 	host="horse"
 	{scatter}

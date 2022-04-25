@@ -1,6 +1,7 @@
 <script>
 	import { location } from 'src/component/location'
-
+	import { fade, scale } from 'svelte/transition'
+	import { bounceInOut } from 'svelte/easing'
 	import { binds, binds_icon } from 'src/control'
 	import { key_down, key_map, key_up } from 'src/input'
 	import { ismobile, open_text } from 'src/timing'
@@ -140,7 +141,9 @@
 
 <div class="location">
 	{#each $location as loc}
-		<div class="loc">{loc}</div>
+		<div class="loc" in:scale={{ easing: bounceInOut }} out:scale={{ easing: bounceInOut }}>
+			{loc}
+		</div>
 	{/each}
 </div>
 

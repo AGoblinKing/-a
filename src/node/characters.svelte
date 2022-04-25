@@ -7,6 +7,12 @@
 	import { sfx_jump } from 'src/sound/action'
 </script>
 
+<a-mixin
+	id="character"
+	ammo-body="type: dynamic; mass: 1; linearDamping: 0.95; angularDamping: 1;angularFactor: 0 1 0;"
+	ammo-shape="type: capsule; fit: manual; halfExtents: 0.35 0.6 0.35; offset: 0 0.75 0"
+/>
+
 <a-entity
 	mixin="shadow character"
 	position="0 1 0"

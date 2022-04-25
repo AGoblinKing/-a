@@ -92,6 +92,8 @@ export enum EControl {
 
     Icon = "icon",
     NotIcon = "noticon",
+    Use = "use",
+    NotUse = "notuse",
 }
 
 
@@ -238,8 +240,14 @@ export const controls = {
     },
     [EControl.NotIcon]: (items: string[]) => {
         delete binds_icon.$[items[2]]
-    }
+    },
+    [EControl.Use]: (items: string[]) => {
 
+
+    },
+    [EControl.NotUse]: (items: string[]) => {
+
+    }
 
 }
 

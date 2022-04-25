@@ -1,3 +1,5 @@
+import { doControl, talk } from "src/chat";
+
 /* global DeviceOrientationEvent  */
 var registerComponent = AFRAME.registerComponent;
 var THREE = AFRAME.THREE
@@ -218,6 +220,7 @@ registerComponent('look', {
         if (this.pointerLocked) {
             movementX = evt.movementX || evt.mozMovementX || 0;
             movementY = evt.movementY || evt.mozMovementY || 0;
+
         } else {
             movementX = evt.screenX - previousMouseEvent.screenX;
             movementY = evt.screenY - previousMouseEvent.screenY;
@@ -231,6 +234,8 @@ registerComponent('look', {
         // yawObject.rotation.y = Math.max(-PI_2 / 2, Math.min(PI_2 / 2, pitchObject.rotation.y));
         pitchObject.rotation.x += movementY * 0.002 * direction;
         pitchObject.rotation.x = Math.max(-PI_2 / 3, Math.min(PI_2 / 3, pitchObject.rotation.x));
+
+
     },
 
     /**
@@ -240,7 +245,8 @@ registerComponent('look', {
         var sceneEl = this.el.sceneEl;
         if (!this.data.enabled || !this.data.mouseEnabled || ((sceneEl.is('vr-mode') || sceneEl.is('ar-mode')) && sceneEl.checkHeadsetConnected())) { return; }
         // Handle only primary button.
-        if (evt.button !== 0) { return; }
+
+        if (evt.button !== 0 && evt.button !== 2) { return; }
 
         var canvasEl = sceneEl && sceneEl.canvas;
 
@@ -249,12 +255,16 @@ registerComponent('look', {
         this.previousMouseEvent.screenY = evt.screenY;
         this.showGrabbingCursor();
 
+        // do the use left/right commanads
+
         if (this.data.pointerLockEnabled && !this.pointerLocked) {
             if (canvasEl.requestPointerLock) {
                 canvasEl.requestPointerLock();
             } else if (canvasEl.mozRequestPointerLock) {
                 canvasEl.mozRequestPointerLock();
             }
+        } else {
+            doControl("control use " + (evt.button === 0 ? "left" : "right"));
         }
     },
 
@@ -275,7 +285,10 @@ registerComponent('look', {
     /**
      * Register mouse up to detect release of mouse drag.
      */
-    onMouseUp: function () {
+    onMouseUp: function (evt) {
+        if (this.pointerLocked) {
+            doControl("control not use " + (evt.button === 0 ? "left" : "right"));
+        }
         this.mouseDown = false;
         this.hideGrabbingCursor();
     },
@@ -331,7 +344,7 @@ registerComponent('look', {
         var sceneEl = this.el.sceneEl;
         if (!sceneEl.checkHeadsetConnected()) { return; }
         this.saveCameraPose();
-        this.el.object3D.position.set(0, 0, 0);
+
         this.el.object3D.rotation.set(0, 0, 0);
         if (sceneEl.hasWebXR) {
             this.el.object3D.matrixAutoUpdate = false;
@@ -345,7 +358,7 @@ registerComponent('look', {
     onExitVR: function () {
         if (!this.el.sceneEl.checkHeadsetConnected()) { return; }
         this.restoreCameraPose();
-        this.previousHMDPosition.set(0, 0, 0);
+
         this.el.object3D.matrixAutoUpdate = true;
     },
 
