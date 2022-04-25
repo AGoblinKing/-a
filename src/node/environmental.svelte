@@ -29,10 +29,10 @@
 	rotation="-90 0 0"
 	width={groundSize * 1.5}
 	height={groundSize * 1.5}
-	physx-body="type: static; mass: 0;"
+	ammo-body="type: static; mass: 0;"
 	ammo-shape="type:box"
 	color="#334411"
-	location="name: 🌳; color: green; box: {-groundSize * 1.5} 0 {-groundSize * 1.5} {groundSize *
+	location="name: 🌳;  box: {-groundSize * 1.5} 0 {-groundSize * 1.5} {groundSize *
 		1.5} 100 {groundSize * 1.5}"
 />
 <a-entity
@@ -46,10 +46,10 @@
 		shadowCameraLeft: -groundSize,
 		shadowCameraRight: groundSize,
 		shadowCameraBottom: -groundSize,
-		shadowBias: -0.0001,
+
 		shadowMapHeight: 1024 * 4,
 		shadowMapWidth: 1024 * 4,
-		intensity: 0.75
+		intensity: 0.5
 	})}
 >
 	<a-sphere position="0 100 0" radius="10" material="color: yellow; shader: flat;" />
@@ -62,11 +62,11 @@
 
 		color: light,
 
-		intensity: 0.75
+		intensity: 0.5
 	})}
 />
 
-<a-entity light="type:ambient; color:white; intensity:1.5;" />
+<a-entity light="type:ambient; color:white; intensity:1;" />
 
 <a-mixin
 	id="cloud"

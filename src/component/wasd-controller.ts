@@ -39,7 +39,7 @@ AFRAME.registerComponent("wasd-controller", {
         let torq
         vec3.set(0, 0, 0)
         let intensity = 1
-        let hop = 15
+        let hop = 5
         if (key_map.$["shift"]) {
             intensity = 1.5
         }

@@ -41,6 +41,7 @@
 			bind:value={$open_text}
 			bind:this={ele}
 			on:blur={escape}
+			autofocus
 			on:keydown={(e) => {
 				if (e.key === 'Enter') {
 					send()
@@ -99,7 +100,8 @@
 		pointer-events: all;
 		z-index: 15;
 	}
-	.mobile.lofi {
-		transform: translate(-50%, 0) !important;
+
+	.lofi.mobile {
+		transform: none;
 	}
 </style>

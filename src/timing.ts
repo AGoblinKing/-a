@@ -7,7 +7,7 @@ import mobile from "is-mobile"
 export const tick = new Value(0)
 export const avatar_current = new Value<string>(state.avatar.current).save("avatar_current_2")
 export const avatar_doer = new Value<string>(state.avatar.doer).save("avatar_doer_1")
-export const voice_current = new Value("Guy | UK English").save("voice_current")
+export const voice_current = new Value("UK English").save("voice_current")
 export const voice_doer = new Value("Aus | UK English").save("voice_doer")
 export const scouter = new Value("green").save("scouter")
 export const videos = new Value(["pxCwIWL4_wA", "ntV3RbQmLAU", "BzIeSMDe85U"])
@@ -45,12 +45,12 @@ open_game.on(($g) => {
     }
 })
 
-export const motd = new Value(`🎊v0.3.2🎊
+export const motd = new Value(`🎊v0.3.3🎊
 
-❌ Online MP ✅ Forest 
-❌ Cabin ✅ Animals
+✅ Sky ✅ Mobile ✅ HUD
+✅ Cabin ✅ Animals
+❌ Online MP 
 ❌ Recording Mode
-
 ❌ Targeting
 ❌ AI  ❌ Gameplay 
 

@@ -203,9 +203,9 @@ AFRAME.registerComponent("host", {
     },
 
     slowtick() {
-        let type = this.el.components["physx-body"]?.data.type
+        let type = this.el.components["ammo-body"]?.data.type
         if (guest.$ && (type === "kinematic" || type === "dynamic")) {
-            type = this.el.components["physx-body"].data.type = "static"
+            type = this.el.components["ammo-body"].data.type = "static"
         }
         // || !
         if (!host.$ || type === "static") return

@@ -9,7 +9,7 @@
 
 <a-entity
 	mixin="shadow character"
-	position="0 1 1"
+	position="0 1 0"
 	vrm="src: {$avatar_current}; current: true"
 	look-controls
 	scale="{$size.x} {$size.y} {$size.z}"

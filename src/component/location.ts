@@ -18,17 +18,14 @@ AFRAME.registerSystem("loc", {
             const [key, value] = entry
 
             const n = value.data.name
-
             const l = location.$.indexOf(n)
-
             if (value.playerIsIn(wpos)) {
                 if (l !== -1) continue
-
                 location.$.push(n)
                 location.poke()
 
             } else if (l !== -1) {
-                delete location.$[key]
+                location.$.splice(l, 1)
                 location.poke()
             }
         }
@@ -52,15 +49,13 @@ interface ILocation {
 AFRAME.registerComponent("location", {
     schema: {
         name: { type: "string" },
-        box: { type: "string", default: "-1 -1 -1 1 1 1" },
-        color: { type: "color", default: "#ffffff" },
+        box: { type: "string", default: "-1 -1 -1 1 1 1" }
     },
 
     init() {
         locations[this.data.name] = this
         this.bb = new AFRAME.THREE.Box3() as Box3
         this.bb.setFromArray(this.data.box.split(" ").map(parseFloat))
-
     },
 
     playerIsIn(playerPos: Vector3) {
@@ -69,6 +64,6 @@ AFRAME.registerComponent("location", {
     },
 
     remove() {
-        delete locations[this.data]
+        delete locations[this.data.name]
     }
 })

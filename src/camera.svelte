@@ -70,7 +70,7 @@
 	far="50000"
 	position="0 4 0"
 	wasd-controls="enabled: false;"
-	look="enabled: true;pointerLockEnabled: true;"
+	look="enabled: true;pointerLockEnabled: true; magicWindowTrackingEnabled: false; reverseTouchDrag: true;"
 	look-controls="enabled: false;"
 >
 	<a-entity
@@ -89,7 +89,7 @@
 			position="0 0 -1"
 			on:collidestart={collidestart}
 			on:collideend={collideend}
-			physx-body="type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;"
+			ammo-body="type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;"
 			ammo-shape="type: box; halfExtents: 0.05 0.05 6;offset: 0 0 -9.5"
 		/>
 	{/if}

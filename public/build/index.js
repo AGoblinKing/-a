@@ -5369,7 +5369,6 @@
   // node_modules/svelte/internal/index.mjs
   function noop() {
   }
-  var identity = (x) => x;
   function assign(tar, src) {
     for (const k in src)
       tar[k] = src[k];
@@ -5411,33 +5410,6 @@
   function component_subscribe(component, store, callback) {
     component.$$.on_destroy.push(subscribe(store, callback));
   }
-  var is_client = typeof window !== "undefined";
-  var now = is_client ? () => window.performance.now() : () => Date.now();
-  var raf = is_client ? (cb) => requestAnimationFrame(cb) : noop;
-  var tasks = /* @__PURE__ */ new Set();
-  function run_tasks(now2) {
-    tasks.forEach((task) => {
-      if (!task.c(now2)) {
-        tasks.delete(task);
-        task.f();
-      }
-    });
-    if (tasks.size !== 0)
-      raf(run_tasks);
-  }
-  function loop(callback) {
-    let task;
-    if (tasks.size === 0)
-      raf(run_tasks);
-    return {
-      promise: new Promise((fulfill) => {
-        tasks.add(task = { c: callback, f: fulfill });
-      }),
-      abort() {
-        tasks.delete(task);
-      }
-    };
-  }
   var is_hydrating = false;
   function start_hydrating() {
     is_hydrating = true;
@@ -5447,23 +5419,6 @@
   }
   function append(target, node) {
     target.appendChild(node);
-  }
-  function get_root_for_style(node) {
-    if (!node)
-      return document;
-    const root = node.getRootNode ? node.getRootNode() : node.ownerDocument;
-    if (root && root.host) {
-      return root;
-    }
-    return node.ownerDocument;
-  }
-  function append_empty_stylesheet(node) {
-    const style_element = element("style");
-    append_stylesheet(get_root_for_style(node), style_element);
-    return style_element.sheet;
-  }
-  function append_stylesheet(node, style) {
-    append(node.head || node, style);
   }
   function insert(target, node, anchor) {
     target.insertBefore(node, anchor || null);
@@ -5540,72 +5495,6 @@
       node.style.setProperty(key, value, important ? "important" : "");
     }
   }
-  function custom_event(type, detail, bubbles = false) {
-    const e = document.createEvent("CustomEvent");
-    e.initCustomEvent(type, bubbles, false, detail);
-    return e;
-  }
-  var managed_styles = /* @__PURE__ */ new Map();
-  var active = 0;
-  function hash(str) {
-    let hash2 = 5381;
-    let i = str.length;
-    while (i--)
-      hash2 = (hash2 << 5) - hash2 ^ str.charCodeAt(i);
-    return hash2 >>> 0;
-  }
-  function create_style_information(doc, node) {
-    const info = { stylesheet: append_empty_stylesheet(node), rules: {} };
-    managed_styles.set(doc, info);
-    return info;
-  }
-  function create_rule(node, a, b, duration, delay, ease, fn, uid = 0) {
-    const step = 16.666 / duration;
-    let keyframes = "{\n";
-    for (let p2 = 0; p2 <= 1; p2 += step) {
-      const t = a + (b - a) * ease(p2);
-      keyframes += p2 * 100 + `%{${fn(t, 1 - t)}}
-`;
-    }
-    const rule = keyframes + `100% {${fn(b, 1 - b)}}
-}`;
-    const name = `__svelte_${hash(rule)}_${uid}`;
-    const doc = get_root_for_style(node);
-    const { stylesheet, rules } = managed_styles.get(doc) || create_style_information(doc, node);
-    if (!rules[name]) {
-      rules[name] = true;
-      stylesheet.insertRule(`@keyframes ${name} ${rule}`, stylesheet.cssRules.length);
-    }
-    const animation = node.style.animation || "";
-    node.style.animation = `${animation ? `${animation}, ` : ""}${name} ${duration}ms linear ${delay}ms 1 both`;
-    active += 1;
-    return name;
-  }
-  function delete_rule(node, name) {
-    const previous = (node.style.animation || "").split(", ");
-    const next = previous.filter(name ? (anim) => anim.indexOf(name) < 0 : (anim) => anim.indexOf("__svelte") === -1);
-    const deleted = previous.length - next.length;
-    if (deleted) {
-      node.style.animation = next.join(", ");
-      active -= deleted;
-      if (!active)
-        clear_rules();
-    }
-  }
-  function clear_rules() {
-    raf(() => {
-      if (active)
-        return;
-      managed_styles.forEach((info) => {
-        const { stylesheet } = info;
-        let i = stylesheet.cssRules.length;
-        while (i--)
-          stylesheet.deleteRule(i);
-        info.rules = {};
-      });
-      managed_styles.clear();
-    });
-  }
   var current_component;
   function set_current_component(component) {
     current_component = component;
@@ -5667,19 +5556,6 @@
       $$.after_update.forEach(add_render_callback);
     }
   }
-  var promise;
-  function wait() {
-    if (!promise) {
-      promise = Promise.resolve();
-      promise.then(() => {
-        promise = null;
-      });
-    }
-    return promise;
-  }
-  function dispatch(node, direction, kind) {
-    node.dispatchEvent(custom_event(`${direction ? "intro" : "outro"}${kind}`));
-  }
   var outroing = /* @__PURE__ */ new Set();
   var outros;
   function group_outros() {
@@ -5716,121 +5592,6 @@
       });
       block.o(local);
     }
-  }
-  var null_transition = { duration: 0 };
-  function create_in_transition(node, fn, params) {
-    let config = fn(node, params);
-    let running = false;
-    let animation_name;
-    let task;
-    let uid = 0;
-    function cleanup() {
-      if (animation_name)
-        delete_rule(node, animation_name);
-    }
-    function go() {
-      const { delay = 0, duration = 300, easing = identity, tick: tick2 = noop, css } = config || null_transition;
-      if (css)
-        animation_name = create_rule(node, 0, 1, duration, delay, easing, css, uid++);
-      tick2(0, 1);
-      const start_time = now() + delay;
-      const end_time = start_time + duration;
-      if (task)
-        task.abort();
-      running = true;
-      add_render_callback(() => dispatch(node, true, "start"));
-      task = loop((now2) => {
-        if (running) {
-          if (now2 >= end_time) {
-            tick2(1, 0);
-            dispatch(node, true, "end");
-            cleanup();
-            return running = false;
-          }
-          if (now2 >= start_time) {
-            const t = easing((now2 - start_time) / duration);
-            tick2(t, 1 - t);
-          }
-        }
-        return running;
-      });
-    }
-    let started = false;
-    return {
-      start() {
-        if (started)
-          return;
-        started = true;
-        delete_rule(node);
-        if (is_function(config)) {
-          config = config();
-          wait().then(go);
-        } else {
-          go();
-        }
-      },
-      invalidate() {
-        started = false;
-      },
-      end() {
-        if (running) {
-          cleanup();
-          running = false;
-        }
-      }
-    };
-  }
-  function create_out_transition(node, fn, params) {
-    let config = fn(node, params);
-    let running = true;
-    let animation_name;
-    const group = outros;
-    group.r += 1;
-    function go() {
-      const { delay = 0, duration = 300, easing = identity, tick: tick2 = noop, css } = config || null_transition;
-      if (css)
-        animation_name = create_rule(node, 1, 0, duration, delay, easing, css);
-      const start_time = now() + delay;
-      const end_time = start_time + duration;
-      add_render_callback(() => dispatch(node, false, "start"));
-      loop((now2) => {
-        if (running) {
-          if (now2 >= end_time) {
-            tick2(0, 1);
-            dispatch(node, false, "end");
-            if (!--group.r) {
-              run_all(group.c);
-            }
-            return false;
-          }
-          if (now2 >= start_time) {
-            const t = easing((now2 - start_time) / duration);
-            tick2(1 - t, t);
-          }
-        }
-        return running;
-      });
-    }
-    if (is_function(config)) {
-      wait().then(() => {
-        config = config();
-        go();
-      });
-    } else {
-      go();
-    }
-    return {
-      end(reset) {
-        if (reset && config.tick) {
-          config.tick(1, 0);
-        }
-        if (running) {
-          if (animation_name)
-            delete_rule(node, animation_name);
-          running = false;
-        }
-      }
-    };
   }
   var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
   function get_spread_update(levels, updates) {
@@ -6183,7 +5944,7 @@
   var tick = new Value(0);
   var avatar_current = new Value(state_default.avatar.current).save("avatar_current_2");
   var avatar_doer = new Value(state_default.avatar.doer).save("avatar_doer_1");
-  var voice_current = new Value("Guy | UK English").save("voice_current");
+  var voice_current = new Value("UK English").save("voice_current");
   var voice_doer = new Value("Aus | UK English").save("voice_doer");
   var scouter = new Value("green").save("scouter");
   var videos = new Value(["pxCwIWL4_wA", "ntV3RbQmLAU", "BzIeSMDe85U"]);
@@ -6215,12 +5976,12 @@
       open_loading.set(true);
     }
   });
-  var motd = new Value(`\u{1F38A}v0.3.2\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.3.3\u{1F38A}
 
-\u274C Online MP \u2705 Forest 
-\u274C Cabin \u2705 Animals
+\u2705 Sky \u2705 Mobile \u2705 HUD
+\u2705 Cabin \u2705 Animals
+\u274C Online MP 
 \u274C Recording Mode
-
 \u274C Targeting
 \u274C AI  \u274C Gameplay 
 
@@ -6602,9 +6363,9 @@ reset back to 1 for size
       u.v = o3d.visible ? 1 : 0;
     },
     slowtick() {
-      let type = this.el.components["physx-body"]?.data.type;
+      let type = this.el.components["ammo-body"]?.data.type;
       if (guest.$ && (type === "kinematic" || type === "dynamic")) {
-        type = this.el.components["physx-body"].data.type = "static";
+        type = this.el.components["ammo-body"].data.type = "static";
       }
       if (!host.$ || type === "static")
         return;
@@ -7104,10 +6865,10 @@ reset back to 1 for size
     const ctx = canvasElement.$.getContext("2d");
     ctx.translate(width, 0);
     ctx.scale(-1, 1);
-    let c;
+    let camera2;
     open_live.on(($l) => {
-      if (!c && $l) {
-        c = new import_camera_utils.Camera($ve, {
+      if (!camera2 && $l) {
+        camera2 = new import_camera_utils.Camera($ve, {
           onFrame: async () => {
             ctx.drawImage($ve, 0, 0, width, height);
             await holistic.send({ image: canvasElement.$ });
@@ -7117,10 +6878,9 @@ reset back to 1 for size
         });
       }
       if ($l)
-        c.start();
-      if (!$l && c) {
-        c.stop();
-      }
+        camera2.start();
+      if (!$l && camera2)
+        camera2.stop();
     });
   });
   tick.on(() => {
@@ -7273,7 +7033,7 @@ reset back to 1 for size
       c() {
         a_mixin = element("a-mixin");
         set_custom_element_data(a_mixin, "id", "character");
-        set_custom_element_data(a_mixin, "physx-body", "type: dynamic; mass: 1; linearDamping: 0.95; angularDamping: 1;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.95; angularDamping: 1;angularFactor: 0 1 0;");
         set_custom_element_data(a_mixin, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.2 0.6 0.2; offset: 0 0.75 0");
       },
       m(target, anchor) {
@@ -7326,7 +7086,7 @@ reset back to 1 for size
       let torq;
       vec32.set(0, 0, 0);
       let intensity = 1;
-      let hop = 15;
+      let hop = 5;
       if (key_map.$["shift"]) {
         intensity = 1.5;
       }
@@ -7473,7 +7233,7 @@ reset back to 1 for size
         t = space();
         a_entity1 = element("a-entity");
         set_custom_element_data(a_entity0, "mixin", "shadow character");
-        set_custom_element_data(a_entity0, "position", "0 1 1");
+        set_custom_element_data(a_entity0, "position", "0 1 0");
         set_custom_element_data(a_entity0, "vrm", a_entity0_vrm_value = "src: " + ctx[0] + "; current: true");
         set_custom_element_data(a_entity0, "look-controls", "");
         set_custom_element_data(a_entity0, "scale", a_entity0_scale_value = ctx[1].x + " " + ctx[1].y + " " + ctx[1].z);
@@ -8633,11 +8393,11 @@ reset back to 1 for size
       this.z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
       return this;
     },
-    project: function(camera3) {
-      return this.applyMatrix4(camera3.matrixWorldInverse).applyMatrix4(camera3.projectionMatrix);
+    project: function(camera2) {
+      return this.applyMatrix4(camera2.matrixWorldInverse).applyMatrix4(camera2.projectionMatrix);
     },
-    unproject: function(camera3) {
-      return this.applyMatrix4(camera3.projectionMatrixInverse).applyMatrix4(camera3.matrixWorld);
+    unproject: function(camera2) {
+      return this.applyMatrix4(camera2.projectionMatrixInverse).applyMatrix4(camera2.matrixWorld);
     },
     transformDirection: function(m) {
       var x = this.x, y = this.y, z = this.z;
@@ -13508,31 +13268,31 @@ reset back to 1 for size
         return enabled ? value | 1 << position : value & ~(1 << position);
       }
       function getNormalIndex(normal) {
-        var hash2 = normal.x.toString() + normal.y.toString() + normal.z.toString();
-        if (normalsHash[hash2] !== void 0) {
-          return normalsHash[hash2];
+        var hash = normal.x.toString() + normal.y.toString() + normal.z.toString();
+        if (normalsHash[hash] !== void 0) {
+          return normalsHash[hash];
         }
-        normalsHash[hash2] = normals.length / 3;
+        normalsHash[hash] = normals.length / 3;
         normals.push(normal.x, normal.y, normal.z);
-        return normalsHash[hash2];
+        return normalsHash[hash];
       }
       function getColorIndex(color) {
-        var hash2 = color.r.toString() + color.g.toString() + color.b.toString();
-        if (colorsHash[hash2] !== void 0) {
-          return colorsHash[hash2];
+        var hash = color.r.toString() + color.g.toString() + color.b.toString();
+        if (colorsHash[hash] !== void 0) {
+          return colorsHash[hash];
         }
-        colorsHash[hash2] = colors.length;
+        colorsHash[hash] = colors.length;
         colors.push(color.getHex());
-        return colorsHash[hash2];
+        return colorsHash[hash];
       }
       function getUvIndex(uv) {
-        var hash2 = uv.x.toString() + uv.y.toString();
-        if (uvsHash[hash2] !== void 0) {
-          return uvsHash[hash2];
+        var hash = uv.x.toString() + uv.y.toString();
+        if (uvsHash[hash] !== void 0) {
+          return uvsHash[hash];
         }
-        uvsHash[hash2] = uvs.length / 2;
+        uvsHash[hash] = uvs.length / 2;
         uvs.push(uv.x, uv.y);
-        return uvsHash[hash2];
+        return uvsHash[hash];
       }
       data.data = {};
       data.data.vertices = vertices;
@@ -16016,7 +15776,7 @@ reset back to 1 for size
     var boxMesh;
     var currentBackground = null;
     var currentBackgroundVersion = 0;
-    function render(renderList, scene2, camera3, forceClear) {
+    function render(renderList, scene2, camera2, forceClear) {
       var background = scene2.background;
       var vr = renderer.vr;
       var session = vr.getSession && vr.getSession();
@@ -16050,8 +15810,8 @@ reset back to 1 for size
           }));
           boxMesh.geometry.removeAttribute("normal");
           boxMesh.geometry.removeAttribute("uv");
-          boxMesh.onBeforeRender = function(renderer2, scene3, camera4) {
-            this.matrixWorld.copyPosition(camera4.matrixWorld);
+          boxMesh.onBeforeRender = function(renderer2, scene3, camera3) {
+            this.matrixWorld.copyPosition(camera3.matrixWorld);
           };
           Object.defineProperty(boxMesh.material, "map", {
             get: function() {
@@ -16223,10 +15983,10 @@ reset back to 1 for size
     this.uniform = uniform;
     this.numPlanes = 0;
     this.numIntersection = 0;
-    this.init = function(planes, enableLocalClipping, camera3) {
+    this.init = function(planes, enableLocalClipping, camera2) {
       var enabled = planes.length !== 0 || enableLocalClipping || numGlobalPlanes !== 0 || localClippingEnabled;
       localClippingEnabled = enableLocalClipping;
-      globalState = projectPlanes(planes, camera3, 0);
+      globalState = projectPlanes(planes, camera2, 0);
       numGlobalPlanes = planes.length;
       return enabled;
     };
@@ -16238,7 +15998,7 @@ reset back to 1 for size
       renderingShadows = false;
       resetGlobalState();
     };
-    this.setState = function(planes, clipIntersection, clipShadows, camera3, cache, fromCache) {
+    this.setState = function(planes, clipIntersection, clipShadows, camera2, cache, fromCache) {
       if (!localClippingEnabled || planes === null || planes.length === 0 || renderingShadows && !clipShadows) {
         if (renderingShadows) {
           projectPlanes(null);
@@ -16248,7 +16008,7 @@ reset back to 1 for size
       } else {
         var nGlobal = renderingShadows ? 0 : numGlobalPlanes, lGlobal = nGlobal * 4, dstArray = cache.clippingState || null;
         uniform.value = dstArray;
-        dstArray = projectPlanes(planes, camera3, lGlobal, fromCache);
+        dstArray = projectPlanes(planes, camera2, lGlobal, fromCache);
         for (var i = 0; i !== lGlobal; ++i) {
           dstArray[i] = globalState[i];
         }
@@ -16265,12 +16025,12 @@ reset back to 1 for size
       scope.numPlanes = numGlobalPlanes;
       scope.numIntersection = 0;
     }
-    function projectPlanes(planes, camera3, dstOffset, skipTransform) {
+    function projectPlanes(planes, camera2, dstOffset, skipTransform) {
       var nPlanes = planes !== null ? planes.length : 0, dstArray = null;
       if (nPlanes !== 0) {
         dstArray = uniform.value;
         if (skipTransform !== true || dstArray === null) {
-          var flatSize = dstOffset + nPlanes * 4, viewMatrix = camera3.matrixWorldInverse;
+          var flatSize = dstOffset + nPlanes * 4, viewMatrix = camera2.matrixWorldInverse;
           viewNormalMatrix.getNormalMatrix(viewMatrix);
           if (dstArray === null || dstArray.length < flatSize) {
             dstArray = new Float32Array(flatSize);
@@ -17902,19 +17662,19 @@ reset back to 1 for size
       scene2.removeEventListener("dispose", onSceneDispose);
       delete lists[scene2.id];
     }
-    function get(scene2, camera3) {
+    function get(scene2, camera2) {
       var cameras = lists[scene2.id];
       var list;
       if (cameras === void 0) {
         list = new WebGLRenderList();
         lists[scene2.id] = {};
-        lists[scene2.id][camera3.id] = list;
+        lists[scene2.id][camera2.id] = list;
         scene2.addEventListener("dispose", onSceneDispose);
       } else {
-        list = cameras[camera3.id];
+        list = cameras[camera2.id];
         if (list === void 0) {
           list = new WebGLRenderList();
-          cameras[camera3.id] = list;
+          cameras[camera2.id] = list;
         }
       }
       return list;
@@ -18026,14 +17786,14 @@ reset back to 1 for size
     var vector3 = new Vector3();
     var matrix4 = new Matrix4();
     var matrix42 = new Matrix4();
-    function setup(lights, shadows, camera3) {
+    function setup(lights, shadows, camera2) {
       var r = 0, g = 0, b = 0;
       var directionalLength = 0;
       var pointLength = 0;
       var spotLength = 0;
       var rectAreaLength = 0;
       var hemiLength = 0;
-      var viewMatrix = camera3.matrixWorldInverse;
+      var viewMatrix = camera2.matrixWorldInverse;
       for (var i = 0, l = lights.length; i < l; i++) {
         var light2 = lights[i];
         var color = light2.color;
@@ -18167,8 +17927,8 @@ reset back to 1 for size
     function pushShadow(shadowLight) {
       shadowsArray.push(shadowLight);
     }
-    function setupLights(camera3) {
-      lights.setup(lightsArray, shadowsArray, camera3);
+    function setupLights(camera2) {
+      lights.setup(lightsArray, shadowsArray, camera2);
     }
     var state2 = {
       lightsArray,
@@ -18190,19 +17950,19 @@ reset back to 1 for size
       scene2.removeEventListener("dispose", onSceneDispose);
       delete renderStates[scene2.id];
     }
-    function get(scene2, camera3) {
+    function get(scene2, camera2) {
       var renderState;
       if (renderStates[scene2.id] === void 0) {
         renderState = new WebGLRenderState();
         renderStates[scene2.id] = {};
-        renderStates[scene2.id][camera3.id] = renderState;
+        renderStates[scene2.id][camera2.id] = renderState;
         scene2.addEventListener("dispose", onSceneDispose);
       } else {
-        if (renderStates[scene2.id][camera3.id] === void 0) {
+        if (renderStates[scene2.id][camera2.id] === void 0) {
           renderState = new WebGLRenderState();
-          renderStates[scene2.id][camera3.id] = renderState;
+          renderStates[scene2.id][camera2.id] = renderState;
         } else {
-          renderState = renderStates[scene2.id][camera3.id];
+          renderState = renderStates[scene2.id][camera2.id];
         }
       }
       return renderState;
@@ -18330,7 +18090,7 @@ reset back to 1 for size
     this.autoUpdate = true;
     this.needsUpdate = false;
     this.type = PCFShadowMap;
-    this.render = function(lights, scene2, camera3) {
+    this.render = function(lights, scene2, camera2) {
       if (scope.enabled === false)
         return;
       if (scope.autoUpdate === false && scope.needsUpdate === false)
@@ -18406,7 +18166,7 @@ reset back to 1 for size
           }
           _projScreenMatrix.multiplyMatrices(shadowCamera.projectionMatrix, shadowCamera.matrixWorldInverse);
           _frustum.setFromMatrix(_projScreenMatrix);
-          renderObject(scene2, camera3, shadowCamera, isPointLight);
+          renderObject(scene2, camera2, shadowCamera, isPointLight);
         }
       }
       scope.needsUpdate = false;
@@ -18472,10 +18232,10 @@ reset back to 1 for size
       }
       return result;
     }
-    function renderObject(object, camera3, shadowCamera, isPointLight) {
+    function renderObject(object, camera2, shadowCamera, isPointLight) {
       if (object.visible === false)
         return;
-      var visible = object.layers.test(camera3.layers);
+      var visible = object.layers.test(camera2.layers);
       if (visible && (object.isMesh || object.isLine || object.isPoints)) {
         if (object.castShadow && (!object.frustumCulled || _frustum.intersectsObject(object))) {
           object.modelViewMatrix.multiplyMatrices(shadowCamera.matrixWorldInverse, object.matrixWorld);
@@ -18499,7 +18259,7 @@ reset back to 1 for size
       }
       var children2 = object.children;
       for (var i2 = 0, l = children2.length; i2 < l; i2++) {
-        renderObject(children2[i2], camera3, shadowCamera, isPointLight);
+        renderObject(children2[i2], camera2, shadowCamera, isPointLight);
       }
     }
   }
@@ -19981,7 +19741,7 @@ reset back to 1 for size
   });
   var cameraLPos = new Vector3();
   var cameraRPos = new Vector3();
-  function setProjectionFromUnion(camera3, cameraL, cameraR) {
+  function setProjectionFromUnion(camera2, cameraL, cameraR) {
     cameraLPos.setFromMatrixPosition(cameraL.matrixWorld);
     cameraRPos.setFromMatrixPosition(cameraR.matrixWorld);
     var ipd = cameraLPos.distanceTo(cameraRPos);
@@ -19997,18 +19757,18 @@ reset back to 1 for size
     var right = near * rightFov;
     var zOffset = ipd / (-leftFov + rightFov);
     var xOffset = zOffset * -leftFov;
-    cameraL.matrixWorld.decompose(camera3.position, camera3.quaternion, camera3.scale);
-    camera3.translateX(xOffset);
-    camera3.translateZ(zOffset);
-    camera3.matrixWorld.compose(camera3.position, camera3.quaternion, camera3.scale);
-    camera3.matrixWorldInverse.getInverse(camera3.matrixWorld);
+    cameraL.matrixWorld.decompose(camera2.position, camera2.quaternion, camera2.scale);
+    camera2.translateX(xOffset);
+    camera2.translateZ(zOffset);
+    camera2.matrixWorld.compose(camera2.position, camera2.quaternion, camera2.scale);
+    camera2.matrixWorldInverse.getInverse(camera2.matrixWorld);
     var near2 = near + zOffset;
     var far2 = far + zOffset;
     var left2 = left - xOffset;
     var right2 = right + (ipd - xOffset);
     var top2 = topFov * far / far2 * near2;
     var bottom2 = bottomFov * far / far2 * near2;
-    camera3.projectionMatrix.makePerspective(left2, right2, top2, bottom2, near2, far2);
+    camera2.projectionMatrix.makePerspective(left2, right2, top2, bottom2, near2, far2);
   }
   function WebVRManager(renderer) {
     var scope = this;
@@ -20131,15 +19891,15 @@ reset back to 1 for size
       if (object !== void 0)
         poseTarget = object;
     };
-    this.getCamera = function(camera3) {
+    this.getCamera = function(camera2) {
       var userHeight = frameOfReferenceType === "stage" ? 1.6 : 0;
       if (isPresenting() === false) {
-        camera3.position.set(0, userHeight, 0);
-        camera3.rotation.set(0, 0, 0);
-        return camera3;
+        camera2.position.set(0, userHeight, 0);
+        camera2.rotation.set(0, 0, 0);
+        return camera2;
       }
-      device.depthNear = camera3.near;
-      device.depthFar = camera3.far;
+      device.depthNear = camera2.near;
+      device.depthFar = camera2.far;
       device.getFrameData(frameData);
       if (frameOfReferenceType === "stage") {
         var stageParameters = device.stageParameters;
@@ -20150,7 +19910,7 @@ reset back to 1 for size
         }
       }
       var pose = frameData.pose;
-      var poseObject = poseTarget !== null ? poseTarget : camera3;
+      var poseObject = poseTarget !== null ? poseTarget : camera2;
       poseObject.matrix.copy(standingMatrix);
       poseObject.matrix.decompose(poseObject.position, poseObject.quaternion, poseObject.scale);
       if (pose.orientation !== null) {
@@ -20164,10 +19924,10 @@ reset back to 1 for size
         poseObject.position.add(tempPosition);
       }
       poseObject.updateMatrixWorld();
-      cameraL.near = camera3.near;
-      cameraR.near = camera3.near;
-      cameraL.far = camera3.far;
-      cameraR.far = camera3.far;
+      cameraL.near = camera2.near;
+      cameraR.near = camera2.near;
+      cameraL.far = camera2.far;
+      cameraR.far = camera2.far;
       cameraL.matrixWorldInverse.fromArray(frameData.leftViewMatrix);
       cameraR.matrixWorldInverse.fromArray(frameData.rightViewMatrix);
       standingMatrixInverse.getInverse(standingMatrix);
@@ -20302,31 +20062,31 @@ reset back to 1 for size
         });
       }
     };
-    function updateCamera(camera3, parent) {
+    function updateCamera(camera2, parent) {
       if (parent === null) {
-        camera3.matrixWorld.copy(camera3.matrix);
+        camera2.matrixWorld.copy(camera2.matrix);
       } else {
-        camera3.matrixWorld.multiplyMatrices(parent.matrixWorld, camera3.matrix);
+        camera2.matrixWorld.multiplyMatrices(parent.matrixWorld, camera2.matrix);
       }
-      camera3.matrixWorldInverse.getInverse(camera3.matrixWorld);
+      camera2.matrixWorldInverse.getInverse(camera2.matrixWorld);
     }
-    this.getCamera = function(camera3) {
+    this.getCamera = function(camera2) {
       if (isPresenting()) {
-        var parent = camera3.parent;
+        var parent = camera2.parent;
         var cameras = cameraVR.cameras;
         updateCamera(cameraVR, parent);
         for (var i = 0; i < cameras.length; i++) {
           updateCamera(cameras[i], parent);
         }
-        camera3.matrixWorld.copy(cameraVR.matrixWorld);
-        var children2 = camera3.children;
+        camera2.matrixWorld.copy(cameraVR.matrixWorld);
+        var children2 = camera2.children;
         for (var i = 0, l = children2.length; i < l; i++) {
           children2[i].updateMatrixWorld(true);
         }
         setProjectionFromUnion(cameraVR, cameraL, cameraR);
         return cameraVR;
       }
-      return camera3;
+      return camera2;
     };
     this.isPresenting = isPresenting;
     var onAnimationFrameCallback = null;
@@ -20339,12 +20099,12 @@ reset back to 1 for size
           var view = views[i];
           var viewport = layer.getViewport(view);
           var viewMatrix = pose.getViewMatrix(view);
-          var camera3 = cameraVR.cameras[i];
-          camera3.matrix.fromArray(viewMatrix).getInverse(camera3.matrix);
-          camera3.projectionMatrix.fromArray(view.projectionMatrix);
-          camera3.viewport.set(viewport.x, viewport.y, viewport.width, viewport.height);
+          var camera2 = cameraVR.cameras[i];
+          camera2.matrix.fromArray(viewMatrix).getInverse(camera2.matrix);
+          camera2.projectionMatrix.fromArray(view.projectionMatrix);
+          camera2.viewport.set(viewport.x, viewport.y, viewport.width, viewport.height);
           if (i === 0) {
-            cameraVR.matrix.copy(camera3.matrix);
+            cameraVR.matrix.copy(camera2.matrix);
           }
         }
       }
@@ -20706,10 +20466,10 @@ reset back to 1 for size
       _gl.drawArrays(4, 0, object.count);
       object.count = 0;
     };
-    this.renderBufferDirect = function(camera3, fog, geometry2, material, object, group) {
+    this.renderBufferDirect = function(camera2, fog, geometry2, material, object, group) {
       var frontFaceCW = object.isMesh && object.matrixWorld.determinant() < 0;
       state2.setMaterial(material, frontFaceCW);
-      var program = setProgram(camera3, fog, material, object);
+      var program = setProgram(camera2, fog, material, object);
       var updateBuffers = false;
       if (_currentGeometryProgram.geometry !== geometry2.id || _currentGeometryProgram.program !== program.id || _currentGeometryProgram.wireframe !== (material.wireframe === true)) {
         _currentGeometryProgram.geometry = geometry2.id;
@@ -20870,8 +20630,8 @@ reset back to 1 for size
       }
       state2.disableUnusedAttributes();
     }
-    this.compile = function(scene2, camera3) {
-      currentRenderState = renderStates.get(scene2, camera3);
+    this.compile = function(scene2, camera2) {
+      currentRenderState = renderStates.get(scene2, camera2);
       currentRenderState.init();
       scene2.traverse(function(object) {
         if (object.isLight) {
@@ -20881,7 +20641,7 @@ reset back to 1 for size
           }
         }
       });
-      currentRenderState.setupLights(camera3);
+      currentRenderState.setupLights(camera2);
       scene2.traverse(function(object) {
         if (object.material) {
           if (Array.isArray(object.material)) {
@@ -20910,7 +20670,7 @@ reset back to 1 for size
       vr.setAnimationLoop(callback);
       animation.start();
     };
-    this.render = function(scene2, camera3) {
+    this.render = function(scene2, camera2) {
       var renderTarget, forceClear;
       if (arguments[2] !== void 0) {
         console.warn("THREE.WebGLRenderer.render(): the renderTarget argument has been removed. Use .setRenderTarget() instead.");
@@ -20920,7 +20680,7 @@ reset back to 1 for size
         console.warn("THREE.WebGLRenderer.render(): the forceClear argument has been removed. Use .clear() instead.");
         forceClear = arguments[3];
       }
-      if (!(camera3 && camera3.isCamera)) {
+      if (!(camera2 && camera2.isCamera)) {
         console.error("THREE.WebGLRenderer.render: camera is not an instance of THREE.Camera.");
         return;
       }
@@ -20933,29 +20693,29 @@ reset back to 1 for size
       _currentCamera = null;
       if (scene2.autoUpdate === true)
         scene2.updateMatrixWorld();
-      if (camera3.parent === null)
-        camera3.updateMatrixWorld();
+      if (camera2.parent === null)
+        camera2.updateMatrixWorld();
       if (vr.enabled) {
-        camera3 = vr.getCamera(camera3);
+        camera2 = vr.getCamera(camera2);
       }
-      currentRenderState = renderStates.get(scene2, camera3);
+      currentRenderState = renderStates.get(scene2, camera2);
       currentRenderState.init();
-      scene2.onBeforeRender(_this, scene2, camera3, renderTarget || _currentRenderTarget);
-      _projScreenMatrix.multiplyMatrices(camera3.projectionMatrix, camera3.matrixWorldInverse);
+      scene2.onBeforeRender(_this, scene2, camera2, renderTarget || _currentRenderTarget);
+      _projScreenMatrix.multiplyMatrices(camera2.projectionMatrix, camera2.matrixWorldInverse);
       _frustum.setFromMatrix(_projScreenMatrix);
       _localClippingEnabled = this.localClippingEnabled;
-      _clippingEnabled = _clipping.init(this.clippingPlanes, _localClippingEnabled, camera3);
-      currentRenderList = renderLists.get(scene2, camera3);
+      _clippingEnabled = _clipping.init(this.clippingPlanes, _localClippingEnabled, camera2);
+      currentRenderList = renderLists.get(scene2, camera2);
       currentRenderList.init();
-      projectObject(scene2, camera3, 0, _this.sortObjects);
+      projectObject(scene2, camera2, 0, _this.sortObjects);
       if (_this.sortObjects === true) {
         currentRenderList.sort();
       }
       if (_clippingEnabled)
         _clipping.beginShadows();
       var shadowsArray = currentRenderState.state.shadowsArray;
-      shadowMap.render(shadowsArray, scene2, camera3);
-      currentRenderState.setupLights(camera3);
+      shadowMap.render(shadowsArray, scene2, camera2);
+      currentRenderState.setupLights(camera2);
       if (_clippingEnabled)
         _clipping.endShadows();
       if (this.info.autoReset)
@@ -20963,22 +20723,22 @@ reset back to 1 for size
       if (renderTarget !== void 0) {
         this.setRenderTarget(renderTarget);
       }
-      background.render(currentRenderList, scene2, camera3, forceClear);
+      background.render(currentRenderList, scene2, camera2, forceClear);
       var opaqueObjects = currentRenderList.opaque;
       var transparentObjects = currentRenderList.transparent;
       if (scene2.overrideMaterial) {
         var overrideMaterial = scene2.overrideMaterial;
         if (opaqueObjects.length)
-          renderObjects(opaqueObjects, scene2, camera3, overrideMaterial);
+          renderObjects(opaqueObjects, scene2, camera2, overrideMaterial);
         if (transparentObjects.length)
-          renderObjects(transparentObjects, scene2, camera3, overrideMaterial);
+          renderObjects(transparentObjects, scene2, camera2, overrideMaterial);
       } else {
         if (opaqueObjects.length)
-          renderObjects(opaqueObjects, scene2, camera3);
+          renderObjects(opaqueObjects, scene2, camera2);
         if (transparentObjects.length)
-          renderObjects(transparentObjects, scene2, camera3);
+          renderObjects(transparentObjects, scene2, camera2);
       }
-      scene2.onAfterRender(_this, scene2, camera3);
+      scene2.onAfterRender(_this, scene2, camera2);
       if (_currentRenderTarget !== null) {
         textures.updateRenderTargetMipmap(_currentRenderTarget);
         textures.updateMultisampleRenderTarget(_currentRenderTarget);
@@ -20993,10 +20753,10 @@ reset back to 1 for size
       currentRenderList = null;
       currentRenderState = null;
     };
-    function projectObject(object, camera3, groupOrder, sortObjects) {
+    function projectObject(object, camera2, groupOrder, sortObjects) {
       if (object.visible === false)
         return;
-      var visible = object.layers.test(camera3.layers);
+      var visible = object.layers.test(camera2.layers);
       if (visible) {
         if (object.isGroup) {
           groupOrder = object.renderOrder;
@@ -21048,19 +20808,19 @@ reset back to 1 for size
       }
       var children2 = object.children;
       for (var i = 0, l = children2.length; i < l; i++) {
-        projectObject(children2[i], camera3, groupOrder, sortObjects);
+        projectObject(children2[i], camera2, groupOrder, sortObjects);
       }
     }
-    function renderObjects(renderList, scene2, camera3, overrideMaterial) {
+    function renderObjects(renderList, scene2, camera2, overrideMaterial) {
       for (var i = 0, l = renderList.length; i < l; i++) {
         var renderItem = renderList[i];
         var object = renderItem.object;
         var geometry2 = renderItem.geometry;
         var material = overrideMaterial === void 0 ? renderItem.material : overrideMaterial;
         var group = renderItem.group;
-        if (camera3.isArrayCamera) {
-          _currentArrayCamera = camera3;
-          var cameras = camera3.cameras;
+        if (camera2.isArrayCamera) {
+          _currentArrayCamera = camera2;
+          var cameras = camera2.cameras;
           for (var j = 0, jl = cameras.length; j < jl; j++) {
             var camera22 = cameras[j];
             if (object.layers.test(camera22.layers)) {
@@ -21080,27 +20840,27 @@ reset back to 1 for size
           }
         } else {
           _currentArrayCamera = null;
-          renderObject(object, scene2, camera3, geometry2, material, group);
+          renderObject(object, scene2, camera2, geometry2, material, group);
         }
       }
     }
-    function renderObject(object, scene2, camera3, geometry2, material, group) {
-      object.onBeforeRender(_this, scene2, camera3, geometry2, material, group);
-      currentRenderState = renderStates.get(scene2, _currentArrayCamera || camera3);
-      object.modelViewMatrix.multiplyMatrices(camera3.matrixWorldInverse, object.matrixWorld);
+    function renderObject(object, scene2, camera2, geometry2, material, group) {
+      object.onBeforeRender(_this, scene2, camera2, geometry2, material, group);
+      currentRenderState = renderStates.get(scene2, _currentArrayCamera || camera2);
+      object.modelViewMatrix.multiplyMatrices(camera2.matrixWorldInverse, object.matrixWorld);
       object.normalMatrix.getNormalMatrix(object.modelViewMatrix);
       if (object.isImmediateRenderObject) {
         state2.setMaterial(material);
-        var program = setProgram(camera3, scene2.fog, material, object);
+        var program = setProgram(camera2, scene2.fog, material, object);
         _currentGeometryProgram.geometry = null;
         _currentGeometryProgram.program = null;
         _currentGeometryProgram.wireframe = false;
         renderObjectImmediate(object, program);
       } else {
-        _this.renderBufferDirect(camera3, scene2.fog, geometry2, material, object, group);
+        _this.renderBufferDirect(camera2, scene2.fog, geometry2, material, object, group);
       }
-      object.onAfterRender(_this, scene2, camera3, geometry2, material, group);
-      currentRenderState = renderStates.get(scene2, _currentArrayCamera || camera3);
+      object.onAfterRender(_this, scene2, camera2, geometry2, material, group);
+      currentRenderState = renderStates.get(scene2, _currentArrayCamera || camera2);
     }
     function initMaterial(material, fog, object) {
       var materialProperties = properties.get(material);
@@ -21204,16 +20964,16 @@ reset back to 1 for size
       var progUniforms = materialProperties.program.getUniforms(), uniformsList = WebGLUniforms.seqWithValue(progUniforms.seq, uniforms);
       materialProperties.uniformsList = uniformsList;
     }
-    function setProgram(camera3, fog, material, object) {
+    function setProgram(camera2, fog, material, object) {
       textures.resetTextureUnits();
       var materialProperties = properties.get(material);
       var lights = currentRenderState.state.lights;
       var lightsHash = materialProperties.lightsHash;
       var lightsStateHash = lights.state.hash;
       if (_clippingEnabled) {
-        if (_localClippingEnabled || camera3 !== _currentCamera) {
-          var useCache = camera3 === _currentCamera && material.id === _currentMaterialId;
-          _clipping.setState(material.clippingPlanes, material.clipIntersection, material.clipShadows, camera3, materialProperties, useCache);
+        if (_localClippingEnabled || camera2 !== _currentCamera) {
+          var useCache = camera2 === _currentCamera && material.id === _currentMaterialId;
+          _clipping.setState(material.clippingPlanes, material.clipIntersection, material.clipShadows, camera2, materialProperties, useCache);
         }
       }
       if (material.needsUpdate === false) {
@@ -21244,24 +21004,24 @@ reset back to 1 for size
         _currentMaterialId = material.id;
         refreshMaterial = true;
       }
-      if (refreshProgram || _currentCamera !== camera3) {
-        p_uniforms.setValue(_gl, "projectionMatrix", camera3.projectionMatrix);
+      if (refreshProgram || _currentCamera !== camera2) {
+        p_uniforms.setValue(_gl, "projectionMatrix", camera2.projectionMatrix);
         if (capabilities.logarithmicDepthBuffer) {
-          p_uniforms.setValue(_gl, "logDepthBufFC", 2 / (Math.log(camera3.far + 1) / Math.LN2));
+          p_uniforms.setValue(_gl, "logDepthBufFC", 2 / (Math.log(camera2.far + 1) / Math.LN2));
         }
-        if (_currentCamera !== camera3) {
-          _currentCamera = camera3;
+        if (_currentCamera !== camera2) {
+          _currentCamera = camera2;
           refreshMaterial = true;
           refreshLights = true;
         }
         if (material.isShaderMaterial || material.isMeshPhongMaterial || material.isMeshStandardMaterial || material.envMap) {
           var uCamPos = p_uniforms.map.cameraPosition;
           if (uCamPos !== void 0) {
-            uCamPos.setValue(_gl, _vector3.setFromMatrixPosition(camera3.matrixWorld));
+            uCamPos.setValue(_gl, _vector3.setFromMatrixPosition(camera2.matrixWorld));
           }
         }
         if (material.isMeshPhongMaterial || material.isMeshLambertMaterial || material.isMeshBasicMaterial || material.isMeshStandardMaterial || material.isShaderMaterial || material.skinning) {
-          p_uniforms.setValue(_gl, "viewMatrix", camera3.matrixWorldInverse);
+          p_uniforms.setValue(_gl, "viewMatrix", camera2.matrixWorldInverse);
         }
       }
       if (material.skinning) {
@@ -22099,10 +21859,10 @@ reset back to 1 for size
     update: function() {
       var v1 = new Vector3();
       var v2 = new Vector3();
-      return function update3(camera3) {
+      return function update3(camera2) {
         var levels = this.levels;
         if (levels.length > 1) {
-          v1.setFromMatrixPosition(camera3.matrixWorld);
+          v1.setFromMatrixPosition(camera2.matrixWorld);
           v2.setFromMatrixPosition(this.matrixWorld);
           var distance = v1.distanceTo(v2);
           levels[0].object.visible = true;
@@ -27969,8 +27729,8 @@ reset back to 1 for size
       return this;
     }
   });
-  function LightShadow(camera3) {
-    this.camera = camera3;
+  function LightShadow(camera2) {
+    this.camera = camera2;
     this.bias = 0;
     this.radius = 1;
     this.mapSize = new Vector2(512, 512);
@@ -28008,15 +27768,15 @@ reset back to 1 for size
     constructor: SpotLightShadow,
     isSpotLightShadow: true,
     update: function(light2) {
-      var camera3 = this.camera;
+      var camera2 = this.camera;
       var fov = _Math.RAD2DEG * 2 * light2.angle;
       var aspect = this.mapSize.width / this.mapSize.height;
-      var far = light2.distance || camera3.far;
-      if (fov !== camera3.fov || aspect !== camera3.aspect || far !== camera3.far) {
-        camera3.fov = fov;
-        camera3.aspect = aspect;
-        camera3.far = far;
-        camera3.updateProjectionMatrix();
+      var far = light2.distance || camera2.far;
+      if (fov !== camera2.fov || aspect !== camera2.aspect || far !== camera2.far) {
+        camera2.fov = fov;
+        camera2.aspect = aspect;
+        camera2.far = far;
+        camera2.updateProjectionMatrix();
       }
     }
   });
@@ -29694,17 +29454,17 @@ reset back to 1 for size
       var instance18, focus, fov, aspect, near, far, zoom, eyeSep;
       var eyeRight = new Matrix4();
       var eyeLeft = new Matrix4();
-      return function update3(camera3) {
-        var needsUpdate = instance18 !== this || focus !== camera3.focus || fov !== camera3.fov || aspect !== camera3.aspect * this.aspect || near !== camera3.near || far !== camera3.far || zoom !== camera3.zoom || eyeSep !== this.eyeSep;
+      return function update3(camera2) {
+        var needsUpdate = instance18 !== this || focus !== camera2.focus || fov !== camera2.fov || aspect !== camera2.aspect * this.aspect || near !== camera2.near || far !== camera2.far || zoom !== camera2.zoom || eyeSep !== this.eyeSep;
         if (needsUpdate) {
           instance18 = this;
-          focus = camera3.focus;
-          fov = camera3.fov;
-          aspect = camera3.aspect * this.aspect;
-          near = camera3.near;
-          far = camera3.far;
-          zoom = camera3.zoom;
-          var projectionMatrix = camera3.projectionMatrix.clone();
+          focus = camera2.focus;
+          fov = camera2.fov;
+          aspect = camera2.aspect * this.aspect;
+          near = camera2.near;
+          far = camera2.far;
+          zoom = camera2.zoom;
+          var projectionMatrix = camera2.projectionMatrix.clone();
           eyeSep = this.eyeSep / 2;
           var eyeSepOnProjection = eyeSep * near / focus;
           var ymax = near * Math.tan(_Math.DEG2RAD * fov * 0.5) / zoom;
@@ -29722,8 +29482,8 @@ reset back to 1 for size
           projectionMatrix.elements[8] = (xmax + xmin) / (xmax - xmin);
           this.cameraR.projectionMatrix.copy(projectionMatrix);
         }
-        this.cameraL.matrixWorld.copy(camera3.matrixWorld).multiply(eyeLeft);
-        this.cameraR.matrixWorld.copy(camera3.matrixWorld).multiply(eyeRight);
+        this.cameraL.matrixWorld.copy(camera2.matrixWorld).multiply(eyeLeft);
+        this.cameraR.matrixWorld.copy(camera2.matrixWorld).multiply(eyeRight);
       };
     }()
   });
@@ -30883,14 +30643,14 @@ reset back to 1 for size
       return this.warp(this._effectiveTimeScale, 0, duration);
     },
     warp: function(startTimeScale, endTimeScale, duration) {
-      var mixer = this._mixer, now2 = mixer.time, interpolant = this._timeScaleInterpolant, timeScale = this.timeScale;
+      var mixer = this._mixer, now = mixer.time, interpolant = this._timeScaleInterpolant, timeScale = this.timeScale;
       if (interpolant === null) {
         interpolant = mixer._lendControlInterpolant();
         this._timeScaleInterpolant = interpolant;
       }
       var times = interpolant.parameterPositions, values = interpolant.sampleValues;
-      times[0] = now2;
-      times[1] = now2 + duration;
+      times[0] = now;
+      times[1] = now + duration;
       values[0] = startTimeScale / timeScale;
       values[1] = endTimeScale / timeScale;
       return this;
@@ -30981,15 +30741,15 @@ reset back to 1 for size
     _updateTime: function(deltaTime) {
       var time2 = this.time + deltaTime;
       var duration = this._clip.duration;
-      var loop2 = this.loop;
+      var loop = this.loop;
       var loopCount = this._loopCount;
-      var pingPong = loop2 === LoopPingPong;
+      var pingPong = loop === LoopPingPong;
       if (deltaTime === 0) {
         if (loopCount === -1)
           return time2;
         return pingPong && (loopCount & 1) === 1 ? duration - time2 : time2;
       }
-      if (loop2 === LoopOnce) {
+      if (loop === LoopOnce) {
         if (loopCount === -1) {
           this._loopCount = 0;
           this._setEndings(true, true, false);
@@ -31078,15 +30838,15 @@ reset back to 1 for size
       }
     },
     _scheduleFading: function(duration, weightNow, weightThen) {
-      var mixer = this._mixer, now2 = mixer.time, interpolant = this._weightInterpolant;
+      var mixer = this._mixer, now = mixer.time, interpolant = this._weightInterpolant;
       if (interpolant === null) {
         interpolant = mixer._lendControlInterpolant();
         this._weightInterpolant = interpolant;
       }
       var times = interpolant.parameterPositions, values = interpolant.sampleValues;
-      times[0] = now2;
+      times[0] = now;
       values[0] = weightNow;
-      times[1] = now2 + duration;
+      times[1] = now + duration;
       values[1] = weightThen;
       return this;
     }
@@ -31506,13 +31266,13 @@ reset back to 1 for size
     set: function(origin, direction) {
       this.ray.set(origin, direction);
     },
-    setFromCamera: function(coords, camera3) {
-      if (camera3 && camera3.isPerspectiveCamera) {
-        this.ray.origin.setFromMatrixPosition(camera3.matrixWorld);
-        this.ray.direction.set(coords.x, coords.y, 0.5).unproject(camera3).sub(this.ray.origin).normalize();
-      } else if (camera3 && camera3.isOrthographicCamera) {
-        this.ray.origin.set(coords.x, coords.y, (camera3.near + camera3.far) / (camera3.near - camera3.far)).unproject(camera3);
-        this.ray.direction.set(0, 0, -1).transformDirection(camera3.matrixWorld);
+    setFromCamera: function(coords, camera2) {
+      if (camera2 && camera2.isPerspectiveCamera) {
+        this.ray.origin.setFromMatrixPosition(camera2.matrixWorld);
+        this.ray.direction.set(coords.x, coords.y, 0.5).unproject(camera2).sub(this.ray.origin).normalize();
+      } else if (camera2 && camera2.isOrthographicCamera) {
+        this.ray.origin.set(coords.x, coords.y, (camera2.near + camera2.far) / (camera2.near - camera2.far)).unproject(camera2);
+        this.ray.direction.set(0, 0, -1).transformDirection(camera2.matrixWorld);
       } else {
         console.error("THREE.Raycaster: Unsupported camera type.");
       }
@@ -32379,7 +32139,7 @@ reset back to 1 for size
       this.targetLine.scale.z = v32.length();
     };
   }();
-  function CameraHelper(camera3) {
+  function CameraHelper(camera2) {
     var geometry2 = new BufferGeometry();
     var material = new LineBasicMaterial({ color: 16777215, vertexColors: FaceColors });
     var vertices = [];
@@ -32430,10 +32190,10 @@ reset back to 1 for size
     geometry2.addAttribute("position", new Float32BufferAttribute(vertices, 3));
     geometry2.addAttribute("color", new Float32BufferAttribute(colors, 3));
     LineSegments.call(this, geometry2, material);
-    this.camera = camera3;
+    this.camera = camera2;
     if (this.camera.updateProjectionMatrix)
       this.camera.updateProjectionMatrix();
-    this.matrix = camera3.matrixWorld;
+    this.matrix = camera2.matrixWorld;
     this.matrixAutoUpdate = false;
     this.pointMap = pointMap;
     this.update();
@@ -32443,9 +32203,9 @@ reset back to 1 for size
   CameraHelper.prototype.update = function() {
     var geometry2, pointMap;
     var vector = new Vector3();
-    var camera3 = new Camera2();
+    var camera2 = new Camera2();
     function setPoint(point, x, y, z) {
-      vector.set(x, y, z).unproject(camera3);
+      vector.set(x, y, z).unproject(camera2);
       var points = pointMap[point];
       if (points !== void 0) {
         var position = geometry2.getAttribute("position");
@@ -32458,7 +32218,7 @@ reset back to 1 for size
       geometry2 = this.geometry;
       pointMap = this.pointMap;
       var w = 1, h = 1;
-      camera3.projectionMatrixInverse.copy(this.camera.projectionMatrixInverse);
+      camera2.projectionMatrixInverse.copy(this.camera.projectionMatrixInverse);
       setPoint("c", 0, 0, -1);
       setPoint("t", 0, 0, 1);
       setPoint("n1", -w, -h, -1);
@@ -34120,7 +33880,7 @@ reset back to 1 for size
         set_custom_element_data(a_entity, "material", a_entity_material_value = "wireframe: true; opacity: 0.05s;color: #0F0; shader: flat;transparent: true; visible: " + ctx[3] + " };");
         set_custom_element_data(a_entity, "scale", "0.1 0.1 20");
         set_custom_element_data(a_entity, "position", "0 0 -1");
-        set_custom_element_data(a_entity, "physx-body", "type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;");
+        set_custom_element_data(a_entity, "ammo-body", "type: kinematic;disableCollision: true;emitCollisionEvents: true;collisionFilterMask: 3;");
         set_custom_element_data(a_entity, "ammo-shape", "type: box; halfExtents: 0.05 0.05 6;offset: 0 0 -9.5");
       },
       m(target, anchor) {
@@ -34183,7 +33943,7 @@ reset back to 1 for size
         set_custom_element_data(a_camera, "far", "50000");
         set_custom_element_data(a_camera, "position", "0 4 0");
         set_custom_element_data(a_camera, "wasd-controls", "enabled: false;");
-        set_custom_element_data(a_camera, "look", "enabled: true;pointerLockEnabled: true;");
+        set_custom_element_data(a_camera, "look", "enabled: true;pointerLockEnabled: true; magicWindowTrackingEnabled: false; reverseTouchDrag: true;");
         set_custom_element_data(a_camera, "look-controls", "enabled: false;");
         set_custom_element_data(a_entity1, "geometry", "");
         set_custom_element_data(a_entity1, "material", "color: blue; opacity: 0.15; shader: flat; visible: false;");
@@ -34554,7 +34314,7 @@ gl_Position = mvPosition;
     let a_mixin7_levels = [
       { id: "tree" },
       { class: "climbable" },
-      { shadow: "" },
+      { shadow: "receive: false" },
       { windy: "" },
       { "gltf-model": "./glb/tree.glb" },
       { scatter: ctx[1] },
@@ -34663,7 +34423,7 @@ gl_Position = mvPosition;
         t28 = space();
         a_entity13 = element("a-entity");
         set_custom_element_data(a_mixin0, "id", "smolitem");
-        set_custom_element_data(a_mixin0, "physx-body", "type: static; mass: 0;collisionFilterGroup: 2;");
+        set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;collisionFilterGroup: 2;");
         set_custom_element_data(a_mixin0, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
         set_custom_element_data(a_mixin1, "id", "smolfix");
         set_custom_element_data(a_mixin1, "ammo-shape", "offset: -1.85 0 0.85;");
@@ -34696,7 +34456,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin5, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
         set_custom_element_data(a_mixin5, "scatter", ctx[1]);
         set_custom_element_data(a_mixin5, "gltf-model", "./glb/rockB.glb");
-        set_custom_element_data(a_mixin5, "physx-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin5, "ammo-body", "type: static; mass: 0");
         set_custom_element_data(a_mixin5, "host", "");
         set_custom_element_data(a_mixin5, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
         set_custom_element_data(a_mixin6, "id", "mountains");
@@ -34704,7 +34464,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin6, "host", "");
         set_custom_element_data(a_mixin6, "gltf-model", "./glb/rockC.glb");
         set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value = "radius: " + ctx[0] * 0.7 + "; count: 50");
-        set_custom_element_data(a_mixin6, "physx-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_mixin6, "vary", "property: scale; range: 12 2 12 15 20 15");
         set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
         set_custom_element_data(a_entity0, "pool__mountains", "mixin: mountains; size: 50");
@@ -34732,7 +34492,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity6, "activate__flowerslow", "");
         set_custom_element_data(a_mixin9, "id", "animal");
         set_custom_element_data(a_mixin9, "gltf-model", "./char/Horse.glb");
-        set_custom_element_data(a_mixin9, "physx-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin9, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
         set_custom_element_data(a_mixin9, "scale", "0.35 0.35 0.35");
         set_custom_element_data(a_mixin9, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.5 0");
         set_custom_element_data(a_mixin9, "shadow", "cast: true; receive: false;");
@@ -34839,7 +34599,7 @@ gl_Position = mvPosition;
         set_attributes(a_mixin7, a_mixin7_data = get_spread_update(a_mixin7_levels, [
           { id: "tree" },
           { class: "climbable" },
-          { shadow: "" },
+          { shadow: "receive: false" },
           { windy: "" },
           { "gltf-model": "./glb/tree.glb" },
           { scatter: ctx2[1] },
@@ -35001,11 +34761,11 @@ gl_Position = mvPosition;
     let { groundSize = 100 } = $$props;
     const scatter = [-groundSize / 2, 0, -groundSize / 2, groundSize / 2, 0, groundSize / 2].join(" ");
     const boxBlocker = {
-      "physx-body": "type: static; mass: 0;",
+      "ammo-body": "type: static; mass: 0;",
       "ammo-shape": "type: box; fit: manual; halfExtents: 1 2.5 1; offset: 0 2.5 0"
     };
     const smolBoxBlocker = {
-      "physx-body": "type: static; mass: 0;",
+      "ammo-body": "type: static; mass: 0;",
       "ammo-shape": "type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0"
     };
     $$self.$$set = ($$props2) => {
@@ -35031,7 +34791,7 @@ gl_Position = mvPosition;
     return {
       c() {
         div = element("div");
-        attr(div, "class", div_class_value = "action " + (ctx[0] ? "live" : "") + " " + (ctx[1] ? "mobile" : "") + " svelte-1a08ttw");
+        attr(div, "class", div_class_value = "action " + (ctx[0] ? "live" : "") + " " + (ctx[1] ? "mobile" : "") + " svelte-67wfs3");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -35041,7 +34801,7 @@ gl_Position = mvPosition;
         }
       },
       p(ctx2, [dirty]) {
-        if (dirty & 3 && div_class_value !== (div_class_value = "action " + (ctx2[0] ? "live" : "") + " " + (ctx2[1] ? "mobile" : "") + " svelte-1a08ttw")) {
+        if (dirty & 3 && div_class_value !== (div_class_value = "action " + (ctx2[0] ? "live" : "") + " " + (ctx2[1] ? "mobile" : "") + " svelte-67wfs3")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -35102,53 +34862,6 @@ gl_Position = mvPosition;
     }
   });
 
-  // src/component/location.ts
-  var location2 = new Value([]);
-  var locations = {};
-  var wpos = new AFRAME.THREE.Vector3();
-  AFRAME.registerSystem("loc", {
-    init() {
-      this.tick = AFRAME.utils.throttleTick(this.tick, 1e3, this);
-    },
-    tick() {
-      camera.$.updateMatrixWorld();
-      camera.$.getWorldPosition(wpos);
-      for (let entry of Object.entries(locations)) {
-        const [key, value] = entry;
-        const n = value.data.name;
-        const l = location2.$.indexOf(n);
-        if (value.playerIsIn(wpos)) {
-          if (l !== -1)
-            continue;
-          location2.$.push(n);
-          location2.poke();
-        } else if (l !== -1) {
-          delete location2.$[key];
-          location2.poke();
-        }
-      }
-    }
-  });
-  var vec34 = new AFRAME.THREE.Vector3();
-  AFRAME.registerComponent("location", {
-    schema: {
-      name: { type: "string" },
-      box: { type: "string", default: "-1 -1 -1 1 1 1" },
-      color: { type: "color", default: "#ffffff" }
-    },
-    init() {
-      locations[this.data.name] = this;
-      this.bb = new AFRAME.THREE.Box3();
-      this.bb.setFromArray(this.data.box.split(" ").map(parseFloat));
-    },
-    playerIsIn(playerPos) {
-      return this.bb.containsPoint(vec34.copy(playerPos).sub(this.el.object3D.position));
-    },
-    remove() {
-      delete locations[this.data];
-    }
-  });
-
   // src/node/house.svelte
   function create_fragment8(ctx) {
     let a_mixin0;
@@ -35156,6 +34869,7 @@ gl_Position = mvPosition;
     let a_mixin1;
     let t1;
     let a_entity0;
+    let a_entity0_location_value;
     let t2;
     let a_entity1;
     let t3;
@@ -35226,7 +34940,7 @@ gl_Position = mvPosition;
         t16 = space();
         a_entity15 = element("a-entity");
         set_custom_element_data(a_mixin0, "id", "wall");
-        set_custom_element_data(a_mixin0, "physx-body", "type: static; mass: 0; ");
+        set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0; ");
         set_custom_element_data(a_mixin0, "ammo-shape", "type: box; fit: manual; half-extents: 5 4 1; offset: 0 0.5 0.5;");
         set_custom_element_data(a_mixin0, "geometry", "");
         set_custom_element_data(a_mixin0, "scale", "10 4 10");
@@ -35234,17 +34948,17 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin1, "id", "fence");
         set_custom_element_data(a_mixin1, "scale", "15 2 1");
         set_custom_element_data(a_mixin1, "shadow", "");
-        set_custom_element_data(a_mixin1, "physx-body", "type: static; mass: 0; ");
+        set_custom_element_data(a_mixin1, "ammo-body", "type: static; mass: 0; ");
         set_custom_element_data(a_mixin1, "ammo-shape", "type: box; fit: manual; half-extents: 7 0.5 0.5; offset: 0 0.5 0.5;");
         set_custom_element_data(a_entity0, "id", "ground");
         set_custom_element_data(a_entity0, "geometry", "");
         set_custom_element_data(a_entity0, "material", "color: #281b0d;");
-        set_custom_element_data(a_entity0, "physx-body", "type: kinematic; mass: 0; disableCollision: true; emitCollisionEvents: true");
-        set_custom_element_data(a_entity0, "ammo-shape", "type: box; fit: manual; half-extents: 10 0.1 10; ");
+        set_custom_element_data(a_entity0, "ammo-body", "type: static; mass: 0; ");
+        set_custom_element_data(a_entity0, "ammo-shape", "type: box; fit: manual; half-extents: 20 0.1 20; ");
         set_custom_element_data(a_entity0, "shadow", "");
         set_custom_element_data(a_entity0, "scale", "20 0.1 20");
         set_custom_element_data(a_entity0, "position", "0 0 0");
-        set_custom_element_data(a_entity0, "location", "name: \u{1F3E0}; box: -10 0 -10 10 100 10; ");
+        set_custom_element_data(a_entity0, "location", a_entity0_location_value = "name: \u{1F6D6}; box:" + -20 + " 0 " + -20 + " " + 20 + " 30 " + 20);
         set_custom_element_data(a_entity1, "mixin", "wall");
         set_custom_element_data(a_entity1, "gltf-model", "./glb/cabinWindow.glb");
         set_custom_element_data(a_entity1, "position", "0 0 -5");
@@ -35297,7 +35011,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity12, "gltf-model", "./glb/fence.glb");
         set_custom_element_data(a_entity12, "rotation", "0 90 0");
         set_custom_element_data(a_entity12, "position", "9 0 0");
-        set_custom_element_data(a_entity13, "shadow", "");
+        set_custom_element_data(a_entity13, "shadow", "receive: false");
         set_custom_element_data(a_entity13, "gltf-model", "./glb/cabinRoofCenter.glb");
         set_custom_element_data(a_entity13, "scale", "10 4 10");
         set_custom_element_data(a_entity13, "rotation", "0 90 0");
@@ -35673,10 +35387,10 @@ void main() {
         set_custom_element_data(a_plane, "rotation", "-90 0 0");
         set_custom_element_data(a_plane, "width", a_plane_width_value = ctx[0] * 1.5);
         set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 1.5);
-        set_custom_element_data(a_plane, "physx-body", "type: static; mass: 0;");
+        set_custom_element_data(a_plane, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_plane, "ammo-shape", "type:box");
         set_custom_element_data(a_plane, "color", "#334411");
-        set_custom_element_data(a_plane, "location", a_plane_location_value = "name: \u{1F333}; color: green; box: " + -ctx[0] * 1.5 + " 0 " + -ctx[0] * 1.5 + " " + ctx[0] * 1.5 + " 100 " + ctx[0] * 1.5);
+        set_custom_element_data(a_plane, "location", a_plane_location_value = "name: \u{1F333};  box: " + -ctx[0] * 1.5 + " 0 " + -ctx[0] * 1.5 + " " + ctx[0] * 1.5 + " 100 " + ctx[0] * 1.5);
         set_custom_element_data(a_sphere, "position", "0 100 0");
         set_custom_element_data(a_sphere, "radius", "10");
         set_custom_element_data(a_sphere, "material", "color: yellow; shader: flat;");
@@ -35689,18 +35403,17 @@ void main() {
           shadowCameraLeft: -ctx[0],
           shadowCameraRight: ctx[0],
           shadowCameraBottom: -ctx[0],
-          shadowBias: -1e-4,
           shadowMapHeight: 1024 * 4,
           shadowMapWidth: 1024 * 4,
-          intensity: 0.75
+          intensity: 0.5
         }));
         set_custom_element_data(a_entity1, "position", a_entity1_position_value = "-" + ctx[0] / 4 + " " + ctx[0] * 2 + " -" + ctx[0] / 4);
         set_custom_element_data(a_entity1, "light", a_entity1_light_value = ctx[1]({
           type: "directional",
           color: light,
-          intensity: 0.75
+          intensity: 0.5
         }));
-        set_custom_element_data(a_entity2, "light", "type:ambient; color:white; intensity:1.5;");
+        set_custom_element_data(a_entity2, "light", "type:ambient; color:white; intensity:1;");
         set_custom_element_data(a_mixin0, "id", "cloud");
         set_custom_element_data(a_mixin0, "scatter", ctx[2]);
         set_custom_element_data(a_mixin0, "material", "color: #ffffff; shader: flat; ");
@@ -35764,7 +35477,7 @@ void main() {
         if (dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 1.5)) {
           set_custom_element_data(a_plane, "height", a_plane_height_value);
         }
-        if (dirty & 1 && a_plane_location_value !== (a_plane_location_value = "name: \u{1F333}; color: green; box: " + -ctx2[0] * 1.5 + " 0 " + -ctx2[0] * 1.5 + " " + ctx2[0] * 1.5 + " 100 " + ctx2[0] * 1.5)) {
+        if (dirty & 1 && a_plane_location_value !== (a_plane_location_value = "name: \u{1F333};  box: " + -ctx2[0] * 1.5 + " 0 " + -ctx2[0] * 1.5 + " " + ctx2[0] * 1.5 + " 100 " + ctx2[0] * 1.5)) {
           set_custom_element_data(a_plane, "location", a_plane_location_value);
         }
         if (dirty & 1 && a_entity0_position_value !== (a_entity0_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
@@ -35778,10 +35491,9 @@ void main() {
           shadowCameraLeft: -ctx2[0],
           shadowCameraRight: ctx2[0],
           shadowCameraBottom: -ctx2[0],
-          shadowBias: -1e-4,
           shadowMapHeight: 1024 * 4,
           shadowMapWidth: 1024 * 4,
-          intensity: 0.75
+          intensity: 0.5
         }))) {
           set_custom_element_data(a_entity0, "light", a_entity0_light_value);
         }
@@ -35872,16 +35584,51 @@ void main() {
   };
   var environmental_default = Environmental;
 
-  // node_modules/svelte/transition/index.mjs
-  function fade(node, { delay = 0, duration = 400, easing = identity } = {}) {
-    const o = +getComputedStyle(node).opacity;
-    return {
-      delay,
-      duration,
-      easing,
-      css: (t) => `opacity: ${t * o}`
-    };
-  }
+  // src/component/location.ts
+  var location2 = new Value([]);
+  var locations = {};
+  var wpos = new AFRAME.THREE.Vector3();
+  AFRAME.registerSystem("loc", {
+    init() {
+      this.tick = AFRAME.utils.throttleTick(this.tick, 1e3, this);
+    },
+    tick() {
+      camera.$.updateMatrixWorld();
+      camera.$.getWorldPosition(wpos);
+      for (let entry of Object.entries(locations)) {
+        const [key, value] = entry;
+        const n = value.data.name;
+        const l = location2.$.indexOf(n);
+        if (value.playerIsIn(wpos)) {
+          if (l !== -1)
+            continue;
+          location2.$.push(n);
+          location2.poke();
+        } else if (l !== -1) {
+          location2.$.splice(l, 1);
+          location2.poke();
+        }
+      }
+    }
+  });
+  var vec34 = new AFRAME.THREE.Vector3();
+  AFRAME.registerComponent("location", {
+    schema: {
+      name: { type: "string" },
+      box: { type: "string", default: "-1 -1 -1 1 1 1" }
+    },
+    init() {
+      locations[this.data.name] = this;
+      this.bb = new AFRAME.THREE.Box3();
+      this.bb.setFromArray(this.data.box.split(" ").map(parseFloat));
+    },
+    playerIsIn(playerPos) {
+      return this.bb.containsPoint(vec34.copy(playerPos).sub(this.el.object3D.position));
+    },
+    remove() {
+      delete locations[this.data.name];
+    }
+  });
 
   // src/ui/onscreen-ui.svelte
   function get_each_context(ctx, list, i) {
@@ -35910,7 +35657,7 @@ void main() {
         div = element("div");
         t0 = text(t0_value);
         t1 = space();
-        attr(div, "class", div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[5][ctx[20]] ? "active" : "") + " svelte-6qoykx");
+        attr(div, "class", div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[5][ctx[20]] ? "active" : "") + " svelte-11pk8jo");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -35925,7 +35672,7 @@ void main() {
         ctx = new_ctx;
         if (dirty & 64 && t0_value !== (t0_value = (ctx[6][ctx[20]] || ctx[20]) + ""))
           set_data(t0, t0_value);
-        if (dirty & 48 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[5][ctx[20]] ? "active" : "") + " svelte-6qoykx")) {
+        if (dirty & 48 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[5][ctx[20]] ? "active" : "") + " svelte-11pk8jo")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -35941,46 +35688,23 @@ void main() {
     let div;
     let t_value = ctx[17] + "";
     let t;
-    let div_intro;
-    let div_outro;
-    let current;
     return {
       c() {
         div = element("div");
         t = text(t_value);
-        attr(div, "class", "loc svelte-6qoykx");
+        attr(div, "class", "loc");
       },
       m(target, anchor) {
         insert(target, div, anchor);
         append(div, t);
-        current = true;
       },
       p(ctx2, dirty) {
-        if ((!current || dirty & 128) && t_value !== (t_value = ctx2[17] + ""))
+        if (dirty & 128 && t_value !== (t_value = ctx2[17] + ""))
           set_data(t, t_value);
-      },
-      i(local) {
-        if (current)
-          return;
-        add_render_callback(() => {
-          if (div_outro)
-            div_outro.end(1);
-          div_intro = create_in_transition(div, fade, {});
-          div_intro.start();
-        });
-        current = true;
-      },
-      o(local) {
-        if (div_intro)
-          div_intro.invalidate();
-        div_outro = create_out_transition(div, fade, {});
-        current = false;
       },
       d(detaching) {
         if (detaching)
           detach(div);
-        if (detaching && div_outro)
-          div_outro.end();
       }
     };
   }
@@ -35998,7 +35722,6 @@ void main() {
     let div5_class_value;
     let t5;
     let div6;
-    let current;
     let mounted;
     let dispose;
     let each_value_1 = ctx[8];
@@ -36011,9 +35734,6 @@ void main() {
     for (let i = 0; i < each_value.length; i += 1) {
       each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
     }
-    const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
-      each_blocks[i] = null;
-    });
     return {
       c() {
         div0 = element("div");
@@ -36035,15 +35755,15 @@ void main() {
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
-        attr(div0, "class", div0_class_value = "bind-bar " + (ctx[3] ? "mobile" : "") + " svelte-6qoykx");
-        attr(div1, "class", "speak button bounce svelte-6qoykx");
-        attr(div2, "class", "jump button bounce svelte-6qoykx");
-        attr(div3, "class", "dot svelte-6qoykx");
+        attr(div0, "class", div0_class_value = "bind-bar " + (ctx[3] ? "mobile" : "") + " svelte-11pk8jo");
+        attr(div1, "class", "speak button bounce svelte-11pk8jo");
+        attr(div2, "class", "jump button bounce svelte-11pk8jo");
+        attr(div3, "class", "dot svelte-11pk8jo");
         set_style(div3, "margin-top", ctx[2] * 100 + "%");
         set_style(div3, "margin-left", ctx[1] * 100 + "%");
-        attr(div4, "class", "move button bounce svelte-6qoykx");
-        attr(div5, "class", div5_class_value = "motion " + (ctx[3] ? "mobile" : "") + " svelte-6qoykx");
-        attr(div6, "class", "location svelte-6qoykx");
+        attr(div4, "class", "move button bounce svelte-11pk8jo");
+        attr(div5, "class", div5_class_value = "motion " + (ctx[3] ? "mobile" : "") + " svelte-11pk8jo");
+        attr(div6, "class", "location svelte-11pk8jo");
       },
       m(target, anchor) {
         insert(target, div0, anchor);
@@ -36064,7 +35784,6 @@ void main() {
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].m(div6, null);
         }
-        current = true;
         if (!mounted) {
           dispose = [
             listen(div1, "click", ctx[13]),
@@ -36099,16 +35818,16 @@ void main() {
           }
           each_blocks_1.length = each_value_1.length;
         }
-        if (!current || dirty & 8 && div0_class_value !== (div0_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-6qoykx")) {
+        if (dirty & 8 && div0_class_value !== (div0_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-11pk8jo")) {
           attr(div0, "class", div0_class_value);
         }
-        if (!current || dirty & 4) {
+        if (dirty & 4) {
           set_style(div3, "margin-top", ctx2[2] * 100 + "%");
         }
-        if (!current || dirty & 2) {
+        if (dirty & 2) {
           set_style(div3, "margin-left", ctx2[1] * 100 + "%");
         }
-        if (!current || dirty & 8 && div5_class_value !== (div5_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-6qoykx")) {
+        if (dirty & 8 && div5_class_value !== (div5_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-11pk8jo")) {
           attr(div5, "class", div5_class_value);
         }
         if (dirty & 128) {
@@ -36118,36 +35837,20 @@ void main() {
             const child_ctx = get_each_context(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
-              transition_in(each_blocks[i], 1);
             } else {
               each_blocks[i] = create_each_block(child_ctx);
               each_blocks[i].c();
-              transition_in(each_blocks[i], 1);
               each_blocks[i].m(div6, null);
             }
           }
-          group_outros();
-          for (i = each_value.length; i < each_blocks.length; i += 1) {
-            out(i);
+          for (; i < each_blocks.length; i += 1) {
+            each_blocks[i].d(1);
           }
-          check_outros();
+          each_blocks.length = each_value.length;
         }
       },
-      i(local) {
-        if (current)
-          return;
-        for (let i = 0; i < each_value.length; i += 1) {
-          transition_in(each_blocks[i]);
-        }
-        current = true;
-      },
-      o(local) {
-        each_blocks = each_blocks.filter(Boolean);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          transition_out(each_blocks[i]);
-        }
-        current = false;
-      },
+      i: noop,
+      o: noop,
       d(detaching) {
         if (detaching)
           detach(div0);
@@ -36197,8 +35900,8 @@ void main() {
       target_x = e.x - bx;
       const ye = target_y / height2;
       const xd = target_x / width2;
-      $$invalidate(1, x = xd);
-      $$invalidate(2, y = ye);
+      $$invalidate(1, x = Math.min(Math.max(0, xd), 1));
+      $$invalidate(2, y = Math.min(Math.max(0, ye), 1));
       if (!interacting)
         return;
       if (x > 0.6) {
@@ -36360,7 +36063,7 @@ void main() {
     let t5;
     let charactersmixins;
     let t6;
-    let camera3;
+    let camera2;
     let t7;
     let characters;
     let t8;
@@ -36371,12 +36074,13 @@ void main() {
     let debug_1;
     let t11;
     let environmental;
+    let a_scene_physics_value;
     let current;
     webcam = new webcam_default({});
     netdata = new netdata_default({});
     let if_block = ctx[0] && create_if_block3(ctx);
     charactersmixins = new characters_assets_default({});
-    camera3 = new camera_default({});
+    camera2 = new camera_default({});
     characters = new characters_default({});
     forest = new forest_default({ props: { groundSize: 200 } });
     house = new house_default({});
@@ -36401,7 +36105,7 @@ void main() {
         t5 = space();
         create_component(charactersmixins.$$.fragment);
         t6 = space();
-        create_component(camera3.$$.fragment);
+        create_component(camera2.$$.fragment);
         t7 = space();
         create_component(characters.$$.fragment);
         t8 = space();
@@ -36421,10 +36125,9 @@ void main() {
         set_custom_element_data(a_mixin, "shadow", "cast: true");
         set_custom_element_data(a_scene, "keyboard-shortcuts", "enterVR: false");
         set_custom_element_data(a_scene, "stats", ctx[1]);
-        set_custom_element_data(a_scene, "physx", "autoLoad: true");
-        set_custom_element_data(a_scene, "renderer", "highRefreshRate: true; alpha: false;precision: low;colorManagement: true; physicallyCorrectLights: true");
+        set_custom_element_data(a_scene, "renderer", " alpha: false; colorManagement: true;");
         set_custom_element_data(a_scene, "shadow", "type:basic;");
-        set_custom_element_data(a_scene, "fog", "type: exponential; color: #555");
+        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2] + ";");
         set_custom_element_data(a_scene, "uniforms", "");
         set_custom_element_data(a_scene, "net", "");
       },
@@ -36446,7 +36149,7 @@ void main() {
         append(a_assets, t5);
         mount_component(charactersmixins, a_assets, null);
         append(a_scene, t6);
-        mount_component(camera3, a_scene, null);
+        mount_component(camera2, a_scene, null);
         append(a_scene, t7);
         mount_component(characters, a_scene, null);
         append(a_scene, t8);
@@ -36481,6 +36184,9 @@ void main() {
         if (!current || dirty & 2) {
           set_custom_element_data(a_scene, "stats", ctx2[1]);
         }
+        if (!current || dirty & 4 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[2] + ";")) {
+          set_custom_element_data(a_scene, "physics", a_scene_physics_value);
+        }
       },
       i(local) {
         if (current)
@@ -36489,7 +36195,7 @@ void main() {
         transition_in(netdata.$$.fragment, local);
         transition_in(if_block);
         transition_in(charactersmixins.$$.fragment, local);
-        transition_in(camera3.$$.fragment, local);
+        transition_in(camera2.$$.fragment, local);
         transition_in(characters.$$.fragment, local);
         transition_in(forest.$$.fragment, local);
         transition_in(house.$$.fragment, local);
@@ -36502,7 +36208,7 @@ void main() {
         transition_out(netdata.$$.fragment, local);
         transition_out(if_block);
         transition_out(charactersmixins.$$.fragment, local);
-        transition_out(camera3.$$.fragment, local);
+        transition_out(camera2.$$.fragment, local);
         transition_out(characters.$$.fragment, local);
         transition_out(forest.$$.fragment, local);
         transition_out(house.$$.fragment, local);
@@ -36524,7 +36230,7 @@ void main() {
         if (detaching)
           detach(a_scene);
         destroy_component(charactersmixins);
-        destroy_component(camera3);
+        destroy_component(camera2);
         destroy_component(characters);
         destroy_component(forest);
         destroy_component(house);
@@ -36536,9 +36242,11 @@ void main() {
   function instance11($$self, $$props, $$invalidate) {
     let $open_ui;
     let $open_stats;
+    let $open_debug;
     component_subscribe($$self, open_ui, ($$value) => $$invalidate(0, $open_ui = $$value));
     component_subscribe($$self, open_stats, ($$value) => $$invalidate(1, $open_stats = $$value));
-    return [$open_ui, $open_stats];
+    component_subscribe($$self, open_debug, ($$value) => $$invalidate(2, $open_debug = $$value));
+    return [$open_ui, $open_stats, $open_debug];
   }
   var Game = class extends SvelteComponent {
     constructor(options) {
@@ -36900,14 +36608,16 @@ void main() {
         input = element("input");
         attr(input, "id", "text");
         attr(input, "type", "text");
-        attr(input, "class", "entry svelte-3kaq8e");
-        attr(div, "class", div_class_value = "lofi " + (ctx[2] ? "mobile" : "") + " svelte-3kaq8e");
+        attr(input, "class", "entry svelte-ul99pz");
+        input.autofocus = true;
+        attr(div, "class", div_class_value = "lofi " + (ctx[2] ? "mobile" : "") + " svelte-ul99pz");
       },
       m(target, anchor) {
         insert(target, div, anchor);
         append(div, input);
         set_input_value(input, ctx[1]);
         ctx[6](input);
+        input.focus();
         if (!mounted) {
           dispose = [
             listen(input, "input", ctx[5]),
@@ -36921,7 +36631,7 @@ void main() {
         if (dirty & 2 && input.value !== ctx2[1]) {
           set_input_value(input, ctx2[1]);
         }
-        if (dirty & 4 && div_class_value !== (div_class_value = "lofi " + (ctx2[2] ? "mobile" : "") + " svelte-3kaq8e")) {
+        if (dirty & 4 && div_class_value !== (div_class_value = "lofi " + (ctx2[2] ? "mobile" : "") + " svelte-ul99pz")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -37515,18 +37225,4 @@ void main() {
   });
   window.addEventListener("contextmenu", (e) => e.preventDefault());
 })();
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
 //!\ DECLARE ALIAS AFTER assign prototype !
