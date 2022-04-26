@@ -1,6 +1,6 @@
 import { camera } from "src/timing";
 import { Value } from "src/value";
-import type { Box3, Color, Object3D, Vector3 } from "three";
+import type { Box3, Color, Vector3 } from "three";
 
 export const location = new Value<string[]>([])
 

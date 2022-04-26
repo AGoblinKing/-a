@@ -1,0 +1,1 @@
+export const stringify = AFRAME.utils.styleParser.stringify

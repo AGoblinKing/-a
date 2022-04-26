@@ -39,9 +39,9 @@ AFRAME.registerComponent("wasd-controller", {
         let torq
         vec3.set(0, 0, 0)
         let intensity = 1
-        let hop = 10
+        let hop = 5
         if (key_map.$["shift"]) {
-            intensity = 1.5
+            intensity = 2
         }
         vec3.y = 5
         // TODO: or if colliding with a climbable

@@ -3,7 +3,7 @@
 	import 'src/component/activate'
 	import 'src/component/ring'
 
-	import 'src/component/webcam-vrm'
+	import 'src/component/vrm-input'
 	import 'src/component/vrm'
 	import 'src/component/vary'
 	import 'src/component/floaty'
@@ -31,7 +31,7 @@
 	ammo-body="type: static; mass: 0;"
 	ammo-shape="type:box"
 	color="#334411"
-	location="name: 🌳;  box: {-groundSize * 1.5} 0 {-groundSize * 1.5} {groundSize *
+	location="name: 🌲;  box: {-groundSize * 1.5} 0 {-groundSize * 1.5} {groundSize *
 		1.5} 100 {groundSize * 1.5}"
 />
 <a-entity

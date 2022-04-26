@@ -3,8 +3,7 @@
 	import 'src/component/activate'
 	import 'src/component/ring'
 
-	import 'src/component/webcam-vrm'
-	import 'src/component/vrm'
+	import 'src/component/vrm-input'
 	import 'src/component/vary'
 	import 'src/component/floaty'
 	import 'src/component/windy'
@@ -41,6 +40,7 @@
 	id="flowers"
 	mixin="smolitem smolfix"
 	shadow
+	target="🌺"
 	gltf-model="./glb/flowers.glb"
 	windy
 	{scatter}
@@ -49,6 +49,7 @@
 />
 <a-mixin
 	id="mushroom"
+	target="🍄"
 	mixin="smolitem smolfix"
 	shadow
 	gltf-model="./glb/mushrooms.glb"
@@ -59,6 +60,7 @@
 />
 <a-mixin
 	id="flowersLow"
+	target="🌹"
 	mixin="smolitem smolfix"
 	shadow
 	gltf-model="./glb/flowersLow.glb"
@@ -71,6 +73,7 @@
 <a-mixin
 	id="rock"
 	shadow
+	target="🪨"
 	vary="property: scale; range: 0.5 0.25 0.5 2 1 2"
 	{scatter}
 	gltf-model="./glb/rockB.glb"
@@ -93,6 +96,7 @@
 
 <a-mixin
 	id="tree"
+	target="🌲"
 	class="climbable"
 	shadow="receive: false"
 	windy
@@ -113,6 +117,7 @@
 	mixin="smolitem"
 	gltf-model="./glb/grass.glb"
 	shadow
+	target="🌿"
 	{scatter}
 	host="grass"
 	vary="property: scale; range: 1 0.5 1 1.5 1.5 1.5"
@@ -133,14 +138,15 @@
 	alive="type: random;"
 	motion-events
 	gltf-events
+	target="🐎"
 	material="shader: flat;"
 	host="horse"
 	{scatter}
 />
 
-<a-mixin id="sheep" host="sheep" gltf-model="./char/Sheep.glb" />
-<a-mixin id="cow" host="cow" gltf-model="./char/Cow.glb" />
-<a-mixin id="frog" host="frog" gltf-model="./char/easy_Frog.glb" color="white" />
+<a-mixin id="sheep" host="sheep" gltf-model="./char/Sheep.glb" target="🐑" />
+<a-mixin id="cow" host="cow" gltf-model="./char/Cow.glb" target="🐄" />
+<a-mixin id="frog" host="frog" gltf-model="./char/easy_Frog.glb" target="🐸" color="white" />
 <a-entity pool__horse="mixin: animal; size: 5;" activate__horse />
 <a-entity pool__sheep="mixin: animal sheep; size: 5;" activate__sheep />
 <a-entity pool__animal="mixin: animal cow; size: 5;" activate__animal />

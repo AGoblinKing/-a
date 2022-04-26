@@ -1,15 +1,16 @@
 <script lang="ts">
-	import { avatar_current, avatar_doer, size, video } from 'src/timing'
+	import { avatar_current, avatar_doer, size } from 'src/timing'
 
-	import '../component/wasd-controller'
-	import '../component/sfxr'
+	import 'src/component/wasd-controller'
+	import 'src/component/sfxr'
+	import 'src/component/vrm-avatar'
 
 	import { sfx_jump } from 'src/sound/action'
 </script>
 
 <a-mixin
 	id="character"
-	ammo-body="type: dynamic; mass: 1; linearDamping: 0.95; angularDamping: 1;angularFactor: 0 1 0;"
+	ammo-body="gravity: 0 -20 0; type: dynamic; mass: 1; linearDamping: 0.95; angularDamping: 1;angularFactor: 0 1 0;"
 	ammo-shape="type: capsule; fit: manual; halfExtents: 0.35 0.6 0.35; offset: 0 0.75 0"
 />
 
@@ -22,8 +23,15 @@
 	host="current"
 	wasd-controller
 	net-avatar
-	sfxr__jump={AFRAME.utils.styleParser.stringify(sfx_jump)}
-/>
+	sfxr__jump={sfx_jump}
+>
+	<a-entity
+		class="vrm-interaction"
+		vrm-avatar
+		ammo-body="type: kinematic;  mass: 0; collisionFilterGroup: 3; disableCollision: true; emitCollisionEvents: true; collisionFilterMask:1;scaleAutoUpdate:false"
+		ammo-shape="type: sphere; sphereRadius: 2.5; fit:manual;"
+	/>
+</a-entity>
 
 <a-entity
 	mixin="shadow character"

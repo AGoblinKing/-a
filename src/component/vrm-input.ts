@@ -5,6 +5,7 @@ import { open_live, tick } from 'src/timing';
 import { Value } from 'src/value';
 import { currentVRM, mirrorVRM } from './vrm';
 import { talk } from 'src/chat';
+import type { VRM } from 'three-vrm';
 const { VRMSchema } = THREE_VRM
 
 const clamp = Kalidokit.Utils.clamp;
@@ -199,20 +200,7 @@ const animateVRM = (vrm, results, riggedPose, riggedLeftHand, riggedRightHand) =
   }
 };
 
-const bones = Object.keys(VRMSchema.HumanoidBoneName)
-function mirror(source: VRM, target: VRM) {
-  for (let name of bones) {
-    const s = source.humanoid.getBoneNode(
-      VRMSchema.HumanoidBoneName[name]
-    );
-    const t = target.humanoid.getBoneNode(
-      VRMSchema.HumanoidBoneName[name]
-    )
 
-    if (t && s) t.copy(s)
-  }
-
-}
 /* SETUP MEDIAPIPE HOLISTIC INSTANCE */
 export const videoElement = new Value<HTMLVideoElement>()
 export const canvasElement = new Value<HTMLCanvasElement>()

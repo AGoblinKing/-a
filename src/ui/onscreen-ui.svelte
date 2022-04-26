@@ -4,9 +4,10 @@
 	import { bounceInOut } from 'svelte/easing'
 	import { binds, binds_icon } from 'src/control'
 	import { key_down, key_map, key_up } from 'src/input'
-	import { ismobile, open_text } from 'src/timing'
+	import { ismobile, open_text, ground } from 'src/timing'
+	import Body from './body.svelte'
 
-	let bound = [1, 2, 3, 4, 5]
+	let bound = [1, 2, 3, 4, 5, 6, 7]
 	let holder
 	let x = 0.5
 	let y = 0.5
@@ -101,41 +102,45 @@
 	{/each}
 </div>
 
-<div class="motion {$ismobile ? 'mobile' : ''}">
-	<div
-		class="speak button bounce"
-		on:click={() => {
-			open_text.set('')
-			requestAnimationFrame(() => {
-				document.getElementById('text').focus()
-			})
-		}}
-	>
-		💬
-	</div>
-	<div
-		class="jump button bounce"
-		on:click={() => {
-			key_down.set(' ')
-			setTimeout(() => {
-				key_up.set(' ')
-			}, 300)
-		}}
-	>
-		🦘
-	</div>
-	<div
-		class="move button bounce"
-		on:touchmove={update}
-		on:touchend={stop_interact}
-		on:mousemove={update}
-		on:mousedown={interact}
-		on:touchstart={interact}
-		on:mouseleave={stop_interact}
-		on:mouseup={stop_interact}
-		bind:this={holder}
-	>
-		<div class="dot" style="margin-top:{y * 100}%;margin-left:{x * 100}%;" />
+<div class="holder">
+	<div class="motion {$ismobile ? 'mobile' : ''}">
+		<div
+			class="speak button bounce"
+			on:click={() => {
+				open_text.set('')
+				requestAnimationFrame(() => {
+					document.getElementById('text').focus()
+				})
+			}}
+		>
+			💬
+		</div>
+		<Body />
+
+		<div
+			class="jump button bounce"
+			on:click={() => {
+				key_down.set(' ')
+				setTimeout(() => {
+					key_up.set(' ')
+				}, 300)
+			}}
+		>
+			🦘
+		</div>
+		<div
+			class="move button bounce"
+			on:touchmove={update}
+			on:touchend={stop_interact}
+			on:mousemove={update}
+			on:mousedown={interact}
+			on:touchstart={interact}
+			on:mouseleave={stop_interact}
+			on:mouseup={stop_interact}
+			bind:this={holder}
+		>
+			<div class="dot" style="margin-top:{y * 100}%;margin-left:{x * 100}%;" />
+		</div>
 	</div>
 </div>
 
@@ -146,21 +151,40 @@
 		</div>
 	{/each}
 </div>
+<div class="ground">
+	{#each $ground as g}
+		<div class="loc" in:scale={{ easing: bounceInOut }} out:scale={{ easing: bounceInOut }}>
+			{g}
+		</div>
+	{/each}
+</div>
 
 <style>
+	.ground,
 	.location {
+		user-select: none;
 		display: flex;
 		flex-direction: row;
 		position: absolute;
 		font-size: 5vh;
 		opacity: 0.5;
-		bottom: 0;
 		left: 0;
+		pointer-events: none;
 		text-shadow: -0.15rem -0.15rem 0 #000, 0.15rem -0.15rem 0 #000, -0.15rem 0.15rem 0 #000,
 			0.15rem 0.15rem 0 #000;
 		z-index: 1;
+	}
+	.ground {
+		bottom: 0;
+		left: 50%;
+		align-items: center;
+		transform: translateX(-50%);
+	}
 
-		pointer-events: none;
+	.location {
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
 	}
 	.loc {
 		margin: 1vh;
@@ -228,18 +252,18 @@
 	.button.down {
 		box-shadow: 0 0 5vh rgb(0, 65, 150), 0 0 2vh rgb(31, 255, 2);
 	}
-	.motion {
+	.holder {
 		position: absolute;
 		right: 0;
 		z-index: 5;
-		bottom: 0;
+		bottom: 10vh;
 	}
 
 	.motion .button {
 		opacity: 0.65;
 	}
 	.motion .button {
-		padding: 0.5vh 1vh;
+		padding: 0.5vh 0vh;
 		transform: perspective(400px) rotateY(-40deg);
 	}
 	.move.button {

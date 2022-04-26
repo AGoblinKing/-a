@@ -1,4 +1,6 @@
-export const sfx_jump = {
+import { stringify } from "src/util";
+
+export const sfx_jump = stringify({
     "oldParams": true,
     "wave_type": 0,
     "p_env_attack": 0,
@@ -26,4 +28,4 @@ export const sfx_jump = {
     "sound_vol": 0.001,
     "sample_rate": 44100,
     "sample_size": 8
-}
+})

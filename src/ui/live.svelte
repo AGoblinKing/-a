@@ -12,8 +12,8 @@
 <style>
 	.action {
 		cursor: pointer;
-		top: 1vh;
-		right: 0vh;
+		top: 2vh;
+		left: 2vh;
 		position: absolute;
 
 		width: 3vh;
@@ -24,7 +24,7 @@
 		opacity: 0.75;
 		z-index: 5;
 		box-shadow: 0 0 5vh rgb(0 65 150);
-		transform: translate(-50%, 0) perspective(400px) rotateX(-20deg) rotateY(-20deg);
+		transform: perspective(400px) rotateX(-20deg) rotateY(-20deg);
 	}
 	.action:hover {
 		box-shadow: 0 0 5vh #0f0;

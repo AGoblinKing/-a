@@ -1,13 +1,10 @@
 
 import { camera, camera_el, toggle_selfie } from "src/timing"
-import { Object3D, Quaternion, Vector3 } from "three"
+
 import { currentVRM } from "./vrm"
 
-const pos = new Vector3()
-const quat = new Quaternion()
-const scale = new Vector3()
 
-AFRAME.registerComponent("character-camera", {
+AFRAME.registerComponent("camera-controller", {
     init() {
 
         camera.set(this.el.object3D)

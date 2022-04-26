@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { open_help, open_loading, open_targeting } from 'src/timing'
+	import { open_help, open_loading, open_targeting, toggle_pointerlock } from 'src/timing'
 
-	import 'src/component/character-camera'
+	import 'src/component/camera-controller'
 	import 'src/component/copy'
 	import 'src/component/look'
 
@@ -66,7 +66,7 @@
 	active
 	fov="85"
 	id="camera"
-	character-camera
+	camera-controller
 	far="50000"
 	position="0 4 0"
 	wasd-controls="enabled: false;"

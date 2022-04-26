@@ -3,6 +3,7 @@
 	shadow="cast; receive: false"
 	gltf-model="./glb/dagger.glb"
 	scale="0.01 0.01 0.01"
+	target="🗡️"
 	ammo-body="type: dynamic;scaleAutoUpdate: false; mass: 0.1;"
 	ammo-shape="type:box; fit: manual; halfExtents: 0.1 0.75 0.1; offset: 0 0.45 0"
 />
@@ -17,6 +18,7 @@
 />
 <a-mixin
 	id="chest"
+	target="🧰"
 	shadow="cast; receive: false"
 	gltf-model="./glb/chest.glb"
 	scale="0.01 0.01 0.01"
@@ -25,6 +27,7 @@
 />
 <a-mixin
 	id="bow"
+	target="🏹"
 	shadow="cast; receive: false"
 	gltf-model="./glb/bow.glb"
 	scale="0.01 0.01 0.01"
@@ -34,6 +37,7 @@
 
 <a-mixin
 	id="arrow"
+	target="↗️"
 	shadow="cast; receive: false"
 	gltf-model="./glb/arrow.glb"
 	scale="0.01 0.01 0.01"
@@ -43,6 +47,7 @@
 
 <a-mixin
 	id="bag"
+	target="👝"
 	shadow="cast; receive: false"
 	gltf-model="./glb/bag.glb"
 	scale="0.01 0.01 0.01"

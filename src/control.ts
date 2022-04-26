@@ -1,7 +1,7 @@
 import { guest, host, room } from "./component/net"
 
 import state from "./state"
-import { avatar_current, avatar_doer, do_echo, do_vary, open_debug, open_help, open_hostid, open_stats, open_targeting, open_ui, scouter, size, toggle_selfie, toggle_visible, voice_current } from "./timing"
+import { avatar_current, avatar_doer, do_echo, do_vary, open_debug, open_help, open_hostid, open_stats, open_targeting, open_ui, scouter, size, toggle_pointerlock, toggle_selfie, toggle_visible, voice_current } from "./timing"
 import { Value } from "./value"
 
 export const binds = new Value<{ [key: string]: string }>(clone(state.binds)).save("binds")
@@ -29,6 +29,12 @@ function loadState(state: { binds: { [key: string]: string }, vars: { [key: stri
 
 // @ts-ignore
 window.loadState = loadState
+
+export enum EMod {
+    not = "not",
+    clear = "clear",
+    toggle = "toggle"
+}
 
 export enum EControl {
     Nothing = "",
@@ -94,6 +100,10 @@ export enum EControl {
     NotIcon = "noticon",
     Use = "use",
     NotUse = "notuse",
+
+    PointerLock = "pointerlock",
+    NotPointerLock = "notpointerlock",
+    TogglePointerLock = "togglepointerlock"
 }
 
 
@@ -247,7 +257,19 @@ export const controls = {
     },
     [EControl.NotUse]: (items: string[]) => {
 
+    },
+
+    // TODO: should make a helper for this common scenario
+    [EControl.PointerLock]: (items: string[]) => {
+        toggle_pointerlock.set(true)
+    },
+    [EControl.NotPointerLock]: (items: string[]) => {
+        toggle_pointerlock.set(false)
+    },
+    [EControl.TogglePointerLock]: (items: string[]) => {
+        toggle_pointerlock.set(!toggle_pointerlock.$)
     }
+
 
 }
 

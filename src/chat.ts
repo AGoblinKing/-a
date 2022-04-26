@@ -1,5 +1,5 @@
 
-import { binds, controls, vars } from "./control";
+import { binds, controls, EMod, vars } from "./control";
 import { key_down } from "./input";
 
 import { do_echo, open_live, voice_current } from "./timing";
@@ -67,12 +67,9 @@ export function doControl(said: string) {
 
     if (items[0] !== "control") return false
 
-    switch (items[1]) {
-        case "not":
-        case "clear":
-            items[1] += items[2]
+    if (EMod[items[1]] !== undefined) {
+        items[1] += items[2]
     }
-
     if (controls[items[1]]) {
         controls[items[1]](items)
     } else if (vars.$[items[1]]) {

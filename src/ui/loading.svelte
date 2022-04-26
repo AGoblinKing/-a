@@ -133,7 +133,7 @@
 		text-align: left;
 
 		font-size: 0.8rem;
-		height: 45vh;
+		height: 40vh;
 		transform: perspective(400px) rotateX(20deg);
 		box-sizing: border-box;
 		border: 1px solid rgba(19, 18, 18, 0.836);

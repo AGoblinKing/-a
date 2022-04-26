@@ -10,7 +10,13 @@ export default {
         "2": "these are keybinds",
         "3": "press ~ or enter then type ~ bind 3 to change this bind",
         "4": "press f1 to explore other commands",
-        "5": "good luck, have fun"
+        "5": "good luck, have fun",
+        "6": "foobar",
+        "7": "Lorum ipsum",
+        "8": "Vas rel por",
+        "9": "In vas flam",
+        "0": "nox",
+        "f": "~ not pointerlock"
     },
     "vars": {
 
@@ -25,7 +31,12 @@ export default {
         2: "🏴‍☠️",
         3: "💕",
         4: "🏜️",
-        5: "🌪️"
+        5: "🌪️",
+        6: "🌈",
+        7: "🌊",
+        8: "🌋",
+        9: "🌌",
+        0: "🌍",
     },
     visible: true
 }

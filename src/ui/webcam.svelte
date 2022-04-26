@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { videoElement, canvasElement } from 'src/component/webcam-vrm'
-
-	let videoElementSource
+	import { videoElement, canvasElement } from 'src/component/vrm-input'
 	let canvasElementSource
+	let videoElementSource
 
 	$: {
 		if (canvasElementSource && !canvasElement.$) {

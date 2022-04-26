@@ -2,11 +2,11 @@
 	import 'src/component/scatter'
 	import 'src/component/activate'
 	import 'src/component/ring'
-	import 'src/component/webcam-vrm'
-	import 'src/component/vrm'
+	import 'src/component/vrm-input'
 	import 'src/component/uniforms'
 	import 'src/component/vary'
 	import 'src/component/random'
+	import 'src/component/target'
 
 	import Webcam from 'src/ui/webcam.svelte'
 

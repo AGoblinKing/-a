@@ -12,6 +12,7 @@ export const voice_doer = new Value("Aus | UK English").save("voice_doer")
 export const scouter = new Value("green").save("scouter")
 export const videos = new Value(["pxCwIWL4_wA", "ntV3RbQmLAU", "BzIeSMDe85U"])
 export const video = new Value("doer1.8").save("video_2")
+export const ground = new Value<string[]>([])
 
 export const open_ui = new Value(true).save("ui")
 export const open_home = new Value(true)
@@ -35,7 +36,7 @@ export const toggle_visible = new Value(state.visible).save("visible")
 export const do_echo = new Value(false).save("do_echo2")
 export const do_vary = new Value(true)
 export const ismobile = new Value(mobile())
-
+export const toggle_pointerlock = new Value(true)
 export const time = new Value(new AFRAME.THREE.Uniform(0))
 
 export const size = new Value(new AFRAME.THREE.Vector3(1, 1, 1))
@@ -45,14 +46,18 @@ open_game.on(($g) => {
     }
 })
 
-export const motd = new Value(`🎊v0.3.3🎊
+export const motd = new Value(`🎊v0.3.4🎊
 
-✅ Sky ✅ Mobile ✅ HUD
-✅ Cabin ✅ Animals
-❌ Online MP 
-❌ Recording Mode
-❌ Targeting
-❌ AI  ❌ Gameplay 
+✅ Sky ✅ Mobile 
+✅ Proximity UI ✅ Physical Items
+✅ Location UI
+
+❌ Drop/Stow/Pickup Items
+❌ Use Items
+❌ Bag
+❌ Networked Multiplayer 
+❌ Pose Animations recorded from our VRM
+❌ AI  
 
 Camera data is processed by mediapipe via tensorflow locally.
 

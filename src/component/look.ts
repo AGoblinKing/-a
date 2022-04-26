@@ -1,4 +1,5 @@
 import { doControl, talk } from "src/chat";
+import { toggle_pointerlock } from "src/timing";
 
 /* global DeviceOrientationEvent  */
 var registerComponent = AFRAME.registerComponent;
@@ -44,6 +45,7 @@ registerComponent('look', {
             position: new THREE.Vector3(),
             rotation: new THREE.Euler()
         };
+
 
         // Call enter VR handler if the scene has entered VR before the event listeners attached.
         if (this.el.sceneEl.is('vr-mode') || this.el.sceneEl.is('ar-mode')) { this.onEnterVR(); }
@@ -123,7 +125,17 @@ registerComponent('look', {
             sceneEl.addEventListener('render-target-loaded', this.addEventListeners.bind(this));
             return;
         }
+        this.cancel = toggle_pointerlock.on(($t) => {
 
+            if (!this.pointerLocked) return
+
+            if ($t) {
+                canvasEl.requestPointerLock();
+            } else {
+
+                document.exitPointerLock()
+            }
+        })
         // Mouse events.
         canvasEl.addEventListener('mousedown', this.onMouseDown, false);
         window.addEventListener('mousemove', this.onMouseMove, false);
