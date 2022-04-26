@@ -11,19 +11,21 @@ AFRAME.registerComponent("vary", {
     },
 
     init() {
-        const range = this.data.range.split(" ").map(v => parseFloat(v))
+        this.range = this.data.range.split(" ").map(v => parseFloat(v))
 
-        this.cancel = do_vary.on(($v) => {
-            const o3d = this.el.object3D
+        this.cancel = do_vary.on(this.vary.bind(this))
+    },
 
-            bb.setFromArray(range)
+    vary() {
+        const o3d = this.el.object3D
 
-            o3d[this.data.property]?.set(
-                bb.min.x + Math.random() * (bb.max.x - bb.min.x),
-                bb.min.y + Math.random() * (bb.max.y - bb.min.y),
-                bb.min.z + Math.random() * (bb.max.z - bb.min.z)
-            )
-        })
+        bb.setFromArray(this.range)
+
+        o3d[this.data.property]?.set(
+            bb.min.x + Math.random() * (bb.max.x - bb.min.x),
+            bb.min.y + Math.random() * (bb.max.y - bb.min.y),
+            bb.min.z + Math.random() * (bb.max.z - bb.min.z)
+        )
     },
 
     remove() {

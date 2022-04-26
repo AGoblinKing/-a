@@ -1,5 +1,6 @@
 <script>
 	import 'src/component/grid'
+	import 'src/component/tag'
 
 	// static collider that removes other static colliders found
 
@@ -43,11 +44,15 @@
 	id="ground"
 	geometry
 	material="color: #281b0d;"
-	ammo-body="type: static; mass: 0; "
-	ammo-shape="type: box; fit: manual; half-extents: 20 0.2 20; "
-	on:collide={(e) => {
-		console.log(e)
+	on:collidestart={(e) => {
+		const el = e.detail.targetEl
+
+		if (el.tags?.env) {
+			el.remove()
+		}
 	}}
+	ammo-body="type: kinematic; collisionFilterGroup: 1;  collisionFilterMask:1; disableCollision: true; mass: 0; emitCollisionEvents: true; scaleAutoUpdate: false"
+	ammo-shape="type: box; fit: manual; half-extents: 10 0.2 10; "
 	shadow
 	scale="20 0.1 20"
 	position="0 0 0"

@@ -5901,7 +5901,7 @@
     }
     component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
   }
-  function init(component, options, instance18, create_fragment21, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance17, create_fragment21, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -5924,7 +5924,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance18 ? instance18(component, options.props || {}, (i, ret, ...rest) => {
+    $$.ctx = instance17 ? instance17(component, options.props || {}, (i, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
         if (!$$.skip_bound && $$.bound[i])
@@ -6825,6 +6825,9 @@ reset back to 1 for size
     ["noticon" /* NotIcon */]: (items) => {
       delete binds_icon.$[items[2]];
     },
+    ["clearicon" /* ClearIcon */]: (items) => {
+      binds_icon.set(clone(state_default.binds_icon));
+    },
     ["use" /* Use */]: (items) => {
     },
     ["notuse" /* NotUse */]: (items) => {
@@ -7203,12 +7206,13 @@ reset back to 1 for size
       range: { type: "string", default: "-1 -1 -1 1 1 1" }
     },
     init() {
-      const range = this.data.range.split(" ").map((v) => parseFloat(v));
-      this.cancel = do_vary.on(($v) => {
-        const o3d = this.el.object3D;
-        bb2.setFromArray(range);
-        o3d[this.data.property]?.set(bb2.min.x + Math.random() * (bb2.max.x - bb2.min.x), bb2.min.y + Math.random() * (bb2.max.y - bb2.min.y), bb2.min.z + Math.random() * (bb2.max.z - bb2.min.z));
-      });
+      this.range = this.data.range.split(" ").map((v) => parseFloat(v));
+      this.cancel = do_vary.on(this.vary.bind(this));
+    },
+    vary() {
+      const o3d = this.el.object3D;
+      bb2.setFromArray(this.range);
+      o3d[this.data.property]?.set(bb2.min.x + Math.random() * (bb2.max.x - bb2.min.x), bb2.min.y + Math.random() * (bb2.max.y - bb2.min.y), bb2.min.z + Math.random() * (bb2.max.z - bb2.min.z));
     },
     remove() {
       this.cancel();
@@ -8438,7 +8442,8 @@ gl_Position = mvPosition;
     let a_mixin7_levels = [
       { id: "tree" },
       { target: "\u{1F332}" },
-      { class: "climbable" },
+      { class: "climbable env" },
+      { tag__env: "" },
       { shadow: "receive: false" },
       { windy: "" },
       { "gltf-model": "./glb/tree.glb" },
@@ -8480,7 +8485,8 @@ gl_Position = mvPosition;
       { "gltf-model": "./glb/pillarObelisk.glb" },
       ctx[2],
       { vary: trunkVary },
-      { scatter: ctx[0] }
+      { scatter: ctx[0] },
+      { tag__env: "" }
     ];
     let a_mixin15_data = {};
     for (let i = 0; i < a_mixin15_levels.length; i += 1) {
@@ -8555,6 +8561,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin2, "id", "flowers");
         set_custom_element_data(a_mixin2, "mixin", "smolitem smolfix");
         set_custom_element_data(a_mixin2, "shadow", "");
+        set_custom_element_data(a_mixin2, "tag__env", "");
         set_custom_element_data(a_mixin2, "target", "\u{1F33A}");
         set_custom_element_data(a_mixin2, "gltf-model", "./glb/flowers.glb");
         set_custom_element_data(a_mixin2, "windy", "");
@@ -8565,6 +8572,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin3, "target", "\u{1F344}");
         set_custom_element_data(a_mixin3, "mixin", "smolitem smolfix");
         set_custom_element_data(a_mixin3, "shadow", "");
+        set_custom_element_data(a_mixin3, "tag__env", "");
         set_custom_element_data(a_mixin3, "gltf-model", "./glb/mushrooms.glb");
         set_custom_element_data(a_mixin3, "windy", "");
         set_custom_element_data(a_mixin3, "scatter", ctx[0]);
@@ -8572,6 +8580,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin3, "host", "mushroom");
         set_custom_element_data(a_mixin4, "id", "flowersLow");
         set_custom_element_data(a_mixin4, "target", "\u{1F339}");
+        set_custom_element_data(a_mixin4, "tag__env", "");
         set_custom_element_data(a_mixin4, "mixin", "smolitem smolfix");
         set_custom_element_data(a_mixin4, "shadow", "");
         set_custom_element_data(a_mixin4, "gltf-model", "./glb/flowersLow.glb");
@@ -8582,6 +8591,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin5, "id", "rock");
         set_custom_element_data(a_mixin5, "shadow", "");
         set_custom_element_data(a_mixin5, "target", "\u{1FAA8}");
+        set_custom_element_data(a_mixin5, "tag__env", "");
         set_custom_element_data(a_mixin5, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
         set_custom_element_data(a_mixin5, "scatter", ctx[0]);
         set_custom_element_data(a_mixin5, "gltf-model", "./glb/rockB.glb");
@@ -8608,6 +8618,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin8, "mixin", "smolitem");
         set_custom_element_data(a_mixin8, "gltf-model", "./glb/grass.glb");
         set_custom_element_data(a_mixin8, "shadow", "");
+        set_custom_element_data(a_mixin8, "tag__env", "");
         set_custom_element_data(a_mixin8, "target", "\u{1F33F}");
         set_custom_element_data(a_mixin8, "scatter", ctx[0]);
         set_custom_element_data(a_mixin8, "host", "grass");
@@ -8729,7 +8740,8 @@ gl_Position = mvPosition;
         set_attributes(a_mixin7, a_mixin7_data = get_spread_update(a_mixin7_levels, [
           { id: "tree" },
           { target: "\u{1F332}" },
-          { class: "climbable" },
+          { class: "climbable env" },
+          { tag__env: "" },
           { shadow: "receive: false" },
           { windy: "" },
           { "gltf-model": "./glb/tree.glb" },
@@ -8759,7 +8771,8 @@ gl_Position = mvPosition;
           { "gltf-model": "./glb/pillarObelisk.glb" },
           ctx2[2],
           { vary: trunkVary },
-          { scatter: ctx2[0] }
+          { scatter: ctx2[0] },
+          { tag__env: "" }
         ]));
       },
       i: noop,
@@ -8989,6 +9002,21 @@ gl_Position = mvPosition;
     }
   });
 
+  // src/component/tag.ts
+  AFRAME.registerComponent("tag", {
+    multiple: true,
+    schema: {
+      type: "string",
+      default: "true"
+    },
+    init() {
+      if (!this.el.tags) {
+        this.el.tags = {};
+      }
+      this.el.tags[this.id] = this.data;
+    }
+  });
+
   // src/node/house.svelte
   function create_fragment7(ctx) {
     let a_entity0;
@@ -9096,8 +9124,8 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity1, "id", "ground");
         set_custom_element_data(a_entity1, "geometry", "");
         set_custom_element_data(a_entity1, "material", "color: #281b0d;");
-        set_custom_element_data(a_entity1, "ammo-body", "type: static; mass: 0; ");
-        set_custom_element_data(a_entity1, "ammo-shape", "type: box; fit: manual; half-extents: 20 0.2 20; ");
+        set_custom_element_data(a_entity1, "ammo-body", "type: kinematic; collisionFilterGroup: 1;  collisionFilterMask:1; disableCollision: true; mass: 0; emitCollisionEvents: true; scaleAutoUpdate: false");
+        set_custom_element_data(a_entity1, "ammo-shape", "type: box; fit: manual; half-extents: 10 0.2 10; ");
         set_custom_element_data(a_entity1, "shadow", "");
         set_custom_element_data(a_entity1, "scale", "20 0.1 20");
         set_custom_element_data(a_entity1, "position", "0 0 0");
@@ -9205,7 +9233,7 @@ gl_Position = mvPosition;
         insert(target, t17, anchor);
         insert(target, a_entity16, anchor);
         if (!mounted) {
-          dispose = listen(a_entity1, "collide", ctx[0]);
+          dispose = listen(a_entity1, "collidestart", collidestart_handler);
           mounted = true;
         }
       },
@@ -9292,16 +9320,16 @@ gl_Position = mvPosition;
       }
     };
   }
-  function instance7($$self) {
-    const collide_handler = (e) => {
-      console.log(e);
-    };
-    return [collide_handler];
-  }
+  var collidestart_handler = (e) => {
+    const el = e.detail.targetEl;
+    if (el.tags?.env) {
+      el.remove();
+    }
+  };
   var House = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance7, create_fragment7, safe_not_equal, {});
+      init(this, options, null, create_fragment7, safe_not_equal, {});
     }
   };
   var house_default = House;
@@ -9376,7 +9404,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  function instance8($$self, $$props, $$invalidate) {
+  function instance7($$self, $$props, $$invalidate) {
     let $open_hostid;
     let $room;
     component_subscribe($$self, open_hostid, ($$value) => $$invalidate(0, $open_hostid = $$value));
@@ -9390,7 +9418,7 @@ gl_Position = mvPosition;
   var Netdata = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance8, create_fragment8, safe_not_equal, {});
+      init(this, options, instance7, create_fragment8, safe_not_equal, {});
     }
   };
   var netdata_default = Netdata;
@@ -9715,7 +9743,7 @@ void main() {
     };
   }
   var light = "#FEE";
-  function instance9($$self, $$props, $$invalidate) {
+  function instance8($$self, $$props, $$invalidate) {
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
     let { groundSize: groundSize2 = 300 } = $$props;
     const scatterBig = [-groundSize2, 0, -groundSize2, groundSize2, 0, groundSize2].join(" ");
@@ -9728,7 +9756,7 @@ void main() {
   var Environmental = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance9, create_fragment9, safe_not_equal, { groundSize: 0 });
+      init(this, options, instance8, create_fragment9, safe_not_equal, { groundSize: 0 });
     }
   };
   var environmental_default = Environmental;
@@ -10310,7 +10338,7 @@ void main() {
       }
     };
   }
-  function instance10($$self, $$props, $$invalidate) {
+  function instance9($$self, $$props, $$invalidate) {
     let $ismobile;
     let $key_down;
     let $binds;
@@ -10432,7 +10460,7 @@ void main() {
   var Onscreen_ui = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance10, create_fragment11, safe_not_equal, {});
+      init(this, options, instance9, create_fragment11, safe_not_equal, {});
     }
   };
   var onscreen_ui_default = Onscreen_ui;
@@ -10801,7 +10829,7 @@ void main() {
       }
     };
   }
-  function instance11($$self, $$props, $$invalidate) {
+  function instance10($$self, $$props, $$invalidate) {
     let $open_ui;
     let $open_stats;
     let $open_debug;
@@ -10813,7 +10841,7 @@ void main() {
   var Game = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance11, create_fragment13, safe_not_equal, {});
+      init(this, options, instance10, create_fragment13, safe_not_equal, {});
     }
   };
   var game_default = Game;
@@ -10900,7 +10928,7 @@ void main() {
       }
     };
   }
-  function instance12($$self, $$props, $$invalidate) {
+  function instance11($$self, $$props, $$invalidate) {
     let $videos;
     component_subscribe($$self, videos, ($$value) => $$invalidate(1, $videos = $$value));
     let { src = "MePBW53Rtpw" } = $$props;
@@ -10913,7 +10941,7 @@ void main() {
   var Video = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance12, create_fragment15, safe_not_equal, { src: 0 });
+      init(this, options, instance11, create_fragment15, safe_not_equal, { src: 0 });
     }
   };
   var video_default = Video;
@@ -11134,7 +11162,7 @@ void main() {
   };
   var keydown_handler = (e) => {
   };
-  function instance13($$self, $$props, $$invalidate) {
+  function instance12($$self, $$props, $$invalidate) {
     let $motd;
     let $videos;
     component_subscribe($$self, motd, ($$value) => $$invalidate(0, $motd = $$value));
@@ -11152,7 +11180,7 @@ void main() {
   var Home = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance13, create_fragment16, safe_not_equal, {});
+      init(this, options, instance12, create_fragment16, safe_not_equal, {});
     }
   };
   var home_default = Home;
@@ -11244,7 +11272,7 @@ void main() {
       }
     };
   }
-  function instance14($$self, $$props, $$invalidate) {
+  function instance13($$self, $$props, $$invalidate) {
     let $open_text;
     let $ismobile;
     component_subscribe($$self, open_text, ($$value) => $$invalidate(1, $open_text = $$value));
@@ -11309,7 +11337,7 @@ void main() {
   var Text = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance14, create_fragment17, safe_not_equal, {});
+      init(this, options, instance13, create_fragment17, safe_not_equal, {});
     }
   };
   var text_default = Text;
@@ -11389,7 +11417,7 @@ void main() {
       }
     };
   }
-  function instance15($$self, $$props, $$invalidate) {
+  function instance14($$self, $$props, $$invalidate) {
     let $loading;
     component_subscribe($$self, loading, ($$value) => $$invalidate(0, $loading = $$value));
     return [$loading];
@@ -11397,7 +11425,7 @@ void main() {
   var Loading = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance15, create_fragment18, safe_not_equal, {});
+      init(this, options, instance14, create_fragment18, safe_not_equal, {});
     }
   };
   var loading_default = Loading;
@@ -11474,7 +11502,7 @@ void main() {
       }
     };
   }
-  function instance16($$self, $$props, $$invalidate) {
+  function instance15($$self, $$props, $$invalidate) {
     let $helptext;
     component_subscribe($$self, helptext, ($$value) => $$invalidate(0, $helptext = $$value));
     function close() {
@@ -11485,7 +11513,7 @@ void main() {
   var Help = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance16, create_fragment19, safe_not_equal, {});
+      init(this, options, instance15, create_fragment19, safe_not_equal, {});
     }
   };
   var help_default = Help;
@@ -11761,7 +11789,7 @@ void main() {
       }
     };
   }
-  function instance17($$self, $$props, $$invalidate) {
+  function instance16($$self, $$props, $$invalidate) {
     let $open_help;
     let $open_loading;
     let $open_home;
@@ -11775,7 +11803,7 @@ void main() {
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance17, create_fragment20, safe_not_equal, {});
+      init(this, options, instance16, create_fragment20, safe_not_equal, {});
     }
   };
   var main_default = Main;

@@ -40,6 +40,7 @@
 	id="flowers"
 	mixin="smolitem smolfix"
 	shadow
+	tag__env
 	target="🌺"
 	gltf-model="./glb/flowers.glb"
 	windy
@@ -52,6 +53,7 @@
 	target="🍄"
 	mixin="smolitem smolfix"
 	shadow
+	tag__env
 	gltf-model="./glb/mushrooms.glb"
 	windy
 	{scatter}
@@ -61,6 +63,7 @@
 <a-mixin
 	id="flowersLow"
 	target="🌹"
+	tag__env
 	mixin="smolitem smolfix"
 	shadow
 	gltf-model="./glb/flowersLow.glb"
@@ -74,6 +77,7 @@
 	id="rock"
 	shadow
 	target="🪨"
+	tag__env
 	vary="property: scale; range: 0.5 0.25 0.5 2 1 2"
 	{scatter}
 	gltf-model="./glb/rockB.glb"
@@ -97,7 +101,8 @@
 <a-mixin
 	id="tree"
 	target="🌲"
-	class="climbable"
+	class="climbable env"
+	tag__env
 	shadow="receive: false"
 	windy
 	gltf-model="./glb/tree.glb"
@@ -117,6 +122,7 @@
 	mixin="smolitem"
 	gltf-model="./glb/grass.glb"
 	shadow
+	tag__env
 	target="🌿"
 	{scatter}
 	host="grass"
@@ -170,5 +176,6 @@
 	{...smolBoxBlocker}
 	vary={trunkVary}
 	{scatter}
+	tag__env
 />
 <a-entity pool__pillarObelisk="mixin: pillarObelisk; size: 5" activate__pillarObelisk />
