@@ -2,7 +2,7 @@
 	import { talk } from 'src/chat'
 	import { ismobile } from 'src/timing'
 
-	let text = ' yo what up'
+	let text = '👾Welcome to a.Goblin.Life👾'
 
 	talk.on(() => {
 		if (!talk.$) return

@@ -8229,7 +8229,7 @@ reset back to 1 for size
   function instance4($$self, $$props, $$invalidate) {
     let $ismobile;
     component_subscribe($$self, ismobile, ($$value) => $$invalidate(1, $ismobile = $$value));
-    let text2 = " yo what up";
+    let text2 = "\u{1F47E}Welcome to a.Goblin.Life\u{1F47E}";
     talk.on(() => {
       if (!talk.$)
         return;
