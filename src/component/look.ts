@@ -276,7 +276,7 @@ registerComponent('look', {
                 canvasEl.mozRequestPointerLock();
             }
         } else {
-            doControl("control use " + (evt.button === 0 ? "left" : "right"));
+            doControl("control use " + (evt.button === 0 ? "hand_left" : "hand_right"));
         }
     },
 

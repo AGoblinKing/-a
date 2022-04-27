@@ -2,6 +2,7 @@ import type { Object3D } from "three"
 import { key_map } from "src/input";
 import { camera } from "src/timing";
 import { guest } from "./net";
+import { VRM_AVATAR } from "./vrm-avatar";
 
 const vec3 = new AFRAME.THREE.Vector3()
 const quat = new AFRAME.THREE.Quaternion()
@@ -22,6 +23,9 @@ AFRAME.registerComponent("wasd-controller", {
 
     init() {
         this.jump = AFRAME.utils.throttleTick(this.jump, 2000, this)
+    },
+    remove() {
+        this.cancel()
     },
     jump() {
         this.el.emit("jump")

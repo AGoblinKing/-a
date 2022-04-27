@@ -1,4 +1,6 @@
-export const sfx_squeek = {
+import { stringify } from "src/util";
+
+export const sfx_squeek = stringify({
     "oldParams": true,
     "wave_type": 0,
     "p_env_attack": -0.03825496773355172,
@@ -23,8 +25,8 @@ export const sfx_squeek = {
     "p_lpf_resonance": 0.03217976614080667,
     "p_hpf_freq": -0.061780063423290135,
     "p_hpf_ramp": 0.05994838413016637,
-    "sound_vol": 0.25,
+    "sound_vol": 0.05,
     "sample_rate": 44100,
     "sample_size": 8,
     "p_vib_delay": null
-}
+})

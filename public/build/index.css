@@ -4,7 +4,7 @@
 }
 
 /* fakecss:/workspaces/-a/src/ui/heard.esbuild-svelte-fake-css */
-.entry.svelte-9fi79x {
+.entry.svelte-1777n5d {
   flex: 1;
   font-size: 2vh;
   user-select: none;
@@ -34,12 +34,14 @@
     0.15rem 0.15rem 0 #000;
   transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 }
-.lofi.svelte-9fi79x {
+.lofi.svelte-1777n5d {
   display: flex;
   position: absolute;
   top: 0vh;
   right: 0;
   direction: rtl;
+  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
   pointer-events: all;
   z-index: 2;
 }

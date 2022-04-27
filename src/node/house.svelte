@@ -129,7 +129,7 @@
 	gltf-model="./glb/cabinFloor.glb"
 	scale="10 4 10"
 	rotation="0 0 0"
-	position="0 0.01 0"
+	position="0 -0.1 0"
 />
 <a-entity light="type: point; distance: 12" />
 <!-- <a-entity mixin="building" material="color: #333;" scale="24 0.1 24" /> -->

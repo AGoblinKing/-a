@@ -1,4 +1,5 @@
 import { guest, host, room } from "./component/net"
+import { VRM_AVATAR } from "./component/vrm-avatar"
 
 import state from "./state"
 import { avatar_current, avatar_doer, do_echo, do_vary, open_debug, open_help, open_hostid, open_stats, open_targeting, open_ui, scouter, size, toggle_pointerlock, toggle_selfie, toggle_visible, voice_current } from "./timing"
@@ -258,7 +259,8 @@ export const controls = {
         binds_icon.set(clone(state.binds_icon))
     },
     [EControl.Use]: (items: string[]) => {
-
+        // use [itemslot=hand_left]
+        VRM_AVATAR.$.doUse(items[2])
 
     },
     [EControl.NotUse]: (items: string[]) => {

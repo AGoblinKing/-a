@@ -25,7 +25,8 @@ AFRAME.registerComponent("sfxr", {
         p_lpf_resonance: { default: 0 },
         p_hpf_freq: { default: 0 },
         p_hpf_ramp: { default: 0 },
-        sound_vol: { default: 0.25 },
+        p_vib_delay: { default: 0 },
+        sound_vol: { default: 0.4 },
         sample_rate: { default: 44100 },
         sample_size: { default: 8 },
         autoplay: { type: "boolean", default: false },
@@ -45,15 +46,21 @@ AFRAME.registerComponent("sfxr", {
         }
     },
     event() {
-        if (!this.audio) {
-            this.audio = new SoundEffect(this.data).generate()
-        }
 
-        this.audio.getAudio().play()
+
+        this.audio = new SoundEffect(
+            Object.assign(new Params(), this.data).mutate()
+        )
+            .generate()
+            .getAudio()
+
+
+
+        this.audio.play()
 
     },
     remove() {
         if (this.cancel) clearTimeout(this.cancel)
-        this.el.removeEventlistener(this.id, this.event)
+        this.el.removeEventListener(this.id, this.event)
     }
 })

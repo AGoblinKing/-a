@@ -8,6 +8,9 @@
 	import 'src/component/floaty'
 	import 'src/component/windy'
 	import 'src/component/alive'
+	import { sfx_squeek } from 'src/sound/plush'
+	import { sfx_bump } from 'src/sound/action'
+	import { sfx_wood } from 'src/sound/material'
 
 	const groundSize = 200
 
@@ -31,6 +34,7 @@
 
 <a-mixin
 	id="smolitem"
+	tag__env
 	ammo-body="type: static; mass: 0;collisionFilterGroup: 2;"
 	ammo-shape="type: sphere; fit: manual; sphereRadius: 1;"
 />
@@ -80,6 +84,7 @@
 	tag__env
 	vary="property: scale; range: 0.5 0.25 0.5 2 1 2"
 	{scatter}
+	sfxr__use={sfx_bump}
 	gltf-model="./glb/rockB.glb"
 	ammo-body="type: static; mass: 0"
 	host
@@ -105,6 +110,7 @@
 	tag__env
 	shadow="receive: false"
 	windy
+	sfxr__use={sfx_wood}
 	gltf-model="./glb/tree.glb"
 	{scatter}
 	vary="property: scale; range: 4 2 4 8 10 8"
@@ -147,6 +153,7 @@
 	target="🐎"
 	material="shader: flat;"
 	host="horse"
+	sfxr__use={sfx_squeek}
 	{scatter}
 />
 

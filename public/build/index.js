@@ -6661,6 +6661,77 @@ reset back to 1 for size
     }
   });
 
+  // src/component/vrm-avatar.ts
+  function Random(targets) {
+    const keys = Object.keys(targets.$);
+    const t = targets.$[keys[Math.floor(keys.length * Math.random())]];
+    return t;
+  }
+  var hands = ["hand_left", "hand_right"];
+  var VRM_AVATAR = new Value();
+  AFRAME.registerComponent("vrm-avatar", {
+    schema: {
+      hip_left: { type: "selector" },
+      hip_right: { type: "selector" },
+      spine: { type: "selector" },
+      hand_left: { type: "selector" },
+      hand_right: { type: "selector" }
+    },
+    init() {
+      requestAnimationFrame(() => {
+        if (this.el.parentEl.components.vrm?.data.current) {
+          VRM_AVATAR.set(this);
+        }
+      });
+      this.targets = new Value({});
+      this.collideStart = this.collideStart.bind(this);
+      this.collideEnd = this.collideEnd.bind(this);
+      this.el.addEventListener("collidestart", this.collideStart);
+      this.el.addEventListener("collideend", this.collideEnd);
+    },
+    remove() {
+      this.el.removeEventListener("collidestart", this.collideStart);
+      this.el.removeEventListener("collideend", this.collideEnd);
+    },
+    isCurrent() {
+      return this.el.parentEl.components.vrm.attrValue.current === "true";
+    },
+    doUse(slot = "hand_left") {
+      const e = { whom: this.el, slot };
+      if (this.data[slot]) {
+        this.data[slot].emit("use", e, false);
+        return;
+      }
+      if (hands.indexOf(slot) === -1)
+        return;
+      Random(this.targets)?.emit("use", e, false);
+    },
+    collideStart(e) {
+      const o = e.detail.targetEl;
+      if (!o.components.target)
+        return;
+      this.targets.$[o.object3D.uuid] = o;
+      this.targets.poke();
+      if (this.isCurrent()) {
+        ground.$.push(o.components.target.data);
+        ground.poke();
+      }
+    },
+    collideEnd(e) {
+      const o = e.detail.targetEl;
+      if (!o?.object3D || !o.components.target)
+        return;
+      delete this.targets.$[o.object3D.uuid];
+      this.targets.poke();
+      if (this.isCurrent()) {
+        ground.$.splice(ground.$.indexOf(o.components.target.data), 1);
+        ground.poke();
+      }
+    },
+    tick() {
+    }
+  });
+
   // src/control.ts
   var binds = new Value(clone(state_default.binds)).save("binds");
   var vars = new Value(clone(state_default.vars)).save("vars");
@@ -6829,6 +6900,7 @@ reset back to 1 for size
       binds_icon.set(clone(state_default.binds_icon));
     },
     ["use" /* Use */]: (items) => {
+      VRM_AVATAR.$.doUse(items[2]);
     },
     ["notuse" /* NotUse */]: (items) => {
     },
@@ -7166,7 +7238,7 @@ reset back to 1 for size
       mirrorVRM.$.update(0.01);
     }
   });
-  function Random(items) {
+  function Random2(items) {
     return items[Math.floor(Math.random() * items.length)];
   }
   talk.on(async ($talk) => {
@@ -7181,7 +7253,7 @@ reset back to 1 for size
         clearInterval(intv);
         return;
       }
-      mirrorVRM.$?.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName[Random("OEIAU")], 0.5 + 2 * s2);
+      mirrorVRM.$?.blendShapeProxy.setValue(VRMSchema.BlendShapePresetName[Random2("OEIAU")], 0.5 + 2 * s2);
     }, 1 / 3.5 * 1e3);
   });
 
@@ -7229,6 +7301,21 @@ reset back to 1 for size
       const spi = this.data.split("|");
       const mix = spi[Math.floor(Math.random() * spi.length)];
       this.el.setAttribute("mixin", this.el.getAttribute("mixin") || ` ${mix}`);
+    }
+  });
+
+  // src/component/tag.ts
+  AFRAME.registerComponent("tag", {
+    multiple: true,
+    schema: {
+      type: "string",
+      default: "true"
+    },
+    init() {
+      if (!this.el.tags) {
+        this.el.tags = {};
+      }
+      this.el.tags[this.id] = this.data;
     }
   });
 
@@ -7329,6 +7416,9 @@ reset back to 1 for size
     init() {
       this.jump = AFRAME.utils.throttleTick(this.jump, 2e3, this);
     },
+    remove() {
+      this.cancel();
+    },
     jump() {
       this.el.emit("jump");
     },
@@ -7415,7 +7505,8 @@ reset back to 1 for size
       p_lpf_resonance: { default: 0 },
       p_hpf_freq: { default: 0 },
       p_hpf_ramp: { default: 0 },
-      sound_vol: { default: 0.25 },
+      p_vib_delay: { default: 0 },
+      sound_vol: { default: 0.4 },
       sample_rate: { default: 44100 },
       sample_size: { default: 8 },
       autoplay: { type: "boolean", default: false },
@@ -7431,60 +7522,13 @@ reset back to 1 for size
       }
     },
     event() {
-      if (!this.audio) {
-        this.audio = new SoundEffect(this.data).generate();
-      }
-      this.audio.getAudio().play();
+      this.audio = new SoundEffect(Object.assign(new Params(), this.data).mutate()).generate().getAudio();
+      this.audio.play();
     },
     remove() {
       if (this.cancel)
         clearTimeout(this.cancel);
-      this.el.removeEventlistener(this.id, this.event);
-    }
-  });
-
-  // src/component/vrm-avatar.ts
-  AFRAME.registerComponent("vrm-avatar", {
-    schema: {
-      hip_left: { type: "selector" },
-      hip_right: { type: "selector" },
-      spine: { type: "selector" },
-      hand_left: { type: "selector" },
-      hand_right: { type: "selector" }
-    },
-    init() {
-      this.targets = new Value({});
-      this.collideStart = this.collideStart.bind(this);
-      this.collideEnd = this.collideEnd.bind(this);
-      this.el.addEventListener("collidestart", this.collideStart);
-      this.el.addEventListener("collideend", this.collideEnd);
-    },
-    remove() {
-      this.el.removeEventListener("collidestart", this.collideStart);
-      this.el.removeEventListener("collideend", this.collideEnd);
-    },
-    isCurrent() {
-      return this.el.parentEl.components.vrm.data.current;
-    },
-    collideStart(e) {
-      const o = e.detail.targetEl;
-      this.targets.$[o.object3D.uuid] = o.object3D;
-      this.targets.poke();
-      if (o.components.target && this.isCurrent()) {
-        ground.$.push(o.components.target.data);
-        ground.poke();
-      }
-    },
-    collideEnd(e) {
-      const o = e.detail.targetEl;
-      delete this.targets.$[o.object3D.uuid];
-      this.targets.poke();
-      if (o.components.target && this.isCurrent()) {
-        ground.$.splice(ground.$.indexOf(o.components.target.data), 1);
-        ground.poke();
-      }
-    },
-    tick() {
+      this.el.removeEventListener(this.id, this.event);
     }
   });
 
@@ -7518,6 +7562,122 @@ reset back to 1 for size
     "p_hpf_freq": 0.25097654676858755,
     "p_hpf_ramp": 0,
     "sound_vol": 1e-3,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+  var sfx_shthump = stringify({
+    "oldParams": true,
+    "wave_type": 3,
+    "p_env_attack": 0.14288772521725981,
+    "p_env_sustain": 0.18947118560584877,
+    "p_env_punch": 0.5333044335665993,
+    "p_env_decay": 0.09659737108218491,
+    "p_base_freq": 0.9026222794210492,
+    "p_freq_limit": 0,
+    "p_freq_ramp": 0.42397347917953465,
+    "p_freq_dramp": 0,
+    "p_vib_strength": 0.4563193465356852,
+    "p_vib_speed": 0.4239749801602483,
+    "p_arp_mod": 0.5993362888774147,
+    "p_arp_speed": 0.7955386638193522,
+    "p_duty": 0,
+    "p_duty_ramp": 0,
+    "p_repeat_speed": 0,
+    "p_pha_offset": 0,
+    "p_pha_ramp": 0,
+    "p_lpf_freq": 1,
+    "p_lpf_ramp": 0,
+    "p_lpf_resonance": 0,
+    "p_hpf_freq": 0.9733010009859232,
+    "p_hpf_ramp": 0,
+    "sound_vol": 0.25,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+  var sfx_near_miss = stringify({
+    "oldParams": true,
+    "wave_type": 3,
+    "p_env_attack": 0.5437457551781613,
+    "p_env_sustain": 0.21063143417314412,
+    "p_env_punch": 0.2542619527213554,
+    "p_env_decay": -0.2564894724385278,
+    "p_base_freq": 0.49999545852664595,
+    "p_freq_limit": 0,
+    "p_freq_ramp": -8434691459481186e-22,
+    "p_freq_dramp": 0.001432130337006416,
+    "p_vib_strength": -0.5052584806939552,
+    "p_vib_speed": -0.9065028252455742,
+    "p_arp_mod": -0.27221993435987546,
+    "p_arp_speed": 0.5987949474724483,
+    "p_duty": -0.20376620840891269,
+    "p_duty_ramp": 13669716600822202e-21,
+    "p_repeat_speed": -0.44811129857507037,
+    "p_pha_offset": -0.15439370603593736,
+    "p_pha_ramp": 6282153539375482e-22,
+    "p_lpf_freq": 0.03813951357680645,
+    "p_lpf_ramp": 0.1697485457762507,
+    "p_lpf_resonance": 0.6316165961198439,
+    "p_hpf_freq": 0.8137072361400771,
+    "p_hpf_ramp": 14227234806808646e-20,
+    "sound_vol": 0.25,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+  var sfx_charge_up = stringify({
+    "oldParams": true,
+    "wave_type": 3,
+    "p_env_attack": 0.3874825490203318,
+    "p_env_sustain": 0.7190222106791869,
+    "p_env_punch": 0.004265468954162491,
+    "p_env_decay": -0.6087350641913779,
+    "p_base_freq": 1.1261794460876196,
+    "p_freq_limit": 0,
+    "p_freq_ramp": -14025183021737829e-24,
+    "p_freq_dramp": -0.0039038649574089294,
+    "p_vib_strength": -0.7817875606283197,
+    "p_vib_speed": -0.3797615980243507,
+    "p_arp_mod": -0.7625171146742447,
+    "p_arp_speed": -0.33517809114980546,
+    "p_duty": 0.17373764646665757,
+    "p_duty_ramp": 0.059359124093710525,
+    "p_repeat_speed": -0.7419334407993086,
+    "p_pha_offset": 0.9523126517430207,
+    "p_pha_ramp": -0.09739333601144026,
+    "p_lpf_freq": 0.9958033214806387,
+    "p_lpf_ramp": 0.2033764059805292,
+    "p_lpf_resonance": -0.9659966879893127,
+    "p_hpf_freq": 0.0031298963649359023,
+    "p_hpf_ramp": 0.22308580095770741,
+    "sound_vol": 0.25,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+  var sfx_bump = stringify({
+    "oldParams": true,
+    "wave_type": 1,
+    "p_env_attack": -13846885693587297e-20,
+    "p_env_sustain": 0.009640721255066926,
+    "p_env_punch": 0.0030335447507990367,
+    "p_env_decay": 0.2794994504966408,
+    "p_base_freq": 0.01504519423224339,
+    "p_freq_limit": 0,
+    "p_freq_ramp": -7804659067900858e-21,
+    "p_freq_dramp": -11121166912703114e-20,
+    "p_vib_strength": 0.06434611697985575,
+    "p_vib_speed": -0.6406129915245771,
+    "p_arp_mod": -0.5098012413331912,
+    "p_arp_speed": -0.41947845119034843,
+    "p_duty": 0.7860739068985212,
+    "p_duty_ramp": 0.14527949840944718,
+    "p_repeat_speed": 0.8257105682199826,
+    "p_pha_offset": 0.06471548367218008,
+    "p_pha_ramp": -1429869098729941e-19,
+    "p_lpf_freq": 0.23407713985719159,
+    "p_lpf_ramp": 9247443839314244e-20,
+    "p_lpf_resonance": 0.27873708489880533,
+    "p_hpf_freq": 11343465197386403e-21,
+    "p_hpf_ramp": 0.0520462756379083,
+    "sound_vol": 0.25,
     "sample_rate": 44100,
     "sample_size": 8
   });
@@ -7883,7 +8043,7 @@ reset back to 1 for size
           canvasEl.mozRequestPointerLock();
         }
       } else {
-        doControl("control use " + (evt.button === 0 ? "left" : "right"));
+        doControl("control use " + (evt.button === 0 ? "hand_left" : "hand_right"));
       }
     },
     showGrabbingCursor: function() {
@@ -8199,9 +8359,9 @@ reset back to 1 for size
       c() {
         div = element("div");
         textarea = element("textarea");
-        attr(textarea, "class", "entry svelte-9fi79x");
+        attr(textarea, "class", "entry svelte-1777n5d");
         textarea.readOnly = true;
-        attr(div, "class", div_class_value = "lofi " + (ctx[1] ? "mobile" : "") + " svelte-9fi79x");
+        attr(div, "class", div_class_value = "lofi " + (ctx[1] ? "mobile" : "") + " svelte-1777n5d");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -8216,7 +8376,7 @@ reset back to 1 for size
         if (dirty & 1) {
           set_input_value(textarea, ctx2[0]);
         }
-        if (dirty & 2 && div_class_value !== (div_class_value = "lofi " + (ctx2[1] ? "mobile" : "") + " svelte-9fi79x")) {
+        if (dirty & 2 && div_class_value !== (div_class_value = "lofi " + (ctx2[1] ? "mobile" : "") + " svelte-1777n5d")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -8377,6 +8537,69 @@ gl_Position = mvPosition;
     }
   });
 
+  // src/sound/plush.ts
+  var sfx_squeek = stringify({
+    "oldParams": true,
+    "wave_type": 0,
+    "p_env_attack": -0.03825496773355172,
+    "p_env_sustain": 0.2712243258639075,
+    "p_env_punch": -0.040620749955223676,
+    "p_env_decay": 0.08717376043129219,
+    "p_base_freq": 0.5991919454359508,
+    "p_freq_limit": 0,
+    "p_freq_ramp": 0.12899175352157,
+    "p_freq_dramp": -0.2047203643716314,
+    "p_vib_strength": -0.03986261619061358,
+    "p_vib_speed": -0.11749563502028569,
+    "p_arp_mod": 0.007946087450328324,
+    "p_arp_speed": 0.08232690976131513,
+    "p_duty": 0.18540096796064842,
+    "p_duty_ramp": 0.08576715780609281,
+    "p_repeat_speed": 0.08007409543733945,
+    "p_pha_offset": -0.11110279223654707,
+    "p_pha_ramp": -0.05729119776895752,
+    "p_lpf_freq": 1.0702826743407952,
+    "p_lpf_ramp": 0.027317809739609497,
+    "p_lpf_resonance": 0.03217976614080667,
+    "p_hpf_freq": -0.061780063423290135,
+    "p_hpf_ramp": 0.05994838413016637,
+    "sound_vol": 0.05,
+    "sample_rate": 44100,
+    "sample_size": 8,
+    "p_vib_delay": null
+  });
+
+  // src/sound/material.ts
+  var sfx_wood = stringify({
+    "oldParams": true,
+    "wave_type": 3,
+    "p_env_attack": 0.17376130068206297,
+    "p_env_sustain": 0.006303938426766295,
+    "p_env_punch": 0,
+    "p_env_decay": 0.06192324654181807,
+    "p_base_freq": 0.9472372633910334,
+    "p_freq_limit": 0,
+    "p_freq_ramp": -0.5406430983069259,
+    "p_freq_dramp": 0,
+    "p_vib_strength": 0,
+    "p_vib_speed": 0,
+    "p_arp_mod": 0,
+    "p_arp_speed": 0,
+    "p_duty": 0,
+    "p_duty_ramp": 0,
+    "p_repeat_speed": 0,
+    "p_pha_offset": 0,
+    "p_pha_ramp": 0,
+    "p_lpf_freq": 1,
+    "p_lpf_ramp": 0,
+    "p_lpf_resonance": 0,
+    "p_hpf_freq": 0.9682005530613256,
+    "p_hpf_ramp": 0,
+    "sound_vol": 0.25,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+
   // src/node/forest.svelte
   function create_fragment5(ctx) {
     let a_mixin0;
@@ -8446,6 +8669,7 @@ gl_Position = mvPosition;
       { tag__env: "" },
       { shadow: "receive: false" },
       { windy: "" },
+      { sfxr__use: sfx_wood },
       { "gltf-model": "./glb/tree.glb" },
       { scatter: ctx[0] },
       {
@@ -8554,6 +8778,7 @@ gl_Position = mvPosition;
         t28 = space();
         a_entity13 = element("a-entity");
         set_custom_element_data(a_mixin0, "id", "smolitem");
+        set_custom_element_data(a_mixin0, "tag__env", "");
         set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;collisionFilterGroup: 2;");
         set_custom_element_data(a_mixin0, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
         set_custom_element_data(a_mixin1, "id", "smolfix");
@@ -8594,6 +8819,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin5, "tag__env", "");
         set_custom_element_data(a_mixin5, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
         set_custom_element_data(a_mixin5, "scatter", ctx[0]);
+        set_custom_element_data(a_mixin5, "sfxr__use", sfx_bump);
         set_custom_element_data(a_mixin5, "gltf-model", "./glb/rockB.glb");
         set_custom_element_data(a_mixin5, "ammo-body", "type: static; mass: 0");
         set_custom_element_data(a_mixin5, "host", "");
@@ -8643,6 +8869,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin9, "target", "\u{1F40E}");
         set_custom_element_data(a_mixin9, "material", "shader: flat;");
         set_custom_element_data(a_mixin9, "host", "horse");
+        set_custom_element_data(a_mixin9, "sfxr__use", sfx_squeek);
         set_custom_element_data(a_mixin9, "scatter", ctx[0]);
         set_custom_element_data(a_mixin10, "id", "sheep");
         set_custom_element_data(a_mixin10, "host", "sheep");
@@ -8744,6 +8971,7 @@ gl_Position = mvPosition;
           { tag__env: "" },
           { shadow: "receive: false" },
           { windy: "" },
+          { sfxr__use: sfx_wood },
           { "gltf-model": "./glb/tree.glb" },
           { scatter: ctx2[0] },
           {
@@ -9002,21 +9230,6 @@ gl_Position = mvPosition;
     }
   });
 
-  // src/component/tag.ts
-  AFRAME.registerComponent("tag", {
-    multiple: true,
-    schema: {
-      type: "string",
-      default: "true"
-    },
-    init() {
-      if (!this.el.tags) {
-        this.el.tags = {};
-      }
-      this.el.tags[this.id] = this.data;
-    }
-  });
-
   // src/node/house.svelte
   function create_fragment7(ctx) {
     let a_entity0;
@@ -9191,7 +9404,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity15, "gltf-model", "./glb/cabinFloor.glb");
         set_custom_element_data(a_entity15, "scale", "10 4 10");
         set_custom_element_data(a_entity15, "rotation", "0 0 0");
-        set_custom_element_data(a_entity15, "position", "0 0.01 0");
+        set_custom_element_data(a_entity15, "position", "0 -0.1 0");
         set_custom_element_data(a_entity16, "light", "type: point; distance: 12");
       },
       m(target, anchor) {
@@ -10465,6 +10678,66 @@ void main() {
   };
   var onscreen_ui_default = Onscreen_ui;
 
+  // src/sound/item.ts
+  var sfx_coin = stringify({
+    "oldParams": true,
+    "wave_type": 0,
+    "p_env_attack": 28155292488153208e-21,
+    "p_env_sustain": 0.25090524581392454,
+    "p_env_punch": 0.2754783887201076,
+    "p_env_decay": 0.5001297734171963,
+    "p_base_freq": 0.7229702310585184,
+    "p_freq_limit": 0,
+    "p_freq_ramp": -14776352156154787e-22,
+    "p_freq_dramp": -5856113851912658e-20,
+    "p_vib_strength": -0.05164408451145692,
+    "p_vib_speed": -0.7516716977873803,
+    "p_arp_mod": 0.1193500930839626,
+    "p_arp_speed": -0.26820812306536945,
+    "p_duty": -0.5705320288115394,
+    "p_duty_ramp": -0.28549479103644787,
+    "p_repeat_speed": -0.49774298507680825,
+    "p_pha_offset": -0.018310671336277635,
+    "p_pha_ramp": 7286555974103111e-20,
+    "p_lpf_freq": 0.9921686570413756,
+    "p_lpf_ramp": -6077321119627986e-20,
+    "p_lpf_resonance": -0.01517606345242939,
+    "p_hpf_freq": 0.011157003507858042,
+    "p_hpf_ramp": -0.002697787656542977,
+    "sound_vol": 0.25,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+  var sfx_item = stringify({
+    "oldParams": true,
+    "wave_type": 1,
+    "p_env_attack": 0,
+    "p_env_sustain": 0.008299432590524236,
+    "p_env_punch": 0.32452583374074934,
+    "p_env_decay": 0.10867751061393696,
+    "p_base_freq": 0.6635334138022878,
+    "p_freq_limit": 0,
+    "p_freq_ramp": 0,
+    "p_freq_dramp": 0,
+    "p_vib_strength": 0,
+    "p_vib_speed": 0,
+    "p_arp_mod": 0,
+    "p_arp_speed": 0,
+    "p_duty": 0,
+    "p_duty_ramp": 0,
+    "p_repeat_speed": 0,
+    "p_pha_offset": 0,
+    "p_pha_ramp": 0,
+    "p_lpf_freq": 1,
+    "p_lpf_ramp": 0,
+    "p_lpf_resonance": 0,
+    "p_hpf_freq": 0,
+    "p_hpf_ramp": 0,
+    "sound_vol": 0.1,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+
   // src/node/items.svelte
   function create_fragment12(ctx) {
     let a_mixin0;
@@ -10496,6 +10769,7 @@ void main() {
         set_custom_element_data(a_mixin0, "gltf-model", "./glb/dagger.glb");
         set_custom_element_data(a_mixin0, "scale", "0.01 0.01 0.01");
         set_custom_element_data(a_mixin0, "target", "\u{1F5E1}\uFE0F");
+        set_custom_element_data(a_mixin0, "sfxr__use", sfx_item);
         set_custom_element_data(a_mixin0, "ammo-body", "type: dynamic;scaleAutoUpdate: false; mass: 0.1;");
         set_custom_element_data(a_mixin0, "ammo-shape", "type:box; fit: manual; halfExtents: 0.1 0.75 0.1; offset: 0 0.45 0");
         set_custom_element_data(a_mixin1, "id", "armor_black");
@@ -10506,20 +10780,23 @@ void main() {
         set_custom_element_data(a_mixin1, "ammo-shape", "type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0");
         set_custom_element_data(a_mixin2, "id", "chest");
         set_custom_element_data(a_mixin2, "target", "\u{1F9F0}");
+        set_custom_element_data(a_mixin2, "sfxr__use", sfx_item);
         set_custom_element_data(a_mixin2, "shadow", "cast; receive: false");
         set_custom_element_data(a_mixin2, "gltf-model", "./glb/chest.glb");
         set_custom_element_data(a_mixin2, "scale", "0.01 0.01 0.01");
         set_custom_element_data(a_mixin2, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 5;");
-        set_custom_element_data(a_mixin2, "ammo-shape", "type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0.5 0");
+        set_custom_element_data(a_mixin2, "ammo-shape", "type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0.4 0");
         set_custom_element_data(a_mixin3, "id", "bow");
         set_custom_element_data(a_mixin3, "target", "\u{1F3F9}");
+        set_custom_element_data(a_mixin3, "sfxr__use", sfx_item);
         set_custom_element_data(a_mixin3, "shadow", "cast; receive: false");
         set_custom_element_data(a_mixin3, "gltf-model", "./glb/bow.glb");
         set_custom_element_data(a_mixin3, "scale", "0.01 0.01 0.01");
         set_custom_element_data(a_mixin3, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.1;");
-        set_custom_element_data(a_mixin3, "ammo-shape", "type:box; fit: manual; halfExtents: 0.25 1 0.4; offset: 0 0 0");
+        set_custom_element_data(a_mixin3, "ammo-shape", "type:box; fit: manual; halfExtents: 0.25 1 0.5; offset: 0 0 0");
         set_custom_element_data(a_mixin4, "id", "arrow");
         set_custom_element_data(a_mixin4, "target", "\u2197\uFE0F");
+        set_custom_element_data(a_mixin4, "sfxr__use", sfx_item);
         set_custom_element_data(a_mixin4, "shadow", "cast; receive: false");
         set_custom_element_data(a_mixin4, "gltf-model", "./glb/arrow.glb");
         set_custom_element_data(a_mixin4, "scale", "0.01 0.01 0.01");
@@ -10527,11 +10804,12 @@ void main() {
         set_custom_element_data(a_mixin4, "ammo-shape", "type:box; fit: manual; halfExtents: 0.1 1 0.1; offset: 0 0 0");
         set_custom_element_data(a_mixin5, "id", "bag");
         set_custom_element_data(a_mixin5, "target", "\u{1F45D}");
+        set_custom_element_data(a_mixin5, "sfxr__use", sfx_item);
         set_custom_element_data(a_mixin5, "shadow", "cast; receive: false");
         set_custom_element_data(a_mixin5, "gltf-model", "./glb/bag.glb");
         set_custom_element_data(a_mixin5, "scale", "0.01 0.01 0.01");
         set_custom_element_data(a_mixin5, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.5;");
-        set_custom_element_data(a_mixin5, "ammo-shape", "type:box; fit: manual; halfExtents: 0.25 0.25 0.25; offset: 0 0 0");
+        set_custom_element_data(a_mixin5, "ammo-shape", "type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0");
       },
       m(target, anchor) {
         insert(target, a_mixin0, anchor);

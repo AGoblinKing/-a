@@ -6,6 +6,7 @@
 	import 'src/component/uniforms'
 	import 'src/component/vary'
 	import 'src/component/random'
+	import 'src/component/tag'
 	import 'src/component/target'
 
 	import Webcam from 'src/ui/webcam.svelte'

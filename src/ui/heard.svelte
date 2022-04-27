@@ -53,7 +53,8 @@
 		top: 0vh;
 		right: 0;
 		direction: rtl;
-
+		-webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+		mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
 		pointer-events: all;
 		z-index: 2;
 	}

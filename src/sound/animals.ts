@@ -1,0 +1,31 @@
+import { stringify } from "src/util";
+
+export const sfx_cat = stringify({
+    "oldParams": true,
+    "wave_type": 1,
+    "p_env_attack": 0.41762676199321386,
+    "p_env_sustain": 0.472018557677806,
+    "p_env_punch": 0.2223574906291296,
+    "p_env_decay": -0.24948129831117205,
+    "p_base_freq": -0.3152087399672988,
+    "p_freq_limit": 0,
+    "p_freq_ramp": 0.2945332953062531,
+    "p_freq_dramp": -0.9606932000625092,
+    "p_vib_strength": 0.000100667591679878,
+    "p_vib_speed": -0.8152355840444634,
+    "p_arp_mod": 0.532823873640992,
+    "p_arp_speed": -0.3709213297574965,
+    "p_duty": 0.33091534100845577,
+    "p_duty_ramp": 0.062061657847819945,
+    "p_repeat_speed": 0.6973355722504344,
+    "p_pha_offset": -0.4335518761438936,
+    "p_pha_ramp": 0.028460506087941397,
+    "p_lpf_freq": 0.9999999799659793,
+    "p_lpf_ramp": 0.01677619904459581,
+    "p_lpf_resonance": 0.004515281319145359,
+    "p_hpf_freq": 0.0003325274419334111,
+    "p_hpf_ramp": 0.0007682252453488168,
+    "sound_vol": 0.25,
+    "sample_rate": 44100,
+    "sample_size": 8
+})
