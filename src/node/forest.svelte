@@ -85,6 +85,7 @@
 	vary="property: scale; range: 0.5 0.25 0.5 2 1 2"
 	{scatter}
 	sfxr__use={sfx_bump}
+	sfxr__bump={sfx_bump}
 	gltf-model="./glb/rockB.glb"
 	ammo-body="type: static; mass: 0"
 	host
@@ -111,6 +112,7 @@
 	shadow="receive: false"
 	windy
 	sfxr__use={sfx_wood}
+	sfxr__bump={sfx_wood}
 	gltf-model="./glb/tree.glb"
 	{scatter}
 	vary="property: scale; range: 4 2 4 8 10 8"
@@ -154,6 +156,7 @@
 	material="shader: flat;"
 	host="horse"
 	sfxr__use={sfx_squeek}
+	sfxr__bump={sfx_squeek}
 	{scatter}
 />
 
@@ -165,7 +168,14 @@
 <a-entity pool__animal="mixin: animal cow; size: 5;" activate__animal />
 <a-entity pool__animal="mixin: animal frog; size: 5;" activate__animal />
 
-<a-mixin id="trunk" {...smolBoxBlocker} gltf-model="./glb/trunk.glb" vary={trunkVary} {scatter} />
+<a-mixin
+	id="trunk"
+	{...smolBoxBlocker}
+	gltf-model="./glb/trunk.glb"
+	tag__env
+	vary={trunkVary}
+	{scatter}
+/>
 <a-entity pool__trunk="mixin: trunk; size: 20" activate__trunk />
 
 <a-mixin

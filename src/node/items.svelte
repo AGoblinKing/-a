@@ -1,5 +1,5 @@
 <script>
-	import { sfx_item } from 'src/sound/item'
+	import { sfx_coin, sfx_item } from 'src/sound/item'
 </script>
 
 <a-mixin
@@ -9,6 +9,7 @@
 	scale="0.01 0.01 0.01"
 	target="🗡️"
 	sfxr__use={sfx_item}
+	sfxr__bump={sfx_coin}
 	ammo-body="type: dynamic;scaleAutoUpdate: false; mass: 0.1;"
 	ammo-shape="type:box; fit: manual; halfExtents: 0.1 0.75 0.1; offset: 0 0.45 0"
 />
@@ -25,6 +26,7 @@
 	id="chest"
 	target="🧰"
 	sfxr__use={sfx_item}
+	sfxr__bump={sfx_coin}
 	shadow="cast; receive: false"
 	gltf-model="./glb/chest.glb"
 	scale="0.01 0.01 0.01"
@@ -35,6 +37,7 @@
 	id="bow"
 	target="🏹"
 	sfxr__use={sfx_item}
+	sfxr__bump={sfx_coin}
 	shadow="cast; receive: false"
 	gltf-model="./glb/bow.glb"
 	scale="0.01 0.01 0.01"
@@ -46,6 +49,7 @@
 	id="arrow"
 	target="↗️"
 	sfxr__use={sfx_item}
+	sfxr__bump={sfx_coin}
 	shadow="cast; receive: false"
 	gltf-model="./glb/arrow.glb"
 	scale="0.01 0.01 0.01"
@@ -57,6 +61,7 @@
 	id="bag"
 	target="👝"
 	sfxr__use={sfx_item}
+	sfxr__bump={sfx_coin}
 	shadow="cast; receive: false"
 	gltf-model="./glb/bag.glb"
 	scale="0.01 0.01 0.01"

@@ -6713,6 +6713,7 @@ reset back to 1 for size
       this.targets.$[o.object3D.uuid] = o;
       this.targets.poke();
       if (this.isCurrent()) {
+        o.emit("bump", { whom: this.el });
         ground.$.push(o.components.target.data);
         ground.poke();
       }
@@ -7522,7 +7523,8 @@ reset back to 1 for size
       }
     },
     event() {
-      this.audio = new SoundEffect(Object.assign(new Params(), this.data).mutate()).generate().getAudio();
+      if (!this.audio)
+        this.audio = new SoundEffect(Object.assign(new Params(), this.data).mutate().mutate()).generate().getAudio();
       this.audio.play();
     },
     remove() {
@@ -7682,6 +7684,37 @@ reset back to 1 for size
     "sample_size": 8
   });
 
+  // src/sound/person.ts
+  var sfx_doer1 = stringify({
+    "oldParams": true,
+    "wave_type": 2,
+    "p_env_attack": -14140292398049939e-21,
+    "p_env_sustain": 0.2783775417625987,
+    "p_env_punch": 0.19110524829085512,
+    "p_env_decay": 0.24291011008920216,
+    "p_base_freq": 0.4628825807009038,
+    "p_freq_limit": 0,
+    "p_freq_ramp": -0.001036644707209624,
+    "p_freq_dramp": -5468717507720412e-19,
+    "p_vib_strength": 0.6131331238497073,
+    "p_vib_speed": -0.34944443470188613,
+    "p_arp_mod": -0.8766410041733139,
+    "p_arp_speed": -0.037249007282142976,
+    "p_duty": -0.2235259325594261,
+    "p_duty_ramp": -0.0017080456605581328,
+    "p_repeat_speed": -0.3291382658203825,
+    "p_pha_offset": -0.3729294690701458,
+    "p_pha_ramp": -23313889856112357e-20,
+    "p_lpf_freq": 0.991722302732238,
+    "p_lpf_ramp": -0.2380101450884604,
+    "p_lpf_resonance": -0.7996369184745049,
+    "p_hpf_freq": 0.002463573855517682,
+    "p_hpf_ramp": -0.877137470405033,
+    "sound_vol": 0.25,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+
   // src/node/characters.svelte
   function create_fragment2(ctx) {
     let a_mixin;
@@ -7721,6 +7754,8 @@ reset back to 1 for size
         set_custom_element_data(a_entity2, "position", "0 1 -1");
         set_custom_element_data(a_entity2, "rotation", "0 180 0");
         set_custom_element_data(a_entity2, "host", "doer");
+        set_custom_element_data(a_entity2, "sfxr__bump", sfx_doer1);
+        set_custom_element_data(a_entity2, "target", "\u{1F9D9}\u200D\u2640\uFE0F");
         set_custom_element_data(a_entity2, "net-avatar", "");
         set_custom_element_data(a_entity2, "vrm", a_entity2_vrm_value = "src: " + ctx[2] + "; mirror: true");
       },
@@ -8670,6 +8705,7 @@ gl_Position = mvPosition;
       { shadow: "receive: false" },
       { windy: "" },
       { sfxr__use: sfx_wood },
+      { sfxr__bump: sfx_wood },
       { "gltf-model": "./glb/tree.glb" },
       { scatter: ctx[0] },
       {
@@ -8686,6 +8722,7 @@ gl_Position = mvPosition;
       { id: "trunk" },
       ctx[2],
       { "gltf-model": "./glb/trunk.glb" },
+      { tag__env: "" },
       { vary: trunkVary },
       { scatter: ctx[0] }
     ];
@@ -8820,6 +8857,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin5, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
         set_custom_element_data(a_mixin5, "scatter", ctx[0]);
         set_custom_element_data(a_mixin5, "sfxr__use", sfx_bump);
+        set_custom_element_data(a_mixin5, "sfxr__bump", sfx_bump);
         set_custom_element_data(a_mixin5, "gltf-model", "./glb/rockB.glb");
         set_custom_element_data(a_mixin5, "ammo-body", "type: static; mass: 0");
         set_custom_element_data(a_mixin5, "host", "");
@@ -8870,6 +8908,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin9, "material", "shader: flat;");
         set_custom_element_data(a_mixin9, "host", "horse");
         set_custom_element_data(a_mixin9, "sfxr__use", sfx_squeek);
+        set_custom_element_data(a_mixin9, "sfxr__bump", sfx_squeek);
         set_custom_element_data(a_mixin9, "scatter", ctx[0]);
         set_custom_element_data(a_mixin10, "id", "sheep");
         set_custom_element_data(a_mixin10, "host", "sheep");
@@ -8972,6 +9011,7 @@ gl_Position = mvPosition;
           { shadow: "receive: false" },
           { windy: "" },
           { sfxr__use: sfx_wood },
+          { sfxr__bump: sfx_wood },
           { "gltf-model": "./glb/tree.glb" },
           { scatter: ctx2[0] },
           {
@@ -8984,6 +9024,7 @@ gl_Position = mvPosition;
           { id: "trunk" },
           ctx2[2],
           { "gltf-model": "./glb/trunk.glb" },
+          { tag__env: "" },
           { vary: trunkVary },
           { scatter: ctx2[0] }
         ]));
@@ -10679,35 +10720,6 @@ void main() {
   var onscreen_ui_default = Onscreen_ui;
 
   // src/sound/item.ts
-  var sfx_coin = stringify({
-    "oldParams": true,
-    "wave_type": 0,
-    "p_env_attack": 28155292488153208e-21,
-    "p_env_sustain": 0.25090524581392454,
-    "p_env_punch": 0.2754783887201076,
-    "p_env_decay": 0.5001297734171963,
-    "p_base_freq": 0.7229702310585184,
-    "p_freq_limit": 0,
-    "p_freq_ramp": -14776352156154787e-22,
-    "p_freq_dramp": -5856113851912658e-20,
-    "p_vib_strength": -0.05164408451145692,
-    "p_vib_speed": -0.7516716977873803,
-    "p_arp_mod": 0.1193500930839626,
-    "p_arp_speed": -0.26820812306536945,
-    "p_duty": -0.5705320288115394,
-    "p_duty_ramp": -0.28549479103644787,
-    "p_repeat_speed": -0.49774298507680825,
-    "p_pha_offset": -0.018310671336277635,
-    "p_pha_ramp": 7286555974103111e-20,
-    "p_lpf_freq": 0.9921686570413756,
-    "p_lpf_ramp": -6077321119627986e-20,
-    "p_lpf_resonance": -0.01517606345242939,
-    "p_hpf_freq": 0.011157003507858042,
-    "p_hpf_ramp": -0.002697787656542977,
-    "sound_vol": 0.25,
-    "sample_rate": 44100,
-    "sample_size": 8
-  });
   var sfx_item = stringify({
     "oldParams": true,
     "wave_type": 1,
@@ -10737,6 +10749,7 @@ void main() {
     "sample_rate": 44100,
     "sample_size": 8
   });
+  var sfx_coin = sfx_item;
 
   // src/node/items.svelte
   function create_fragment12(ctx) {
@@ -10770,6 +10783,7 @@ void main() {
         set_custom_element_data(a_mixin0, "scale", "0.01 0.01 0.01");
         set_custom_element_data(a_mixin0, "target", "\u{1F5E1}\uFE0F");
         set_custom_element_data(a_mixin0, "sfxr__use", sfx_item);
+        set_custom_element_data(a_mixin0, "sfxr__bump", sfx_coin);
         set_custom_element_data(a_mixin0, "ammo-body", "type: dynamic;scaleAutoUpdate: false; mass: 0.1;");
         set_custom_element_data(a_mixin0, "ammo-shape", "type:box; fit: manual; halfExtents: 0.1 0.75 0.1; offset: 0 0.45 0");
         set_custom_element_data(a_mixin1, "id", "armor_black");
@@ -10781,6 +10795,7 @@ void main() {
         set_custom_element_data(a_mixin2, "id", "chest");
         set_custom_element_data(a_mixin2, "target", "\u{1F9F0}");
         set_custom_element_data(a_mixin2, "sfxr__use", sfx_item);
+        set_custom_element_data(a_mixin2, "sfxr__bump", sfx_coin);
         set_custom_element_data(a_mixin2, "shadow", "cast; receive: false");
         set_custom_element_data(a_mixin2, "gltf-model", "./glb/chest.glb");
         set_custom_element_data(a_mixin2, "scale", "0.01 0.01 0.01");
@@ -10789,6 +10804,7 @@ void main() {
         set_custom_element_data(a_mixin3, "id", "bow");
         set_custom_element_data(a_mixin3, "target", "\u{1F3F9}");
         set_custom_element_data(a_mixin3, "sfxr__use", sfx_item);
+        set_custom_element_data(a_mixin3, "sfxr__bump", sfx_coin);
         set_custom_element_data(a_mixin3, "shadow", "cast; receive: false");
         set_custom_element_data(a_mixin3, "gltf-model", "./glb/bow.glb");
         set_custom_element_data(a_mixin3, "scale", "0.01 0.01 0.01");
@@ -10797,6 +10813,7 @@ void main() {
         set_custom_element_data(a_mixin4, "id", "arrow");
         set_custom_element_data(a_mixin4, "target", "\u2197\uFE0F");
         set_custom_element_data(a_mixin4, "sfxr__use", sfx_item);
+        set_custom_element_data(a_mixin4, "sfxr__bump", sfx_coin);
         set_custom_element_data(a_mixin4, "shadow", "cast; receive: false");
         set_custom_element_data(a_mixin4, "gltf-model", "./glb/arrow.glb");
         set_custom_element_data(a_mixin4, "scale", "0.01 0.01 0.01");
@@ -10805,6 +10822,7 @@ void main() {
         set_custom_element_data(a_mixin5, "id", "bag");
         set_custom_element_data(a_mixin5, "target", "\u{1F45D}");
         set_custom_element_data(a_mixin5, "sfxr__use", sfx_item);
+        set_custom_element_data(a_mixin5, "sfxr__bump", sfx_coin);
         set_custom_element_data(a_mixin5, "shadow", "cast; receive: false");
         set_custom_element_data(a_mixin5, "gltf-model", "./glb/bag.glb");
         set_custom_element_data(a_mixin5, "scale", "0.01 0.01 0.01");

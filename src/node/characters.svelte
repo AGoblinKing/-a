@@ -6,6 +6,7 @@
 	import 'src/component/vrm-avatar'
 
 	import { sfx_jump } from 'src/sound/action'
+	import { sfx_doer1 } from 'src/sound/person'
 </script>
 
 <a-mixin
@@ -13,6 +14,8 @@
 	ammo-body="gravity: 0 -20 0; type: dynamic; mass: 1; linearDamping: 0.95; angularDamping: 1;angularFactor: 0 1 0;"
 	ammo-shape="type: capsule; fit: manual; halfExtents: 0.35 0.6 0.35; offset: 0 0.75 0"
 />
+
+<!-- <a-entity pool__dust="mixin: dust; size: 5;" activate__dust /> -->
 
 <a-entity
 	mixin="shadow character"
@@ -38,6 +41,8 @@
 	position="0 1 -1"
 	rotation="0 180 0"
 	host="doer"
+	sfxr__bump={sfx_doer1}
+	target="🧙‍♀️"
 	net-avatar
 	vrm="src: {$avatar_doer}; mirror: true"
 />

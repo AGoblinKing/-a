@@ -73,6 +73,7 @@ AFRAME.registerComponent("vrm-avatar", {
         this.targets.poke()
 
         if (this.isCurrent()) {
+            o.emit("bump", { whom: this.el })
             ground.$.push(o.components.target.data)
             ground.poke()
         }

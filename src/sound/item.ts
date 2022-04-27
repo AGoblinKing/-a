@@ -1,34 +1,33 @@
 import { stringify } from "src/util"
-
-export const sfx_coin = stringify({
+/*stringify({
     "oldParams": true,
-    "wave_type": 0,
-    "p_env_attack": 0.000028155292488153208,
-    "p_env_sustain": 0.25090524581392454,
-    "p_env_punch": 0.2754783887201076,
-    "p_env_decay": 0.5001297734171963,
-    "p_base_freq": 0.7229702310585184,
+    "wave_type": 1,
+    "p_env_attack": 0,
+    "p_env_sustain": 0.09283549995297223,
+    "p_env_punch": 0.34204811746491576,
+    "p_env_decay": 0.2417616903132828,
+    "p_base_freq": 0.7295019250921798,
     "p_freq_limit": 0,
-    "p_freq_ramp": -0.0000014776352156154787,
-    "p_freq_dramp": -0.00005856113851912658,
-    "p_vib_strength": -0.05164408451145692,
-    "p_vib_speed": -0.7516716977873803,
-    "p_arp_mod": 0.1193500930839626,
-    "p_arp_speed": -0.26820812306536945,
-    "p_duty": -0.5705320288115394,
-    "p_duty_ramp": -0.28549479103644787,
-    "p_repeat_speed": -0.49774298507680825,
-    "p_pha_offset": -0.018310671336277635,
-    "p_pha_ramp": 0.00007286555974103111,
-    "p_lpf_freq": 0.9921686570413756,
-    "p_lpf_ramp": -0.00006077321119627986,
-    "p_lpf_resonance": -0.01517606345242939,
-    "p_hpf_freq": 0.011157003507858042,
-    "p_hpf_ramp": -0.002697787656542977,
-    "sound_vol": 0.25,
+    "p_freq_ramp": 0,
+    "p_freq_dramp": 0,
+    "p_vib_strength": 0,
+    "p_vib_speed": 0,
+    "p_arp_mod": 0.23880219791297394,
+    "p_arp_speed": 0.687508324811289,
+    "p_duty": 0,
+    "p_duty_ramp": 0,
+    "p_repeat_speed": 0,
+    "p_pha_offset": 0,
+    "p_pha_ramp": 0,
+    "p_lpf_freq": 1,
+    "p_lpf_ramp": 0,
+    "p_lpf_resonance": 0,
+    "p_hpf_freq": 0,
+    "p_hpf_ramp": 0,
+    "sound_vol": 0.05,
     "sample_rate": 44100,
     "sample_size": 8
-})
+})*/
 
 export const sfx_item = stringify({
     "oldParams": true,
@@ -59,3 +58,4 @@ export const sfx_item = stringify({
     "sample_rate": 44100,
     "sample_size": 8
 })
+export const sfx_coin = sfx_item
