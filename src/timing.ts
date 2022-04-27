@@ -10,7 +10,7 @@ export const avatar_doer = new Value<string>(state.avatar.doer).save("avatar_doe
 export const voice_current = new Value("UK English").save("voice_current")
 export const voice_doer = new Value("Aus | UK English").save("voice_doer")
 export const scouter = new Value("green").save("scouter")
-export const videos = new Value(["pxCwIWL4_wA", "ntV3RbQmLAU", "BzIeSMDe85U"])
+export const videos = new Value(["7Cchlyg7XNI", "WajD8HPS0JI", "pxCwIWL4_wA"])
 export const video = new Value("doer1.8").save("video_2")
 export const ground = new Value<string[]>([])
 

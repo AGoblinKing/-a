@@ -29,3 +29,33 @@ export const sfx_cat = stringify({
     "sample_rate": 44100,
     "sample_size": 8
 })
+
+export const sfx_bird = stringify({
+    "oldParams": true,
+    "wave_type": 2,
+    "p_env_attack": -0.5984439330783985,
+    "p_env_sustain": 0.9816371247911583,
+    "p_env_punch": 0.0005185768111939373,
+    "p_env_decay": 0.3161300993341185,
+    "p_base_freq": 0.2085164499954622,
+    "p_freq_limit": 0,
+    "p_freq_ramp": 0.04202073781268929,
+    "p_freq_dramp": -0.024968588968825714,
+    "p_vib_strength": 0.71946686722983,
+    "p_vib_speed": -0.5121385075927258,
+    "p_arp_mod": 0.528122886555956,
+    "p_arp_speed": 0.025331920746700654,
+    "p_duty": 0.9568794696039387,
+    "p_duty_ramp": 0.023123884097627632,
+    "p_repeat_speed": 0.36835431362974536,
+    "p_pha_offset": 0.11057762324380299,
+    "p_pha_ramp": 0.581189087185058,
+    "p_lpf_freq": 0.10037433152407471,
+    "p_lpf_ramp": 0.008331274115915104,
+    "p_lpf_resonance": -0.9793191723490668,
+    "p_hpf_freq": 0.13327861965545218,
+    "p_hpf_ramp": 0.02163136268236316,
+    "sound_vol": 0.25,
+    "sample_rate": 44100,
+    "sample_size": 8
+})

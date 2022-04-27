@@ -1,6 +1,8 @@
 <script>
 	import 'src/component/grid'
 	import 'src/component/tag'
+	import 'src/component/recolor'
+	import { sfx_squeek } from 'src/sound/plush'
 
 	// static collider that removes other static colliders found
 
@@ -133,3 +135,28 @@
 />
 <a-entity light="type: point; distance: 12" />
 <!-- <a-entity mixin="building" material="color: #333;" scale="24 0.1 24" /> -->
+
+<!-- vary="property: recolor__skin; range: 0 0 0 255 255 255"-->
+<a-mixin
+	id="elf"
+	gltf-model="./char/Elf.glb"
+	recolor__skin="#212F00"
+	recolor__hat="black"
+	recolor__clothes="black"
+	recolor__face="#F0F"
+	ammo-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;"
+	scale="0.35 0.35 0.35"
+	ammo-shape="type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.6 0"
+	shadow="cast: true; receive: false;"
+	alive="type: random;"
+	motion-events
+	gltf-events
+	target="🧝"
+	material="shader: flat;filter: Skin"
+	host="elf"
+	sfxr__use={sfx_squeek}
+	sfxr__bump={sfx_squeek}
+	scatter="-5 1 -5 5 5 5"
+/>
+
+<a-entity pool__elf="mixin: elf; size: 5;" activate__elf />

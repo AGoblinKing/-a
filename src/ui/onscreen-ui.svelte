@@ -7,7 +7,7 @@
 	import { ismobile, open_text, ground } from 'src/timing'
 	import Body from './body.svelte'
 
-	let bound = [1, 2, 3, 4, 5, 6, 7]
+	let bound = [1, 2, 3, 4, 5, 6]
 	let holder
 	let x = 0.5
 	let y = 0.5
@@ -100,6 +100,20 @@
 			{$binds_icon[b] || b}
 		</div>
 	{/each}
+
+	<div class="button bounce">🦾</div>
+	<div
+		class="jump button bounce"
+		on:click={() => {
+			key_down.set(' ')
+			setTimeout(() => {
+				key_up.set(' ')
+			}, 300)
+		}}
+	>
+		🦘
+	</div>
+	<div class="reverse button bounce">🦾</div>
 </div>
 
 <div class="holder">
@@ -117,17 +131,6 @@
 		</div>
 		<Body />
 
-		<div
-			class="jump button bounce"
-			on:click={() => {
-				key_down.set(' ')
-				setTimeout(() => {
-					key_up.set(' ')
-				}, 300)
-			}}
-		>
-			🦘
-		</div>
 		<div
 			class="move button bounce"
 			on:touchmove={update}
@@ -160,6 +163,9 @@
 </div>
 
 <style>
+	.bounce {
+		opacity: 0.5;
+	}
 	.ground,
 	.location {
 		user-select: none;
@@ -179,6 +185,17 @@
 		left: 50%;
 		align-items: center;
 		transform: translateX(-50%);
+	}
+
+	.reverse.button {
+		transform: perspective(400px) rotateY(40deg) scaleX(-1);
+	}
+
+	.mobile .reverse.button {
+		transform: scaleX(-1);
+	}
+	.reverse.button:hover {
+		transform: scaleX(-1);
 	}
 
 	.location {
@@ -206,10 +223,15 @@
 		transform: translateY(-50%);
 		z-index: 5;
 	}
+
+	.bind-bar .button {
+		font-size: 2.5vh;
+	}
 	.inactive {
 		opacity: 0;
 	}
 	.button {
+		user-select: none;
 		border: 0.5vh solid rgb(0, 106, 206);
 		border-radius: 1vh;
 		color: white;
@@ -250,7 +272,7 @@
 		}
 	}
 	.button.down {
-		box-shadow: 0 0 5vh rgb(0, 65, 150), 0 0 2vh rgb(31, 255, 2);
+		box-shadow: 0 0 5vh rgb(0, 65, 150), 0 0 2vh rgb(2, 255, 255);
 	}
 	.holder {
 		position: absolute;
@@ -281,7 +303,7 @@
 		opacity: 0.65;
 	}
 
-	.mobile .button {
-		transform: none !important;
+	.mobile .buttons {
+		transform: none;
 	}
 </style>

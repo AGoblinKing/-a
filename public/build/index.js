@@ -6197,7 +6197,7 @@
   var voice_current = new Value("UK English").save("voice_current");
   var voice_doer = new Value("Aus | UK English").save("voice_doer");
   var scouter = new Value("green").save("scouter");
-  var videos = new Value(["pxCwIWL4_wA", "ntV3RbQmLAU", "BzIeSMDe85U"]);
+  var videos = new Value(["7Cchlyg7XNI", "WajD8HPS0JI", "pxCwIWL4_wA"]);
   var video = new Value("doer1.8").save("video_2");
   var ground = new Value([]);
   var open_ui = new Value(true).save("ui");
@@ -7285,6 +7285,10 @@ reset back to 1 for size
     vary() {
       const o3d = this.el.object3D;
       bb2.setFromArray(this.range);
+      if (this.data.property.indexOf("recolor") === 0) {
+        this.el.setAttribute(this.data.property, `rgb(${bb2.min.x + Math.random() * (bb2.max.x - bb2.min.x)}, ${bb2.min.y + Math.random() * (bb2.max.y - bb2.min.y)}, ${bb2.min.z + Math.random() * (bb2.max.z - bb2.min.z)})`);
+        return;
+      }
       o3d[this.data.property]?.set(bb2.min.x + Math.random() * (bb2.max.x - bb2.min.x), bb2.min.y + Math.random() * (bb2.max.y - bb2.min.y), bb2.min.z + Math.random() * (bb2.max.z - bb2.min.z));
     },
     remove() {
@@ -7416,6 +7420,7 @@ reset back to 1 for size
     },
     init() {
       this.jump = AFRAME.utils.throttleTick(this.jump, 2e3, this);
+      this.next = 0;
     },
     remove() {
       this.cancel();
@@ -7423,7 +7428,10 @@ reset back to 1 for size
     jump() {
       this.el.emit("jump");
     },
-    tick(_, delta) {
+    step() {
+      this.el.emit("step");
+    },
+    tick(t, delta) {
       if (guest.$)
         return;
       if (!this.el.body)
@@ -7437,33 +7445,39 @@ reset back to 1 for size
       if (key_map.$["shift"]) {
         intensity = 2;
       }
-      vec32.y = 5;
       if (key_map.$[" "] && o3d.position.y < 0.5) {
         hop *= delta;
         this.jump();
         vec32.y = hop;
       }
       if (key_map.$["w"]) {
+        vec32.y += 5;
         vec32.z += -this.data.speed * delta * intensity;
       }
       if (key_map.$["s"]) {
+        vec32.y += 5;
         vec32.z += this.data.speed * delta * intensity;
       }
       if (key_map.$["a"]) {
+        vec32.y += 5;
         vec32.x += -this.data.speed * delta * intensity;
       }
       if (key_map.$["d"]) {
+        vec32.y += 5;
         vec32.x += this.data.speed * delta * intensity;
       }
       if (key_map.$["q"]) {
+        vec32.y += 5;
         const root = getRoot(camera.$);
         root.rotation.y += this.data.rot * delta;
       }
       if (key_map.$["e"]) {
+        vec32.y += 5;
         const root = getRoot(camera.$);
         root.rotation.y -= this.data.rot * delta;
       }
-      if (Math.abs(vec32.length()) > 0 && camera.$) {
+      const l = Math.abs(vec32.length());
+      if (l > 0 && camera.$) {
         camera.$.updateMatrixWorld();
         quat2.setFromRotationMatrix(camera.$.matrixWorld);
         const up = vec32.y;
@@ -7472,6 +7486,10 @@ reset back to 1 for size
         this.el.body.applyForce(force);
         this.el.body.activate();
         Ammo.destroy(force);
+        if (t - this.next > 0) {
+          this.step();
+          this.next = t + 1e3 - l * 40 + Math.random() * 100 + (t % 100 > 50 ? 250 : 0);
+        }
       }
       if (torq)
         Ammo.destroy(torq);
@@ -7710,7 +7728,94 @@ reset back to 1 for size
     "p_lpf_resonance": -0.7996369184745049,
     "p_hpf_freq": 0.002463573855517682,
     "p_hpf_ramp": -0.877137470405033,
-    "sound_vol": 0.25,
+    "sound_vol": 0.05,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+  var sfx_step = stringify({
+    "oldParams": true,
+    "wave_type": 0,
+    "p_env_attack": -0.001992137071507483,
+    "p_env_sustain": 0.02887634247502266,
+    "p_env_punch": 0.06602000202423139,
+    "p_env_decay": 0.18711795113690988,
+    "p_base_freq": 0.78615754090854,
+    "p_freq_limit": 0,
+    "p_freq_ramp": -0.9130772193580317,
+    "p_freq_dramp": 0.7839164432200496,
+    "p_vib_strength": -0.0028002409007415597,
+    "p_vib_speed": -0.5241176461726615,
+    "p_arp_mod": -0.12051833616856555,
+    "p_arp_speed": 0.10814053862244011,
+    "p_duty": 0.42531293422570826,
+    "p_duty_ramp": -0.6085685939428387,
+    "p_repeat_speed": 0.06740669958577028,
+    "p_pha_offset": 0.792814619606911,
+    "p_pha_ramp": -0.05861207666646063,
+    "p_lpf_freq": 0.6276262068790779,
+    "p_lpf_ramp": 0.6497584737007176,
+    "p_lpf_resonance": -0.4663861975759924,
+    "p_hpf_freq": 0.11248103763612881,
+    "p_hpf_ramp": 0.0763884580208738,
+    "sound_vol": 0.01,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+  var sfx_step2 = stringify({
+    "oldParams": true,
+    "wave_type": 1,
+    "p_env_attack": 0.03236098469619712,
+    "p_env_sustain": 0.2705724972779315,
+    "p_env_punch": 0.029632247273632333,
+    "p_env_decay": 0.5256501669572298,
+    "p_base_freq": 0.458615573442568,
+    "p_freq_limit": 0,
+    "p_freq_ramp": 0.0034449992484306764,
+    "p_freq_dramp": -0.8176704139729954,
+    "p_vib_strength": 0.05463151067372264,
+    "p_vib_speed": 0.8023353751525573,
+    "p_arp_mod": -0.4185293161595989,
+    "p_arp_speed": 0.1543336714233381,
+    "p_duty": -0.5634192018692583,
+    "p_duty_ramp": -0.25289157705045817,
+    "p_repeat_speed": -0.9294585252887337,
+    "p_pha_offset": 0.02542836266244359,
+    "p_pha_ramp": 0.236112658177757,
+    "p_lpf_freq": 0.9998162946102427,
+    "p_lpf_ramp": 0.45118968025298606,
+    "p_lpf_resonance": -0.4482408045401636,
+    "p_hpf_freq": 674561078276487e-18,
+    "p_hpf_ramp": 5318547697887226e-19,
+    "sound_vol": 0.05,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+  var sfx_step3 = stringify({
+    "oldParams": true,
+    "wave_type": 2,
+    "p_env_attack": 0.27990485227055584,
+    "p_env_sustain": 0.020506998010026076,
+    "p_env_punch": 0.16596659461414084,
+    "p_env_decay": 0.20794936589878876,
+    "p_base_freq": 0.39098197565281834,
+    "p_freq_limit": 0,
+    "p_freq_ramp": -0.5191345290176836,
+    "p_freq_dramp": -3908268883617118e-20,
+    "p_vib_strength": 35777445777187156e-20,
+    "p_vib_speed": -0.633528747529275,
+    "p_arp_mod": -0.049517999495189535,
+    "p_arp_speed": 0.43650489199637477,
+    "p_duty": -0.4039380025688972,
+    "p_duty_ramp": -0.0016339049005769744,
+    "p_repeat_speed": 0.4575409109472983,
+    "p_pha_offset": -0.26822338283957997,
+    "p_pha_ramp": -0.15228830174630165,
+    "p_lpf_freq": 0.977206070084553,
+    "p_lpf_ramp": -0.06562380503361015,
+    "p_lpf_resonance": 0.3960568108105873,
+    "p_hpf_freq": 0.2551407112349606,
+    "p_hpf_ramp": -0.06906816447380913,
+    "sound_vol": 5e-3,
     "sample_rate": 44100,
     "sample_size": 8
   });
@@ -8394,9 +8499,9 @@ reset back to 1 for size
       c() {
         div = element("div");
         textarea = element("textarea");
-        attr(textarea, "class", "entry svelte-1777n5d");
+        attr(textarea, "class", "entry svelte-1msl7xv");
         textarea.readOnly = true;
-        attr(div, "class", div_class_value = "lofi " + (ctx[1] ? "mobile" : "") + " svelte-1777n5d");
+        attr(div, "class", div_class_value = "lofi " + (ctx[1] ? "mobile" : "") + " svelte-1msl7xv");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -8411,7 +8516,7 @@ reset back to 1 for size
         if (dirty & 1) {
           set_input_value(textarea, ctx2[0]);
         }
-        if (dirty & 2 && div_class_value !== (div_class_value = "lofi " + (ctx2[1] ? "mobile" : "") + " svelte-1777n5d")) {
+        if (dirty & 2 && div_class_value !== (div_class_value = "lofi " + (ctx2[1] ? "mobile" : "") + " svelte-1msl7xv")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -9271,6 +9376,37 @@ gl_Position = mvPosition;
     }
   });
 
+  // src/component/recolor.ts
+  AFRAME.registerComponent("recolor", {
+    multiple: true,
+    schema: {
+      type: "color",
+      default: "#0F0"
+    },
+    init() {
+      this.el.addEventListener("model-loaded", this.loaded = this.loaded.bind(this));
+    },
+    update() {
+      if (this.e) {
+        this.loaded(this.e);
+      }
+    },
+    remove() {
+      this.el.removeEventListener("model-loaded", this.loaded);
+    },
+    loaded(e) {
+      this.e = e;
+      e.detail.model.traverse((o) => {
+        if (o.isMesh) {
+          if (this.id === "" || o.material.name.toLowerCase().includes(this.id)) {
+            o.material.color.set(this.data);
+            o.material.needsUpdate = true;
+          }
+        }
+      });
+    }
+  });
+
   // src/node/house.svelte
   function create_fragment7(ctx) {
     let a_entity0;
@@ -9311,6 +9447,10 @@ gl_Position = mvPosition;
     let a_entity15;
     let t17;
     let a_entity16;
+    let t18;
+    let a_mixin2;
+    let t19;
+    let a_entity17;
     let mounted;
     let dispose;
     return {
@@ -9352,6 +9492,10 @@ gl_Position = mvPosition;
         a_entity15 = element("a-entity");
         t17 = space();
         a_entity16 = element("a-entity");
+        t18 = space();
+        a_mixin2 = element("a-mixin");
+        t19 = space();
+        a_entity17 = element("a-entity");
         set_custom_element_data(a_entity0, "class", "loot drop");
         set_custom_element_data(a_entity0, "pool__dagger", "mixin: dagger; size: 5;");
         set_custom_element_data(a_entity0, "activate__dagger", "");
@@ -9447,6 +9591,27 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity15, "rotation", "0 0 0");
         set_custom_element_data(a_entity15, "position", "0 -0.1 0");
         set_custom_element_data(a_entity16, "light", "type: point; distance: 12");
+        set_custom_element_data(a_mixin2, "id", "elf");
+        set_custom_element_data(a_mixin2, "gltf-model", "./char/Elf.glb");
+        set_custom_element_data(a_mixin2, "recolor__skin", "#212F00");
+        set_custom_element_data(a_mixin2, "recolor__hat", "black");
+        set_custom_element_data(a_mixin2, "recolor__clothes", "black");
+        set_custom_element_data(a_mixin2, "recolor__face", "#F0F");
+        set_custom_element_data(a_mixin2, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin2, "scale", "0.35 0.35 0.35");
+        set_custom_element_data(a_mixin2, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.6 0");
+        set_custom_element_data(a_mixin2, "shadow", "cast: true; receive: false;");
+        set_custom_element_data(a_mixin2, "alive", "type: random;");
+        set_custom_element_data(a_mixin2, "motion-events", "");
+        set_custom_element_data(a_mixin2, "gltf-events", "");
+        set_custom_element_data(a_mixin2, "target", "\u{1F9DD}");
+        set_custom_element_data(a_mixin2, "material", "shader: flat;filter: Skin");
+        set_custom_element_data(a_mixin2, "host", "elf");
+        set_custom_element_data(a_mixin2, "sfxr__use", sfx_squeek);
+        set_custom_element_data(a_mixin2, "sfxr__bump", sfx_squeek);
+        set_custom_element_data(a_mixin2, "scatter", "-5 1 -5 5 5 5");
+        set_custom_element_data(a_entity17, "pool__elf", "mixin: elf; size: 5;");
+        set_custom_element_data(a_entity17, "activate__elf", "");
       },
       m(target, anchor) {
         insert(target, a_entity0, anchor);
@@ -9486,6 +9651,10 @@ gl_Position = mvPosition;
         insert(target, a_entity15, anchor);
         insert(target, t17, anchor);
         insert(target, a_entity16, anchor);
+        insert(target, t18, anchor);
+        insert(target, a_mixin2, anchor);
+        insert(target, t19, anchor);
+        insert(target, a_entity17, anchor);
         if (!mounted) {
           dispose = listen(a_entity1, "collidestart", collidestart_handler);
           mounted = true;
@@ -9569,6 +9738,14 @@ gl_Position = mvPosition;
           detach(t17);
         if (detaching)
           detach(a_entity16);
+        if (detaching)
+          detach(t18);
+        if (detaching)
+          detach(a_mixin2);
+        if (detaching)
+          detach(t19);
+        if (detaching)
+          detach(a_entity17);
         mounted = false;
         dispose();
       }
@@ -10100,75 +10277,75 @@ void main() {
 
   // src/ui/body.svelte
   function create_fragment10(ctx) {
-    let div0;
-    let t1;
-    let div3;
+    let div2;
     let t3;
-    let div6;
-    let t5;
-    let div9;
-    let t9;
-    let div12;
+    let div5;
+    let t7;
+    let div8;
+    let t11;
+    let div11;
+    let t15;
+    let div14;
     return {
       c() {
-        div0 = element("div");
-        div0.textContent = "\u{1F45C}";
-        t1 = space();
-        div3 = element("div");
-        div3.innerHTML = `<div class="button bounce svelte-ckq4rl"></div> 
-	<div class="reverse button bounce svelte-ckq4rl"></div>`;
+        div2 = element("div");
+        div2.innerHTML = `<div class="button bounce svelte-1qm3p6d">\u{1F5E1}\uFE0F</div> 
+	<div class="reverse button bounce svelte-1qm3p6d">\u{1F3FA}</div>`;
         t3 = space();
-        div6 = element("div");
-        div6.innerHTML = `<div class="button bounce svelte-ckq4rl"></div> 
-	<div class="reverse button bounce svelte-ckq4rl"></div>`;
-        t5 = space();
-        div9 = element("div");
-        div9.innerHTML = `<div class="button bounce svelte-ckq4rl">\u{1F9BE}</div> 
-	<div class="reverse button bounce svelte-ckq4rl">\u{1F9BE}</div>`;
-        t9 = space();
-        div12 = element("div");
-        div12.innerHTML = `<div class="reverse button bounce svelte-ckq4rl">\u{1F9BF}</div> 
-	<div class="button bounce svelte-ckq4rl">\u{1F9BF}</div>`;
-        attr(div0, "class", "button bounce nonce svelte-ckq4rl");
-        set_style(div0, "margin-bottom", "0.1vh");
-        attr(div3, "class", "flex svelte-ckq4rl");
-        attr(div6, "class", "flex svelte-ckq4rl");
-        attr(div9, "class", "flex svelte-ckq4rl");
-        attr(div12, "class", "flex svelte-ckq4rl");
+        div5 = element("div");
+        div5.innerHTML = `<div class="button bounce svelte-1qm3p6d">\u2197\uFE0F</div> 
+	<div class="reverse button bounce svelte-1qm3p6d">\u{1F498}</div>`;
+        t7 = space();
+        div8 = element("div");
+        div8.innerHTML = `<div class="button bounce svelte-1qm3p6d">\u{1F45C}</div> 
+	<div class="reverse button bounce svelte-1qm3p6d">\u{1F45C}</div>`;
+        t11 = space();
+        div11 = element("div");
+        div11.innerHTML = `<div class="button bounce svelte-1qm3p6d">\u{1F9BE}</div> 
+	<div class="reverse button bounce svelte-1qm3p6d">\u{1F9BE}</div>`;
+        t15 = space();
+        div14 = element("div");
+        div14.innerHTML = `<div class="reverse button bounce svelte-1qm3p6d">\u{1F9BF}</div> 
+	<div class="button bounce svelte-1qm3p6d">\u{1F9BF}</div>`;
+        attr(div2, "class", "flex bag disable svelte-1qm3p6d");
+        attr(div5, "class", "flex bag disable svelte-1qm3p6d");
+        attr(div8, "class", "flex bag disable svelte-1qm3p6d");
+        attr(div11, "class", "flex bag svelte-1qm3p6d");
+        attr(div14, "class", "flex bag svelte-1qm3p6d");
       },
       m(target, anchor) {
-        insert(target, div0, anchor);
-        insert(target, t1, anchor);
-        insert(target, div3, anchor);
+        insert(target, div2, anchor);
         insert(target, t3, anchor);
-        insert(target, div6, anchor);
-        insert(target, t5, anchor);
-        insert(target, div9, anchor);
-        insert(target, t9, anchor);
-        insert(target, div12, anchor);
+        insert(target, div5, anchor);
+        insert(target, t7, anchor);
+        insert(target, div8, anchor);
+        insert(target, t11, anchor);
+        insert(target, div11, anchor);
+        insert(target, t15, anchor);
+        insert(target, div14, anchor);
       },
       p: noop,
       i: noop,
       o: noop,
       d(detaching) {
         if (detaching)
-          detach(div0);
-        if (detaching)
-          detach(t1);
-        if (detaching)
-          detach(div3);
+          detach(div2);
         if (detaching)
           detach(t3);
         if (detaching)
-          detach(div6);
+          detach(div5);
         if (detaching)
-          detach(t5);
+          detach(t7);
         if (detaching)
-          detach(div9);
+          detach(div8);
         if (detaching)
-          detach(t9);
+          detach(t11);
         if (detaching)
-          detach(div12);
+          detach(div11);
+        if (detaching)
+          detach(t15);
+        if (detaching)
+          detach(div14);
       }
     };
   }
@@ -10198,9 +10375,8 @@ void main() {
   }
   function create_each_block_2(ctx) {
     let div;
-    let t0_value = (ctx[6][ctx[24]] || ctx[24]) + "";
-    let t0;
-    let t1;
+    let t_value = (ctx[6][ctx[24]] || ctx[24]) + "";
+    let t;
     let div_class_value;
     let mounted;
     let dispose;
@@ -10210,14 +10386,12 @@ void main() {
     return {
       c() {
         div = element("div");
-        t0 = text(t0_value);
-        t1 = space();
-        attr(div, "class", div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[24] ? "down" : "inactive") + " " + (ctx[5][ctx[24]] ? "active" : "") + " svelte-1ul56wr");
+        t = text(t_value);
+        attr(div, "class", div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[24] ? "down" : "inactive") + " " + (ctx[5][ctx[24]] ? "active" : "") + " svelte-1m7x9wp");
       },
       m(target, anchor) {
         insert(target, div, anchor);
-        append(div, t0);
-        append(div, t1);
+        append(div, t);
         if (!mounted) {
           dispose = listen(div, "click", click_handler);
           mounted = true;
@@ -10225,9 +10399,9 @@ void main() {
       },
       p(new_ctx, dirty) {
         ctx = new_ctx;
-        if (dirty & 64 && t0_value !== (t0_value = (ctx[6][ctx[24]] || ctx[24]) + ""))
-          set_data(t0, t0_value);
-        if (dirty & 48 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[24] ? "down" : "inactive") + " " + (ctx[5][ctx[24]] ? "active" : "") + " svelte-1ul56wr")) {
+        if (dirty & 64 && t_value !== (t_value = (ctx[6][ctx[24]] || ctx[24]) + ""))
+          set_data(t, t_value);
+        if (dirty & 48 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[4] === "" + ctx[24] ? "down" : "inactive") + " " + (ctx[5][ctx[24]] ? "active" : "") + " svelte-1m7x9wp")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -10252,7 +10426,7 @@ void main() {
         div = element("div");
         t0 = text(t0_value);
         t1 = space();
-        attr(div, "class", "loc svelte-1ul56wr");
+        attr(div, "class", "loc svelte-1m7x9wp");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -10303,7 +10477,7 @@ void main() {
         div = element("div");
         t0 = text(t0_value);
         t1 = space();
-        attr(div, "class", "loc svelte-1ul56wr");
+        attr(div, "class", "loc svelte-1m7x9wp");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -10342,24 +10516,28 @@ void main() {
     };
   }
   function create_fragment11(ctx) {
-    let div0;
-    let div0_class_value;
+    let div3;
     let t0;
+    let div0;
+    let t2;
+    let div1;
+    let t4;
+    let div2;
+    let div3_class_value;
+    let t6;
+    let div8;
+    let div7;
+    let div4;
+    let t8;
+    let body;
+    let t9;
     let div6;
     let div5;
-    let div1;
-    let t2;
-    let body;
-    let t3;
-    let div2;
-    let t5;
-    let div4;
-    let div3;
-    let div5_class_value;
-    let t6;
-    let div7;
-    let t7;
-    let div8;
+    let div7_class_value;
+    let t10;
+    let div9;
+    let t11;
+    let div10;
     let current;
     let mounted;
     let dispose;
@@ -10387,84 +10565,96 @@ void main() {
     });
     return {
       c() {
-        div0 = element("div");
+        div3 = element("div");
         for (let i = 0; i < each_blocks_2.length; i += 1) {
           each_blocks_2[i].c();
         }
         t0 = space();
+        div0 = element("div");
+        div0.textContent = "\u{1F9BE}";
+        t2 = space();
+        div1 = element("div");
+        div1.textContent = "\u{1F998}";
+        t4 = space();
+        div2 = element("div");
+        div2.textContent = "\u{1F9BE}";
+        t6 = space();
+        div8 = element("div");
+        div7 = element("div");
+        div4 = element("div");
+        div4.textContent = "\u{1F4AC}";
+        t8 = space();
+        create_component(body.$$.fragment);
+        t9 = space();
         div6 = element("div");
         div5 = element("div");
-        div1 = element("div");
-        div1.textContent = "\u{1F4AC}";
-        t2 = space();
-        create_component(body.$$.fragment);
-        t3 = space();
-        div2 = element("div");
-        div2.textContent = "\u{1F998}";
-        t5 = space();
-        div4 = element("div");
-        div3 = element("div");
-        t6 = space();
-        div7 = element("div");
+        t10 = space();
+        div9 = element("div");
         for (let i = 0; i < each_blocks_1.length; i += 1) {
           each_blocks_1[i].c();
         }
-        t7 = space();
-        div8 = element("div");
+        t11 = space();
+        div10 = element("div");
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
-        attr(div0, "class", div0_class_value = "bind-bar " + (ctx[3] ? "mobile" : "") + " svelte-1ul56wr");
-        attr(div1, "class", "speak button bounce svelte-1ul56wr");
-        attr(div2, "class", "jump button bounce svelte-1ul56wr");
-        attr(div3, "class", "dot svelte-1ul56wr");
-        set_style(div3, "margin-top", ctx[2] * 100 + "%");
-        set_style(div3, "margin-left", ctx[1] * 100 + "%");
-        attr(div4, "class", "move button bounce svelte-1ul56wr");
-        attr(div5, "class", div5_class_value = "motion " + (ctx[3] ? "mobile" : "") + " svelte-1ul56wr");
-        attr(div6, "class", "holder svelte-1ul56wr");
-        attr(div7, "class", "location svelte-1ul56wr");
-        attr(div8, "class", "ground svelte-1ul56wr");
+        attr(div0, "class", "button bounce svelte-1m7x9wp");
+        attr(div1, "class", "jump button bounce svelte-1m7x9wp");
+        attr(div2, "class", "reverse button bounce svelte-1m7x9wp");
+        attr(div3, "class", div3_class_value = "bind-bar " + (ctx[3] ? "mobile" : "") + " svelte-1m7x9wp");
+        attr(div4, "class", "speak button bounce svelte-1m7x9wp");
+        attr(div5, "class", "dot svelte-1m7x9wp");
+        set_style(div5, "margin-top", ctx[2] * 100 + "%");
+        set_style(div5, "margin-left", ctx[1] * 100 + "%");
+        attr(div6, "class", "move button bounce svelte-1m7x9wp");
+        attr(div7, "class", div7_class_value = "motion " + (ctx[3] ? "mobile" : "") + " svelte-1m7x9wp");
+        attr(div8, "class", "holder svelte-1m7x9wp");
+        attr(div9, "class", "location svelte-1m7x9wp");
+        attr(div10, "class", "ground svelte-1m7x9wp");
       },
       m(target, anchor) {
-        insert(target, div0, anchor);
+        insert(target, div3, anchor);
         for (let i = 0; i < each_blocks_2.length; i += 1) {
-          each_blocks_2[i].m(div0, null);
+          each_blocks_2[i].m(div3, null);
         }
-        insert(target, t0, anchor);
-        insert(target, div6, anchor);
-        append(div6, div5);
-        append(div5, div1);
-        append(div5, t2);
-        mount_component(body, div5, null);
-        append(div5, t3);
-        append(div5, div2);
-        append(div5, t5);
-        append(div5, div4);
-        append(div4, div3);
-        ctx[16](div4);
+        append(div3, t0);
+        append(div3, div0);
+        append(div3, t2);
+        append(div3, div1);
+        append(div3, t4);
+        append(div3, div2);
         insert(target, t6, anchor);
-        insert(target, div7, anchor);
-        for (let i = 0; i < each_blocks_1.length; i += 1) {
-          each_blocks_1[i].m(div7, null);
-        }
-        insert(target, t7, anchor);
         insert(target, div8, anchor);
+        append(div8, div7);
+        append(div7, div4);
+        append(div7, t8);
+        mount_component(body, div7, null);
+        append(div7, t9);
+        append(div7, div6);
+        append(div6, div5);
+        ctx[16](div6);
+        insert(target, t10, anchor);
+        insert(target, div9, anchor);
+        for (let i = 0; i < each_blocks_1.length; i += 1) {
+          each_blocks_1[i].m(div9, null);
+        }
+        insert(target, t11, anchor);
+        insert(target, div10, anchor);
         for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].m(div8, null);
+          each_blocks[i].m(div10, null);
         }
         current = true;
         if (!mounted) {
           dispose = [
             listen(div1, "click", ctx[14]),
-            listen(div2, "click", ctx[15]),
-            listen(div4, "touchmove", ctx[10]),
-            listen(div4, "touchend", ctx[11]),
-            listen(div4, "mousemove", ctx[10]),
-            listen(div4, "mousedown", ctx[12]),
-            listen(div4, "touchstart", ctx[12]),
-            listen(div4, "mouseleave", ctx[11]),
-            listen(div4, "mouseup", ctx[11])
+            listen(div4, "click", ctx[15]),
+            listen(div6, "touchmove", ctx[10]),
+            listen(div6, "touchend", ctx[11]),
+            listen(div6, "mousemove", ctx[10]),
+            listen(div6, "mousedown", ctx[12]),
+            listen(div6, "touchstart", ctx[12]),
+            listen(div6, "mouseleave", ctx[11]),
+            listen(div6, "mouseup", ctx[11])
           ];
           mounted = true;
         }
@@ -10480,7 +10670,7 @@ void main() {
             } else {
               each_blocks_2[i] = create_each_block_2(child_ctx);
               each_blocks_2[i].c();
-              each_blocks_2[i].m(div0, null);
+              each_blocks_2[i].m(div3, t0);
             }
           }
           for (; i < each_blocks_2.length; i += 1) {
@@ -10488,17 +10678,17 @@ void main() {
           }
           each_blocks_2.length = each_value_2.length;
         }
-        if (!current || dirty & 8 && div0_class_value !== (div0_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-1ul56wr")) {
-          attr(div0, "class", div0_class_value);
+        if (!current || dirty & 8 && div3_class_value !== (div3_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-1m7x9wp")) {
+          attr(div3, "class", div3_class_value);
         }
         if (!current || dirty & 4) {
-          set_style(div3, "margin-top", ctx2[2] * 100 + "%");
+          set_style(div5, "margin-top", ctx2[2] * 100 + "%");
         }
         if (!current || dirty & 2) {
-          set_style(div3, "margin-left", ctx2[1] * 100 + "%");
+          set_style(div5, "margin-left", ctx2[1] * 100 + "%");
         }
-        if (!current || dirty & 8 && div5_class_value !== (div5_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-1ul56wr")) {
-          attr(div5, "class", div5_class_value);
+        if (!current || dirty & 8 && div7_class_value !== (div7_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-1m7x9wp")) {
+          attr(div7, "class", div7_class_value);
         }
         if (dirty & 128) {
           each_value_1 = ctx2[7];
@@ -10512,7 +10702,7 @@ void main() {
               each_blocks_1[i] = create_each_block_1(child_ctx);
               each_blocks_1[i].c();
               transition_in(each_blocks_1[i], 1);
-              each_blocks_1[i].m(div7, null);
+              each_blocks_1[i].m(div9, null);
             }
           }
           group_outros();
@@ -10533,7 +10723,7 @@ void main() {
               each_blocks[i] = create_each_block(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
-              each_blocks[i].m(div8, null);
+              each_blocks[i].m(div10, null);
             }
           }
           group_outros();
@@ -10569,23 +10759,23 @@ void main() {
       },
       d(detaching) {
         if (detaching)
-          detach(div0);
+          detach(div3);
         destroy_each(each_blocks_2, detaching);
-        if (detaching)
-          detach(t0);
-        if (detaching)
-          detach(div6);
-        destroy_component(body);
-        ctx[16](null);
         if (detaching)
           detach(t6);
         if (detaching)
-          detach(div7);
+          detach(div8);
+        destroy_component(body);
+        ctx[16](null);
+        if (detaching)
+          detach(t10);
+        if (detaching)
+          detach(div9);
         destroy_each(each_blocks_1, detaching);
         if (detaching)
-          detach(t7);
+          detach(t11);
         if (detaching)
-          detach(div8);
+          detach(div10);
         destroy_each(each_blocks, detaching);
         mounted = false;
         run_all(dispose);
@@ -10605,7 +10795,7 @@ void main() {
     component_subscribe($$self, binds_icon, ($$value) => $$invalidate(6, $binds_icon = $$value));
     component_subscribe($$self, location2, ($$value) => $$invalidate(7, $location = $$value));
     component_subscribe($$self, ground, ($$value) => $$invalidate(8, $ground = $$value));
-    let bound = [1, 2, 3, 4, 5, 6, 7];
+    let bound = [1, 2, 3, 4, 5, 6];
     let holder;
     let x = 0.5;
     let y = 0.5;
@@ -10674,18 +10864,18 @@ void main() {
       key_up.set("" + b);
     };
     const click_handler_1 = () => {
-      open_text.set("");
-      requestAnimationFrame(() => {
-        document.getElementById("text").focus();
-      });
-    };
-    const click_handler_2 = () => {
       key_down.set(" ");
       setTimeout(() => {
         key_up.set(" ");
       }, 300);
     };
-    function div4_binding($$value) {
+    const click_handler_2 = () => {
+      open_text.set("");
+      requestAnimationFrame(() => {
+        document.getElementById("text").focus();
+      });
+    };
+    function div6_binding($$value) {
       binding_callbacks[$$value ? "unshift" : "push"](() => {
         holder = $$value;
         $$invalidate(0, holder);
@@ -10708,7 +10898,7 @@ void main() {
       click_handler,
       click_handler_1,
       click_handler_2,
-      div4_binding
+      div6_binding
     ];
   }
   var Onscreen_ui = class extends SvelteComponent {
@@ -10721,6 +10911,64 @@ void main() {
 
   // src/sound/item.ts
   var sfx_item = stringify({
+    "oldParams": true,
+    "wave_type": 1,
+    "p_env_attack": 0,
+    "p_env_sustain": 0.09283549995297223,
+    "p_env_punch": 0.34204811746491576,
+    "p_env_decay": 0.2417616903132828,
+    "p_base_freq": 0.7295019250921798,
+    "p_freq_limit": 0,
+    "p_freq_ramp": 0,
+    "p_freq_dramp": 0,
+    "p_vib_strength": 0,
+    "p_vib_speed": 0,
+    "p_arp_mod": 0.23880219791297394,
+    "p_arp_speed": 0.687508324811289,
+    "p_duty": 0,
+    "p_duty_ramp": 0,
+    "p_repeat_speed": 0,
+    "p_pha_offset": 0,
+    "p_pha_ramp": 0,
+    "p_lpf_freq": 1,
+    "p_lpf_ramp": 0,
+    "p_lpf_resonance": 0,
+    "p_hpf_freq": 0,
+    "p_hpf_ramp": 0,
+    "sound_vol": 0.05,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+  var sfx_item3 = stringify({
+    "oldParams": true,
+    "wave_type": 0,
+    "p_env_attack": -0.003934407542108663,
+    "p_env_sustain": 0.524366769037737,
+    "p_env_punch": 0.008665538364896794,
+    "p_env_decay": 0.3396477438397971,
+    "p_base_freq": 0.4143056310860395,
+    "p_freq_limit": 0,
+    "p_freq_ramp": -0.0014206315544120496,
+    "p_freq_dramp": 0.0706245059769714,
+    "p_vib_strength": -0.021815287929415027,
+    "p_vib_speed": -0.8205013654289433,
+    "p_arp_mod": -0.3189473993423517,
+    "p_arp_speed": -0.48605230596033877,
+    "p_duty": -0.632832818119808,
+    "p_duty_ramp": 0.012317492869445515,
+    "p_repeat_speed": 0.4008256724923345,
+    "p_pha_offset": -0.33575449214840836,
+    "p_pha_ramp": -0.27298287585827274,
+    "p_lpf_freq": 0.945630556731045,
+    "p_lpf_ramp": -0.32357457218842606,
+    "p_lpf_resonance": 0.9677887682942008,
+    "p_hpf_freq": 0.7626844242863982,
+    "p_hpf_ramp": -0.06844341625774902,
+    "sound_vol": 0.25,
+    "sample_rate": 44100,
+    "sample_size": 8
+  });
+  var sfx_item2 = stringify({
     "oldParams": true,
     "wave_type": 1,
     "p_env_attack": 0,

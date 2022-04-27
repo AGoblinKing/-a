@@ -21,6 +21,13 @@ AFRAME.registerComponent("vary", {
 
         bb.setFromArray(this.range)
 
+        if (this.data.property.indexOf("recolor") === 0) {
+
+            // TODO: set the attribute recolor__whatever on it to a color use the range
+            this.el.setAttribute(this.data.property, `rgb(${bb.min.x + Math.random() * (bb.max.x - bb.min.x)}, ${bb.min.y + Math.random() * (bb.max.y - bb.min.y)}, ${bb.min.z + Math.random() * (bb.max.z - bb.min.z)})`)
+
+            return
+        }
         o3d[this.data.property]?.set(
             bb.min.x + Math.random() * (bb.max.x - bb.min.x),
             bb.min.y + Math.random() * (bb.max.y - bb.min.y),

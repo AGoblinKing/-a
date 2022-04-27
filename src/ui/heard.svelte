@@ -21,7 +21,6 @@
 
 		font-size: 2vh;
 		user-select: none;
-		color: white;
 
 		resize: none;
 
@@ -38,7 +37,7 @@
 		box-shadow: none;
 		font-weight: 500;
 		height: 18vh;
-		width: 50vw;
+		width: 80vw;
 		direction: ltr;
 		opacity: 0.4;
 		border-radius: 1vh;

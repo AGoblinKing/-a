@@ -23,6 +23,8 @@ AFRAME.registerComponent("wasd-controller", {
 
     init() {
         this.jump = AFRAME.utils.throttleTick(this.jump, 2000, this)
+
+        this.next = 0
     },
     remove() {
         this.cancel()
@@ -30,8 +32,11 @@ AFRAME.registerComponent("wasd-controller", {
     jump() {
         this.el.emit("jump")
     },
+    step() {
+        this.el.emit("step")
+    },
 
-    tick(_, delta) {
+    tick(t, delta) {
         if (guest.$) return
 
         if (!this.el.body) return
@@ -47,7 +52,7 @@ AFRAME.registerComponent("wasd-controller", {
         if (key_map.$["shift"]) {
             intensity = 2
         }
-        vec3.y = 5
+
         // TODO: or if colliding with a climbable
         if (key_map.$[" "] && o3d.position.y < 0.5) {
             hop *= delta
@@ -57,32 +62,34 @@ AFRAME.registerComponent("wasd-controller", {
             vec3.y = hop
         }
         if (key_map.$["w"]) {
-
+            vec3.y += 5
             vec3.z += -this.data.speed * delta * intensity
         }
         if (key_map.$["s"]) {
-
+            vec3.y += 5
             vec3.z += this.data.speed * delta * intensity
         }
         if (key_map.$["a"]) {
-
+            vec3.y += 5
             vec3.x += -this.data.speed * delta * intensity
         }
         if (key_map.$["d"]) {
-
+            vec3.y += 5
             vec3.x += this.data.speed * delta * intensity
         }
         if (key_map.$["q"]) {
+            vec3.y += 5
             const root = getRoot(camera.$)
             root.rotation.y += this.data.rot * delta
         }
         if (key_map.$["e"]) {
+            vec3.y += 5
             const root = getRoot(camera.$)
             root.rotation.y -= this.data.rot * delta
 
         }
-
-        if (Math.abs(vec3.length()) > 0 && camera.$) {
+        const l = Math.abs(vec3.length())
+        if (l > 0 && camera.$) {
             camera.$.updateMatrixWorld()
             quat.setFromRotationMatrix(camera.$.matrixWorld)
             const up = vec3.y
@@ -93,7 +100,11 @@ AFRAME.registerComponent("wasd-controller", {
             this.el.body.applyForce(force)
             this.el.body.activate()
             Ammo.destroy(force);
+            if (t - this.next > 0) {
+                this.step()
 
+                this.next = t + 1000 - l * 40 + Math.random() * 100 + (t % 100 > 50 ? 250 : 0)
+            }
         }
 
         if (torq) Ammo.destroy(torq)

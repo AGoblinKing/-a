@@ -6,7 +6,7 @@
 	import 'src/component/vrm-avatar'
 
 	import { sfx_jump } from 'src/sound/action'
-	import { sfx_doer1 } from 'src/sound/person'
+	import { sfx_doer1, sfx_step } from 'src/sound/person'
 </script>
 
 <a-mixin
@@ -16,7 +16,7 @@
 />
 
 <!-- <a-entity pool__dust="mixin: dust; size: 5;" activate__dust /> -->
-
+<!-- sfxr__step={sfx_step} -->
 <a-entity
 	mixin="shadow character"
 	position="0 1 0"

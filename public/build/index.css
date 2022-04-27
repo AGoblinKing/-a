@@ -4,11 +4,10 @@
 }
 
 /* fakecss:/workspaces/-a/src/ui/heard.esbuild-svelte-fake-css */
-.entry.svelte-1777n5d {
+.entry.svelte-1msl7xv {
   flex: 1;
   font-size: 2vh;
   user-select: none;
-  color: white;
   resize: none;
   border-radius: 1vh;
   background-color: transparent;
@@ -23,7 +22,7 @@
   box-shadow: none;
   font-weight: 500;
   height: 18vh;
-  width: 50vw;
+  width: 80vw;
   direction: ltr;
   opacity: 0.4;
   border-radius: 1vh;
@@ -34,7 +33,7 @@
     0.15rem 0.15rem 0 #000;
   transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 }
-.lofi.svelte-1777n5d {
+.lofi.svelte-1msl7xv {
   display: flex;
   position: absolute;
   top: 0vh;
@@ -91,27 +90,33 @@
 }
 
 /* fakecss:/workspaces/-a/src/ui/body.esbuild-svelte-fake-css */
-.nonce.svelte-ckq4rl.svelte-ckq4rl {
-  transform: none !important;
+.disable.svelte-1qm3p6d.svelte-1qm3p6d {
+  filter: sepia(1) grayscale(0.5);
 }
-.flex.svelte-ckq4rl.svelte-ckq4rl {
+.disable.svelte-1qm3p6d .button.svelte-1qm3p6d {
+  pointer-events: none;
+}
+.flex.svelte-1qm3p6d.svelte-1qm3p6d {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.reverse.svelte-ckq4rl.svelte-ckq4rl {
+.reverse.svelte-1qm3p6d.svelte-1qm3p6d {
   transform: scaleX(-1) !important;
 }
-.flex.svelte-ckq4rl div.svelte-ckq4rl {
+.flex.svelte-1qm3p6d div.svelte-1qm3p6d {
   margin: 0.25vh 0.1vh;
 }
-.button.svelte-ckq4rl.svelte-ckq4rl {
-  opacity: 0.25;
+.bag.svelte-1qm3p6d .button.svelte-1qm3p6d {
+  font-size: 2vh;
+}
+.button.svelte-1qm3p6d.svelte-1qm3p6d {
   border: 0.5vh solid rgb(0, 106, 206);
   border-radius: 1vh;
   color: white;
   padding: 0.5vh 0.5vh;
   font-size: 3vh;
+  opacity: 0.5;
   outline: none;
   background-color: rgb(0, 58, 130);
   text-align: center;
@@ -120,6 +125,7 @@
   align-self: center;
   margin: 0 2.5vh;
   box-shadow: 0 0 5vh rgb(0, 65, 150);
+  cursor: pointer;
   text-shadow:
     -0.15rem -0.15rem 0 #000,
     0.15rem -0.15rem 0 #000,
@@ -127,7 +133,18 @@
     0.15rem 0.15rem 0 #000;
   transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 }
-@keyframes svelte-ckq4rl-beep {
+.button.svelte-1qm3p6d.svelte-1qm3p6d:active {
+  opacity: 1;
+  background-color: rgb(0, 32, 53) !important;
+}
+.button.svelte-1qm3p6d.svelte-1qm3p6d:hover {
+  opacity: 1;
+  background-color: rgb(0, 106, 206) !important;
+  color: rgb(0, 225, 255);
+  cursor: pointer;
+  animation: svelte-1qm3p6d-beep 250ms alternate infinite;
+}
+@keyframes svelte-1qm3p6d-beep {
   0% {
     opacity: 95%;
   }
@@ -137,8 +154,11 @@
 }
 
 /* fakecss:/workspaces/-a/src/ui/onscreen-ui.esbuild-svelte-fake-css */
-.ground.svelte-1ul56wr.svelte-1ul56wr,
-.location.svelte-1ul56wr.svelte-1ul56wr {
+.bounce.svelte-1m7x9wp.svelte-1m7x9wp {
+  opacity: 0.5;
+}
+.ground.svelte-1m7x9wp.svelte-1m7x9wp,
+.location.svelte-1m7x9wp.svelte-1m7x9wp {
   user-select: none;
   display: flex;
   flex-direction: row;
@@ -154,21 +174,30 @@
     0.15rem 0.15rem 0 #000;
   z-index: 1;
 }
-.ground.svelte-1ul56wr.svelte-1ul56wr {
+.ground.svelte-1m7x9wp.svelte-1m7x9wp {
   bottom: 0;
   left: 50%;
   align-items: center;
   transform: translateX(-50%);
 }
-.location.svelte-1ul56wr.svelte-1ul56wr {
+.reverse.button.svelte-1m7x9wp.svelte-1m7x9wp {
+  transform: perspective(400px) rotateY(40deg) scaleX(-1);
+}
+.mobile.svelte-1m7x9wp .reverse.button.svelte-1m7x9wp {
+  transform: scaleX(-1);
+}
+.reverse.button.svelte-1m7x9wp.svelte-1m7x9wp:hover {
+  transform: scaleX(-1);
+}
+.location.svelte-1m7x9wp.svelte-1m7x9wp {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
 }
-.loc.svelte-1ul56wr.svelte-1ul56wr {
+.loc.svelte-1m7x9wp.svelte-1m7x9wp {
   margin: 1vh;
 }
-.dot.svelte-1ul56wr.svelte-1ul56wr {
+.dot.svelte-1m7x9wp.svelte-1m7x9wp {
   width: 3vh;
   height: 3vh;
   background-color: rgb(153, 173, 192);
@@ -178,17 +207,21 @@
   cursor: pointer;
   pointer-events: none;
 }
-.bind-bar.svelte-1ul56wr.svelte-1ul56wr {
+.bind-bar.svelte-1m7x9wp.svelte-1m7x9wp {
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
   z-index: 5;
 }
-.inactive.svelte-1ul56wr.svelte-1ul56wr {
+.bind-bar.svelte-1m7x9wp .button.svelte-1m7x9wp {
+  font-size: 2.5vh;
+}
+.inactive.svelte-1m7x9wp.svelte-1m7x9wp {
   opacity: 0;
 }
-.button.svelte-1ul56wr.svelte-1ul56wr {
+.button.svelte-1m7x9wp.svelte-1m7x9wp {
+  user-select: none;
   border: 0.5vh solid rgb(0, 106, 206);
   border-radius: 1vh;
   color: white;
@@ -211,16 +244,16 @@
   transform: perspective(400px) rotateY(40deg);
   cursor: pointer;
 }
-.button.svelte-1ul56wr.svelte-1ul56wr:active {
+.button.svelte-1m7x9wp.svelte-1m7x9wp:active {
   background-color: rgb(0, 32, 53) !important;
 }
-.button.svelte-1ul56wr.svelte-1ul56wr:hover {
+.button.svelte-1m7x9wp.svelte-1m7x9wp:hover {
   background-color: rgb(0, 106, 206) !important;
   color: rgb(0, 225, 255);
   cursor: pointer;
-  animation: svelte-1ul56wr-beep 250ms alternate infinite;
+  animation: svelte-1m7x9wp-beep 250ms alternate infinite;
 }
-@keyframes svelte-1ul56wr-beep {
+@keyframes svelte-1m7x9wp-beep {
   0% {
     opacity: 95%;
   }
@@ -228,38 +261,35 @@
     opacity: 100%;
   }
 }
-.button.down.svelte-1ul56wr.svelte-1ul56wr {
-  box-shadow: 0 0 5vh rgb(0, 65, 150), 0 0 2vh rgb(31, 255, 2);
+.button.down.svelte-1m7x9wp.svelte-1m7x9wp {
+  box-shadow: 0 0 5vh rgb(0, 65, 150), 0 0 2vh rgb(2, 255, 255);
 }
-.holder.svelte-1ul56wr.svelte-1ul56wr {
+.holder.svelte-1m7x9wp.svelte-1m7x9wp {
   position: absolute;
   right: 0;
   z-index: 5;
   bottom: 10vh;
 }
-.motion.svelte-1ul56wr .button.svelte-1ul56wr {
+.motion.svelte-1m7x9wp .button.svelte-1m7x9wp {
   opacity: 0.65;
 }
-.motion.svelte-1ul56wr .button.svelte-1ul56wr {
+.motion.svelte-1m7x9wp .button.svelte-1m7x9wp {
   padding: 0.5vh 0vh;
   transform: perspective(400px) rotateY(-40deg);
 }
-.move.button.svelte-1ul56wr.svelte-1ul56wr {
+.move.button.svelte-1m7x9wp.svelte-1m7x9wp {
   width: 10vh;
   height: 10vh;
 }
-.motion.svelte-1ul56wr .button.svelte-1ul56wr:active,
-.button.svelte-1ul56wr.svelte-1ul56wr:hover,
-.motion.svelte-1ul56wr .button.svelte-1ul56wr:hover,
-.button.svelte-1ul56wr.svelte-1ul56wr:active {
+.motion.svelte-1m7x9wp .button.svelte-1m7x9wp:active,
+.button.svelte-1m7x9wp.svelte-1m7x9wp:hover,
+.motion.svelte-1m7x9wp .button.svelte-1m7x9wp:hover,
+.button.svelte-1m7x9wp.svelte-1m7x9wp:active {
   transform: none;
   opacity: 1;
 }
-.active.svelte-1ul56wr.svelte-1ul56wr {
+.active.svelte-1m7x9wp.svelte-1m7x9wp {
   opacity: 0.65;
-}
-.mobile.svelte-1ul56wr .button.svelte-1ul56wr {
-  transform: none !important;
 }
 
 /* fakecss:/workspaces/-a/src/ui/title.esbuild-svelte-fake-css */
