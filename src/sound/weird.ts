@@ -55,7 +55,7 @@ export const sfx_creepy_laugh_tick = stringify({
     "p_lpf_resonance": 0.4958603109123527,
     "p_hpf_freq": 0.0006800319932675319,
     "p_hpf_ramp": 0.00006786906281003671,
-    "sound_vol": 0.25,
+    "sound_vol": 0.1,
     "sample_rate": 44100,
     "sample_size": 8
 })

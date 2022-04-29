@@ -3,7 +3,7 @@
 
 	import 'src/component/wasd-controller'
 	import 'src/component/sfxr'
-	import 'src/component/vrm-avatar'
+	import 'src/component/avatar'
 
 	import { sfx_jump } from 'src/sound/action'
 	import { sfx_doer1, sfx_step } from 'src/sound/person'
@@ -30,7 +30,7 @@
 >
 	<a-entity
 		class="vrm-interaction"
-		vrm-avatar
+		avatar
 		ammo-body="type: kinematic;  mass: 0; collisionFilterGroup: 3; disableCollision: true; emitCollisionEvents: true; collisionFilterMask:1;scaleAutoUpdate:false"
 		ammo-shape="type: sphere; sphereRadius: 2.5; fit:manual;"
 	/>

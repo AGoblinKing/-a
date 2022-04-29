@@ -28,6 +28,9 @@ AFRAME.registerComponent("recolor", {
         this.e = e
         e.detail.model.traverse(o => {
             if (o.isMesh) {
+                o.material.roughness = 1
+                o.material.metalness = 0
+
                 if (this.id === "" || o.material.name.toLowerCase().includes(this.id)) {
                     o.material.color.set(this.data)
 

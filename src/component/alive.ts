@@ -31,5 +31,12 @@ AFRAME.registerComponent("alive", {
         this.el.body.activate()
         Ammo.destroy(force)
         Ammo.destroy(torq)
+
+        if (this.el.components.avatar) {
+            this.avatar()
+        }
+    },
+    avatar() {
+        this.el.components.avatar?.doUse()
     }
 })

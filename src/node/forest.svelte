@@ -9,8 +9,12 @@
 	import 'src/component/windy'
 	import 'src/component/alive'
 	import { sfx_squeek } from 'src/sound/plush'
-	import { sfx_bump } from 'src/sound/action'
+	import { sfx_bump, sfx_near_miss, sfx_shthump } from 'src/sound/action'
 	import { sfx_wood } from 'src/sound/material'
+	import { sfx_bird, sfx_cat } from 'src/sound/animals'
+	import { sfx_creepy_laugh_tick, sfx_deep_robot, sfx_funky } from 'src/sound/weird'
+	import { sfx_flute } from 'src/sound/instrument'
+	import { sfx_bubbles } from 'src/sound/environmental'
 
 	const groundSize = 200
 
@@ -35,7 +39,8 @@
 <a-mixin
 	id="smolitem"
 	tag__env
-	ammo-body="type: static; mass: 0;collisionFilterGroup: 2;"
+	sfxr__bump={sfx_shthump}
+	ammo-body="type: static; mass: 0;"
 	ammo-shape="type: sphere; fit: manual; sphereRadius: 1;"
 />
 
@@ -174,13 +179,17 @@
 	gltf-model="./glb/trunk.glb"
 	tag__env
 	vary={trunkVary}
+	sfxr__bump={sfx_bubbles}
+	target="🪵"
 	{scatter}
 />
 <a-entity pool__trunk="mixin: trunk; size: 20" activate__trunk />
 
 <a-mixin
 	id="trunkLong"
+	target="🪵"
 	{...smolBoxBlocker}
+	sfxr__bump={sfx_creepy_laugh_tick}
 	gltf-model="./glb/trunkLong.glb"
 	vary={trunkVary}
 	{scatter}
@@ -194,5 +203,7 @@
 	vary={trunkVary}
 	{scatter}
 	tag__env
+	target="⛩️"
+	sfxr__bump={sfx_cat}
 />
-<a-entity pool__pillarObelisk="mixin: pillarObelisk; size: 5" activate__pillarObelisk />
+<a-entity pool__pillarObelisk="mixin: pillarObelisk; size: 10" activate__pillarObelisk />

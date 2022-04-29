@@ -31,3 +31,7 @@ body {
 .favicon {
 	background-image: url('./favicon.png');
 }
+
+canvas {
+	user-select: none;
+}

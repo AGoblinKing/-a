@@ -16,15 +16,14 @@
 		left: 2vh;
 		position: absolute;
 
-		width: 3vh;
+		width: 2vh;
 		background-color: #444;
-		height: 3vh;
+		height: 2vh;
 		border-radius: 3vh;
 		border: 1vh solid #222;
 		opacity: 0.75;
 		z-index: 5;
 		box-shadow: 0 0 5vh rgb(0 65 150);
-		transform: perspective(400px) rotateX(-20deg) rotateY(-20deg);
 	}
 	.action:hover {
 		box-shadow: 0 0 5vh #0f0;

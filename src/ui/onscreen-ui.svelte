@@ -1,13 +1,13 @@
 <script>
-	import { location } from 'src/component/location'
-	import { fade, scale } from 'svelte/transition'
-	import { bounceInOut } from 'svelte/easing'
 	import { binds, binds_icon } from 'src/control'
 	import { key_down, key_map, key_up } from 'src/input'
 	import { ismobile, open_text, ground } from 'src/timing'
 	import Body from './body.svelte'
+	import { doControl } from 'src/chat'
+	import { AVATAR } from 'src/component/avatar'
+	import { sfx_button_play } from 'src/sound/sfx-ui'
+	import Location from './location.svelte'
 
-	let bound = [1, 2, 3, 4, 5, 6]
 	let holder
 	let x = 0.5
 	let y = 0.5
@@ -36,15 +36,15 @@
 		if (!interacting) return
 
 		if (x > 0.6) {
-			key_down.set('e')
+			key_down.set('c')
 		} else {
-			key_up.set('e')
+			key_up.set('c')
 		}
 
 		if (x < 0.4) {
-			key_down.set('q')
+			key_down.set('z')
 		} else {
-			key_up.set('q')
+			key_up.set('z')
 		}
 
 		if (y > 0.6) {
@@ -74,8 +74,8 @@
 		interacting = false
 		key_up.set('w')
 		key_up.set('s')
-		key_up.set('q')
-		key_up.set('e')
+		key_up.set('z')
+		key_up.set('c')
 		key_up.set('shift')
 	}
 
@@ -86,39 +86,47 @@
 	}
 </script>
 
+<Location />
+
 <div class="bind-bar {$ismobile ? 'mobile' : ''}">
-	{#each bound as b}
+	<div class="flexer">
 		<div
-			class="button bounce bound {$key_down === '' + b ? 'down' : 'inactive'} {$binds[b]
-				? 'active'
-				: ''}"
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
+			class="button bounce"
+			on:click={() => doControl('~ use hand_left')}
+		>
+			{$AVATAR?.data.hand_left?.components.target.data || '🦾'}
+		</div>
+		<div
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
+			class="jump button bounce"
 			on:click={() => {
-				key_down.set('' + b)
-				key_up.set('' + b)
+				key_down.set(' ')
+				setTimeout(() => {
+					key_up.set(' ')
+				}, 300)
 			}}
 		>
-			{$binds_icon[b] || b}
+			🦘
 		</div>
-	{/each}
-
-	<div class="button bounce">🦾</div>
-	<div
-		class="jump button bounce"
-		on:click={() => {
-			key_down.set(' ')
-			setTimeout(() => {
-				key_up.set(' ')
-			}, 300)
-		}}
-	>
-		🦘
+		<div
+			class="reverse button bounce"
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
+			on:click={() => doControl('~ use hand_right')}
+		>
+			{$AVATAR?.data.hand_right?.components.target.data || '🦾'}
+		</div>
 	</div>
-	<div class="reverse button bounce">🦾</div>
 </div>
 
 <div class="holder">
 	<div class="motion {$ismobile ? 'mobile' : ''}">
 		<div
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
 			class="speak button bounce"
 			on:click={() => {
 				open_text.set('')
@@ -140,6 +148,8 @@
 			on:touchstart={interact}
 			on:mouseleave={stop_interact}
 			on:mouseup={stop_interact}
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
 			bind:this={holder}
 		>
 			<div class="dot" style="margin-top:{y * 100}%;margin-left:{x * 100}%;" />
@@ -147,48 +157,13 @@
 	</div>
 </div>
 
-<div class="location">
-	{#each $location as loc}
-		<div class="loc" in:scale={{ easing: bounceInOut }} out:scale={{ easing: bounceInOut }}>
-			{loc}
-		</div>
-	{/each}
-</div>
-<div class="ground">
-	{#each $ground as g}
-		<div class="loc" in:scale={{ easing: bounceInOut }} out:scale={{ easing: bounceInOut }}>
-			{g}
-		</div>
-	{/each}
-</div>
-
 <style>
 	.bounce {
 		opacity: 0.5;
 	}
-	.ground,
-	.location {
-		user-select: none;
-		display: flex;
-		flex-direction: row;
-		position: absolute;
-		font-size: 5vh;
-		opacity: 0.5;
-		left: 0;
-		pointer-events: none;
-		text-shadow: -0.15rem -0.15rem 0 #000, 0.15rem -0.15rem 0 #000, -0.15rem 0.15rem 0 #000,
-			0.15rem 0.15rem 0 #000;
-		z-index: 1;
-	}
-	.ground {
-		bottom: 0;
-		left: 50%;
-		align-items: center;
-		transform: translateX(-50%);
-	}
 
 	.reverse.button {
-		transform: perspective(400px) rotateY(40deg) scaleX(-1);
+		transform: scaleX(-1);
 	}
 
 	.mobile .reverse.button {
@@ -197,15 +172,10 @@
 	.reverse.button:hover {
 		transform: scaleX(-1);
 	}
+	.bind-bar .flexer .button {
+		font-size: 2vh;
+	}
 
-	.location {
-		top: 0;
-		left: 50%;
-		transform: translateX(-50%);
-	}
-	.loc {
-		margin: 1vh;
-	}
 	.dot {
 		width: 3vh;
 		height: 3vh;
@@ -219,16 +189,17 @@
 	.bind-bar {
 		position: absolute;
 		left: 0;
-		top: 50%;
-		transform: translateY(-50%);
+		bottom: 5vh;
 		z-index: 5;
 	}
 
 	.bind-bar .button {
-		font-size: 2.5vh;
+		font-size: 2vh;
+		width: 3vh;
 	}
-	.inactive {
-		opacity: 0;
+
+	.flexer {
+		display: flex;
 	}
 	.button {
 		user-select: none;
@@ -250,7 +221,6 @@
 			0.15rem 0.15rem 0 #000;
 		transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 
-		transform: perspective(400px) rotateY(40deg);
 		cursor: pointer;
 	}
 	.button:active {
@@ -271,14 +241,12 @@
 			opacity: 100%;
 		}
 	}
-	.button.down {
-		box-shadow: 0 0 5vh rgb(0, 65, 150), 0 0 2vh rgb(2, 255, 255);
-	}
+
 	.holder {
 		position: absolute;
 		right: 0;
 		z-index: 5;
-		bottom: 10vh;
+		bottom: 5vh;
 	}
 
 	.motion .button {
@@ -286,7 +254,6 @@
 	}
 	.motion .button {
 		padding: 0.5vh 0vh;
-		transform: perspective(400px) rotateY(-40deg);
 	}
 	.move.button {
 		width: 10vh;
@@ -298,12 +265,5 @@
 	.button:active {
 		transform: none;
 		opacity: 1;
-	}
-	.active {
-		opacity: 0.65;
-	}
-
-	.mobile .buttons {
-		transform: none;
 	}
 </style>

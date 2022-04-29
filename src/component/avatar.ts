@@ -14,25 +14,43 @@ function Random(targets: { [key: string]: HTMLElement }) {
 
     return t
 }
-
-export interface IVRM_AVATAR {
+export enum ESlot {
+    hand_left = "hand_left",
+    hand_right = "hand_right",
+    bag1 = "bag1",
+    bag2 = "bag2",
+    bag3 = "bag3",
+    bag4 = "bag4",
+    bag5 = "bag5",
+    bag6 = "bag6",
+}
+export interface IAVATAR {
     doUse(string): void;
+    doThrow(string): void;
+    doDrop(string): void;
+    data: any;
 }
 const hands = ["hand_left", "hand_right"]
-export const VRM_AVATAR = new Value<IVRM_AVATAR>()
+export const AVATAR = new Value<IAVATAR>()
 
-AFRAME.registerComponent("vrm-avatar", {
+AFRAME.registerComponent("avatar", {
     schema: {
-        hip_left: { type: "selector" },
-        hip_right: { type: "selector" },
-        spine: { type: "selector" },
-        hand_left: { type: "selector" },
-        hand_right: { type: "selector" },
+
+        [ESlot.hand_left]: { type: "selector" },
+        [ESlot.hand_right]: { type: "selector" },
+        [ESlot.bag1]: { type: "selector" },
+        [ESlot.bag2]: { type: "selector" },
+        [ESlot.bag3]: { type: "selector" },
+        [ESlot.bag4]: { type: "selector" },
+        [ESlot.bag5]: { type: "selector" },
+        [ESlot.bag6]: { type: "selector" },
     },
     init() {
+        this.updated = new Value(this.data)
+
         requestAnimationFrame(() => {
             if (this.el.parentEl.components.vrm?.data.current) {
-                VRM_AVATAR.set(this)
+                AVATAR.set(this)
             }
         })
 
@@ -62,13 +80,28 @@ AFRAME.registerComponent("vrm-avatar", {
         }
 
         if (hands.indexOf(slot) === -1) return
+        //items will equip themselves
         Random(this.targets)?.emit('use', e, false)
+    },
+    doThrow(slot = "hand_left") {
+        const item = this.data[slot]
+        if (!item) return
+
+        item.emit('throw', { whom: this.el, slot }, false)
+    },
+
+    doDrop(slot = "hand_left") {
+        const item = this.data[slot]
+        if (!item) return
+
+        item.emit('drop', { whom: this.el, slot }, false)
     },
 
     collideStart(e) {
         const o = e.detail.targetEl
         if (!o.components.target) return
 
+        // aframe entity targets
         this.targets.$[o.object3D.uuid] = o;
         this.targets.poke()
 

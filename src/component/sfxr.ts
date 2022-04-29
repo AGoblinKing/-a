@@ -48,7 +48,7 @@ AFRAME.registerComponent("sfxr", {
     event() {
 
         if (!this.audio) this.audio = new SoundEffect(
-            Object.assign(new Params(), this.data).mutate().mutate()
+            Object.assign(new Params(), this.data).mutate().mutate().mutate()
         )
             .generate()
             .getAudio()
@@ -63,3 +63,4 @@ AFRAME.registerComponent("sfxr", {
         this.el.removeEventListener(this.id, this.event)
     }
 })
+

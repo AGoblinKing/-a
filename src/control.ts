@@ -1,9 +1,9 @@
 import { guest, host, room } from "./component/net"
-import { VRM_AVATAR } from "./component/vrm-avatar"
+import { AVATAR } from "src/component/avatar"
 
-import state from "./state"
+import state from "src/state"
 import { avatar_current, avatar_doer, do_echo, do_vary, open_debug, open_help, open_hostid, open_stats, open_targeting, open_ui, scouter, size, toggle_pointerlock, toggle_selfie, toggle_visible, voice_current } from "./timing"
-import { Value } from "./value"
+import { Value } from "src/value"
 
 export const binds = new Value<{ [key: string]: string }>(clone(state.binds)).save("binds")
 export const vars = new Value<{ [key: string]: string }>(clone(state.vars)).save("vars")
@@ -103,6 +103,7 @@ export enum EControl {
 
     Use = "use",
     NotUse = "notuse",
+    ClearUse = 'throw',
 
     PointerLock = "pointerlock",
     NotPointerLock = "notpointerlock",
@@ -260,13 +261,16 @@ export const controls = {
     },
     [EControl.Use]: (items: string[]) => {
         // use [itemslot=hand_left]
-        VRM_AVATAR.$.doUse(items[2])
+        AVATAR.$.doUse(items[2])
 
     },
     [EControl.NotUse]: (items: string[]) => {
-
+        // drop [itemslot=hand_left]
+        AVATAR.$.doDrop(items[3])
     },
-
+    [EControl.ClearUse]: (items: string[]) => {
+        AVATAR.$.doThrow(items[3])
+    },
     // TODO: should make a helper for this common scenario
     [EControl.PointerLock]: (items: string[]) => {
         toggle_pointerlock.set(true)

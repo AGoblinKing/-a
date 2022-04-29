@@ -38,7 +38,7 @@
 <a-scene
 	keyboard-shortcuts="enterVR: false"
 	stats={$open_stats}
-	renderer=" alpha: false; colorManagement: true;"
+	renderer="alpha: false; color;colorManagement: true;"
 	shadow="type:basic;"
 	device-orientation-permission-ui="enabled: false"
 	physics="driver: ammo; debug: {$open_debug}; iterations: 2; fixedTimeStep: 0.01667; maxSubSteps: 2;"

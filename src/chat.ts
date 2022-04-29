@@ -63,7 +63,7 @@ export function say(said: string) {
 
 
 export function doControl(said: string) {
-    const items = said.toLowerCase().trim().split(" ")
+    const items = said.replace("~", "control").toLowerCase().trim().split(" ")
 
     if (items[0] !== "control") return false
 

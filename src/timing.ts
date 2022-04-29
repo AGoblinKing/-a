@@ -81,13 +81,15 @@ const ticker = () => {
 
 export const loading = new Value(`Loading...
 
- WASD Move > Q+E Rotate
+ WASD Move > Z+C Rotate
  Enter > Chat
-     ~ > Command
+ ~ > Command
  Space > Jump
  
  Default Binds:
-
+ 
+ Q: Toggle Drop
+ E: Toggle Throw
  N: Selfie
  M: NotSelfie
  H: Hi | Hi! | Hello | Heya | Yo

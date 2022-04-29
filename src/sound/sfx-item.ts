@@ -118,3 +118,33 @@ export const sfx_item2 = stringify({
     "sample_size": 8
 })
 export const sfx_coin = sfx_item
+
+export const sfx_sword = stringify({
+    "oldParams": true,
+    "wave_type": 0,
+    "p_env_attack": 0.01170061848590746,
+    "p_env_sustain": 0.38258168244711566,
+    "p_env_punch": 0.4949117709716029,
+    "p_env_decay": -0.5413731161748394,
+    "p_base_freq": 0.6064967287850096,
+    "p_freq_limit": 0,
+    "p_freq_ramp": -0.0027619916598632267,
+    "p_freq_dramp": 0.13054169432259277,
+    "p_vib_strength": -0.12034741124987401,
+    "p_vib_speed": -0.6142620625116471,
+    "p_arp_mod": 0.4824634603701816,
+    "p_arp_speed": -0.9752244407251189,
+    "p_duty": 0.6163566918721113,
+    "p_duty_ramp": -0.02039153140666421,
+    "p_repeat_speed": 0.6648383616289166,
+    "p_pha_offset": -0.7825406348773116,
+    "p_pha_ramp": 0.6010971763764806,
+    "p_lpf_freq": 0.9963279479200927,
+    "p_lpf_ramp": -0.0872884773789926,
+    "p_lpf_resonance": -0.21956057669869944,
+    "p_hpf_freq": 6.766695547147069e-10,
+    "p_hpf_ramp": 0.3150220565247538,
+    "sound_vol": 0.05,
+    "sample_rate": 44100,
+    "sample_size": 8
+})

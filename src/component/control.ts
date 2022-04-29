@@ -1,17 +1,23 @@
+import { doControl } from "src/chat"
 
 
 AFRAME.registerComponent("control", {
+    multiple: true,
+
     schema: {
-        control: { type: "string"},
-        mixin: { type: "string"}
+        type: "string"
     },
 
     init() {
-        
+        this.el.addEventListener(this.id, this.handleEvent = this.handleEvent.bind(this))
+    },
+
+    handleEvent(e) {
+        doControl(this.data)
     },
 
     remove() {
-        this.cancel()
+        this.el.removeEventListener(this.id, this.handleEvent)
     }
 
 })

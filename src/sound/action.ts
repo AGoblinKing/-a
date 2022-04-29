@@ -87,7 +87,7 @@ export const sfx_near_miss = stringify({
     "p_lpf_resonance": 0.6316165961198439,
     "p_hpf_freq": 0.8137072361400771,
     "p_hpf_ramp": 0.00014227234806808646,
-    "sound_vol": 0.25,
+    "sound_vol": 0.1,
     "sample_rate": 44100,
     "sample_size": 8
 })
@@ -118,7 +118,7 @@ export const sfx_charge_up = stringify({
     "p_lpf_resonance": -0.9659966879893127,
     "p_hpf_freq": 0.0031298963649359023,
     "p_hpf_ramp": 0.22308580095770741,
-    "sound_vol": 0.25,
+    "sound_vol": 0.1,
     "sample_rate": 44100,
     "sample_size": 8
 })
@@ -148,6 +148,36 @@ export const sfx_bump = stringify({
     "p_lpf_resonance": 0.27873708489880533,
     "p_hpf_freq": 0.000011343465197386403,
     "p_hpf_ramp": 0.0520462756379083,
+    "sound_vol": 0.25,
+    "sample_rate": 44100,
+    "sample_size": 8
+})
+
+export const sfx_arrowshot = stringify({
+    "oldParams": true,
+    "wave_type": 3,
+    "p_env_attack": 0.19423902391398637,
+    "p_env_sustain": 1.064881775595702,
+    "p_env_punch": 0.21902691783473585,
+    "p_env_decay": -0.23966316098991747,
+    "p_base_freq": 0.12040450627117918,
+    "p_freq_limit": 0,
+    "p_freq_ramp": 0.7335892574850826,
+    "p_freq_dramp": -0.001740558138581788,
+    "p_vib_strength": -0.5275662717440277,
+    "p_vib_speed": -0.14150638730301734,
+    "p_arp_mod": 0.6708398878919186,
+    "p_arp_speed": 0.35203043363429787,
+    "p_duty": 0.8780540295948374,
+    "p_duty_ramp": -0.09841291379124431,
+    "p_repeat_speed": -0.8435256478026987,
+    "p_pha_offset": -0.7697820749778174,
+    "p_pha_ramp": -0.4367776273640769,
+    "p_lpf_freq": 0.7708797266832073,
+    "p_lpf_ramp": -0.4564972895125054,
+    "p_lpf_resonance": 0.2546609942323266,
+    "p_hpf_freq": 0.26577039558388404,
+    "p_hpf_ramp": -0.5357249680458842,
     "sound_vol": 0.25,
     "sample_rate": 44100,
     "sample_size": 8

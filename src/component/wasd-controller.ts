@@ -2,7 +2,7 @@ import type { Object3D } from "three"
 import { key_map } from "src/input";
 import { camera } from "src/timing";
 import { guest } from "./net";
-import { VRM_AVATAR } from "./vrm-avatar";
+import { VRM_AVATAR } from "./avatar";
 
 const vec3 = new AFRAME.THREE.Vector3()
 const quat = new AFRAME.THREE.Quaternion()
@@ -77,12 +77,12 @@ AFRAME.registerComponent("wasd-controller", {
             vec3.y += 5
             vec3.x += this.data.speed * delta * intensity
         }
-        if (key_map.$["q"]) {
+        if (key_map.$["z"]) {
             vec3.y += 5
             const root = getRoot(camera.$)
             root.rotation.y += this.data.rot * delta
         }
-        if (key_map.$["e"]) {
+        if (key_map.$["c"]) {
             vec3.y += 5
             const root = getRoot(camera.$)
             root.rotation.y -= this.data.rot * delta

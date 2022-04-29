@@ -48,24 +48,24 @@
 
 		shadowMapHeight: 1024 * 4,
 		shadowMapWidth: 1024 * 4,
-		intensity: 0.5
+		intensity: 1
 	})}
 >
 	<a-sphere position="0 100 0" radius="10" material="color: yellow; shader: flat;" />
 </a-entity>
 
 <a-entity
-	position="-{groundSize / 4} {groundSize * 2} -{groundSize / 4}"
+	position="-{groundSize / 3} {groundSize * 2} -{groundSize / 3}"
 	light={str({
 		type: 'directional',
 
 		color: light,
 
-		intensity: 0.5
+		intensity: 1
 	})}
 />
 
-<a-entity light="type:ambient; color:white; intensity:1;" />
+<a-entity light="type:ambient; color:{light}; intensity:1;" />
 
 <a-mixin
 	id="cloud"
