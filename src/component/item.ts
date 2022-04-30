@@ -1,5 +1,5 @@
 import { doControl } from "src/chat"
-import { camera, ground } from "src/timing"
+import { camera } from "src/timing"
 import { Value } from "src/value"
 import { AVATAR, WIPE_TARGET } from "src/component/avatar"
 
@@ -9,6 +9,7 @@ const quat = new AFRAME.THREE.Quaternion()
 AFRAME.registerComponent("item", {
     schema: {
         holder: { type: "selector" },
+        slot: { type: "string" },
         action: { type: "string", default: "" },
     },
     init() {
@@ -39,22 +40,31 @@ AFRAME.registerComponent("item", {
 
         this.drop(e)
 
-        vec3.set(0, 3, -30).applyQuaternion(p.getWorldQuaternion(quat))
+        vec3.set(0, 3, -100).applyQuaternion(p.getWorldQuaternion(quat))
         this.el.object3D.lookAt(vec3)
 
         // apply force to item based on thrower
         const force = new Ammo.btVector3(vec3.x, vec3.y, vec3.z)
-        const torque = new Ammo.btVector3(1, 1, 1)
+
         this.el.body.applyForce(force)
-        this.el.body.applyTorque(torque)
+
         this.el.body.activate()
         Ammo.destroy(force)
-        Ammo.destroy(torque)
+
 
         // use the body rotation for the throw
 
     },
     action(slot: string, whom: HTMLElement) {
+        if (slot.slice(0, 3) === "bag") {
+            // move to hand
+            const a = this.data.holder.components.avatar
+
+            if (a.data.hand_left && a.data.hand_right) return
+
+            this.equip({ detail: { slot: a.data.hand_left ? "hand_right" : "hand_left", whom } })
+            return
+        }
         // plays sound/etc
         doControl(this.data.action)
         this.el.emit("action", { slot, whom })
@@ -74,7 +84,18 @@ AFRAME.registerComponent("item", {
     },
     equip(e) {
         const { slot, whom } = e.detail
+
+        if (this.data.holder) {
+            // TODO: maybe unequip event?
+            // inform holder no longer holding the item
+
+            const a = this.data.holder.components.avatar
+            delete a.data[this.data.slot]
+            a.updated.poke()
+        }
+
         this.data.holder = whom
+        this.data.slot = slot
         const avatar = whom.components["avatar"]
 
         avatar.data[slot] = this.el
@@ -109,6 +130,11 @@ AFRAME.registerComponent("item", {
             case "bag4":
             case "bag5":
             case "bag6":
+            case "bag7":
+            case "bag8":
+                const i = parseInt(slot[3])
+                this.el.object3D.position.set(i * 0.1, 0.5, 1)
+                this.el.setAttribute("animation", "property: object3D.position.y; from: 0.5; to: .25; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate;")
                 break
             case "hand_left":
             case "hand_right":

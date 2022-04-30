@@ -171,19 +171,21 @@ AFRAME.registerComponent("host", {
         type: "string"
     },
     init() {
+
         this.slowtick = AFRAME.utils.throttleTick(this.slowtick, 200, this)
         // add unique id to hosts
         this.netpath = MakePath(this.el)
 
         let i = 2;
         const og = this.netpath
+        this.netpath + 1
         while (paths[this.netpath]) {
             this.netpath = og + i
             i++
         }
 
         paths[this.netpath] = this.el
-
+        this.el.id = this.netpath
         this.cancel = host.on(($h) => {
             if (!$h) return
 
@@ -246,6 +248,7 @@ AFRAME.registerComponent("host", {
 
     remove() {
         delete paths[this.netpath]
+        this.el.id = ""
         this.cancel()
     }
 })

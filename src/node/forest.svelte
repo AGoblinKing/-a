@@ -152,7 +152,7 @@
 	gltf-model="./char/Horse.glb"
 	ammo-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;"
 	scale="0.35 0.35 0.35"
-	ammo-shape="type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.6 0"
+	ammo-shape="type: capsule; fit: manual; halfExtents: 0.6 1 0.2; cylinderAxis: z; offset: 0 1 0"
 	shadow="cast: true; receive: false;"
 	alive="type: random;"
 	motion-events

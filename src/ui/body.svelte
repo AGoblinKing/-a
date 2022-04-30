@@ -5,7 +5,7 @@
 	import { key_down, key_map, key_up } from 'src/input'
 	import { sfx_button_play } from 'src/sound/sfx-ui'
 	import { do_drop, do_throw } from 'src/timing'
-	let bound = ['!', '@', '#', '$', '%', '^']
+	let bound = ['!', '@', '#', '$', '%', '^', '&', '*']
 </script>
 
 <div class="flex bag red">
@@ -72,6 +72,15 @@
 		</div>
 		<div class="button bounce" on:focus={sfx_button_play} on:mouseover={sfx_button_play}>
 			{$AVATAR?.data.bag6?.components.target?.data || ' '}
+		</div>
+	</div>
+
+	<div class="flex bag pouch">
+		<div class="button bounce" on:focus={sfx_button_play} on:mouseover={sfx_button_play}>
+			{$AVATAR?.data.bag7?.components.target?.data || ' '}
+		</div>
+		<div class="button bounce" on:focus={sfx_button_play} on:mouseover={sfx_button_play}>
+			{$AVATAR?.data.bag8?.components.target?.data || ' '}
 		</div>
 	</div>
 {/if}

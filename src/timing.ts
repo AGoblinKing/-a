@@ -12,7 +12,7 @@ export const voice_doer = new Value("Aus | UK English").save("voice_doer")
 export const scouter = new Value("green").save("scouter")
 export const videos = new Value(["7Cchlyg7XNI", "WajD8HPS0JI", "pxCwIWL4_wA"])
 export const video = new Value("doer1.8").save("video_2")
-export const ground = new Value<string[]>([])
+export const ground = new Value<HTMLElement[]>([])
 
 export const open_ui = new Value(true).save("ui")
 export const open_home = new Value(true)
@@ -57,6 +57,7 @@ export const motd = new Value(`🎊v0.3.5🎊
 ✅ Drop/Pickup Items
 
 ❌ Use Items
+❌ Use Specific
 ❌ Stow
 ❌ Networked Multiplayer 
 ❌ Pose Animations recorded from our VRM

@@ -6089,13 +6089,19 @@
       "$": "press f1 to explore other commands",
       "%": "good luck, have fun",
       "^": "foobar",
-      "7": "Lorum ipsum",
-      "8": "Vas rel por",
-      "9": "In vas flam",
-      "0": "nox",
+      "*": "ja ja",
+      "&": "no no",
       "f": "~ not pointerlock",
       "q": "~ toggle drop",
-      "e": "~ toggle throw"
+      "e": "~ toggle throw",
+      "1": "~ use bag1",
+      "2": "~ use bag2",
+      "3": "~ use bag3",
+      "4": "~ use bag4",
+      "5": "~ use bag5",
+      "6": "~ use bag6",
+      "7": "~ use bag7",
+      "8": "~ use bag8"
     },
     "vars": {},
     "selfie": false,
@@ -6110,8 +6116,8 @@
       "$": "\u{1F3DC}\uFE0F",
       "%": "\u{1F32A}\uFE0F",
       "^": "\u{1F308}",
-      7: "\u{1F30A}",
-      8: "\u{1F30B}",
+      "*": "\u{1F30A}",
+      "&": "\u{1F30B}",
       9: "\u{1F30C}",
       0: "\u{1F30D}"
     },
@@ -6227,6 +6233,7 @@
 \u2705 Drop/Pickup Items
 
 \u274C Use Items
+\u274C Use Specific
 \u274C Stow
 \u274C Networked Multiplayer 
 \u274C Pose Animations recorded from our VRM
@@ -6591,11 +6598,13 @@ reset back to 1 for size
       this.netpath = MakePath(this.el);
       let i = 2;
       const og = this.netpath;
+      this.netpath + 1;
       while (paths[this.netpath]) {
         this.netpath = og + i;
         i++;
       }
       paths[this.netpath] = this.el;
+      this.el.id = this.netpath;
       this.cancel = host.on(($h) => {
         if (!$h)
           return;
@@ -6646,6 +6655,7 @@ reset back to 1 for size
     },
     remove() {
       delete paths[this.netpath];
+      this.el.id = "";
       this.cancel();
     }
   });
@@ -6660,7 +6670,6 @@ reset back to 1 for size
     const t = targets.$[keys[Math.floor(keys.length * Math.random())]];
     return t;
   }
-  var hands = ["hand_left", "hand_right"];
   var AVATAR = new Value();
   var WIPE_TARGET = new Value("");
   AFRAME.registerComponent("avatar", {
@@ -6691,7 +6700,7 @@ reset back to 1 for size
         delete this.targets.$[$wt];
         this.targets.poke();
         if (this.el.parentEl.components.vrm?.data?.current) {
-          ground.$.splice(ground.$.indexOf(this.el.object3D.uuid), 1);
+          ground.$.splice(ground.$.indexOf(this.el), 1);
           ground.poke();
         }
       });
@@ -6709,15 +6718,16 @@ reset back to 1 for size
     isCurrent() {
       return this.el.parentEl.components.vrm.attrValue.current === "true";
     },
-    doUse(slot = "hand_left") {
+    doUse(slot = "hand_left", target = Random(this.targets)) {
       const e = { whom: this.el, slot };
       if (this.data[slot]) {
         this.data[slot].emit("use", e, false);
         return;
       }
-      if (hands.indexOf(slot) === -1)
-        return;
-      Random(this.targets)?.emit("use", e, false);
+      if (slot.slice(0, 3) === "bag") {
+        target = this.data.hand_left || this.data.hand_right;
+      }
+      target?.emit("use", e, false);
     },
     doThrow(slot = "hand_left") {
       const item = this.data[slot];
@@ -6743,7 +6753,7 @@ reset back to 1 for size
       this.targets.poke();
       if (this.isCurrent()) {
         o.emit("bump", { whom: this.el });
-        ground.$.push(o.components.target.data);
+        ground.$.push(o);
         ground.poke();
       }
     },
@@ -6754,7 +6764,7 @@ reset back to 1 for size
       delete this.targets.$[o.object3D.uuid];
       this.targets.poke();
       if (this.isCurrent()) {
-        ground.$.splice(ground.$.indexOf(o.components.target.data), 1);
+        ground.$.splice(ground.$.indexOf(o), 1);
         ground.poke();
       }
     },
@@ -6930,15 +6940,21 @@ reset back to 1 for size
       binds_icon.set(clone(state_default.binds_icon));
     },
     ["use" /* Use */]: (items) => {
-      if (do_drop.$) {
-        AVATAR.$.doDrop(items[2]);
-        return;
+      if (items[2].slice(0, 3) !== "bag") {
+        if (do_drop.$) {
+          AVATAR.$.doDrop(items[2]);
+          return;
+        }
+        if (do_throw.$) {
+          AVATAR.$.doThrow(items[2]);
+          return;
+        }
       }
-      if (do_throw.$) {
-        AVATAR.$.doThrow(items[2]);
-        return;
+      if (items[3]) {
+        AVATAR.$.doUse(items[2], document.getElementById(items[3]));
+      } else {
+        AVATAR.$.doUse(items[2]);
       }
-      AVATAR.$.doUse(items[2]);
     },
     ["notuse" /* NotUse */]: (items) => {
       AVATAR.$.doDrop(items[3]);
@@ -7377,7 +7393,8 @@ reset back to 1 for size
       type: "string",
       default: ""
     },
-    init() {
+    update() {
+      this.el.name = this.data;
     }
   });
 
@@ -9359,7 +9376,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin9, "gltf-model", "./char/Horse.glb");
         set_custom_element_data(a_mixin9, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
         set_custom_element_data(a_mixin9, "scale", "0.35 0.35 0.35");
-        set_custom_element_data(a_mixin9, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.6 0");
+        set_custom_element_data(a_mixin9, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 1 0.2; cylinderAxis: z; offset: 0 1 0");
         set_custom_element_data(a_mixin9, "shadow", "cast: true; receive: false;");
         set_custom_element_data(a_mixin9, "alive", "type: random;");
         set_custom_element_data(a_mixin9, "motion-events", "");
@@ -10551,6 +10568,15 @@ void main() {
     let div7;
     let t10_value = (ctx[6]?.data.bag6?.components.target?.data || " ") + "";
     let t10;
+    let t11;
+    let div11;
+    let div9;
+    let t12_value = (ctx[6]?.data.bag7?.components.target?.data || " ") + "";
+    let t12;
+    let t13;
+    let div10;
+    let t14_value = (ctx[6]?.data.bag8?.components.target?.data || " ") + "";
+    let t14;
     let mounted;
     let dispose;
     return {
@@ -10575,6 +10601,13 @@ void main() {
         t9 = space();
         div7 = element("div");
         t10 = text(t10_value);
+        t11 = space();
+        div11 = element("div");
+        div9 = element("div");
+        t12 = text(t12_value);
+        t13 = space();
+        div10 = element("div");
+        t14 = text(t14_value);
         attr(div0, "class", "button bounce svelte-1x5jkv8");
         attr(div1, "class", "button bounce svelte-1x5jkv8");
         attr(div2, "class", "flex bag pouch  svelte-1x5jkv8");
@@ -10584,6 +10617,9 @@ void main() {
         attr(div6, "class", "button bounce svelte-1x5jkv8");
         attr(div7, "class", "button bounce svelte-1x5jkv8");
         attr(div8, "class", "flex bag pouch svelte-1x5jkv8");
+        attr(div9, "class", "button bounce svelte-1x5jkv8");
+        attr(div10, "class", "button bounce svelte-1x5jkv8");
+        attr(div11, "class", "flex bag pouch svelte-1x5jkv8");
       },
       m(target, anchor) {
         insert(target, div2, anchor);
@@ -10606,6 +10642,13 @@ void main() {
         append(div8, t9);
         append(div8, div7);
         append(div7, t10);
+        insert(target, t11, anchor);
+        insert(target, div11, anchor);
+        append(div11, div9);
+        append(div9, t12);
+        append(div11, t13);
+        append(div11, div10);
+        append(div10, t14);
         if (!mounted) {
           dispose = [
             listen(div0, "focus", sfx_button_play),
@@ -10619,7 +10662,11 @@ void main() {
             listen(div6, "focus", sfx_button_play),
             listen(div6, "mouseover", sfx_button_play),
             listen(div7, "focus", sfx_button_play),
-            listen(div7, "mouseover", sfx_button_play)
+            listen(div7, "mouseover", sfx_button_play),
+            listen(div9, "focus", sfx_button_play),
+            listen(div9, "mouseover", sfx_button_play),
+            listen(div10, "focus", sfx_button_play),
+            listen(div10, "mouseover", sfx_button_play)
           ];
           mounted = true;
         }
@@ -10637,6 +10684,10 @@ void main() {
           set_data(t8, t8_value);
         if (dirty & 64 && t10_value !== (t10_value = (ctx2[6]?.data.bag6?.components.target?.data || " ") + ""))
           set_data(t10, t10_value);
+        if (dirty & 64 && t12_value !== (t12_value = (ctx2[6]?.data.bag7?.components.target?.data || " ") + ""))
+          set_data(t12, t12_value);
+        if (dirty & 64 && t14_value !== (t14_value = (ctx2[6]?.data.bag8?.components.target?.data || " ") + ""))
+          set_data(t14, t14_value);
       },
       d(detaching) {
         if (detaching)
@@ -10649,6 +10700,10 @@ void main() {
           detach(t7);
         if (detaching)
           detach(div8);
+        if (detaching)
+          detach(t11);
+        if (detaching)
+          detach(div11);
         mounted = false;
         run_all(dispose);
       }
@@ -10864,7 +10919,7 @@ void main() {
     component_subscribe($$self, binds, ($$value) => $$invalidate(4, $binds = $$value));
     component_subscribe($$self, binds_icon, ($$value) => $$invalidate(5, $binds_icon = $$value));
     component_subscribe($$self, AVATAR, ($$value) => $$invalidate(6, $AVATAR = $$value));
-    let bound = ["!", "@", "#", "$", "%", "^"];
+    let bound = ["!", "@", "#", "$", "%", "^", "&", "*"];
     const click_handler = () => do_drop.set(!$do_drop);
     const click_handler_1 = () => do_throw.set(!$do_throw);
     const click_handler_2 = (b) => {
@@ -10984,17 +11039,17 @@ void main() {
   // src/ui/location.svelte
   function get_each_context2(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[2] = list[i];
+    child_ctx[4] = list[i];
     return child_ctx;
   }
   function get_each_context_1(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[5] = list[i];
+    child_ctx[7] = list[i];
     return child_ctx;
   }
   function create_each_block_1(ctx) {
     let div;
-    let t0_value = ctx[5] + "";
+    let t0_value = ctx[7] + "";
     let t0;
     let t1;
     let div_intro;
@@ -11005,7 +11060,7 @@ void main() {
         div = element("div");
         t0 = text(t0_value);
         t1 = space();
-        attr(div, "class", "loc svelte-1ytmb75");
+        attr(div, "class", "loc svelte-1trjjxk");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -11015,7 +11070,7 @@ void main() {
       },
       p(new_ctx, dirty) {
         ctx = new_ctx;
-        if ((!current || dirty & 1) && t0_value !== (t0_value = ctx[5] + ""))
+        if ((!current || dirty & 1) && t0_value !== (t0_value = ctx[7] + ""))
           set_data(t0, t0_value);
       },
       i(local) {
@@ -11045,28 +11100,37 @@ void main() {
   }
   function create_each_block2(ctx) {
     let div;
-    let t0_value = ctx[2] + "";
+    let t0_value = ctx[4].name + "";
     let t0;
     let t1;
     let div_intro;
     let div_outro;
     let current;
+    let mounted;
+    let dispose;
+    function click_handler() {
+      return ctx[3](ctx[4]);
+    }
     return {
       c() {
         div = element("div");
         t0 = text(t0_value);
         t1 = space();
-        attr(div, "class", "loc svelte-1ytmb75");
+        attr(div, "class", "loc clickable svelte-1trjjxk");
       },
       m(target, anchor) {
         insert(target, div, anchor);
         append(div, t0);
         append(div, t1);
         current = true;
+        if (!mounted) {
+          dispose = listen(div, "click", click_handler);
+          mounted = true;
+        }
       },
       p(new_ctx, dirty) {
         ctx = new_ctx;
-        if ((!current || dirty & 2) && t0_value !== (t0_value = ctx[2] + ""))
+        if ((!current || dirty & 2) && t0_value !== (t0_value = ctx[4].name + ""))
           set_data(t0, t0_value);
       },
       i(local) {
@@ -11091,6 +11155,8 @@ void main() {
           detach(div);
         if (detaching && div_outro)
           div_outro.end();
+        mounted = false;
+        dispose();
       }
     };
   }
@@ -11126,8 +11192,8 @@ void main() {
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
-        attr(div0, "class", "location svelte-1ytmb75");
-        attr(div1, "class", "ground svelte-1ytmb75");
+        attr(div0, "class", "location svelte-1trjjxk");
+        attr(div1, "class", "ground svelte-1trjjxk");
       },
       m(target, anchor) {
         insert(target, div0, anchor);
@@ -11163,7 +11229,7 @@ void main() {
           }
           check_outros();
         }
-        if (dirty & 2) {
+        if (dirty & 6) {
           each_value = ctx2[1];
           let i;
           for (i = 0; i < each_value.length; i += 1) {
@@ -11222,9 +11288,14 @@ void main() {
   function instance10($$self, $$props, $$invalidate) {
     let $location;
     let $ground;
+    let $AVATAR;
     component_subscribe($$self, location2, ($$value) => $$invalidate(0, $location = $$value));
     component_subscribe($$self, ground, ($$value) => $$invalidate(1, $ground = $$value));
-    return [$location, $ground];
+    component_subscribe($$self, AVATAR, ($$value) => $$invalidate(2, $AVATAR = $$value));
+    const click_handler = (g) => {
+      doControl(`~ use ${$AVATAR.data.hand_left ? "hand_right" : "hand_left"} ${g.id}`);
+    };
+    return [$location, $ground, $AVATAR, click_handler];
   }
   var Location = class extends SvelteComponent {
     constructor(options) {
@@ -11636,6 +11707,7 @@ void main() {
   AFRAME.registerComponent("item", {
     schema: {
       holder: { type: "selector" },
+      slot: { type: "string" },
       action: { type: "string", default: "" }
     },
     init() {
@@ -11658,17 +11730,21 @@ void main() {
         return;
       const p2 = this.el.object3D.parent;
       this.drop(e);
-      vec35.set(0, 3, -30).applyQuaternion(p2.getWorldQuaternion(quat4));
+      vec35.set(0, 3, -100).applyQuaternion(p2.getWorldQuaternion(quat4));
       this.el.object3D.lookAt(vec35);
       const force = new Ammo.btVector3(vec35.x, vec35.y, vec35.z);
-      const torque = new Ammo.btVector3(1, 1, 1);
       this.el.body.applyForce(force);
-      this.el.body.applyTorque(torque);
       this.el.body.activate();
       Ammo.destroy(force);
-      Ammo.destroy(torque);
     },
     action(slot, whom) {
+      if (slot.slice(0, 3) === "bag") {
+        const a = this.data.holder.components.avatar;
+        if (a.data.hand_left && a.data.hand_right)
+          return;
+        this.equip({ detail: { slot: a.data.hand_left ? "hand_right" : "hand_left", whom } });
+        return;
+      }
       doControl(this.data.action);
       this.el.emit("action", { slot, whom });
     },
@@ -11681,7 +11757,13 @@ void main() {
     },
     equip(e) {
       const { slot, whom } = e.detail;
+      if (this.data.holder) {
+        const a = this.data.holder.components.avatar;
+        delete a.data[this.data.slot];
+        a.updated.poke();
+      }
       this.data.holder = whom;
+      this.data.slot = slot;
       const avatar = whom.components["avatar"];
       avatar.data[slot] = this.el;
       avatar.updated.poke();
@@ -11704,6 +11786,11 @@ void main() {
         case "bag4":
         case "bag5":
         case "bag6":
+        case "bag7":
+        case "bag8":
+          const i = parseInt(slot[3]);
+          this.el.object3D.position.set(i * 0.1, 0.5, 1);
+          this.el.setAttribute("animation", "property: object3D.position.y; from: 0.5; to: .25; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate;");
           break;
         case "hand_left":
         case "hand_right":
@@ -11776,18 +11863,21 @@ void main() {
         set_custom_element_data(a_mixin0, "gltf-model", "./glb/dagger.glb");
         set_custom_element_data(a_mixin0, "scale", "0.01 0.01 0.01");
         set_custom_element_data(a_mixin0, "target", "\u{1F5E1}\uFE0F");
+        set_custom_element_data(a_mixin0, "host", "dagger");
         set_custom_element_data(a_mixin0, "item", "");
         set_custom_element_data(a_mixin0, "sfxr__use", sfx_sword);
         set_custom_element_data(a_mixin0, "sfxr__bump", sfx_sword);
         set_custom_element_data(a_mixin0, "ammo-body", "type: dynamic;scaleAutoUpdate: false; mass: 0.1;");
         set_custom_element_data(a_mixin0, "ammo-shape", "type:box; fit: manual; halfExtents: 0.2 0.75 0.2; offset: 0 0.45 0");
         set_custom_element_data(a_mixin1, "id", "armor_black");
+        set_custom_element_data(a_mixin1, "host", "armor_black");
         set_custom_element_data(a_mixin1, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_mixin1, "gltf-model", "./glb/armor_black.glb");
         set_custom_element_data(a_mixin1, "scale", "0.01 0.01 0.01");
         set_custom_element_data(a_mixin1, "ammo-body", "type: dynamic;scaleAutoUpdate: false;");
         set_custom_element_data(a_mixin1, "ammo-shape", "type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0");
         set_custom_element_data(a_mixin2, "id", "chest");
+        set_custom_element_data(a_mixin2, "host", "chest");
         set_custom_element_data(a_mixin2, "target", "\u{1F9F0}");
         set_custom_element_data(a_mixin2, "sfxr__use", sfx_item);
         set_custom_element_data(a_mixin2, "sfxr__bump", sfx_coin);
@@ -11797,6 +11887,7 @@ void main() {
         set_custom_element_data(a_mixin2, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 5;");
         set_custom_element_data(a_mixin2, "ammo-shape", "type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0.4 0");
         set_custom_element_data(a_mixin3, "id", "bow");
+        set_custom_element_data(a_mixin3, "host", "bow");
         set_custom_element_data(a_mixin3, "target", "\u{1F3F9}");
         set_custom_element_data(a_mixin3, "sfxr__use", sfx_near_miss);
         set_custom_element_data(a_mixin3, "sfxr__bump", sfx_near_miss);
@@ -11809,6 +11900,7 @@ void main() {
         set_custom_element_data(a_mixin4, "id", "arrow");
         set_custom_element_data(a_mixin4, "target", "\u2197\uFE0F");
         set_custom_element_data(a_mixin4, "item", "");
+        set_custom_element_data(a_mixin4, "host", "arrow");
         set_custom_element_data(a_mixin4, "sfxr__use", sfx_item);
         set_custom_element_data(a_mixin4, "sfxr__bump", sfx_coin);
         set_custom_element_data(a_mixin4, "shadow", "cast: true; receive: false");
@@ -11817,6 +11909,7 @@ void main() {
         set_custom_element_data(a_mixin4, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.1;");
         set_custom_element_data(a_mixin4, "ammo-shape", "type:box; fit: manual; halfExtents: 0.1 1 0.1; offset: 0 0 0");
         set_custom_element_data(a_mixin5, "id", "bag");
+        set_custom_element_data(a_mixin5, "host", "bag");
         set_custom_element_data(a_mixin5, "target", "\u{1F45D}");
         set_custom_element_data(a_mixin5, "sfxr__use", sfx_item);
         set_custom_element_data(a_mixin5, "sfxr__bump", sfx_coin);
@@ -11826,6 +11919,7 @@ void main() {
         set_custom_element_data(a_mixin5, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.5;");
         set_custom_element_data(a_mixin5, "ammo-shape", "type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0");
         set_custom_element_data(a_mixin6, "id", "barrel");
+        set_custom_element_data(a_mixin6, "host", "barrel");
         set_custom_element_data(a_mixin6, "target", "\u{1F6E2}\uFE0F");
         set_custom_element_data(a_mixin6, "sfxr__use", sfx_item);
         set_custom_element_data(a_mixin6, "sfxr__bump", sfx_coin);
@@ -11836,6 +11930,7 @@ void main() {
         set_custom_element_data(a_mixin6, "ammo-shape", "type:box; fit: manual; halfExtents: 0.75 0.75 0.75; offset: 0 0.5 0");
         set_custom_element_data(a_mixin7, "id", "crate");
         set_custom_element_data(a_mixin7, "target", "\u{1F4E6}");
+        set_custom_element_data(a_mixin7, "host", "crate");
         set_custom_element_data(a_mixin7, "sfxr__use", sfx_item);
         set_custom_element_data(a_mixin7, "sfxr__bump", sfx_coin);
         set_custom_element_data(a_mixin7, "shadow", "cast: true; receive: false");
@@ -12040,7 +12135,7 @@ void main() {
         set_custom_element_data(a_scene, "renderer", "alpha: false; color;colorManagement: true;");
         set_custom_element_data(a_scene, "shadow", "type:basic;");
         set_custom_element_data(a_scene, "device-orientation-permission-ui", "enabled: false");
-        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2] + "; iterations: 2; fixedTimeStep: 0.01667; maxSubSteps: 2;");
+        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2] + "; iterations: 2; fixedTimeStep: " + 1 / 60 + "; maxSubSteps: 2;");
         set_custom_element_data(a_scene, "uniforms", "");
         set_custom_element_data(a_scene, "net", "");
       },
@@ -12097,7 +12192,7 @@ void main() {
         if (!current || dirty & 2) {
           set_custom_element_data(a_scene, "stats", ctx2[1]);
         }
-        if (!current || dirty & 4 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[2] + "; iterations: 2; fixedTimeStep: 0.01667; maxSubSteps: 2;")) {
+        if (!current || dirty & 4 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[2] + "; iterations: 2; fixedTimeStep: " + 1 / 60 + "; maxSubSteps: 2;")) {
           set_custom_element_data(a_scene, "physics", a_scene_physics_value);
         }
       },

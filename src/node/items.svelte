@@ -10,6 +10,7 @@
 	gltf-model="./glb/dagger.glb"
 	scale="0.01 0.01 0.01"
 	target="🗡️"
+	host="dagger"
 	item
 	sfxr__use={sfx_sword}
 	sfxr__bump={sfx_sword}
@@ -19,6 +20,7 @@
 
 <a-mixin
 	id="armor_black"
+	host="armor_black"
 	shadow="cast: true; receive: false"
 	gltf-model="./glb/armor_black.glb"
 	scale="0.01 0.01 0.01"
@@ -27,6 +29,7 @@
 />
 <a-mixin
 	id="chest"
+	host="chest"
 	target="🧰"
 	sfxr__use={sfx_item}
 	sfxr__bump={sfx_coin}
@@ -38,6 +41,7 @@
 />
 <a-mixin
 	id="bow"
+	host="bow"
 	target="🏹"
 	sfxr__use={sfx_near_miss}
 	sfxr__bump={sfx_near_miss}
@@ -53,6 +57,7 @@
 	id="arrow"
 	target="↗️"
 	item
+	host="arrow"
 	sfxr__use={sfx_item}
 	sfxr__bump={sfx_coin}
 	shadow="cast: true; receive: false"
@@ -64,6 +69,7 @@
 
 <a-mixin
 	id="bag"
+	host="bag"
 	target="👝"
 	sfxr__use={sfx_item}
 	sfxr__bump={sfx_coin}
@@ -75,6 +81,7 @@
 />
 <a-mixin
 	id="barrel"
+	host="barrel"
 	target="🛢️"
 	sfxr__use={sfx_item}
 	sfxr__bump={sfx_coin}
@@ -88,6 +95,7 @@
 <a-mixin
 	id="crate"
 	target="📦"
+	host="crate"
 	sfxr__use={sfx_item}
 	sfxr__bump={sfx_coin}
 	shadow="cast: true; receive: false"

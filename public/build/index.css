@@ -158,8 +158,18 @@
 }
 
 /* fakecss:/workspaces/-a/src/ui/location.esbuild-svelte-fake-css */
-.ground.svelte-1ytmb75,
-.location.svelte-1ytmb75 {
+.clickable.svelte-1trjjxk {
+  cursor: pointer;
+  pointer-events: all;
+}
+.clickable.svelte-1trjjxk:active,
+.clickable.svelte-1trjjxk:hover {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 0.25vh;
+}
+.ground.svelte-1trjjxk,
+.location.svelte-1trjjxk {
+  transition: all cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.5s;
   user-select: none;
   display: flex;
   flex-direction: row;
@@ -175,16 +185,16 @@
     0.15rem 0.15rem 0 #000;
   z-index: 1;
 }
-.ground.svelte-1ytmb75 {
+.ground.svelte-1trjjxk {
   bottom: 0;
   left: 50%;
   align-items: center;
   transform: translateX(-50%);
 }
-.loc.svelte-1ytmb75 {
+.loc.svelte-1trjjxk {
   margin: 1vh;
 }
-.location.svelte-1ytmb75 {
+.location.svelte-1trjjxk {
   flex-direction: column;
   top: 7vh;
   left: 0%;

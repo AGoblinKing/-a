@@ -41,7 +41,8 @@
 	renderer="alpha: false; color;colorManagement: true;"
 	shadow="type:basic;"
 	device-orientation-permission-ui="enabled: false"
-	physics="driver: ammo; debug: {$open_debug}; iterations: 2; fixedTimeStep: 0.01667; maxSubSteps: 2;"
+	physics="driver: ammo; debug: {$open_debug}; iterations: 2; fixedTimeStep: {1 /
+		60}; maxSubSteps: 2;"
 	uniforms
 	net
 >

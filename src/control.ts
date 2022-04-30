@@ -263,17 +263,24 @@ export const controls = {
         binds_icon.set(clone(state.binds_icon))
     },
     [EControl.Use]: (items: string[]) => {
-        if (do_drop.$) {
-            AVATAR.$.doDrop(items[2])
-            return
-        }
+        if (items[2].slice(0, 3) !== "bag") {
+            if (do_drop.$) {
+                AVATAR.$.doDrop(items[2])
+                return
+            }
 
-        if (do_throw.$) {
-            AVATAR.$.doThrow(items[2])
-            return
+            if (do_throw.$) {
+                AVATAR.$.doThrow(items[2])
+                return
+            }
         }
         // use [itemslot=hand_left]
-        AVATAR.$.doUse(items[2])
+        if (items[3]) {
+            AVATAR.$.doUse(items[2], document.getElementById(items[3]))
+        } else {
+            AVATAR.$.doUse(items[2])
+        }
+
 
     },
     [EControl.NotUse]: (items: string[]) => {

@@ -1,7 +1,6 @@
 <script>
-	import { binds, binds_icon } from 'src/control'
 	import { key_down, key_map, key_up } from 'src/input'
-	import { ismobile, open_text, ground } from 'src/timing'
+	import { ismobile, open_text } from 'src/timing'
 	import Body from './body.svelte'
 	import { doControl } from 'src/chat'
 	import { AVATAR } from 'src/component/avatar'

@@ -3,7 +3,7 @@ AFRAME.registerComponent("target", {
         type: "string",
         default: ""
     },
-    init() {
-
+    update() {
+        this.el.name = this.data
     }
 })

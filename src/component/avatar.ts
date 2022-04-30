@@ -25,12 +25,12 @@ export enum ESlot {
     bag6 = "bag6",
 }
 export interface IAVATAR {
-    doUse(string): void;
+    doUse(string, HTMLElement?): void;
     doThrow(string): void;
     doDrop(string): void;
     data: any;
 }
-const hands = ["hand_left", "hand_right"]
+
 export const AVATAR = new Value<IAVATAR>()
 export const WIPE_TARGET = new Value<string>("")
 
@@ -51,7 +51,9 @@ AFRAME.registerComponent("avatar", {
         this.updated = new Value(this.data)
 
         this.cancel = this.updated.on(() => {
+
             if (!this.el.parentEl.components.vrm?.data?.current) return
+
             AVATAR.poke()
         })
         requestAnimationFrame(() => {
@@ -60,13 +62,13 @@ AFRAME.registerComponent("avatar", {
             }
         })
 
-        this.targets = new Value<{ [key: string]: HTMLElement }>({})
+        this.targets = new Value<{ [key: string]: any }>({})
         this.cancel2 = WIPE_TARGET.on(($wt) => {
             delete this.targets.$[$wt]
             this.targets.poke()
 
             if (this.el.parentEl.components.vrm?.data?.current) {
-                ground.$.splice(ground.$.indexOf(this.el.object3D.uuid), 1)
+                ground.$.splice(ground.$.indexOf(this.el), 1)
                 ground.poke()
             }
         })
@@ -88,7 +90,7 @@ AFRAME.registerComponent("avatar", {
         return this.el.parentEl.components.vrm.attrValue.current === "true"
     },
 
-    doUse(slot = "hand_left") {
+    doUse(slot = "hand_left", target = Random(this.targets)) {
 
         const e = { whom: this.el, slot }
         if (this.data[slot]) {
@@ -96,10 +98,12 @@ AFRAME.registerComponent("avatar", {
             return
         }
 
-        if (hands.indexOf(slot) === -1) return
-        //items will equip themselves
-        // targets need removed
-        Random(this.targets)?.emit('use', e, false)
+        if (slot.slice(0, 3) === "bag") {
+            target = this.data.hand_left || this.data.hand_right
+        }
+
+        // items will equip themselves
+        target?.emit('use', e, false)
     },
     doThrow(slot = "hand_left") {
         const item = this.data[slot]
@@ -131,7 +135,7 @@ AFRAME.registerComponent("avatar", {
 
         if (this.isCurrent()) {
             o.emit("bump", { whom: this.el })
-            ground.$.push(o.components.target.data)
+            ground.$.push(o)
             ground.poke()
         }
     },
@@ -144,7 +148,7 @@ AFRAME.registerComponent("avatar", {
 
         this.targets.poke()
         if (this.isCurrent()) {
-            ground.$.splice(ground.$.indexOf(o.components.target.data), 1)
+            ground.$.splice(ground.$.indexOf(o), 1)
             ground.poke()
         }
     },
