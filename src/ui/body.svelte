@@ -49,37 +49,77 @@
 	</div>
 {:else}
 	<div class="flex bag pouch ">
-		<div class="button bounce" on:focus={sfx_button_play} on:mouseover={sfx_button_play}>
+		<div
+			class="button bounce"
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
+			on:click={() => doControl(`~ use bag1`)}
+		>
 			{$AVATAR?.data.bag1?.components.target?.data || ' '}
 		</div>
-		<div class=" button bounce" on:focus={sfx_button_play} on:mouseover={sfx_button_play}>
+		<div
+			class=" button bounce"
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
+			on:click={() => doControl(`~ use bag2`)}
+		>
 			{$AVATAR?.data.bag2?.components.target?.data || ' '}
 		</div>
 	</div>
 
 	<div class="flex bag pouch">
-		<div class="button bounce" on:focus={sfx_button_play} on:mouseover={sfx_button_play}>
+		<div
+			class="button bounce"
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
+			on:click={() => doControl(`~ use bag3`)}
+		>
 			{$AVATAR?.data.bag3?.components.target?.data || ' '}
 		</div>
-		<div class="button bounce" on:focus={sfx_button_play} on:mouseover={sfx_button_play}>
+		<div
+			class="button bounce"
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
+			on:click={() => doControl(`~ use bag4`)}
+		>
 			{$AVATAR?.data.bag4?.components.target?.data || ' '}
 		</div>
 	</div>
 
 	<div class="flex bag pouch">
-		<div class="button bounce" on:focus={sfx_button_play} on:mouseover={sfx_button_play}>
+		<div
+			class="button bounce"
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
+			on:click={() => doControl(`~ use bag5`)}
+		>
 			{$AVATAR?.data.bag5?.components.target?.data || ' '}
 		</div>
-		<div class="button bounce" on:focus={sfx_button_play} on:mouseover={sfx_button_play}>
+		<div
+			class="button bounce"
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
+			on:click={() => doControl(`~ use bag6`)}
+		>
 			{$AVATAR?.data.bag6?.components.target?.data || ' '}
 		</div>
 	</div>
 
 	<div class="flex bag pouch">
-		<div class="button bounce" on:focus={sfx_button_play} on:mouseover={sfx_button_play}>
+		<div
+			class="button bounce"
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
+			on:click={() => doControl(`~ use bag7`)}
+		>
 			{$AVATAR?.data.bag7?.components.target?.data || ' '}
 		</div>
-		<div class="button bounce" on:focus={sfx_button_play} on:mouseover={sfx_button_play}>
+		<div
+			class="button bounce"
+			on:focus={sfx_button_play}
+			on:mouseover={sfx_button_play}
+			on:click={() => doControl(`~ use bag8`)}
+		>
 			{$AVATAR?.data.bag8?.components.target?.data || ' '}
 		</div>
 	</div>

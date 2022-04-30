@@ -6226,17 +6226,18 @@
       open_loading.set(true);
     }
   });
-  var motd = new Value(`\u{1F38A}v0.3.5\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.3.6\u{1F38A}
 
 \u2705 Proximity UI \u2705 Physical Items
 \u2705 Location UI
 \u2705 Drop/Pickup Items
+\u2705 Stow
 
 \u274C Use Items
-\u274C Use Specific
-\u274C Stow
+\u274C Cave
+\u274C HP/Death/Respawn
 \u274C Networked Multiplayer 
-\u274C Pose Animations recorded from our VRM
+\u274C Pose Animations
 \u274C AI  
 
 Camera data is processed by mediapipe via tensorflow locally.
@@ -10538,7 +10539,7 @@ void main() {
   // src/ui/body.svelte
   function get_each_context(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[12] = list[i];
+    child_ctx[20] = list[i];
     return child_ctx;
   }
   function create_else_block(ctx) {
@@ -10653,20 +10654,28 @@ void main() {
           dispose = [
             listen(div0, "focus", sfx_button_play),
             listen(div0, "mouseover", sfx_button_play),
+            listen(div0, "click", ctx[11]),
             listen(div1, "focus", sfx_button_play),
             listen(div1, "mouseover", sfx_button_play),
+            listen(div1, "click", ctx[12]),
             listen(div3, "focus", sfx_button_play),
             listen(div3, "mouseover", sfx_button_play),
+            listen(div3, "click", ctx[13]),
             listen(div4, "focus", sfx_button_play),
             listen(div4, "mouseover", sfx_button_play),
+            listen(div4, "click", ctx[14]),
             listen(div6, "focus", sfx_button_play),
             listen(div6, "mouseover", sfx_button_play),
+            listen(div6, "click", ctx[15]),
             listen(div7, "focus", sfx_button_play),
             listen(div7, "mouseover", sfx_button_play),
+            listen(div7, "click", ctx[16]),
             listen(div9, "focus", sfx_button_play),
             listen(div9, "mouseover", sfx_button_play),
+            listen(div9, "click", ctx[17]),
             listen(div10, "focus", sfx_button_play),
-            listen(div10, "mouseover", sfx_button_play)
+            listen(div10, "mouseover", sfx_button_play),
+            listen(div10, "click", ctx[18])
           ];
           mounted = true;
         }
@@ -10759,21 +10768,21 @@ void main() {
   }
   function create_each_block(ctx) {
     let div;
-    let t0_value = (ctx[5][ctx[12]] || ctx[12]) + "";
+    let t0_value = (ctx[5][ctx[20]] || ctx[20]) + "";
     let t0;
     let t1;
     let div_class_value;
     let mounted;
     let dispose;
     function click_handler_2() {
-      return ctx[10](ctx[12]);
+      return ctx[10](ctx[20]);
     }
     return {
       c() {
         div = element("div");
         t0 = text(t0_value);
         t1 = space();
-        attr(div, "class", div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[12] ? "down" : "inactive") + " " + (ctx[4][ctx[12]] ? "active" : "") + " svelte-1x5jkv8");
+        attr(div, "class", div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[4][ctx[20]] ? "active" : "") + " svelte-1x5jkv8");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -10790,9 +10799,9 @@ void main() {
       },
       p(new_ctx, dirty) {
         ctx = new_ctx;
-        if (dirty & 32 && t0_value !== (t0_value = (ctx[5][ctx[12]] || ctx[12]) + ""))
+        if (dirty & 32 && t0_value !== (t0_value = (ctx[5][ctx[20]] || ctx[20]) + ""))
           set_data(t0, t0_value);
-        if (dirty & 24 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[12] ? "down" : "inactive") + " " + (ctx[4][ctx[12]] ? "active" : "") + " svelte-1x5jkv8")) {
+        if (dirty & 24 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[20] ? "down" : "inactive") + " " + (ctx[4][ctx[20]] ? "active" : "") + " svelte-1x5jkv8")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -10864,7 +10873,7 @@ void main() {
             listen(div1, "click", ctx[9]),
             listen(div3, "focus", sfx_button_play),
             listen(div3, "mouseover", sfx_button_play),
-            listen(div3, "click", ctx[11])
+            listen(div3, "click", ctx[19])
           ];
           mounted = true;
         }
@@ -10926,7 +10935,15 @@ void main() {
       key_down.set("" + b);
       key_up.set("" + b);
     };
-    const click_handler_3 = () => {
+    const click_handler_3 = () => doControl(`~ use bag1`);
+    const click_handler_4 = () => doControl(`~ use bag2`);
+    const click_handler_5 = () => doControl(`~ use bag3`);
+    const click_handler_6 = () => doControl(`~ use bag4`);
+    const click_handler_7 = () => doControl(`~ use bag5`);
+    const click_handler_8 = () => doControl(`~ use bag6`);
+    const click_handler_9 = () => doControl(`~ use bag7`);
+    const click_handler_10 = () => doControl(`~ use bag8`);
+    const click_handler_11 = () => {
       set_store_value(key_map, $key_map["shift"] = !$key_map["shift"], $key_map);
       key_map.poke();
     };
@@ -10942,7 +10959,15 @@ void main() {
       click_handler,
       click_handler_1,
       click_handler_2,
-      click_handler_3
+      click_handler_3,
+      click_handler_4,
+      click_handler_5,
+      click_handler_6,
+      click_handler_7,
+      click_handler_8,
+      click_handler_9,
+      click_handler_10,
+      click_handler_11
     ];
   }
   var Body = class extends SvelteComponent {

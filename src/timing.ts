@@ -50,17 +50,18 @@ open_game.on(($g) => {
     }
 })
 
-export const motd = new Value(`🎊v0.3.5🎊
+export const motd = new Value(`🎊v0.3.6🎊
 
 ✅ Proximity UI ✅ Physical Items
 ✅ Location UI
 ✅ Drop/Pickup Items
+✅ Stow
 
 ❌ Use Items
-❌ Use Specific
-❌ Stow
+❌ Cave
+❌ HP/Death/Respawn
 ❌ Networked Multiplayer 
-❌ Pose Animations recorded from our VRM
+❌ Pose Animations
 ❌ AI  
 
 Camera data is processed by mediapipe via tensorflow locally.
