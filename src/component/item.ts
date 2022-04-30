@@ -81,6 +81,10 @@ AFRAME.registerComponent("item", {
         this.el.setAttribute("ammo-body", this.ogBody)
         this.el.setAttribute("ammo-shape", this.ogShape)
 
+        delete this.ogBody
+        delete this.ogShape
+        delete this.ogParent
+
     },
     equip(e) {
         const { slot, whom } = e.detail
@@ -102,14 +106,15 @@ AFRAME.registerComponent("item", {
         avatar.updated.poke()
 
         // zero out position, add avatar
-        this.ogParent = this.el.object3D.parent
+        if (!this.ogParent) {
+            this.ogParent = this.el.object3D.parent
+            this.ogBody = this.el.getAttribute("ammo-body")
+            this.ogShape = this.el.getAttribute("ammo-shape")
 
-        this.ogBody = this.el.getAttribute("ammo-body")
-        this.ogShape = this.el.getAttribute("ammo-shape")
-
-        this.el.removeAttribute("ammo-body")
-        this.el.removeAttribute("ammo-shape")
-        WIPE_TARGET.set(this.el.object3D.uuid)
+            this.el.removeAttribute("ammo-body")
+            this.el.removeAttribute("ammo-shape")
+            WIPE_TARGET.set(this.el.object3D.uuid)
+        }
 
         if (avatar.isCurrent()) {
             // vrms attach at head

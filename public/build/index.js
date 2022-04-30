@@ -11749,6 +11749,9 @@ void main() {
       this.el.removeAttribute("animation__action");
       this.el.setAttribute("ammo-body", this.ogBody);
       this.el.setAttribute("ammo-shape", this.ogShape);
+      delete this.ogBody;
+      delete this.ogShape;
+      delete this.ogParent;
     },
     equip(e) {
       const { slot, whom } = e.detail;
@@ -11762,12 +11765,14 @@ void main() {
       const avatar = whom.components["avatar"];
       avatar.data[slot] = this.el;
       avatar.updated.poke();
-      this.ogParent = this.el.object3D.parent;
-      this.ogBody = this.el.getAttribute("ammo-body");
-      this.ogShape = this.el.getAttribute("ammo-shape");
-      this.el.removeAttribute("ammo-body");
-      this.el.removeAttribute("ammo-shape");
-      WIPE_TARGET.set(this.el.object3D.uuid);
+      if (!this.ogParent) {
+        this.ogParent = this.el.object3D.parent;
+        this.ogBody = this.el.getAttribute("ammo-body");
+        this.ogShape = this.el.getAttribute("ammo-shape");
+        this.el.removeAttribute("ammo-body");
+        this.el.removeAttribute("ammo-shape");
+        WIPE_TARGET.set(this.el.object3D.uuid);
+      }
       if (avatar.isCurrent()) {
         camera.$.add(this.el.object3D);
         AVATAR.poke();
