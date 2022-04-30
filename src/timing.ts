@@ -50,11 +50,12 @@ open_game.on(($g) => {
     }
 })
 
-export const motd = new Value(`🎊v0.4.0🎊
+export const motd = new Value(`🎊v0.4.1🎊
 
 ✅ Drop/Pickup Items
 ✅ Stow
-✅ Use Items
+✅ Spawn
+❌ Use Items
 
 ❌ Perf Pass
 ❌ Cave

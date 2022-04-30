@@ -6226,11 +6226,12 @@
       open_loading.set(true);
     }
   });
-  var motd = new Value(`\u{1F38A}v0.4.0\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.4.1\u{1F38A}
 
 \u2705 Drop/Pickup Items
 \u2705 Stow
-\u2705 Use Items
+\u2705 Spawn
+\u274C Use Items
 
 \u274C Perf Pass
 \u274C Cave
