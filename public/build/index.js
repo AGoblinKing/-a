@@ -11649,6 +11649,7 @@ void main() {
       if (!this.data.holder)
         return;
       this.el.object3D.getWorldPosition(this.el.object3D.position);
+      this.el.object3D.position.y -= 3;
       this.reset();
       delete this.data.holder;
       this.updated.poke();
@@ -11656,11 +11657,12 @@ void main() {
     throw(e) {
       if (!this.data.holder)
         return;
-      const p2 = this.data.holder;
+      const p2 = this.el.object3D.parent;
       this.drop(e);
-      vec35.set(-30, 10, 0).applyQuaternion(p2.object3D.parent.getWorldQuaternion(quat4));
+      vec35.set(0, 3, -30).applyQuaternion(p2.getWorldQuaternion(quat4));
+      this.el.object3D.lookAt(vec35);
       const force = new Ammo.btVector3(vec35.x, vec35.y, vec35.z);
-      const torque = new Ammo.btVector3(10, 10, 10);
+      const torque = new Ammo.btVector3(1, 1, 1);
       this.el.body.applyForce(force);
       this.el.body.applyTorque(torque);
       this.el.body.activate();

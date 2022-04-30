@@ -24,7 +24,7 @@ AFRAME.registerComponent("item", {
 
         // change position to world position
         this.el.object3D.getWorldPosition(this.el.object3D.position)
-
+        this.el.object3D.position.y -= 3;
         // put item back into scene
         this.reset()
         // set data holder to nothing
@@ -34,15 +34,17 @@ AFRAME.registerComponent("item", {
     throw(e) {
         if (!this.data.holder) return
 
-        const p = this.data.holder
+        const p = this.el.object3D.parent
+
 
         this.drop(e)
 
-        vec3.set(-30, 10, 0).applyQuaternion(p.object3D.parent.getWorldQuaternion(quat))
+        vec3.set(0, 3, -30).applyQuaternion(p.getWorldQuaternion(quat))
+        this.el.object3D.lookAt(vec3)
 
         // apply force to item based on thrower
         const force = new Ammo.btVector3(vec3.x, vec3.y, vec3.z)
-        const torque = new Ammo.btVector3(10, 10, 10)
+        const torque = new Ammo.btVector3(1, 1, 1)
         this.el.body.applyForce(force)
         this.el.body.applyTorque(torque)
         this.el.body.activate()
@@ -90,11 +92,12 @@ AFRAME.registerComponent("item", {
 
         if (avatar.isCurrent()) {
             // vrms attach at head
-            camera.$.add(this.el.object3D)
 
+            camera.$.add(this.el.object3D)
             AVATAR.poke()
             // we updated the data to it
         } else {
+
             whom.object3D.add(this.el.object3D)
         }
 
