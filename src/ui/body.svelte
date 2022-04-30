@@ -4,14 +4,27 @@
 	import { binds, binds_icon } from 'src/control'
 	import { key_down, key_map, key_up } from 'src/input'
 	import { sfx_button_play } from 'src/sound/sfx-ui'
+	import { do_drop, do_throw } from 'src/timing'
 	let bound = ['!', '@', '#', '$', '%', '^']
 </script>
 
 <div class="flex bag red">
-	<div on:focus={sfx_button_play} on:mouseover={sfx_button_play} class="button bounce disable">
+	<div
+		on:focus={sfx_button_play}
+		on:mouseover={sfx_button_play}
+		class="button bounce "
+		class:disable={!$do_drop}
+		on:click={() => do_drop.set(!$do_drop)}
+	>
 		🧫
 	</div>
-	<div on:focus={sfx_button_play} on:mouseover={sfx_button_play} class="button bounce disable">
+	<div
+		on:focus={sfx_button_play}
+		on:mouseover={sfx_button_play}
+		class="button bounce "
+		class:disable={!$do_throw}
+		on:click={() => do_throw.set(!$do_throw)}
+	>
 		🪃
 	</div>
 </div>

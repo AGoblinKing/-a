@@ -25,6 +25,10 @@ export const open_debug = new Value(false).save("debugger")
 export const open_targeting = new Value(false).save("targeting_5")
 export const open_live = new Value(false)
 export const open_hostid = new Value(true)
+
+export const do_drop = new Value(false)
+export const do_throw = new Value(false).not(do_drop)
+
 const loc = location.search.slice(1).split("&").map((i) => i.split("="))
 // @ts-ignore
 export const args = new Value(new Map(loc))

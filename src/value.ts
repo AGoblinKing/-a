@@ -4,7 +4,6 @@ export type FSubscribe<T> = (value: T) => any
 export class Value<T> {
   $: T
   protected reactions: Set<FSubscribe<T>>
-  stopKeeping: ICancel
 
   constructor(value: T = undefined as any) {
     this.$ = value
@@ -47,46 +46,18 @@ export class Value<T> {
     return this
   }
 
-  do(fn: () => void) {
-    // never gonna make you cry
-    fn()
-    return this
-  }
-  re(fn: (value: T) => void) {
-    // never gonna give you up
-    this.on(fn)
+  not(store: Value<boolean>) {
 
-    return this
-  }
-  me() {
-    return new Value(this.$)
-  }
-  fa<TT>(
-    v: Value<TT>,
-    transform?: (value: TT) => T,
-    filter?: (value: TT) => boolean
-  ) {
-    // let you down
-    v.on((state) => {
-      if (filter) {
-        if (!filter(state)) return
-      }
-      if (transform) {
-        this.set(transform(state))
-      } else {
-        // @ts-ignore
-        this.set(state)
-      }
+    store.on(($v) => {
+      if (!$v || !this.$) return
+      // @ts-ignore
+      this.set(false)
     })
 
-    return this
-  }
-  la(timing: number, fn: (i: number) => void) {
-    // never gonna turn around
-    let i = 0
-    setInterval(() => {
-      fn(i++)
-    }, timing)
+    this.on(($v) => {
+      if (!$v || !store.$) return
+      store.set(false)
+    })
 
     return this
   }

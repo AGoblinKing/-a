@@ -5544,6 +5544,9 @@
       node.style.setProperty(key, value, important ? "important" : "");
     }
   }
+  function toggle_class(element2, name, toggle) {
+    element2.classList[toggle ? "add" : "remove"](name);
+  }
   function custom_event(type, detail, bubbles = false) {
     const e = document.createEvent("CustomEvent");
     e.initCustomEvent(type, bubbles, false, detail);
@@ -6090,7 +6093,9 @@
       "8": "Vas rel por",
       "9": "In vas flam",
       "0": "nox",
-      "f": "~ not pointerlock"
+      "f": "~ not pointerlock",
+      "q": "~ toggle drop",
+      "e": "~ toggle throw"
     },
     "vars": {},
     "selfie": false,
@@ -6146,36 +6151,17 @@
       }
       return this;
     }
-    do(fn) {
-      fn();
-      return this;
-    }
-    re(fn) {
-      this.on(fn);
-      return this;
-    }
-    me() {
-      return new Value(this.$);
-    }
-    fa(v, transform, filter) {
-      v.on((state2) => {
-        if (filter) {
-          if (!filter(state2))
-            return;
-        }
-        if (transform) {
-          this.set(transform(state2));
-        } else {
-          this.set(state2);
-        }
+    not(store) {
+      store.on(($v) => {
+        if (!$v || !this.$)
+          return;
+        this.set(false);
       });
-      return this;
-    }
-    la(timing, fn) {
-      let i = 0;
-      setInterval(() => {
-        fn(i++);
-      }, timing);
+      this.on(($v) => {
+        if (!$v || !store.$)
+          return;
+        store.set(false);
+      });
       return this;
     }
     save(where) {
@@ -6215,6 +6201,8 @@
   var open_targeting = new Value(false).save("targeting_5");
   var open_live = new Value(false);
   var open_hostid = new Value(true);
+  var do_drop = new Value(false);
+  var do_throw = new Value(false).not(do_drop);
   var loc = location.search.slice(1).split("&").map((i) => i.split("="));
   var args = new Value(new Map(loc));
   var camera = new Value();
@@ -6675,6 +6663,7 @@ reset back to 1 for size
   }
   var hands = ["hand_left", "hand_right"];
   var AVATAR = new Value();
+  var WIPE_TARGET = new Value("");
   AFRAME.registerComponent("avatar", {
     schema: {
       ["hand_left" /* hand_left */]: { type: "selector" },
@@ -6688,18 +6677,33 @@ reset back to 1 for size
     },
     init() {
       this.updated = new Value(this.data);
+      this.cancel = this.updated.on(() => {
+        if (!this.el.parentEl.components.vrm?.data?.current)
+          return;
+        AVATAR.poke();
+      });
       requestAnimationFrame(() => {
         if (this.el.parentEl.components.vrm?.data.current) {
           AVATAR.set(this);
         }
       });
       this.targets = new Value({});
+      this.cancel2 = WIPE_TARGET.on(($wt) => {
+        delete this.targets.$[$wt];
+        this.targets.poke();
+        if (this.el.parentEl.components.vrm?.data?.current) {
+          ground.$.splice(ground.$.indexOf(this.el.object3D.uuid), 1);
+          ground.poke();
+        }
+      });
       this.collideStart = this.collideStart.bind(this);
       this.collideEnd = this.collideEnd.bind(this);
       this.el.addEventListener("collidestart", this.collideStart);
       this.el.addEventListener("collideend", this.collideEnd);
     },
     remove() {
+      this.cancel2();
+      this.cancel();
       this.el.removeEventListener("collidestart", this.collideStart);
       this.el.removeEventListener("collideend", this.collideEnd);
     },
@@ -6720,12 +6724,16 @@ reset back to 1 for size
       const item = this.data[slot];
       if (!item)
         return;
+      delete this.data[slot];
+      this.updated.poke();
       item.emit("throw", { whom: this.el, slot }, false);
     },
     doDrop(slot = "hand_left") {
       const item = this.data[slot];
       if (!item)
         return;
+      delete this.data[slot];
+      this.updated.poke();
       item.emit("drop", { whom: this.el, slot }, false);
     },
     collideStart(e) {
@@ -6923,6 +6931,14 @@ reset back to 1 for size
       binds_icon.set(clone(state_default.binds_icon));
     },
     ["use" /* Use */]: (items) => {
+      if (do_drop.$) {
+        AVATAR.$.doDrop(items[2]);
+        return;
+      }
+      if (do_throw.$) {
+        AVATAR.$.doThrow(items[2]);
+        return;
+      }
       AVATAR.$.doUse(items[2]);
     },
     ["notuse" /* NotUse */]: (items) => {
@@ -6939,6 +6955,12 @@ reset back to 1 for size
     },
     ["togglepointerlock" /* TogglePointerLock */]: (items) => {
       toggle_pointerlock.set(!toggle_pointerlock.$);
+    },
+    ["toggledrop" /* ToggleDrop */]: (items) => {
+      do_drop.set(!do_drop.$);
+    },
+    ["togglethrow" /* ToggleThrow */]: (items) => {
+      do_throw.set(!do_throw.$);
     }
   };
 
@@ -7464,7 +7486,6 @@ reset back to 1 for size
         return;
       const o3d = this.el.object3D;
       let force;
-      let torq;
       vec32.set(0, 0, 0);
       let intensity = 1;
       let hop = 5;
@@ -7517,8 +7538,6 @@ reset back to 1 for size
           this.next = t + 1e3 - l * 40 + Math.random() * 100 + (t % 100 > 50 ? 250 : 0);
         }
       }
-      if (torq)
-        Ammo.destroy(torq);
     }
   });
 
@@ -8827,7 +8846,7 @@ gl_Position = mvPosition;
     "p_lpf_resonance": 0.004515281319145359,
     "p_hpf_freq": 3325274419334111e-19,
     "p_hpf_ramp": 7682252453488168e-19,
-    "sound_vol": 0.25,
+    "sound_vol": 0.1,
     "sample_rate": 44100,
     "sample_size": 8
   });
@@ -8856,7 +8875,7 @@ gl_Position = mvPosition;
     "p_lpf_resonance": -0.9793191723490668,
     "p_hpf_freq": 0.13327861965545218,
     "p_hpf_ramp": 0.02163136268236316,
-    "sound_vol": 0.25,
+    "sound_vol": 0.1,
     "sample_rate": 44100,
     "sample_size": 8
   });
@@ -10503,35 +10522,35 @@ void main() {
   // src/ui/body.svelte
   function get_each_context(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[8] = list[i];
+    child_ctx[12] = list[i];
     return child_ctx;
   }
   function create_else_block(ctx) {
     let div2;
     let div0;
-    let t0_value = (ctx[4]?.data.bag1?.components.target?.data || " ") + "";
+    let t0_value = (ctx[6]?.data.bag1?.components.target?.data || " ") + "";
     let t0;
     let t1;
     let div1;
-    let t2_value = (ctx[4]?.data.bag2?.components.target?.data || " ") + "";
+    let t2_value = (ctx[6]?.data.bag2?.components.target?.data || " ") + "";
     let t2;
     let t3;
     let div5;
     let div3;
-    let t4_value = (ctx[4]?.data.bag3?.components.target?.data || " ") + "";
+    let t4_value = (ctx[6]?.data.bag3?.components.target?.data || " ") + "";
     let t4;
     let t5;
     let div4;
-    let t6_value = (ctx[4]?.data.bag4?.components.target?.data || " ") + "";
+    let t6_value = (ctx[6]?.data.bag4?.components.target?.data || " ") + "";
     let t6;
     let t7;
     let div8;
     let div6;
-    let t8_value = (ctx[4]?.data.bag5?.components.target?.data || " ") + "";
+    let t8_value = (ctx[6]?.data.bag5?.components.target?.data || " ") + "";
     let t8;
     let t9;
     let div7;
-    let t10_value = (ctx[4]?.data.bag6?.components.target?.data || " ") + "";
+    let t10_value = (ctx[6]?.data.bag6?.components.target?.data || " ") + "";
     let t10;
     let mounted;
     let dispose;
@@ -10607,17 +10626,17 @@ void main() {
         }
       },
       p(ctx2, dirty) {
-        if (dirty & 16 && t0_value !== (t0_value = (ctx2[4]?.data.bag1?.components.target?.data || " ") + ""))
+        if (dirty & 64 && t0_value !== (t0_value = (ctx2[6]?.data.bag1?.components.target?.data || " ") + ""))
           set_data(t0, t0_value);
-        if (dirty & 16 && t2_value !== (t2_value = (ctx2[4]?.data.bag2?.components.target?.data || " ") + ""))
+        if (dirty & 64 && t2_value !== (t2_value = (ctx2[6]?.data.bag2?.components.target?.data || " ") + ""))
           set_data(t2, t2_value);
-        if (dirty & 16 && t4_value !== (t4_value = (ctx2[4]?.data.bag3?.components.target?.data || " ") + ""))
+        if (dirty & 64 && t4_value !== (t4_value = (ctx2[6]?.data.bag3?.components.target?.data || " ") + ""))
           set_data(t4, t4_value);
-        if (dirty & 16 && t6_value !== (t6_value = (ctx2[4]?.data.bag4?.components.target?.data || " ") + ""))
+        if (dirty & 64 && t6_value !== (t6_value = (ctx2[6]?.data.bag4?.components.target?.data || " ") + ""))
           set_data(t6, t6_value);
-        if (dirty & 16 && t8_value !== (t8_value = (ctx2[4]?.data.bag5?.components.target?.data || " ") + ""))
+        if (dirty & 64 && t8_value !== (t8_value = (ctx2[6]?.data.bag5?.components.target?.data || " ") + ""))
           set_data(t8, t8_value);
-        if (dirty & 16 && t10_value !== (t10_value = (ctx2[4]?.data.bag6?.components.target?.data || " ") + ""))
+        if (dirty & 64 && t10_value !== (t10_value = (ctx2[6]?.data.bag6?.components.target?.data || " ") + ""))
           set_data(t10, t10_value);
       },
       d(detaching) {
@@ -10638,7 +10657,7 @@ void main() {
   }
   function create_if_block3(ctx) {
     let div;
-    let each_value = ctx[5];
+    let each_value = ctx[7];
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
       each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
@@ -10658,8 +10677,8 @@ void main() {
         }
       },
       p(ctx2, dirty) {
-        if (dirty & 46) {
-          each_value = ctx2[5];
+        if (dirty & 184) {
+          each_value = ctx2[7];
           let i;
           for (i = 0; i < each_value.length; i += 1) {
             const child_ctx = get_each_context(ctx2, each_value, i);
@@ -10686,21 +10705,21 @@ void main() {
   }
   function create_each_block(ctx) {
     let div;
-    let t0_value = (ctx[3][ctx[8]] || ctx[8]) + "";
+    let t0_value = (ctx[5][ctx[12]] || ctx[12]) + "";
     let t0;
     let t1;
     let div_class_value;
     let mounted;
     let dispose;
-    function click_handler() {
-      return ctx[6](ctx[8]);
+    function click_handler_2() {
+      return ctx[10](ctx[12]);
     }
     return {
       c() {
         div = element("div");
         t0 = text(t0_value);
         t1 = space();
-        attr(div, "class", div_class_value = "button bounce bound " + (ctx[1] === "" + ctx[8] ? "down" : "inactive") + " " + (ctx[2][ctx[8]] ? "active" : "") + " svelte-1x5jkv8");
+        attr(div, "class", div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[12] ? "down" : "inactive") + " " + (ctx[4][ctx[12]] ? "active" : "") + " svelte-1x5jkv8");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -10710,16 +10729,16 @@ void main() {
           dispose = [
             listen(div, "focus", sfx_button_play),
             listen(div, "mouseover", sfx_button_play),
-            listen(div, "click", click_handler)
+            listen(div, "click", click_handler_2)
           ];
           mounted = true;
         }
       },
       p(new_ctx, dirty) {
         ctx = new_ctx;
-        if (dirty & 8 && t0_value !== (t0_value = (ctx[3][ctx[8]] || ctx[8]) + ""))
+        if (dirty & 32 && t0_value !== (t0_value = (ctx[5][ctx[12]] || ctx[12]) + ""))
           set_data(t0, t0_value);
-        if (dirty & 6 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[1] === "" + ctx[8] ? "down" : "inactive") + " " + (ctx[2][ctx[8]] ? "active" : "") + " svelte-1x5jkv8")) {
+        if (dirty & 24 && div_class_value !== (div_class_value = "button bounce bound " + (ctx[3] === "" + ctx[12] ? "down" : "inactive") + " " + (ctx[4][ctx[12]] ? "active" : "") + " svelte-1x5jkv8")) {
           attr(div, "class", div_class_value);
         }
       },
@@ -10743,7 +10762,7 @@ void main() {
     let mounted;
     let dispose;
     function select_block_type(ctx2, dirty) {
-      if (ctx2[0]["shift"])
+      if (ctx2[2]["shift"])
         return create_if_block3;
       return create_else_block;
     }
@@ -10763,8 +10782,10 @@ void main() {
         div4 = element("div");
         div3 = element("div");
         div3.textContent = "\u{1F500}";
-        attr(div0, "class", "button bounce disable svelte-1x5jkv8");
-        attr(div1, "class", "button bounce disable svelte-1x5jkv8");
+        attr(div0, "class", "button bounce  svelte-1x5jkv8");
+        toggle_class(div0, "disable", !ctx[0]);
+        attr(div1, "class", "button bounce  svelte-1x5jkv8");
+        toggle_class(div1, "disable", !ctx[1]);
         attr(div2, "class", "flex bag red svelte-1x5jkv8");
         attr(div3, "class", "button bounce svelte-1x5jkv8");
         attr(div4, "class", "flex bag pouch svelte-1x5jkv8");
@@ -10783,16 +10804,24 @@ void main() {
           dispose = [
             listen(div0, "focus", sfx_button_play),
             listen(div0, "mouseover", sfx_button_play),
+            listen(div0, "click", ctx[8]),
             listen(div1, "focus", sfx_button_play),
             listen(div1, "mouseover", sfx_button_play),
+            listen(div1, "click", ctx[9]),
             listen(div3, "focus", sfx_button_play),
             listen(div3, "mouseover", sfx_button_play),
-            listen(div3, "click", ctx[7])
+            listen(div3, "click", ctx[11])
           ];
           mounted = true;
         }
       },
       p(ctx2, [dirty]) {
+        if (dirty & 1) {
+          toggle_class(div0, "disable", !ctx2[0]);
+        }
+        if (dirty & 2) {
+          toggle_class(div1, "disable", !ctx2[1]);
+        }
         if (current_block_type === (current_block_type = select_block_type(ctx2, dirty)) && if_block) {
           if_block.p(ctx2, dirty);
         } else {
@@ -10822,26 +10851,34 @@ void main() {
     };
   }
   function instance9($$self, $$props, $$invalidate) {
+    let $do_drop;
+    let $do_throw;
     let $key_map;
     let $key_down;
     let $binds;
     let $binds_icon;
     let $AVATAR;
-    component_subscribe($$self, key_map, ($$value) => $$invalidate(0, $key_map = $$value));
-    component_subscribe($$self, key_down, ($$value) => $$invalidate(1, $key_down = $$value));
-    component_subscribe($$self, binds, ($$value) => $$invalidate(2, $binds = $$value));
-    component_subscribe($$self, binds_icon, ($$value) => $$invalidate(3, $binds_icon = $$value));
-    component_subscribe($$self, AVATAR, ($$value) => $$invalidate(4, $AVATAR = $$value));
+    component_subscribe($$self, do_drop, ($$value) => $$invalidate(0, $do_drop = $$value));
+    component_subscribe($$self, do_throw, ($$value) => $$invalidate(1, $do_throw = $$value));
+    component_subscribe($$self, key_map, ($$value) => $$invalidate(2, $key_map = $$value));
+    component_subscribe($$self, key_down, ($$value) => $$invalidate(3, $key_down = $$value));
+    component_subscribe($$self, binds, ($$value) => $$invalidate(4, $binds = $$value));
+    component_subscribe($$self, binds_icon, ($$value) => $$invalidate(5, $binds_icon = $$value));
+    component_subscribe($$self, AVATAR, ($$value) => $$invalidate(6, $AVATAR = $$value));
     let bound = ["!", "@", "#", "$", "%", "^"];
-    const click_handler = (b) => {
+    const click_handler = () => do_drop.set(!$do_drop);
+    const click_handler_1 = () => do_throw.set(!$do_throw);
+    const click_handler_2 = (b) => {
       key_down.set("" + b);
       key_up.set("" + b);
     };
-    const click_handler_1 = () => {
+    const click_handler_3 = () => {
       set_store_value(key_map, $key_map["shift"] = !$key_map["shift"], $key_map);
       key_map.poke();
     };
     return [
+      $do_drop,
+      $do_throw,
       $key_map,
       $key_down,
       $binds,
@@ -10849,7 +10886,9 @@ void main() {
       $AVATAR,
       bound,
       click_handler,
-      click_handler_1
+      click_handler_1,
+      click_handler_2,
+      click_handler_3
     ];
   }
   var Body = class extends SvelteComponent {
@@ -11593,6 +11632,8 @@ void main() {
   });
 
   // src/component/item.ts
+  var vec35 = new AFRAME.THREE.Vector3();
+  var quat4 = new AFRAME.THREE.Quaternion();
   AFRAME.registerComponent("item", {
     schema: {
       holder: { type: "selector" },
@@ -11608,38 +11649,53 @@ void main() {
       if (!this.data.holder)
         return;
       this.el.object3D.getWorldPosition(this.el.object3D.position);
-      this.ogParent.add(this.el.object3D);
+      this.reset();
       delete this.data.holder;
       this.updated.poke();
     },
     throw(e) {
+      if (!this.data.holder)
+        return;
+      const p2 = this.data.holder;
       this.drop(e);
+      vec35.set(-30, 10, 0).applyQuaternion(p2.object3D.parent.getWorldQuaternion(quat4));
+      const force = new Ammo.btVector3(vec35.x, vec35.y, vec35.z);
+      const torque = new Ammo.btVector3(10, 10, 10);
+      this.el.body.applyForce(force);
+      this.el.body.applyTorque(torque);
+      this.el.body.activate();
+      Ammo.destroy(force);
+      Ammo.destroy(torque);
     },
     action(slot, whom) {
       doControl(this.data.action);
       this.el.emit("action", { slot, whom });
     },
-    use(e) {
+    reset() {
+      this.ogParent.add(this.el.object3D);
+      this.el.removeAttribute("animation");
+      this.el.removeAttribute("animation__action");
+      this.el.setAttribute("ammo-body", this.ogBody);
+      this.el.setAttribute("ammo-shape", this.ogShape);
+    },
+    equip(e) {
       const { slot, whom } = e.detail;
-      const avatar = whom.components["avatar"];
-      const existing = avatar.data[slot];
-      if (existing) {
-        if (existing !== this.el)
-          return;
-        this.action(slot, whom);
-        return;
-      }
       this.data.holder = whom;
+      const avatar = whom.components["avatar"];
       avatar.data[slot] = this.el;
       avatar.updated.poke();
       this.ogParent = this.el.object3D.parent;
+      this.ogBody = this.el.getAttribute("ammo-body");
+      this.ogShape = this.el.getAttribute("ammo-shape");
+      this.el.removeAttribute("ammo-body");
+      this.el.removeAttribute("ammo-shape");
+      WIPE_TARGET.set(this.el.object3D.uuid);
       if (avatar.isCurrent()) {
         camera.$.add(this.el.object3D);
         AVATAR.poke();
       } else {
         whom.object3D.add(this.el.object3D);
       }
-      this.el.setAttribute("ammo-body", { "activationState": "disableSimulation", type: "kinematic" });
       switch (slot) {
         case "bag1":
         case "bag2":
@@ -11652,7 +11708,7 @@ void main() {
         case "hand_right":
           this.el.setAttribute("animation__action", "startEvents: action; autoplay: false; property: object3D.rotation; dur: 1000; easing: linear; to: -90 0 0; loop: 2; dur: 500; dir: alternate; ");
           this.el.setAttribute("animation", "property: object3D.position.y; from: -0.5; to: -.25; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate;");
-          this.el.object3D.position.set(slot.indexOf("right") !== -1 ? 0.45 : -0.45, 0, -1);
+          this.el.object3D.position.set(slot.indexOf("right") !== -1 ? 0.4 : -0.4, 0, -1);
           this.el.object3D.lookAt(0, 1, -5);
           break;
         default:
@@ -11660,6 +11716,18 @@ void main() {
           break;
       }
       whom.emit("equip", { item: this.el, slot });
+    },
+    use(e) {
+      const { slot, whom } = e.detail;
+      const avatar = whom.components["avatar"];
+      const existing = avatar.data[slot];
+      if (existing) {
+        if (existing !== this.el)
+          return;
+        this.action(slot, whom);
+        return;
+      }
+      this.equip(e);
     },
     remove() {
       this.el.removeEventListener("use", this.use);

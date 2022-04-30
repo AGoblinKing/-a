@@ -2,7 +2,7 @@ import type { Object3D } from "three"
 import { key_map } from "src/input";
 import { camera } from "src/timing";
 import { guest } from "./net";
-import { VRM_AVATAR } from "./avatar";
+
 
 const vec3 = new AFRAME.THREE.Vector3()
 const quat = new AFRAME.THREE.Quaternion()
@@ -45,7 +45,7 @@ AFRAME.registerComponent("wasd-controller", {
 
         let force
 
-        let torq
+
         vec3.set(0, 0, 0)
         let intensity = 1
         let hop = 5
@@ -107,7 +107,6 @@ AFRAME.registerComponent("wasd-controller", {
             }
         }
 
-        if (torq) Ammo.destroy(torq)
 
 
     }

@@ -16,7 +16,9 @@ export default {
         "8": "Vas rel por",
         "9": "In vas flam",
         "0": "nox",
-        "f": "~ not pointerlock"
+        "f": "~ not pointerlock",
+        "q": "~ toggle drop",
+        "e": "~ toggle throw",
     },
     "vars": {
 

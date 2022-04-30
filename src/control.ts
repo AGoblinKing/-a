@@ -2,7 +2,7 @@ import { guest, host, room } from "./component/net"
 import { AVATAR } from "src/component/avatar"
 
 import state from "src/state"
-import { avatar_current, avatar_doer, do_echo, do_vary, open_debug, open_help, open_hostid, open_stats, open_targeting, open_ui, scouter, size, toggle_pointerlock, toggle_selfie, toggle_visible, voice_current } from "./timing"
+import { avatar_current, avatar_doer, do_drop, do_echo, do_throw, do_vary, open_debug, open_help, open_hostid, open_stats, open_targeting, open_ui, scouter, size, toggle_pointerlock, toggle_selfie, toggle_visible, voice_current } from "./timing"
 import { Value } from "src/value"
 
 export const binds = new Value<{ [key: string]: string }>(clone(state.binds)).save("binds")
@@ -107,7 +107,10 @@ export enum EControl {
 
     PointerLock = "pointerlock",
     NotPointerLock = "notpointerlock",
-    TogglePointerLock = "togglepointerlock"
+    TogglePointerLock = "togglepointerlock",
+
+    ToggleThrow = "togglethrow",
+    ToggleDrop = "toggledrop",
 }
 
 
@@ -260,6 +263,15 @@ export const controls = {
         binds_icon.set(clone(state.binds_icon))
     },
     [EControl.Use]: (items: string[]) => {
+        if (do_drop.$) {
+            AVATAR.$.doDrop(items[2])
+            return
+        }
+
+        if (do_throw.$) {
+            AVATAR.$.doThrow(items[2])
+            return
+        }
         // use [itemslot=hand_left]
         AVATAR.$.doUse(items[2])
 
@@ -280,8 +292,12 @@ export const controls = {
     },
     [EControl.TogglePointerLock]: (items: string[]) => {
         toggle_pointerlock.set(!toggle_pointerlock.$)
+    },
+    [EControl.ToggleDrop]: (items: string[]) => {
+        do_drop.set(!do_drop.$)
+    },
+    [EControl.ToggleThrow]: (items: string[]) => {
+        do_throw.set(!do_throw.$)
     }
-
-
 }
 

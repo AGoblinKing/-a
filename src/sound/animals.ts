@@ -25,7 +25,7 @@ export const sfx_cat = stringify({
     "p_lpf_resonance": 0.004515281319145359,
     "p_hpf_freq": 0.0003325274419334111,
     "p_hpf_ramp": 0.0007682252453488168,
-    "sound_vol": 0.25,
+    "sound_vol": 0.1,
     "sample_rate": 44100,
     "sample_size": 8
 })
@@ -55,7 +55,7 @@ export const sfx_bird = stringify({
     "p_lpf_resonance": -0.9793191723490668,
     "p_hpf_freq": 0.13327861965545218,
     "p_hpf_ramp": 0.02163136268236316,
-    "sound_vol": 0.25,
+    "sound_vol": 0.1,
     "sample_rate": 44100,
     "sample_size": 8
 })
