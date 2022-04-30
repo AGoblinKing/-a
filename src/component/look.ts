@@ -56,11 +56,6 @@ registerComponent('look', {
     update: function (oldData) {
         var data = this.data;
 
-        // Disable grab cursor classes if no longer enabled.
-        if (data.enabled !== oldData.enabled) {
-            this.updateGrabCursor(data.enabled);
-        }
-
 
         if (oldData && !data.pointerLockEnabled !== oldData.pointerLockEnabled) {
             this.removeEventListeners();
@@ -139,6 +134,9 @@ registerComponent('look', {
         // Mouse events.
         canvasEl.addEventListener('mousedown', this.onMouseDown, false);
         window.addEventListener('mousemove', this.onMouseMove, false);
+
+        // remove all other mousemove listeners
+        window.removeEventListener('mousemove', this.onMouseMove, true);
         window.addEventListener('mouseup', this.onMouseUp, false);
 
         // Touch events.
@@ -218,6 +216,7 @@ registerComponent('look', {
      * Dragging left and right rotates the camera around the Y-axis (pitch).
      */
     onMouseMove: function (evt) {
+
         var direction;
         var movementX;
         var movementY;
@@ -265,7 +264,6 @@ registerComponent('look', {
         this.mouseDown = true;
         this.previousMouseEvent.screenX = evt.screenX;
         this.previousMouseEvent.screenY = evt.screenY;
-        this.showGrabbingCursor();
 
         // do the use left/right commanads
 
@@ -281,20 +279,6 @@ registerComponent('look', {
     },
 
     /**
-     * Shows grabbing cursor on scene
-     */
-    showGrabbingCursor: function () {
-        this.el.sceneEl.canvas.style.cursor = 'grabbing';
-    },
-
-    /**
-     * Hides grabbing cursor on scene
-     */
-    hideGrabbingCursor: function () {
-        this.el.sceneEl.canvas.style.cursor = '';
-    },
-
-    /**
      * Register mouse up to detect release of mouse drag.
      */
     onMouseUp: function (evt) {
@@ -302,7 +286,7 @@ registerComponent('look', {
             doControl("control not use " + (evt.button === 0 ? "left" : "right"));
         }
         this.mouseDown = false;
-        this.hideGrabbingCursor();
+
     },
 
     /**
@@ -392,31 +376,6 @@ registerComponent('look', {
     exitPointerLock: function () {
         document.exitPointerLock();
         this.pointerLocked = false;
-    },
-
-    /**
-     * Toggle the feature of showing/hiding the grab cursor.
-     */
-    updateGrabCursor: function (enabled) {
-        var sceneEl = this.el.sceneEl;
-
-        function enableGrabCursor() { sceneEl.canvas.classList.add('a-grab-cursor'); }
-        function disableGrabCursor() { sceneEl.canvas.classList.remove('a-grab-cursor'); }
-
-        if (!sceneEl.canvas) {
-            if (enabled) {
-                sceneEl.addEventListener('render-target-loaded', enableGrabCursor);
-            } else {
-                sceneEl.addEventListener('render-target-loaded', disableGrabCursor);
-            }
-            return;
-        }
-
-        if (enabled) {
-            enableGrabCursor();
-            return;
-        }
-        disableGrabCursor();
     },
 
     /**

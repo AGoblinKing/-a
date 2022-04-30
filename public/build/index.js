@@ -6226,14 +6226,13 @@
       open_loading.set(true);
     }
   });
-  var motd = new Value(`\u{1F38A}v0.3.6\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.4.0\u{1F38A}
 
-\u2705 Proximity UI \u2705 Physical Items
-\u2705 Location UI
 \u2705 Drop/Pickup Items
 \u2705 Stow
+\u2705 Use Items
 
-\u274C Use Items
+\u274C Perf Pass
 \u274C Cave
 \u274C HP/Death/Respawn
 \u274C Networked Multiplayer 
@@ -6480,7 +6479,6 @@ reset back to 1 for size
         if (!guest.$)
           return;
         this.connect();
-        console.log(scene.components);
       });
       host.on(() => {
         if (!host.$)
@@ -6599,7 +6597,7 @@ reset back to 1 for size
       this.netpath = MakePath(this.el);
       let i = 2;
       const og = this.netpath;
-      this.netpath + 1;
+      this.netpath += 1;
       while (paths[this.netpath]) {
         this.netpath = og + i;
         i++;
@@ -6793,6 +6791,10 @@ reset back to 1 for size
     toggle_selfie.set(state2.selfie);
   }
   window.loadState = loadState;
+  var arr = [1, 2, 3];
+  var vec3 = new AFRAME.THREE.Vector3();
+  var vec3o = new AFRAME.THREE.Vector3();
+  var quat = new AFRAME.THREE.Quaternion();
   var EMod = /* @__PURE__ */ ((EMod2) => {
     EMod2["not"] = "not";
     EMod2["clear"] = "clear";
@@ -6977,6 +6979,22 @@ reset back to 1 for size
     },
     ["togglethrow" /* ToggleThrow */]: (items) => {
       do_throw.set(!do_throw.$);
+    },
+    ["spawn" /* Spawn */]: (items) => {
+      const [, , what, count = "1"] = items;
+      const spawned = document.getElementById("spawned");
+      const s2 = document.createElement("a-entity");
+      if (parseInt(count) > 1) {
+        s2.setAttribute(`pool__${what}`, `mixin: ${what}; size: ${count}`);
+        s2.setAttribute(`activate__${what}`, "");
+      } else {
+        s2.setAttribute("mixin", what);
+      }
+      spawned.appendChild(s2);
+      camera.$.getWorldPosition(vec3);
+      vec3o.set(0, 0, -2).applyQuaternion(camera.$.getWorldQuaternion(quat));
+      vec3.add(vec3o);
+      s2.setAttribute("position", vec3.toArray(arr).join(" "));
     }
   };
 
@@ -7111,14 +7129,14 @@ reset back to 1 for size
   var clamp = Kalidokit.Utils.clamp;
   var lerp = Kalidokit.Vector.lerp;
   var euler = new AFRAME.THREE.Euler();
-  var quat = new AFRAME.THREE.Quaternion();
+  var quat2 = new AFRAME.THREE.Quaternion();
   var rigRotation = (vrm, name, rotation = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
     const Part = vrm.humanoid.getBoneNode(VRMSchema.HumanoidBoneName[name]);
     if (!Part) {
       return;
     }
     euler.set(rotation.x * dampener, rotation.y * dampener, rotation.z * dampener);
-    let quaternion = quat.setFromEuler(euler);
+    let quaternion = quat2.setFromEuler(euler);
     Part.quaternion.slerp(quaternion, lerpAmount);
   };
   var v3 = new AFRAME.THREE.Vector3();
@@ -7334,7 +7352,7 @@ reset back to 1 for size
   });
 
   // src/component/vary.ts
-  var vec3 = new AFRAME.THREE.Vector3();
+  var vec32 = new AFRAME.THREE.Vector3();
   var bb2 = new AFRAME.THREE.Box3();
   AFRAME.registerComponent("vary", {
     multiple: true,
@@ -7470,8 +7488,8 @@ reset back to 1 for size
   var webcam_default = Webcam;
 
   // src/component/wasd-controller.ts
-  var vec32 = new AFRAME.THREE.Vector3();
-  var quat2 = new AFRAME.THREE.Quaternion();
+  var vec33 = new AFRAME.THREE.Vector3();
+  var quat3 = new AFRAME.THREE.Quaternion();
   function getRoot(o3d) {
     if (o3d.parent.name === "Root") {
       return o3d.parent;
@@ -7503,7 +7521,7 @@ reset back to 1 for size
         return;
       const o3d = this.el.object3D;
       let force;
-      vec32.set(0, 0, 0);
+      vec33.set(0, 0, 0);
       let intensity = 1;
       let hop = 5;
       if (key_map.$["shift"]) {
@@ -7512,41 +7530,41 @@ reset back to 1 for size
       if (key_map.$[" "] && o3d.position.y < 0.5) {
         hop *= delta;
         this.jump();
-        vec32.y = hop;
+        vec33.y = hop;
       }
       if (key_map.$["w"]) {
-        vec32.y += 5;
-        vec32.z += -this.data.speed * delta * intensity;
+        vec33.y += 5;
+        vec33.z += -this.data.speed * delta * intensity;
       }
       if (key_map.$["s"]) {
-        vec32.y += 5;
-        vec32.z += this.data.speed * delta * intensity;
+        vec33.y += 5;
+        vec33.z += this.data.speed * delta * intensity;
       }
       if (key_map.$["a"]) {
-        vec32.y += 5;
-        vec32.x += -this.data.speed * delta * intensity;
+        vec33.y += 5;
+        vec33.x += -this.data.speed * delta * intensity;
       }
       if (key_map.$["d"]) {
-        vec32.y += 5;
-        vec32.x += this.data.speed * delta * intensity;
+        vec33.y += 5;
+        vec33.x += this.data.speed * delta * intensity;
       }
       if (key_map.$["z"]) {
-        vec32.y += 5;
+        vec33.y += 5;
         const root = getRoot(camera.$);
         root.rotation.y += this.data.rot * delta;
       }
       if (key_map.$["c"]) {
-        vec32.y += 5;
+        vec33.y += 5;
         const root = getRoot(camera.$);
         root.rotation.y -= this.data.rot * delta;
       }
-      const l = Math.abs(vec32.length());
+      const l = Math.abs(vec33.length());
       if (l > 0 && camera.$) {
         camera.$.updateMatrixWorld();
-        quat2.setFromRotationMatrix(camera.$.matrixWorld);
-        const up = vec32.y;
-        vec32.applyQuaternion(quat2);
-        force = new Ammo.btVector3(vec32.x, up, vec32.z);
+        quat3.setFromRotationMatrix(camera.$.matrixWorld);
+        const up = vec33.y;
+        vec33.applyQuaternion(quat3);
+        force = new Ammo.btVector3(vec33.x, up, vec33.z);
         this.el.body.applyForce(force);
         this.el.body.activate();
         Ammo.destroy(force);
@@ -8056,8 +8074,8 @@ reset back to 1 for size
   });
 
   // src/component/copy.ts
-  var vec33 = new AFRAME.THREE.Vector3();
-  var quat3 = new AFRAME.THREE.Quaternion();
+  var vec34 = new AFRAME.THREE.Vector3();
+  var quat4 = new AFRAME.THREE.Quaternion();
   var scale = new AFRAME.THREE.Vector3();
   AFRAME.registerComponent("copy", {
     schema: {
@@ -8072,12 +8090,12 @@ reset back to 1 for size
       const o3d = this.el.object3D;
       const o_o3d = this.data.target.object3D;
       o_o3d.updateMatrixWorld();
-      o_o3d.matrixWorld.decompose(vec33, quat3, scale);
+      o_o3d.matrixWorld.decompose(vec34, quat4, scale);
       if (this.data.position) {
-        o3d.position.copy(vec33);
+        o3d.position.copy(vec34);
       }
       if (this.data.quaternion) {
-        o3d.quaternion.copy(quat3);
+        o3d.quaternion.copy(quat4);
       }
     }
   });
@@ -8119,9 +8137,6 @@ reset back to 1 for size
     },
     update: function(oldData) {
       var data = this.data;
-      if (data.enabled !== oldData.enabled) {
-        this.updateGrabCursor(data.enabled);
-      }
       if (oldData && !data.pointerLockEnabled !== oldData.pointerLockEnabled) {
         this.removeEventListeners();
         this.addEventListeners();
@@ -8189,6 +8204,7 @@ reset back to 1 for size
       });
       canvasEl.addEventListener("mousedown", this.onMouseDown, false);
       window.addEventListener("mousemove", this.onMouseMove, false);
+      window.removeEventListener("mousemove", this.onMouseMove, true);
       window.addEventListener("mouseup", this.onMouseUp, false);
       canvasEl.addEventListener("touchstart", this.onTouchStart);
       window.addEventListener("touchmove", this.onTouchMove);
@@ -8266,7 +8282,6 @@ reset back to 1 for size
       this.mouseDown = true;
       this.previousMouseEvent.screenX = evt.screenX;
       this.previousMouseEvent.screenY = evt.screenY;
-      this.showGrabbingCursor();
       if (this.data.pointerLockEnabled && !this.pointerLocked) {
         if (canvasEl.requestPointerLock) {
           canvasEl.requestPointerLock();
@@ -8277,18 +8292,11 @@ reset back to 1 for size
         doControl("control use " + (evt.button === 0 ? "hand_left" : "hand_right"));
       }
     },
-    showGrabbingCursor: function() {
-      this.el.sceneEl.canvas.style.cursor = "grabbing";
-    },
-    hideGrabbingCursor: function() {
-      this.el.sceneEl.canvas.style.cursor = "";
-    },
     onMouseUp: function(evt) {
       if (this.pointerLocked) {
         doControl("control not use " + (evt.button === 0 ? "left" : "right"));
       }
       this.mouseDown = false;
-      this.hideGrabbingCursor();
     },
     onTouchStart: function(evt) {
       if (evt.touches.length !== 1 || !this.data.touchEnabled || this.el.sceneEl.is("vr-mode") || this.el.sceneEl.is("ar-mode")) {
@@ -8347,28 +8355,6 @@ reset back to 1 for size
     exitPointerLock: function() {
       document.exitPointerLock();
       this.pointerLocked = false;
-    },
-    updateGrabCursor: function(enabled) {
-      var sceneEl = this.el.sceneEl;
-      function enableGrabCursor() {
-        sceneEl.canvas.classList.add("a-grab-cursor");
-      }
-      function disableGrabCursor() {
-        sceneEl.canvas.classList.remove("a-grab-cursor");
-      }
-      if (!sceneEl.canvas) {
-        if (enabled) {
-          sceneEl.addEventListener("render-target-loaded", enableGrabCursor);
-        } else {
-          sceneEl.addEventListener("render-target-loaded", disableGrabCursor);
-        }
-        return;
-      }
-      if (enabled) {
-        enableGrabCursor();
-        return;
-      }
-      disableGrabCursor();
     },
     saveCameraPose: function() {
       var el = this.el;
@@ -9390,14 +9376,17 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin9, "scatter", ctx[0]);
         set_custom_element_data(a_mixin10, "id", "sheep");
         set_custom_element_data(a_mixin10, "host", "sheep");
+        set_custom_element_data(a_mixin10, "mixin", "animal");
         set_custom_element_data(a_mixin10, "gltf-model", "./char/Sheep.glb");
         set_custom_element_data(a_mixin10, "target", "\u{1F411}");
         set_custom_element_data(a_mixin11, "id", "cow");
         set_custom_element_data(a_mixin11, "host", "cow");
+        set_custom_element_data(a_mixin11, "mixin", "animal");
         set_custom_element_data(a_mixin11, "gltf-model", "./char/Cow.glb");
         set_custom_element_data(a_mixin11, "target", "\u{1F404}");
         set_custom_element_data(a_mixin12, "id", "frog");
         set_custom_element_data(a_mixin12, "host", "frog");
+        set_custom_element_data(a_mixin12, "mixin", "animal");
         set_custom_element_data(a_mixin12, "gltf-model", "./char/easy_Frog.glb");
         set_custom_element_data(a_mixin12, "target", "\u{1F438}");
         set_custom_element_data(a_mixin12, "color", "white");
@@ -9815,13 +9804,11 @@ gl_Position = mvPosition;
     let t10;
     let a_entity10;
     let t11;
-    let a_entity11;
-    let t12;
     let a_mixin1;
+    let t12;
+    let a_entity11;
     let t13;
     let a_entity12;
-    let t14;
-    let a_entity13;
     let mounted;
     let dispose;
     return {
@@ -9850,13 +9837,11 @@ gl_Position = mvPosition;
         t10 = space();
         a_entity10 = element("a-entity");
         t11 = space();
-        a_entity11 = element("a-entity");
-        t12 = space();
         a_mixin1 = element("a-mixin");
+        t12 = space();
+        a_entity11 = element("a-entity");
         t13 = space();
         a_entity12 = element("a-entity");
-        t14 = space();
-        a_entity13 = element("a-entity");
         set_custom_element_data(a_entity0, "class", "loot drop");
         set_custom_element_data(a_entity0, "pool__dagger", "mixin: dagger; size: 5;");
         set_custom_element_data(a_entity0, "activate__dagger", "");
@@ -9868,8 +9853,6 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity0, "activate__arrow", "");
         set_custom_element_data(a_entity0, "pool__barrel", "mixin: barrel; size: 1;");
         set_custom_element_data(a_entity0, "activate__barrel", "");
-        set_custom_element_data(a_entity0, "pool__crate", "mixin: crate; size: 5;");
-        set_custom_element_data(a_entity0, "activate__crate", "");
         set_custom_element_data(a_entity0, "position", "0 4 0");
         set_custom_element_data(a_mixin0, "id", "wall");
         set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0; ");
@@ -9926,7 +9909,6 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity10, "scale", "10 4 10");
         set_custom_element_data(a_entity10, "rotation", "0 0 0");
         set_custom_element_data(a_entity10, "position", "0 -0.1 0");
-        set_custom_element_data(a_entity11, "light", "type: point; distance: 12; intensity: 2; position: 0 1 0");
         set_custom_element_data(a_mixin1, "id", "elf");
         set_custom_element_data(a_mixin1, "gltf-model", "./char/Elf.glb");
         set_custom_element_data(a_mixin1, "recolor__skin", "#212F00");
@@ -9934,7 +9916,6 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin1, "recolor__clothes", "black");
         set_custom_element_data(a_mixin1, "recolor__face", "#F0F");
         set_custom_element_data(a_mixin1, "scale", "0.35 0.5 0.35");
-        set_custom_element_data(a_mixin1, "material", "shader: flat;");
         set_custom_element_data(a_mixin1, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
         set_custom_element_data(a_mixin1, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.6 0");
         set_custom_element_data(a_mixin1, "shadow", "cast: true; receive: false;");
@@ -9945,11 +9926,11 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin1, "sfxr__use", sfx_squeek);
         set_custom_element_data(a_mixin1, "sfxr__bump", sfx_squeek);
         set_custom_element_data(a_mixin1, "scatter", "-5 1 -5 5 5 5");
-        set_custom_element_data(a_entity12, "pool__elf", "mixin: elf; size: 5;");
-        set_custom_element_data(a_entity12, "activate__elf", "");
-        set_custom_element_data(a_entity13, "mixin", "elf");
-        set_custom_element_data(a_entity13, "host", "viking");
-        set_custom_element_data(a_entity13, "gltf-model", "./char/Viking_Female.glb");
+        set_custom_element_data(a_entity11, "pool__elf", "mixin: elf; size: 5;");
+        set_custom_element_data(a_entity11, "activate__elf", "");
+        set_custom_element_data(a_entity12, "mixin", "elf");
+        set_custom_element_data(a_entity12, "host", "viking");
+        set_custom_element_data(a_entity12, "gltf-model", "./char/Viking_Female.glb");
       },
       m(target, anchor) {
         insert(target, a_entity0, anchor);
@@ -9976,13 +9957,11 @@ gl_Position = mvPosition;
         insert(target, t10, anchor);
         insert(target, a_entity10, anchor);
         insert(target, t11, anchor);
-        insert(target, a_entity11, anchor);
-        insert(target, t12, anchor);
         insert(target, a_mixin1, anchor);
+        insert(target, t12, anchor);
+        insert(target, a_entity11, anchor);
         insert(target, t13, anchor);
         insert(target, a_entity12, anchor);
-        insert(target, t14, anchor);
-        insert(target, a_entity13, anchor);
         if (!mounted) {
           dispose = listen(a_entity1, "collidestart", collidestart_handler);
           mounted = true;
@@ -10041,19 +10020,15 @@ gl_Position = mvPosition;
         if (detaching)
           detach(t11);
         if (detaching)
-          detach(a_entity11);
+          detach(a_mixin1);
         if (detaching)
           detach(t12);
         if (detaching)
-          detach(a_mixin1);
+          detach(a_entity11);
         if (detaching)
           detach(t13);
         if (detaching)
           detach(a_entity12);
-        if (detaching)
-          detach(t14);
-        if (detaching)
-          detach(a_entity13);
         mounted = false;
         dispose();
       }
@@ -10241,7 +10216,6 @@ void main() {
     let a_plane_location_value;
     let t0;
     let a_entity0;
-    let a_sphere;
     let a_entity0_position_value;
     let a_entity0_light_value;
     let t1;
@@ -10277,7 +10251,6 @@ void main() {
         a_plane = element("a-plane");
         t0 = space();
         a_entity0 = element("a-entity");
-        a_sphere = element("a-sphere");
         t1 = space();
         a_entity1 = element("a-entity");
         t2 = space();
@@ -10308,9 +10281,6 @@ void main() {
         set_custom_element_data(a_plane, "ammo-shape", "type:box");
         set_custom_element_data(a_plane, "color", "#334411");
         set_custom_element_data(a_plane, "location", a_plane_location_value = "name: \u{1F332};  box: " + -ctx[0] * 1.5 + " 0 " + -ctx[0] * 1.5 + " " + ctx[0] * 1.5 + " 100 " + ctx[0] * 1.5);
-        set_custom_element_data(a_sphere, "position", "0 100 0");
-        set_custom_element_data(a_sphere, "radius", "10");
-        set_custom_element_data(a_sphere, "material", "color: yellow; shader: flat;");
         set_custom_element_data(a_entity0, "position", a_entity0_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
         set_custom_element_data(a_entity0, "light", a_entity0_light_value = ctx[1]({
           type: "directional",
@@ -10320,8 +10290,8 @@ void main() {
           shadowCameraLeft: -ctx[0],
           shadowCameraRight: ctx[0],
           shadowCameraBottom: -ctx[0],
-          shadowMapHeight: 1024 * 4,
-          shadowMapWidth: 1024 * 4,
+          shadowMapHeight: 1024 * 3,
+          shadowMapWidth: 1024 * 3,
           intensity: 1
         }));
         set_custom_element_data(a_entity1, "position", a_entity1_position_value = "-" + ctx[0] / 3 + " " + ctx[0] * 2 + " -" + ctx[0] / 3);
@@ -10365,7 +10335,6 @@ void main() {
         insert(target, a_plane, anchor);
         insert(target, t0, anchor);
         insert(target, a_entity0, anchor);
-        append(a_entity0, a_sphere);
         insert(target, t1, anchor);
         insert(target, a_entity1, anchor);
         insert(target, t2, anchor);
@@ -10408,8 +10377,8 @@ void main() {
           shadowCameraLeft: -ctx2[0],
           shadowCameraRight: ctx2[0],
           shadowCameraBottom: -ctx2[0],
-          shadowMapHeight: 1024 * 4,
-          shadowMapWidth: 1024 * 4,
+          shadowMapHeight: 1024 * 3,
+          shadowMapWidth: 1024 * 3,
           intensity: 1
         }))) {
           set_custom_element_data(a_entity0, "light", a_entity0_light_value);
@@ -11005,7 +10974,7 @@ void main() {
       }
     }
   });
-  var vec34 = new AFRAME.THREE.Vector3();
+  var vec35 = new AFRAME.THREE.Vector3();
   AFRAME.registerComponent("location", {
     schema: {
       name: { type: "string" },
@@ -11017,7 +10986,7 @@ void main() {
       this.bb.setFromArray(this.data.box.split(" ").map(parseFloat));
     },
     playerIsIn(playerPos) {
-      return this.bb.containsPoint(vec34.copy(playerPos).sub(this.el.object3D.position));
+      return this.bb.containsPoint(vec35.copy(playerPos).sub(this.el.object3D.position));
     },
     remove() {
       delete locations[this.data.name];
@@ -11385,18 +11354,18 @@ void main() {
         t9 = space();
         div7 = element("div");
         div6 = element("div");
-        attr(div0, "class", "button bounce svelte-l07t5s");
-        attr(div1, "class", "jump button bounce svelte-l07t5s");
-        attr(div2, "class", "reverse button bounce svelte-l07t5s");
-        attr(div3, "class", "flexer svelte-l07t5s");
-        attr(div4, "class", div4_class_value = "bind-bar " + (ctx[3] ? "mobile" : "") + " svelte-l07t5s");
-        attr(div5, "class", "speak button bounce svelte-l07t5s");
-        attr(div6, "class", "dot svelte-l07t5s");
+        attr(div0, "class", "button bounce svelte-mcfy8m");
+        attr(div1, "class", "jump button bounce svelte-mcfy8m");
+        attr(div2, "class", "reverse button bounce svelte-mcfy8m");
+        attr(div3, "class", "flexer svelte-mcfy8m");
+        attr(div4, "class", div4_class_value = "bind-bar " + (ctx[3] ? "mobile" : "") + " svelte-mcfy8m");
+        attr(div5, "class", "speak button bounce svelte-mcfy8m");
+        attr(div6, "class", "dot svelte-mcfy8m");
         set_style(div6, "margin-top", ctx[2] * 100 + "%");
         set_style(div6, "margin-left", ctx[1] * 100 + "%");
-        attr(div7, "class", "move button bounce svelte-l07t5s");
-        attr(div8, "class", div8_class_value = "motion " + (ctx[3] ? "mobile" : "") + " svelte-l07t5s");
-        attr(div9, "class", "holder svelte-l07t5s");
+        attr(div7, "class", "move button bounce svelte-mcfy8m");
+        attr(div8, "class", div8_class_value = "motion " + (ctx[3] ? "mobile" : "") + " svelte-mcfy8m");
+        attr(div9, "class", "holder svelte-mcfy8m");
       },
       m(target, anchor) {
         mount_component(location3, target, anchor);
@@ -11453,7 +11422,7 @@ void main() {
           set_data(t1, t1_value);
         if ((!current || dirty & 16) && t5_value !== (t5_value = (ctx2[4]?.data.hand_right?.components.target.data || "\u{1F9BE}") + ""))
           set_data(t5, t5_value);
-        if (!current || dirty & 8 && div4_class_value !== (div4_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-l07t5s")) {
+        if (!current || dirty & 8 && div4_class_value !== (div4_class_value = "bind-bar " + (ctx2[3] ? "mobile" : "") + " svelte-mcfy8m")) {
           attr(div4, "class", div4_class_value);
         }
         if (!current || dirty & 4) {
@@ -11462,7 +11431,7 @@ void main() {
         if (!current || dirty & 2) {
           set_style(div6, "margin-left", ctx2[1] * 100 + "%");
         }
-        if (!current || dirty & 8 && div8_class_value !== (div8_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-l07t5s")) {
+        if (!current || dirty & 8 && div8_class_value !== (div8_class_value = "motion " + (ctx2[3] ? "mobile" : "") + " svelte-mcfy8m")) {
           attr(div8, "class", div8_class_value);
         }
       },
@@ -11727,8 +11696,8 @@ void main() {
   });
 
   // src/component/item.ts
-  var vec35 = new AFRAME.THREE.Vector3();
-  var quat4 = new AFRAME.THREE.Quaternion();
+  var vec36 = new AFRAME.THREE.Vector3();
+  var quat5 = new AFRAME.THREE.Quaternion();
   AFRAME.registerComponent("item", {
     schema: {
       holder: { type: "selector" },
@@ -11755,9 +11724,9 @@ void main() {
         return;
       const p2 = this.el.object3D.parent;
       this.drop(e);
-      vec35.set(0, 3, -100).applyQuaternion(p2.getWorldQuaternion(quat4));
-      this.el.object3D.lookAt(vec35);
-      const force = new Ammo.btVector3(vec35.x, vec35.y, vec35.z);
+      vec36.set(0, 3, -100).applyQuaternion(p2.getWorldQuaternion(quat5));
+      this.el.object3D.lookAt(vec36);
+      const force = new Ammo.btVector3(vec36.x, vec36.y, vec36.z);
       this.el.body.applyForce(force);
       this.el.body.activate();
       Ammo.destroy(force);
@@ -12079,9 +12048,9 @@ void main() {
     };
   }
   function create_fragment14(ctx) {
-    let webcam;
-    let t0;
     let netdata;
+    let t0;
+    let webcam;
     let t1;
     let t2;
     let a_scene;
@@ -12095,21 +12064,23 @@ void main() {
     let t5;
     let items;
     let t6;
-    let camera2;
+    let a_entity;
     let t7;
-    let characters;
+    let camera2;
     let t8;
-    let forest;
+    let characters;
     let t9;
-    let house;
+    let forest;
     let t10;
-    let debug_1;
+    let house;
     let t11;
+    let debug_1;
+    let t12;
     let environmental;
     let a_scene_physics_value;
     let current;
-    webcam = new webcam_default({});
     netdata = new netdata_default({});
+    webcam = new webcam_default({});
     let if_block = ctx[0] && create_if_block4(ctx);
     items = new items_default({});
     camera2 = new camera_default({});
@@ -12120,9 +12091,9 @@ void main() {
     environmental = new environmental_default({ props: { groundSize: 200 } });
     return {
       c() {
-        create_component(webcam.$$.fragment);
-        t0 = space();
         create_component(netdata.$$.fragment);
+        t0 = space();
+        create_component(webcam.$$.fragment);
         t1 = space();
         if (if_block)
           if_block.c();
@@ -12137,16 +12108,18 @@ void main() {
         t5 = space();
         create_component(items.$$.fragment);
         t6 = space();
-        create_component(camera2.$$.fragment);
+        a_entity = element("a-entity");
         t7 = space();
-        create_component(characters.$$.fragment);
+        create_component(camera2.$$.fragment);
         t8 = space();
-        create_component(forest.$$.fragment);
+        create_component(characters.$$.fragment);
         t9 = space();
-        create_component(house.$$.fragment);
+        create_component(forest.$$.fragment);
         t10 = space();
-        create_component(debug_1.$$.fragment);
+        create_component(house.$$.fragment);
         t11 = space();
+        create_component(debug_1.$$.fragment);
+        t12 = space();
         create_component(environmental.$$.fragment);
         set_custom_element_data(a_sphere, "color", "blue");
         set_custom_element_data(a_sphere, "radius", "5");
@@ -12155,19 +12128,20 @@ void main() {
           attr(audio, "src", audio_src_value);
         set_custom_element_data(a_mixin, "id", "shadow");
         set_custom_element_data(a_mixin, "shadow", "cast: true; receive: false");
+        set_custom_element_data(a_entity, "id", "spawned");
         set_custom_element_data(a_scene, "keyboard-shortcuts", "enterVR: false");
         set_custom_element_data(a_scene, "stats", ctx[1]);
         set_custom_element_data(a_scene, "renderer", "alpha: false; color;colorManagement: true;");
         set_custom_element_data(a_scene, "shadow", "type:basic;");
         set_custom_element_data(a_scene, "device-orientation-permission-ui", "enabled: false");
-        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2] + "; iterations: 2; fixedTimeStep: " + 1 / 60 + "; maxSubSteps: 2;");
+        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2] + "; iterations: 1; fixedTimeStep: " + 1 / 60 + "; maxSubSteps: 1;");
         set_custom_element_data(a_scene, "uniforms", "");
         set_custom_element_data(a_scene, "net", "");
       },
       m(target, anchor) {
-        mount_component(webcam, target, anchor);
-        insert(target, t0, anchor);
         mount_component(netdata, target, anchor);
+        insert(target, t0, anchor);
+        mount_component(webcam, target, anchor);
         insert(target, t1, anchor);
         if (if_block)
           if_block.m(target, anchor);
@@ -12182,16 +12156,18 @@ void main() {
         append(a_assets, t5);
         mount_component(items, a_assets, null);
         append(a_scene, t6);
-        mount_component(camera2, a_scene, null);
+        append(a_scene, a_entity);
         append(a_scene, t7);
-        mount_component(characters, a_scene, null);
+        mount_component(camera2, a_scene, null);
         append(a_scene, t8);
-        mount_component(forest, a_scene, null);
+        mount_component(characters, a_scene, null);
         append(a_scene, t9);
-        mount_component(house, a_scene, null);
+        mount_component(forest, a_scene, null);
         append(a_scene, t10);
-        mount_component(debug_1, a_scene, null);
+        mount_component(house, a_scene, null);
         append(a_scene, t11);
+        mount_component(debug_1, a_scene, null);
+        append(a_scene, t12);
         mount_component(environmental, a_scene, null);
         current = true;
       },
@@ -12217,15 +12193,15 @@ void main() {
         if (!current || dirty & 2) {
           set_custom_element_data(a_scene, "stats", ctx2[1]);
         }
-        if (!current || dirty & 4 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[2] + "; iterations: 2; fixedTimeStep: " + 1 / 60 + "; maxSubSteps: 2;")) {
+        if (!current || dirty & 4 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[2] + "; iterations: 1; fixedTimeStep: " + 1 / 60 + "; maxSubSteps: 1;")) {
           set_custom_element_data(a_scene, "physics", a_scene_physics_value);
         }
       },
       i(local) {
         if (current)
           return;
-        transition_in(webcam.$$.fragment, local);
         transition_in(netdata.$$.fragment, local);
+        transition_in(webcam.$$.fragment, local);
         transition_in(if_block);
         transition_in(items.$$.fragment, local);
         transition_in(camera2.$$.fragment, local);
@@ -12237,8 +12213,8 @@ void main() {
         current = true;
       },
       o(local) {
-        transition_out(webcam.$$.fragment, local);
         transition_out(netdata.$$.fragment, local);
+        transition_out(webcam.$$.fragment, local);
         transition_out(if_block);
         transition_out(items.$$.fragment, local);
         transition_out(camera2.$$.fragment, local);
@@ -12250,10 +12226,10 @@ void main() {
         current = false;
       },
       d(detaching) {
-        destroy_component(webcam, detaching);
+        destroy_component(netdata, detaching);
         if (detaching)
           detach(t0);
-        destroy_component(netdata, detaching);
+        destroy_component(webcam, detaching);
         if (detaching)
           detach(t1);
         if (if_block)

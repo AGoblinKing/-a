@@ -46,13 +46,11 @@
 		shadowCameraRight: groundSize,
 		shadowCameraBottom: -groundSize,
 
-		shadowMapHeight: 1024 * 4,
-		shadowMapWidth: 1024 * 4,
+		shadowMapHeight: 1024 * 3,
+		shadowMapWidth: 1024 * 3,
 		intensity: 1
 	})}
->
-	<a-sphere position="0 100 0" radius="10" material="color: yellow; shader: flat;" />
-</a-entity>
+/>
 
 <a-entity
 	position="-{groundSize / 3} {groundSize * 2} -{groundSize / 3}"

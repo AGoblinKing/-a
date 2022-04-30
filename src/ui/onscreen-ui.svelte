@@ -161,6 +161,9 @@
 		opacity: 0.5;
 	}
 
+	.motion {
+		transform: perspective(0px);
+	}
 	.reverse.button {
 		transform: scaleX(-1);
 	}
@@ -186,6 +189,7 @@
 		pointer-events: none;
 	}
 	.bind-bar {
+		transform: perspective(0px);
 		position: absolute;
 		left: 0;
 		bottom: 5vh;

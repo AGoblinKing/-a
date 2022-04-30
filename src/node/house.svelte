@@ -19,8 +19,6 @@
 	activate__arrow
 	pool__barrel="mixin: barrel; size: 1;"
 	activate__barrel
-	pool__crate="mixin: crate; size: 5;"
-	activate__crate
 	position="0 4 0"
 />
 
@@ -103,7 +101,7 @@
 	rotation="0 0 0"
 	position="0 -0.1 0"
 />
-<a-entity light="type: point; distance: 12; intensity: 2; position: 0 1 0" />
+
 <!-- <a-entity mixin="building" material="color: #333;" scale="24 0.1 24" /> -->
 
 <!-- vary="property: recolor__skin; range: 0 0 0 255 255 255"-->
@@ -115,7 +113,6 @@
 	recolor__clothes="black"
 	recolor__face="#F0F"
 	scale="0.35 0.5 0.35"
-	material="shader: flat;"
 	ammo-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;"
 	ammo-shape="type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.6 0"
 	shadow="cast: true; receive: false;"

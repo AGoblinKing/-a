@@ -26,8 +26,8 @@
 	import Items from './node/items.svelte'
 </script>
 
-<Webcam />
 <Netdata />
+<Webcam />
 
 {#if $open_ui}
 	<Live />
@@ -41,8 +41,8 @@
 	renderer="alpha: false; color;colorManagement: true;"
 	shadow="type:basic;"
 	device-orientation-permission-ui="enabled: false"
-	physics="driver: ammo; debug: {$open_debug}; iterations: 2; fixedTimeStep: {1 /
-		60}; maxSubSteps: 2;"
+	physics="driver: ammo; debug: {$open_debug}; iterations: 1; fixedTimeStep: {1 /
+		60}; maxSubSteps: 1;"
 	uniforms
 	net
 >
@@ -55,6 +55,7 @@
 		<Items />
 	</a-assets>
 
+	<a-entity id="spawned" />
 	<Camera />
 	<Characters />
 	<Forest />

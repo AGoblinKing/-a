@@ -165,9 +165,16 @@
 	{scatter}
 />
 
-<a-mixin id="sheep" host="sheep" gltf-model="./char/Sheep.glb" target="🐑" />
-<a-mixin id="cow" host="cow" gltf-model="./char/Cow.glb" target="🐄" />
-<a-mixin id="frog" host="frog" gltf-model="./char/easy_Frog.glb" target="🐸" color="white" />
+<a-mixin id="sheep" host="sheep" mixin="animal" gltf-model="./char/Sheep.glb" target="🐑" />
+<a-mixin id="cow" host="cow" mixin="animal" gltf-model="./char/Cow.glb" target="🐄" />
+<a-mixin
+	id="frog"
+	host="frog"
+	mixin="animal"
+	gltf-model="./char/easy_Frog.glb"
+	target="🐸"
+	color="white"
+/>
 <a-entity pool__horse="mixin: animal; size: 5;" activate__horse />
 <a-entity pool__sheep="mixin: animal sheep; size: 5;" activate__sheep />
 <a-entity pool__animal="mixin: animal cow; size: 5;" activate__animal />

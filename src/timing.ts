@@ -50,14 +50,13 @@ open_game.on(($g) => {
     }
 })
 
-export const motd = new Value(`🎊v0.3.6🎊
+export const motd = new Value(`🎊v0.4.0🎊
 
-✅ Proximity UI ✅ Physical Items
-✅ Location UI
 ✅ Drop/Pickup Items
 ✅ Stow
+✅ Use Items
 
-❌ Use Items
+❌ Perf Pass
 ❌ Cave
 ❌ HP/Death/Respawn
 ❌ Networked Multiplayer 

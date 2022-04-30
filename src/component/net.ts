@@ -26,7 +26,6 @@ AFRAME.registerSystem("net", {
 
             this.connect()
             // turn off ammo
-            console.log(scene.components)
         })
 
         host.on(() => {
@@ -178,7 +177,7 @@ AFRAME.registerComponent("host", {
 
         let i = 2;
         const og = this.netpath
-        this.netpath + 1
+        this.netpath += 1
         while (paths[this.netpath]) {
             this.netpath = og + i
             i++

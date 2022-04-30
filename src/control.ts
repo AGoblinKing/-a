@@ -2,7 +2,7 @@ import { guest, host, room } from "./component/net"
 import { AVATAR } from "src/component/avatar"
 
 import state from "src/state"
-import { avatar_current, avatar_doer, do_drop, do_echo, do_throw, do_vary, open_debug, open_help, open_hostid, open_stats, open_targeting, open_ui, scouter, size, toggle_pointerlock, toggle_selfie, toggle_visible, voice_current } from "./timing"
+import { avatar_current, avatar_doer, camera, do_drop, do_echo, do_throw, do_vary, open_debug, open_help, open_hostid, open_stats, open_targeting, open_ui, scouter, size, toggle_pointerlock, toggle_selfie, toggle_visible, voice_current } from "./timing"
 import { Value } from "src/value"
 
 export const binds = new Value<{ [key: string]: string }>(clone(state.binds)).save("binds")
@@ -30,6 +30,11 @@ function loadState(state: { binds: { [key: string]: string }, vars: { [key: stri
 
 // @ts-ignore
 window.loadState = loadState
+
+const arr = [1, 2, 3]
+const vec3 = new AFRAME.THREE.Vector3()
+const vec3o = new AFRAME.THREE.Vector3()
+const quat = new AFRAME.THREE.Quaternion()
 
 export enum EMod {
     not = "not",
@@ -111,6 +116,8 @@ export enum EControl {
 
     ToggleThrow = "togglethrow",
     ToggleDrop = "toggledrop",
+
+    Spawn = "spawn",
 }
 
 
@@ -305,6 +312,29 @@ export const controls = {
     },
     [EControl.ToggleThrow]: (items: string[]) => {
         do_throw.set(!do_throw.$)
+    },
+    [EControl.Spawn]: (items: string[]) => {
+        // ezpz
+        const [, , what, count = "1"] = items
+
+        const spawned = document.getElementById("spawned")
+        const s = document.createElement("a-entity")
+        if (parseInt(count) > 1) {
+            // pool it
+            // TODO: Mesh instancing or ammomodifications
+            s.setAttribute(`pool__${what}`, `mixin: ${what}; size: ${count}`)
+            s.setAttribute(`activate__${what}`, "")
+
+        } else {
+            s.setAttribute("mixin", what)
+        }
+        spawned.appendChild(s)
+        camera.$.getWorldPosition(vec3)
+        vec3o.set(0, 0, -2).applyQuaternion(camera.$.getWorldQuaternion(quat))
+        vec3.add(vec3o)
+
+        s.setAttribute("position", vec3.toArray(arr).join(" "))
+
     }
 }
 
