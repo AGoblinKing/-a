@@ -50,15 +50,14 @@ open_game.on(($g) => {
     }
 })
 
-export const motd = new Value(`🎊v0.3.4🎊
+export const motd = new Value(`🎊v0.3.5🎊
 
-✅ Sky ✅ Mobile 
 ✅ Proximity UI ✅ Physical Items
 ✅ Location UI
+✅ Drop/Pickup Items
 
-❌ Drop/Stow/Pickup Items
 ❌ Use Items
-❌ Bag
+❌ Stow
 ❌ Networked Multiplayer 
 ❌ Pose Animations recorded from our VRM
 ❌ AI  

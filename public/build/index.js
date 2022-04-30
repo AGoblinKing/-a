@@ -6220,15 +6220,14 @@
       open_loading.set(true);
     }
   });
-  var motd = new Value(`\u{1F38A}v0.3.4\u{1F38A}
+  var motd = new Value(`\u{1F38A}v0.3.5\u{1F38A}
 
-\u2705 Sky \u2705 Mobile 
 \u2705 Proximity UI \u2705 Physical Items
 \u2705 Location UI
+\u2705 Drop/Pickup Items
 
-\u274C Drop/Stow/Pickup Items
 \u274C Use Items
-\u274C Bag
+\u274C Stow
 \u274C Networked Multiplayer 
 \u274C Pose Animations recorded from our VRM
 \u274C AI  
