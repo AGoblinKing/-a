@@ -9167,7 +9167,7 @@ gl_Position = mvPosition;
       { "gltf-model": "./glb/tree.glb" },
       { scatter: ctx[0] },
       {
-        vary: "property: scale; range: 4 2 4 8 10 8"
+        vary: "property: scale; range: 7 4 7 12 12 12"
       },
       ctx[1],
       { host: "" }
@@ -9338,7 +9338,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity0, "pool__mountains", "mixin: mountains; size: 50");
         set_custom_element_data(a_entity0, "activate__mountains", "");
         set_attributes(a_mixin7, a_mixin7_data);
-        set_custom_element_data(a_entity1, "pool__tree", "mixin: tree; size: 150");
+        set_custom_element_data(a_entity1, "pool__tree", "mixin: tree; size: 50");
         set_custom_element_data(a_entity1, "activate__tree", "");
         set_custom_element_data(a_entity2, "pool__mushroom", "mixin: mushroom; size: 20");
         set_custom_element_data(a_entity2, "activate__mushroom", "");
@@ -9483,7 +9483,7 @@ gl_Position = mvPosition;
           { "gltf-model": "./glb/tree.glb" },
           { scatter: ctx2[0] },
           {
-            vary: "property: scale; range: 4 2 4 8 10 8"
+            vary: "property: scale; range: 7 4 7 12 12 12"
           },
           ctx2[1],
           { host: "" }
@@ -9642,7 +9642,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  var groundSize = 200;
+  var groundSize = 300;
   var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
   var trunkVary = "property:scale; range: 2 1 2 5 2 5";
   function instance5($$self) {
@@ -10276,12 +10276,12 @@ void main() {
         set_custom_element_data(a_plane, "id", "ground");
         set_custom_element_data(a_plane, "position", "0 0 0");
         set_custom_element_data(a_plane, "rotation", "-90 0 0");
-        set_custom_element_data(a_plane, "width", a_plane_width_value = ctx[0] * 1.5);
-        set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 1.5);
+        set_custom_element_data(a_plane, "width", a_plane_width_value = ctx[0] * 2);
+        set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 2);
         set_custom_element_data(a_plane, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_plane, "ammo-shape", "type:box");
         set_custom_element_data(a_plane, "color", "#334411");
-        set_custom_element_data(a_plane, "location", a_plane_location_value = "name: \u{1F332};  box: " + -ctx[0] * 1.5 + " 0 " + -ctx[0] * 1.5 + " " + ctx[0] * 1.5 + " 100 " + ctx[0] * 1.5);
+        set_custom_element_data(a_plane, "location", a_plane_location_value = "name: \u{1F332};  box: " + -ctx[0] * 2 + " 0 " + -ctx[0] * 2 + " " + ctx[0] * 2 + " 100 " + ctx[0] * 2);
         set_custom_element_data(a_entity0, "position", a_entity0_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
         set_custom_element_data(a_entity0, "light", a_entity0_light_value = ctx[1]({
           type: "directional",
@@ -10331,6 +10331,7 @@ void main() {
         set_custom_element_data(a_entity6, "pool__birds", "mixin: birds; size: 50;");
         set_custom_element_data(a_entity6, "activate__birds", "");
         set_custom_element_data(a_sky, "shader", "space");
+        set_custom_element_data(a_sky, "rotation", "90 0 0");
       },
       m(target, anchor) {
         insert(target, a_plane, anchor);
@@ -10358,13 +10359,13 @@ void main() {
         insert(target, a_sky, anchor);
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 1.5)) {
+        if (dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 2)) {
           set_custom_element_data(a_plane, "width", a_plane_width_value);
         }
-        if (dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 1.5)) {
+        if (dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 2)) {
           set_custom_element_data(a_plane, "height", a_plane_height_value);
         }
-        if (dirty & 1 && a_plane_location_value !== (a_plane_location_value = "name: \u{1F332};  box: " + -ctx2[0] * 1.5 + " 0 " + -ctx2[0] * 1.5 + " " + ctx2[0] * 1.5 + " 100 " + ctx2[0] * 1.5)) {
+        if (dirty & 1 && a_plane_location_value !== (a_plane_location_value = "name: \u{1F332};  box: " + -ctx2[0] * 2 + " 0 " + -ctx2[0] * 2 + " " + ctx2[0] * 2 + " 100 " + ctx2[0] * 2)) {
           set_custom_element_data(a_plane, "location", a_plane_location_value);
         }
         if (dirty & 1 && a_entity0_position_value !== (a_entity0_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
@@ -10455,7 +10456,7 @@ void main() {
   var light = "#FEE";
   function instance8($$self, $$props, $$invalidate) {
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
-    let { groundSize: groundSize2 = 300 } = $$props;
+    let { groundSize: groundSize2 = 350 } = $$props;
     const scatterBig = [-groundSize2, 0, -groundSize2, groundSize2, 0, groundSize2].join(" ");
     $$self.$$set = ($$props2) => {
       if ("groundSize" in $$props2)

@@ -13,7 +13,7 @@
 
 	const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser)
 
-	export let groundSize = 300
+	export let groundSize = 350
 
 	const light = '#FEE'
 	const scatterBig = [-groundSize, 0, -groundSize, groundSize, 0, groundSize].join(' ')
@@ -26,13 +26,13 @@
 	id="ground"
 	position="0 0 0"
 	rotation="-90 0 0"
-	width={groundSize * 1.5}
-	height={groundSize * 1.5}
+	width={groundSize * 2}
+	height={groundSize * 2}
 	ammo-body="type: static; mass: 0;"
 	ammo-shape="type:box"
 	color="#334411"
-	location="name: 🌲;  box: {-groundSize * 1.5} 0 {-groundSize * 1.5} {groundSize *
-		1.5} 100 {groundSize * 1.5}"
+	location="name: 🌲;  box: {-groundSize * 2} 0 {-groundSize * 2} {groundSize * 2} 100 {groundSize *
+		2}"
 />
 <a-entity
 	position="{groundSize / 4} {groundSize * 2} {groundSize / 4}"
@@ -108,4 +108,4 @@
 />
 
 <a-entity pool__birds="mixin: birds; size: 50;" activate__birds />
-<a-sky shader="space" />
+<a-sky shader="space" rotation="90 0 0" />

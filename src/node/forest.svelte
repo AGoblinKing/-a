@@ -16,7 +16,7 @@
 	import { sfx_flute } from 'src/sound/instrument'
 	import { sfx_bubbles } from 'src/sound/environmental'
 
-	const groundSize = 200
+	const groundSize = 300
 
 	const scatter = [-groundSize / 2, 0, -groundSize / 2, groundSize / 2, 0, groundSize / 2].join(' ')
 
@@ -120,12 +120,12 @@
 	sfxr__bump={sfx_wood}
 	gltf-model="./glb/tree.glb"
 	{scatter}
-	vary="property: scale; range: 4 2 4 8 10 8"
+	vary="property: scale; range: 7 4 7 12 12 12"
 	{...boxBlocker}
 	host
 />
 
-<a-entity pool__tree="mixin: tree; size: 150" activate__tree />
+<a-entity pool__tree="mixin: tree; size: 50" activate__tree />
 
 <a-entity pool__mushroom="mixin: mushroom; size: 20" activate__mushroom />
 
