@@ -13,7 +13,7 @@
 
 	const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser)
 
-	export let groundSize = 350
+	export let groundSize = 500
 
 	const light = '#FEE'
 	const scatterBig = [-groundSize, 0, -groundSize, groundSize, 0, groundSize].join(' ')
@@ -26,13 +26,13 @@
 	id="ground"
 	position="0 0 0"
 	rotation="-90 0 0"
-	width={groundSize * 2}
-	height={groundSize * 2}
+	width={groundSize * 3}
+	height={groundSize * 3}
 	ammo-body="type: static; mass: 0;"
 	ammo-shape="type:box"
 	color="#334411"
-	location="name: 🌲;  box: {-groundSize * 2} 0 {-groundSize * 2} {groundSize * 2} 100 {groundSize *
-		2}"
+	location="name: 🌲;  box: {-groundSize * 3} 0 {-groundSize * 3} {groundSize * 3} 100 {groundSize *
+		3}"
 />
 <a-entity
 	position="{groundSize / 4} {groundSize * 2} {groundSize / 4}"
@@ -70,14 +70,14 @@
 	scatter={scatterBig}
 	material="color: #ffffff; shader: flat; "
 	geometry
-	scale="15 5 10"
+	scale="60 5 30"
 	vary="property: scale; range: 1 1 1 1.5 1.5 1.5"
 />
 
 <a-entity
 	pool__cloud="mixin: shadow cloud; size: 50"
 	activate__cloud
-	position="0 35 {groundSize}"
+	position="0 125 {groundSize}"
 	animation="property:object3D.position.z; to:-{groundSize}; dur: {400 * 300 * 2}; loop: true;"
 	animation__scale="property:object3D.scale; from: 0 0 0; to:1 1 1; dur: {(400 * 300) /
 		2}; loop: true; dir: alternate"
@@ -108,4 +108,9 @@
 />
 
 <a-entity pool__birds="mixin: birds; size: 50;" activate__birds />
-<a-sky shader="space" rotation="90 0 0" />
+<a-sky
+	shader="space"
+	rotation="90 0 0"
+	scale="50 50 50"
+	animation="property: object3D.rotation.y; from: 0; to: -360; easing: linear; dur: 6000000; loop: true"
+/>

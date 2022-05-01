@@ -11,7 +11,7 @@ uniform float timeMsec; // A-Frame time in milliseconds.
 
 #define zoom   0.800
 #define tile   0.850
-#define speed  0.010 
+#define speed  10000.010 
 
 #define brightness 0.0015
 #define darkmatter 0.300
@@ -21,8 +21,8 @@ uniform float timeMsec; // A-Frame time in milliseconds.
 void main() {
   //get coords and direction
 
-  vec3 dir=vec3(vUv*zoom,1.);
   float time=timeMsec*speed+.25;
+  vec3 dir=vec3(vUv*zoom,1.);
 
   //volumetric rendering
   float s=0.1,fade=1.;

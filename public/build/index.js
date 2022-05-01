@@ -931,7 +931,7 @@
           a.g.i = d;
           return b;
         }
-        function db(a, b, c) {
+        function db2(a, b, c) {
           var d = a.g.j();
           for (d = a.g.g + d; a.g.g < d; )
             c.push(b.call(a.g));
@@ -1222,7 +1222,7 @@
           if (a.h !== 5 && a.h !== 2)
             return false;
           b = ub(b, c);
-          a.h == 2 ? db(a, Ta.prototype.o, b) : b.push(a.g.o());
+          a.h == 2 ? db2(a, Ta.prototype.o, b) : b.push(a.g.o());
           return true;
         }
         function Eb(a, b, c) {
@@ -1280,7 +1280,7 @@
           if (a.h !== 0 && a.h !== 2)
             return false;
           b = ub(b, c);
-          a.h == 2 ? db(a, Ta.prototype.j, b) : b.push(a.g.j());
+          a.h == 2 ? db2(a, Ta.prototype.j, b) : b.push(a.g.j());
           return true;
         }
         function Kb(a, b, c) {
@@ -5336,6 +5336,131 @@
     }
   });
 
+  // node_modules/js-cookie/src/js.cookie.js
+  var require_js_cookie = __commonJS({
+    "node_modules/js-cookie/src/js.cookie.js"(exports, module) {
+      (function(factory) {
+        var registeredInModuleLoader;
+        if (typeof define === "function" && define.amd) {
+          define(factory);
+          registeredInModuleLoader = true;
+        }
+        if (typeof exports === "object") {
+          module.exports = factory();
+          registeredInModuleLoader = true;
+        }
+        if (!registeredInModuleLoader) {
+          var OldCookies = window.Cookies;
+          var api = window.Cookies = factory();
+          api.noConflict = function() {
+            window.Cookies = OldCookies;
+            return api;
+          };
+        }
+      })(function() {
+        function extend() {
+          var i = 0;
+          var result = {};
+          for (; i < arguments.length; i++) {
+            var attributes = arguments[i];
+            for (var key in attributes) {
+              result[key] = attributes[key];
+            }
+          }
+          return result;
+        }
+        function decode(s2) {
+          return s2.replace(/(%[0-9A-Z]{2})+/g, decodeURIComponent);
+        }
+        function init3(converter) {
+          function api() {
+          }
+          function set2(key, value, attributes) {
+            if (typeof document === "undefined") {
+              return;
+            }
+            attributes = extend({
+              path: "/"
+            }, api.defaults, attributes);
+            if (typeof attributes.expires === "number") {
+              attributes.expires = new Date(new Date() * 1 + attributes.expires * 864e5);
+            }
+            attributes.expires = attributes.expires ? attributes.expires.toUTCString() : "";
+            try {
+              var result = JSON.stringify(value);
+              if (/^[\{\[]/.test(result)) {
+                value = result;
+              }
+            } catch (e) {
+            }
+            value = converter.write ? converter.write(value, key) : encodeURIComponent(String(value)).replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g, decodeURIComponent);
+            key = encodeURIComponent(String(key)).replace(/%(23|24|26|2B|5E|60|7C)/g, decodeURIComponent).replace(/[\(\)]/g, escape);
+            var stringifiedAttributes = "";
+            for (var attributeName in attributes) {
+              if (!attributes[attributeName]) {
+                continue;
+              }
+              stringifiedAttributes += "; " + attributeName;
+              if (attributes[attributeName] === true) {
+                continue;
+              }
+              stringifiedAttributes += "=" + attributes[attributeName].split(";")[0];
+            }
+            return document.cookie = key + "=" + value + stringifiedAttributes;
+          }
+          function get2(key, json) {
+            if (typeof document === "undefined") {
+              return;
+            }
+            var jar = {};
+            var cookies = document.cookie ? document.cookie.split("; ") : [];
+            var i = 0;
+            for (; i < cookies.length; i++) {
+              var parts = cookies[i].split("=");
+              var cookie = parts.slice(1).join("=");
+              if (!json && cookie.charAt(0) === '"') {
+                cookie = cookie.slice(1, -1);
+              }
+              try {
+                var name = decode(parts[0]);
+                cookie = (converter.read || converter)(cookie, name) || decode(cookie);
+                if (json) {
+                  try {
+                    cookie = JSON.parse(cookie);
+                  } catch (e) {
+                  }
+                }
+                jar[name] = cookie;
+                if (key === name) {
+                  break;
+                }
+              } catch (e) {
+              }
+            }
+            return key ? jar[key] : jar;
+          }
+          api.set = set2;
+          api.get = function(key) {
+            return get2(key, false);
+          };
+          api.getJSON = function(key) {
+            return get2(key, true);
+          };
+          api.remove = function(key, attributes) {
+            set2(key, "", extend(attributes, {
+              expires: -1
+            }));
+          };
+          api.defaults = {};
+          api.withConverter = init3;
+          return api;
+        }
+        return init3(function() {
+        });
+      });
+    }
+  });
+
   // node_modules/is-mobile/index.js
   var require_is_mobile = __commonJS({
     "node_modules/is-mobile/index.js"(exports, module) {
@@ -5401,18 +5526,18 @@
   function is_empty(obj) {
     return Object.keys(obj).length === 0;
   }
-  function subscribe(store, ...callbacks) {
-    if (store == null) {
+  function subscribe(store2, ...callbacks) {
+    if (store2 == null) {
       return noop;
     }
-    const unsub = store.subscribe(...callbacks);
+    const unsub = store2.subscribe(...callbacks);
     return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
   }
-  function component_subscribe(component, store, callback) {
-    component.$$.on_destroy.push(subscribe(store, callback));
+  function component_subscribe(component, store2, callback) {
+    component.$$.on_destroy.push(subscribe(store2, callback));
   }
-  function set_store_value(store, ret, value) {
-    store.set(value);
+  function set_store_value(store2, ret, value) {
+    store2.set(value);
     return ret;
   }
   var is_client = typeof window !== "undefined";
@@ -6124,7 +6249,261 @@
     visible: true
   };
 
+  // node_modules/immortal-db/src/cookie-store.js
+  var import_js_cookie = __toESM(require_js_cookie());
+  var DEFAULT_COOKIE_TTL = 365;
+  var CROSS_ORIGIN_IFRAME = amIInsideACrossOriginIframe();
+  var DEFAULT_SECURE = CROSS_ORIGIN_IFRAME ? true : false;
+  var DEFAULT_SAMESITE = CROSS_ORIGIN_IFRAME ? "None" : "Lax";
+  function amIInsideACrossOriginIframe() {
+    try {
+      return !Boolean(window.top.location.href);
+    } catch (err) {
+      return true;
+    }
+  }
+  var CookieStore = class {
+    constructor({
+      ttl = DEFAULT_COOKIE_TTL,
+      secure = DEFAULT_SECURE,
+      sameSite = DEFAULT_SAMESITE
+    } = {}) {
+      this.ttl = ttl;
+      this.secure = secure;
+      this.sameSite = sameSite;
+      return (async () => this)();
+    }
+    async get(key) {
+      const value = import_js_cookie.default.get(key);
+      return typeof value === "string" ? value : void 0;
+    }
+    async set(key, value) {
+      import_js_cookie.default.set(key, value, this._constructCookieParams());
+    }
+    async remove(key) {
+      import_js_cookie.default.remove(key, this._constructCookieParams());
+    }
+    _constructCookieParams() {
+      return {
+        expires: this.ttl,
+        secure: this.secure,
+        sameSite: this.sameSite
+      };
+    }
+  };
+
+  // node_modules/idb-keyval/dist/idb-keyval.mjs
+  var Store = class {
+    constructor(dbName = "keyval-store", storeName = "keyval") {
+      this.storeName = storeName;
+      this._dbp = new Promise((resolve, reject) => {
+        const openreq = indexedDB.open(dbName, 1);
+        openreq.onerror = () => reject(openreq.error);
+        openreq.onsuccess = () => resolve(openreq.result);
+        openreq.onupgradeneeded = () => {
+          openreq.result.createObjectStore(storeName);
+        };
+      });
+    }
+    _withIDBStore(type, callback) {
+      return this._dbp.then((db2) => new Promise((resolve, reject) => {
+        const transaction = db2.transaction(this.storeName, type);
+        transaction.oncomplete = () => resolve();
+        transaction.onabort = transaction.onerror = () => reject(transaction.error);
+        callback(transaction.objectStore(this.storeName));
+      }));
+    }
+  };
+  var store;
+  function getDefaultStore() {
+    if (!store)
+      store = new Store();
+    return store;
+  }
+  function get(key, store2 = getDefaultStore()) {
+    let req;
+    return store2._withIDBStore("readonly", (store3) => {
+      req = store3.get(key);
+    }).then(() => req.result);
+  }
+  function set(key, value, store2 = getDefaultStore()) {
+    return store2._withIDBStore("readwrite", (store3) => {
+      store3.put(value, key);
+    });
+  }
+  function del(key, store2 = getDefaultStore()) {
+    return store2._withIDBStore("readwrite", (store3) => {
+      store3.delete(key);
+    });
+  }
+
+  // node_modules/immortal-db/src/indexed-db.js
+  var DEFAULT_DATABASE_NAME = "ImmortalDB";
+  var DEFAULT_STORE_NAME = "key-value-pairs";
+  var IndexedDbStore = class {
+    constructor(dbName = DEFAULT_DATABASE_NAME, storeName = DEFAULT_STORE_NAME) {
+      this.store = new Store(dbName, storeName);
+      return (async () => {
+        try {
+          await this.store._dbp;
+        } catch (err) {
+          if (err.name === "SecurityError") {
+            return null;
+          } else {
+            throw err;
+          }
+        }
+        return this;
+      })();
+    }
+    async get(key) {
+      const value = await get(key, this.store);
+      return typeof value === "string" ? value : void 0;
+    }
+    async set(key, value) {
+      await set(key, value, this.store);
+    }
+    async remove(key) {
+      await del(key, this.store);
+    }
+  };
+
+  // node_modules/immortal-db/src/web-storage.js
+  var StorageApiWrapper = class {
+    constructor(store2) {
+      this.store = store2;
+      return (async () => this)();
+    }
+    async get(key) {
+      const value = this.store.getItem(key);
+      return typeof value === "string" ? value : void 0;
+    }
+    async set(key, value) {
+      this.store.setItem(key, value);
+    }
+    async remove(key) {
+      this.store.removeItem(key);
+    }
+  };
+  var LocalStorageStore = class extends StorageApiWrapper {
+    constructor() {
+      super(window.localStorage);
+    }
+  };
+
+  // node_modules/immortal-db/src/index.js
+  var cl = console.log;
+  var DEFAULT_KEY_PREFIX = "_immortal|";
+  var WINDOW_IS_DEFINED = typeof window !== "undefined";
+  var DEFAULT_STORES = [CookieStore];
+  try {
+    if (WINDOW_IS_DEFINED && window.indexedDB) {
+      DEFAULT_STORES.push(IndexedDbStore);
+    }
+  } catch (err) {
+  }
+  try {
+    if (WINDOW_IS_DEFINED && window.localStorage) {
+      DEFAULT_STORES.push(LocalStorageStore);
+    }
+  } catch (err) {
+  }
+  function arrayGet(arr2, index, _default = null) {
+    if (index in arr2) {
+      return arr2[index];
+    }
+    return _default;
+  }
+  function countUniques(iterable) {
+    const m = /* @__PURE__ */ new Map();
+    let eles = iterable.slice();
+    for (const ele of eles) {
+      let count = 0;
+      for (const obj of eles) {
+        if (ele === obj) {
+          count += 1;
+        }
+      }
+      if (count > 0) {
+        m.set(ele, count);
+        eles = eles.filter((obj) => obj !== ele);
+      }
+    }
+    return m;
+  }
+  var ImmortalStorage = class {
+    constructor(stores = DEFAULT_STORES) {
+      this.stores = [];
+      this.onReady = (async () => {
+        this.stores = (await Promise.all(stores.map(async (StoreClassOrInstance) => {
+          if (typeof StoreClassOrInstance === "object") {
+            return StoreClassOrInstance;
+          } else {
+            try {
+              return await new StoreClassOrInstance();
+            } catch (err) {
+              return null;
+            }
+          }
+        }))).filter(Boolean);
+      })();
+    }
+    async get(key, _default = null) {
+      await this.onReady;
+      const prefixedKey = `${DEFAULT_KEY_PREFIX}${key}`;
+      const values = await Promise.all(this.stores.map(async (store2) => {
+        try {
+          return await store2.get(prefixedKey);
+        } catch (err) {
+          cl(err);
+        }
+      }));
+      const counted = Array.from(countUniques(values).entries());
+      counted.sort((a, b) => a[1] <= b[1]);
+      let value;
+      const [firstValue, firstCount] = arrayGet(counted, 0, [void 0, 0]);
+      const [secondValue, secondCount] = arrayGet(counted, 1, [void 0, 0]);
+      if (firstCount > secondCount || firstCount === secondCount && firstValue !== void 0) {
+        value = firstValue;
+      } else {
+        value = secondValue;
+      }
+      if (value !== void 0) {
+        await this.set(key, value);
+        return value;
+      } else {
+        await this.remove(key);
+        return _default;
+      }
+    }
+    async set(key, value) {
+      await this.onReady;
+      key = `${DEFAULT_KEY_PREFIX}${key}`;
+      await Promise.all(this.stores.map(async (store2) => {
+        try {
+          await store2.set(key, value);
+        } catch (err) {
+          cl(err);
+        }
+      }));
+      return value;
+    }
+    async remove(key) {
+      await this.onReady;
+      key = `${DEFAULT_KEY_PREFIX}${key}`;
+      await Promise.all(this.stores.map(async (store2) => {
+        try {
+          await store2.remove(key);
+        } catch (err) {
+          cl(err);
+        }
+      }));
+    }
+  };
+  var ImmortalDB = new ImmortalStorage();
+
   // src/value.ts
+  var db = new ImmortalStorage([IndexedDbStore]);
   var Value = class {
     constructor(value = void 0) {
       this.$ = value;
@@ -6157,30 +6536,32 @@
       }
       return this;
     }
-    not(store) {
-      store.on(($v) => {
+    not(store2) {
+      store2.on(($v) => {
         if (!$v || !this.$)
           return;
         this.set(false);
       });
       this.on(($v) => {
-        if (!$v || !store.$)
+        if (!$v || !store2.$)
           return;
-        store.set(false);
+        store2.set(false);
       });
       return this;
     }
     save(where) {
-      try {
-        const v = JSON.parse(localStorage.getItem(where));
-        if (v !== void 0 && v !== null) {
-          this.set(v);
+      (async () => {
+        try {
+          const v = JSON.parse(await db.get(where));
+          if (v !== void 0 && v !== null) {
+            this.set(v);
+          }
+        } catch (ex) {
         }
-      } catch (ex) {
-      }
-      this.on((v) => {
-        localStorage.setItem(where, JSON.stringify(v));
-      });
+        this.on(async (v) => {
+          await db.set(where, JSON.stringify(v));
+        });
+      })();
       return this;
     }
   };
@@ -6467,14 +6848,13 @@ reset back to 1 for size
   var guest = new Value(args.$.has("join"));
   var room = new Value(args.$.get("join"));
   var passcode = new Value("").save("passcode");
-  var scene;
   var paths = {};
-  var state = {};
+  var state = new Value({});
+  var pathState = new Value({}).save("pathstate");
   var update2 = {};
   var interop = 0;
   AFRAME.registerSystem("net", {
     init() {
-      scene = this.el.object3D;
       this.tick = AFRAME.utils.throttleTick(this.tick, 200, this);
       guest.on(() => {
         if (!guest.$)
@@ -6486,16 +6866,22 @@ reset back to 1 for size
           return;
         this.connect();
       });
+      setInterval(() => {
+        pathState.set(Object.fromEntries(Object.entries(paths).map(([key, value]) => {
+          return [key, { q: value.object3D.quaternion, p: value.object3D.position, s: value.object3D.scale }];
+        })));
+      }, 1e3);
     },
     process() {
       for (let entry of Object.entries(update2)) {
         const [path, value] = entry;
-        if (state[path]) {
-          Object.assign(state[path], value);
+        if (state.$[path]) {
+          Object.assign(state.$[path], value);
         } else {
-          state[path] = value;
+          state.$[path] = value;
         }
       }
+      state.poke();
     },
     tick() {
       if (!host.$)
@@ -6509,7 +6895,7 @@ reset back to 1 for size
       update2 = {};
     },
     fullUpdate() {
-      this.ws.send("UPD" /* UPDATE */ + this.password + JSON.stringify(state));
+      this.ws.send("UPD" /* UPDATE */ + this.password + JSON.stringify(state.$));
     },
     connect() {
       if (this.ws)
@@ -6553,10 +6939,10 @@ reset back to 1 for size
               const [path, value] = entry;
               if (!paths[path])
                 continue;
-              if (!state[path]) {
-                state[path] = value;
+              if (!state.$[path]) {
+                state.$[path] = value;
               } else {
-                Object.assign(state[path], value);
+                Object.assign(state.$[path], value);
               }
               paths[path].components.host.netUpdate(value);
             }
@@ -6583,7 +6969,7 @@ reset back to 1 for size
       const target = el.parentNode;
       const p2 = MakePath(target);
       const host2 = el.components.host?.data !== void 0 && typeof el.components.host.data === "string" ? el.components.host.data : false;
-      return (p2 !== "" ? p2 + "/" : "") + (host2 || el.id || Mixins(el)) || "";
+      return (p2 !== "" ? p2 + "-" : "") + (host2 || el.id || Mixins(el)) || "";
     }
   }
   var p = new AFRAME.THREE.Vector3();
@@ -6766,6 +7152,15 @@ reset back to 1 for size
       if (this.isCurrent()) {
         ground.$.splice(ground.$.indexOf(o), 1);
         ground.poke();
+      }
+    },
+    getTag(tag) {
+      for (let entry of Object.entries(this.data)) {
+        const [slot, item] = entry;
+        if (!item)
+          continue;
+        if (item.id.indexOf(tag) === 0)
+          return slot;
       }
     },
     tick() {
@@ -6996,6 +7391,10 @@ reset back to 1 for size
       vec3o.set(0, 0, -2).applyQuaternion(camera.$.getWorldQuaternion(quat));
       vec3.add(vec3o);
       s2.setAttribute("position", vec3.toArray(arr).join(" "));
+    },
+    ["shoot" /* Shoot */]: (items) => {
+      const [, , whatTag, withItem] = items;
+      document.getElementById(withItem)?.components.item.doShoot(whatTag);
     }
   };
 
@@ -7415,6 +7814,9 @@ reset back to 1 for size
     },
     update() {
       this.el.name = this.data;
+    },
+    remove() {
+      WIPE_TARGET.set(this.data);
     }
   });
 
@@ -8761,6 +9163,50 @@ gl_Position = mvPosition;
     }
   });
 
+  // src/component/physics.ts
+  AFRAME.registerComponent("physics-body", {
+    schema: {
+      type: "string"
+    },
+    init() {
+      this.loaded = this.loaded.bind(this);
+      this.el.addEventListener("model-loaded", this.loaded);
+    },
+    loaded() {
+      this.ready = true;
+      this.update();
+    },
+    update() {
+      if (!this.ready)
+        return;
+      this.el.setAttribute("ammo-body", this.data);
+    },
+    remove() {
+      this.el.removeEventListener("model-loaded", this.loaded);
+    }
+  });
+  AFRAME.registerComponent("physics-shape", {
+    schema: {
+      type: "string"
+    },
+    init() {
+      this.loaded = this.loaded.bind(this);
+      this.el.addEventListener("model-loaded", this.loaded);
+    },
+    loaded() {
+      this.ready = true;
+      this.update();
+    },
+    update() {
+      if (!this.ready)
+        return;
+      this.el.setAttribute("ammo-shape", this.data);
+    },
+    remove() {
+      this.el.removeEventListener("model-loaded", this.loaded);
+    }
+  });
+
   // src/sound/plush.ts
   var sfx_squeek = stringify({
     "oldParams": true,
@@ -9157,10 +9603,13 @@ gl_Position = mvPosition;
     let a_entity13;
     let a_mixin7_levels = [
       { id: "tree" },
+      {
+        vary__rot: "property: rotation; range: 0 0 0 0 360 0"
+      },
       { target: "\u{1F332}" },
       { class: "climbable env" },
       { tag__env: "" },
-      { shadow: "receive: false" },
+      { shadow: "receive: true" },
       { windy: "" },
       { sfxr__use: sfx_wood },
       { sfxr__bump: sfx_wood },
@@ -9316,29 +9765,28 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin4, "vary", vary);
         set_custom_element_data(a_mixin4, "host", "flowersLow");
         set_custom_element_data(a_mixin5, "id", "rock");
-        set_custom_element_data(a_mixin5, "shadow", "");
+        set_custom_element_data(a_mixin5, "shadow", "cast: true; receive: true");
         set_custom_element_data(a_mixin5, "target", "\u{1FAA8}");
         set_custom_element_data(a_mixin5, "tag__env", "");
-        set_custom_element_data(a_mixin5, "vary", "property: scale; range: 0.5 0.25 0.5 2 1 2");
+        set_custom_element_data(a_mixin5, "vary", "property: scale; range:5 3 5 6 15 6");
         set_custom_element_data(a_mixin5, "scatter", ctx[0]);
         set_custom_element_data(a_mixin5, "sfxr__use", sfx_bump);
         set_custom_element_data(a_mixin5, "sfxr__bump", sfx_bump);
         set_custom_element_data(a_mixin5, "gltf-model", "./glb/rockB.glb");
-        set_custom_element_data(a_mixin5, "ammo-body", "type: static; mass: 0");
+        set_custom_element_data(a_mixin5, "vary__rot", "property: rotation; range: 0 0 0 0 360 0");
+        set_custom_element_data(a_mixin5, "physics-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin5, "physics-shape", "type: box; fit: manual; halfExtents: 6 10 6");
         set_custom_element_data(a_mixin5, "host", "");
-        set_custom_element_data(a_mixin5, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1.5 ");
         set_custom_element_data(a_mixin6, "id", "mountains");
-        set_custom_element_data(a_mixin6, "shadow", "");
-        set_custom_element_data(a_mixin6, "host", "");
         set_custom_element_data(a_mixin6, "gltf-model", "./glb/rockC.glb");
         set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value = "radius: " + groundSize * 0.7 + "; count: 50");
         set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin6, "vary", "property: scale; range: 12 2 12 15 20 15");
+        set_custom_element_data(a_mixin6, "vary", "property: scale; range: 10 5 10 60 100 60");
         set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
         set_custom_element_data(a_entity0, "pool__mountains", "mixin: mountains; size: 50");
         set_custom_element_data(a_entity0, "activate__mountains", "");
         set_attributes(a_mixin7, a_mixin7_data);
-        set_custom_element_data(a_entity1, "pool__tree", "mixin: tree; size: 50");
+        set_custom_element_data(a_entity1, "pool__tree", "mixin: tree; size: 150");
         set_custom_element_data(a_entity1, "activate__tree", "");
         set_custom_element_data(a_entity2, "pool__mushroom", "mixin: mushroom; size: 20");
         set_custom_element_data(a_entity2, "activate__mushroom", "");
@@ -9354,7 +9802,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin8, "vary", "property: scale; range: 1 0.5 1 1.5 1.5 1.5");
         set_custom_element_data(a_entity3, "pool__grass", "mixin: grass; size: 50");
         set_custom_element_data(a_entity3, "activate__grass", "");
-        set_custom_element_data(a_entity4, "pool__rock", "mixin: rock; size: 50");
+        set_custom_element_data(a_entity4, "pool__rock", "mixin: rock; size: 150");
         set_custom_element_data(a_entity4, "activate__rock", "");
         set_custom_element_data(a_entity5, "pool__flowers", "mixin: flowers; size: 50");
         set_custom_element_data(a_entity5, "activate__flowers", "");
@@ -9473,10 +9921,13 @@ gl_Position = mvPosition;
       p(ctx2, [dirty]) {
         set_attributes(a_mixin7, a_mixin7_data = get_spread_update(a_mixin7_levels, [
           { id: "tree" },
+          {
+            vary__rot: "property: rotation; range: 0 0 0 0 360 0"
+          },
           { target: "\u{1F332}" },
           { class: "climbable env" },
           { tag__env: "" },
-          { shadow: "receive: false" },
+          { shadow: "receive: true" },
           { windy: "" },
           { sfxr__use: sfx_wood },
           { sfxr__bump: sfx_wood },
@@ -9642,7 +10093,7 @@ gl_Position = mvPosition;
       }
     };
   }
-  var groundSize = 300;
+  var groundSize = 400;
   var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
   var trunkVary = "property:scale; range: 2 1 2 5 2 5";
   function instance5($$self) {
@@ -10152,7 +10603,7 @@ uniform float timeMsec; // A-Frame time in milliseconds.
 
 #define zoom   0.800
 #define tile   0.850
-#define speed  0.010 
+#define speed  10000.010 
 
 #define brightness 0.0015
 #define darkmatter 0.300
@@ -10162,8 +10613,8 @@ uniform float timeMsec; // A-Frame time in milliseconds.
 void main() {
   //get coords and direction
 
-  vec3 dir=vec3(vUv*zoom,1.);
   float time=timeMsec*speed+.25;
+  vec3 dir=vec3(vUv*zoom,1.);
 
   //volumetric rendering
   float s=0.1,fade=1.;
@@ -10276,12 +10727,12 @@ void main() {
         set_custom_element_data(a_plane, "id", "ground");
         set_custom_element_data(a_plane, "position", "0 0 0");
         set_custom_element_data(a_plane, "rotation", "-90 0 0");
-        set_custom_element_data(a_plane, "width", a_plane_width_value = ctx[0] * 2);
-        set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 2);
+        set_custom_element_data(a_plane, "width", a_plane_width_value = ctx[0] * 3);
+        set_custom_element_data(a_plane, "height", a_plane_height_value = ctx[0] * 3);
         set_custom_element_data(a_plane, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_plane, "ammo-shape", "type:box");
         set_custom_element_data(a_plane, "color", "#334411");
-        set_custom_element_data(a_plane, "location", a_plane_location_value = "name: \u{1F332};  box: " + -ctx[0] * 2 + " 0 " + -ctx[0] * 2 + " " + ctx[0] * 2 + " 100 " + ctx[0] * 2);
+        set_custom_element_data(a_plane, "location", a_plane_location_value = "name: \u{1F332};  box: " + -ctx[0] * 3 + " 0 " + -ctx[0] * 3 + " " + ctx[0] * 3 + " 100 " + ctx[0] * 3);
         set_custom_element_data(a_entity0, "position", a_entity0_position_value = ctx[0] / 4 + " " + ctx[0] * 2 + " " + ctx[0] / 4);
         set_custom_element_data(a_entity0, "light", a_entity0_light_value = ctx[1]({
           type: "directional",
@@ -10306,11 +10757,11 @@ void main() {
         set_custom_element_data(a_mixin0, "scatter", ctx[2]);
         set_custom_element_data(a_mixin0, "material", "color: #ffffff; shader: flat; ");
         set_custom_element_data(a_mixin0, "geometry", "");
-        set_custom_element_data(a_mixin0, "scale", "15 5 10");
+        set_custom_element_data(a_mixin0, "scale", "60 5 30");
         set_custom_element_data(a_mixin0, "vary", "property: scale; range: 1 1 1 1.5 1.5 1.5");
         set_custom_element_data(a_entity3, "pool__cloud", "mixin: shadow cloud; size: 50");
         set_custom_element_data(a_entity3, "activate__cloud", "");
-        set_custom_element_data(a_entity3, "position", a_entity3_position_value = "0 35 " + ctx[0]);
+        set_custom_element_data(a_entity3, "position", a_entity3_position_value = "0 125 " + ctx[0]);
         set_custom_element_data(a_entity3, "animation", a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;");
         set_custom_element_data(a_entity3, "animation__scale", a_entity3_animation__scale_value = "property:object3D.scale; from: 0 0 0; to:1 1 1; dur: " + 400 * 300 / 2 + "; loop: true; dir: alternate");
         set_custom_element_data(a_entity4, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
@@ -10332,6 +10783,8 @@ void main() {
         set_custom_element_data(a_entity6, "activate__birds", "");
         set_custom_element_data(a_sky, "shader", "space");
         set_custom_element_data(a_sky, "rotation", "90 0 0");
+        set_custom_element_data(a_sky, "scale", "50 50 50");
+        set_custom_element_data(a_sky, "animation", "property: object3D.rotation.y; from: 0; to: -360; easing: linear; dur: 6000000; loop: true");
       },
       m(target, anchor) {
         insert(target, a_plane, anchor);
@@ -10359,13 +10812,13 @@ void main() {
         insert(target, a_sky, anchor);
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 2)) {
+        if (dirty & 1 && a_plane_width_value !== (a_plane_width_value = ctx2[0] * 3)) {
           set_custom_element_data(a_plane, "width", a_plane_width_value);
         }
-        if (dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 2)) {
+        if (dirty & 1 && a_plane_height_value !== (a_plane_height_value = ctx2[0] * 3)) {
           set_custom_element_data(a_plane, "height", a_plane_height_value);
         }
-        if (dirty & 1 && a_plane_location_value !== (a_plane_location_value = "name: \u{1F332};  box: " + -ctx2[0] * 2 + " 0 " + -ctx2[0] * 2 + " " + ctx2[0] * 2 + " 100 " + ctx2[0] * 2)) {
+        if (dirty & 1 && a_plane_location_value !== (a_plane_location_value = "name: \u{1F332};  box: " + -ctx2[0] * 3 + " 0 " + -ctx2[0] * 3 + " " + ctx2[0] * 3 + " 100 " + ctx2[0] * 3)) {
           set_custom_element_data(a_plane, "location", a_plane_location_value);
         }
         if (dirty & 1 && a_entity0_position_value !== (a_entity0_position_value = ctx2[0] / 4 + " " + ctx2[0] * 2 + " " + ctx2[0] / 4)) {
@@ -10388,7 +10841,7 @@ void main() {
         if (dirty & 1 && a_entity1_position_value !== (a_entity1_position_value = "-" + ctx2[0] / 3 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 3)) {
           set_custom_element_data(a_entity1, "position", a_entity1_position_value);
         }
-        if (dirty & 1 && a_entity3_position_value !== (a_entity3_position_value = "0 35 " + ctx2[0])) {
+        if (dirty & 1 && a_entity3_position_value !== (a_entity3_position_value = "0 125 " + ctx2[0])) {
           set_custom_element_data(a_entity3, "position", a_entity3_position_value);
         }
         if (dirty & 1 && a_entity3_animation_value !== (a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx2[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
@@ -10456,7 +10909,7 @@ void main() {
   var light = "#FEE";
   function instance8($$self, $$props, $$invalidate) {
     const str = AFRAME.utils.styleParser.stringify.bind(AFRAME.utils.styleParser);
-    let { groundSize: groundSize2 = 350 } = $$props;
+    let { groundSize: groundSize2 = 500 } = $$props;
     const scatterBig = [-groundSize2, 0, -groundSize2, groundSize2, 0, groundSize2].join(" ");
     $$self.$$set = ($$props2) => {
       if ("groundSize" in $$props2)
@@ -11733,6 +12186,22 @@ void main() {
       this.el.body.activate();
       Ammo.destroy(force);
     },
+    doShoot(whatTag) {
+      console.log("do shoot", whatTag, this);
+      if (!this.data.holder)
+        return;
+      const a = this.data.holder.components.avatar;
+      const slot = a.getTag(whatTag);
+      if (!slot)
+        return;
+      const i = a.data[slot];
+      a.doDrop(slot);
+      vec36.set(0, 0, -1e3).applyQuaternion(this.data.holder.object3D.getWorldQuaternion(quat5));
+      i.object3D.lookAt(vec36);
+      const force = new Ammo.btVector3(vec36.x, vec36.y, vec36.z);
+      this.el.body.applyForce(force);
+      this.el.body.activate();
+    },
     action(slot, whom) {
       if (slot.slice(0, 3) === "bag") {
         const a = this.data.holder.components.avatar;
@@ -11741,7 +12210,7 @@ void main() {
         this.equip({ detail: { slot: a.data.hand_left ? "hand_right" : "hand_left", whom } });
         return;
       }
-      doControl(this.data.action);
+      this.data.action && doControl(this.data.action.replace("$id", this.el.id));
       this.el.emit("action", { slot, whom });
     },
     reset() {
@@ -11892,7 +12361,7 @@ void main() {
         set_custom_element_data(a_mixin3, "target", "\u{1F3F9}");
         set_custom_element_data(a_mixin3, "sfxr__use", sfx_near_miss);
         set_custom_element_data(a_mixin3, "sfxr__bump", sfx_near_miss);
-        set_custom_element_data(a_mixin3, "item", "");
+        set_custom_element_data(a_mixin3, "item", "action: ~ shoot arrow $id");
         set_custom_element_data(a_mixin3, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_mixin3, "gltf-model", "./glb/bow.glb");
         set_custom_element_data(a_mixin3, "scale", "0.01 0.01 0.01");
@@ -12708,7 +13177,7 @@ void main() {
       talk.set(open_text.$);
       open_text.set(void 0);
     }
-    function escape() {
+    function escape2() {
       open_text.set(void 0);
     }
     key_down.on(() => {
@@ -12745,7 +13214,7 @@ void main() {
           send();
           break;
         case "Escape":
-          escape();
+          escape2();
           break;
       }
     };
@@ -12754,7 +13223,7 @@ void main() {
       $open_text,
       $ismobile,
       send,
-      escape,
+      escape2,
       input_input_handler,
       input_binding,
       keydown_handler2
@@ -13241,6 +13710,13 @@ void main() {
   });
   window.addEventListener("contextmenu", (e) => e.preventDefault());
 })();
+/*!
+ * JavaScript Cookie v2.2.1
+ * https://github.com/js-cookie/js-cookie
+ *
+ * Copyright 2006, 2015 Klaus Hartl & Fagner Brack
+ * Released under the MIT license
+ */
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 

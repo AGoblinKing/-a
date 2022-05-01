@@ -55,6 +55,35 @@ AFRAME.registerComponent("item", {
         // use the body rotation for the throw
 
     },
+    doShoot(whatTag: string) {
+        console.log("do shoot", whatTag, this)
+        // no holder, no shoot
+        if (!this.data.holder) return
+        // do I have whatTag in my inventory?
+
+        const a = this.data.holder.components.avatar
+        const slot = a.getTag(whatTag)
+
+        // no whatevers
+        if (!slot) return
+
+        const i = a.data[slot]
+        a.doDrop(slot)
+
+        vec3.set(0, 0, -1000).applyQuaternion(this.data.holder.object3D.getWorldQuaternion(quat))
+        i.object3D.lookAt(vec3)
+
+        // apply force to item based on thrower
+        const force = new Ammo.btVector3(vec3.x, vec3.y, vec3.z)
+
+        this.el.body.applyForce(force)
+
+        this.el.body.activate()
+        // its in the world now, lets point it away from the camera
+        // then fire it like a rocket
+
+    },
+
     action(slot: string, whom: HTMLElement) {
         if (slot.slice(0, 3) === "bag") {
             // move to hand
@@ -66,7 +95,7 @@ AFRAME.registerComponent("item", {
             return
         }
         // plays sound/etc
-        doControl(this.data.action)
+        this.data.action && doControl(this.data.action.replace('$id', this.el.id))
         this.el.emit("action", { slot, whom })
 
     },

@@ -118,6 +118,7 @@ export enum EControl {
     ToggleDrop = "toggledrop",
 
     Spawn = "spawn",
+    Shoot = "shoot",
 }
 
 
@@ -335,6 +336,12 @@ export const controls = {
 
         s.setAttribute("position", vec3.toArray(arr).join(" "))
 
+    },
+    [EControl.Shoot]: (items: string[]) => {
+        const [, , whatTag, withItem] = items
+
+        // do shoot
+        document.getElementById(withItem)?.components.item.doShoot(whatTag)
     }
 }
 

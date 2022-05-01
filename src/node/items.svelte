@@ -45,7 +45,7 @@
 	target="🏹"
 	sfxr__use={sfx_near_miss}
 	sfxr__bump={sfx_near_miss}
-	item
+	item="action: ~ shoot arrow $id"
 	shadow="cast: true; receive: false"
 	gltf-model="./glb/bow.glb"
 	scale="0.01 0.01 0.01"

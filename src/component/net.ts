@@ -7,10 +7,10 @@ export const guest = new Value(args.$.has("join"))
 export const room = new Value(args.$.get("join"))
 export const passcode = new Value("").save("passcode")
 
-let scene
-
 export const paths = {}
-const state = {}
+export const state = new Value({})
+export const pathState = new Value({}).save("pathstate")
+
 let update = {}
 
 let interop = 0
@@ -18,7 +18,7 @@ let interop = 0
 AFRAME.registerSystem("net", {
     init() {
         // if guest or host connect
-        scene = this.el.object3D
+
         this.tick = AFRAME.utils.throttleTick(this.tick, 200, this)
 
         guest.on(() => {
@@ -33,18 +33,27 @@ AFRAME.registerSystem("net", {
 
             this.connect()
         })
+        setInterval(() => {
+            // write to pathState
+            pathState.set(Object.fromEntries(Object.entries(paths).map(([key, value]) => {
+                return [key, { q: value.object3D.quaternion, p: value.object3D.position, s: value.object3D.scale }]
+            })))
+        }, 1000)
     },
     process() {
         // apply update to state
         for (let entry of Object.entries(update)) {
             const [path, value] = entry
 
-            if (state[path]) {
-                Object.assign(state[path], value)
+            if (state.$[path]) {
+                Object.assign(state.$[path], value)
             } else {
-                state[path] = value
+                state.$[path] = value
             }
         }
+
+        state.poke()
+
 
     },
     tick() {
@@ -65,7 +74,7 @@ AFRAME.registerSystem("net", {
 
 
     fullUpdate() {
-        this.ws.send(ECommand.UPDATE + this.password + JSON.stringify(state))
+        this.ws.send(ECommand.UPDATE + this.password + JSON.stringify(state.$))
     },
 
     connect() {
@@ -120,10 +129,10 @@ AFRAME.registerSystem("net", {
                         const [path, value] = entry
                         if (!paths[path]) continue
 
-                        if (!state[path]) {
-                            state[path] = value
+                        if (!state.$[path]) {
+                            state.$[path] = value
                         } else {
-                            Object.assign(state[path], value)
+                            Object.assign(state.$[path], value)
                         }
 
                         paths[path].components.host.netUpdate(value)
@@ -156,7 +165,7 @@ function MakePath(el) {
         const host = el.components.host?.data !== undefined && typeof el.components.host.data === "string" ? el.components.host.data : false
 
 
-        return (p !== "" ? p + "/" : "") + (host || el.id || Mixins(el)) || ""
+        return (p !== "" ? p + "-" : "") + (host || el.id || Mixins(el)) || ""
     }
 }
 

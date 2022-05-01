@@ -1,5 +1,13 @@
+import { ImmortalStorage, IndexedDbStore } from "immortal-db"
+
 export type ICancel = () => void
 export type FSubscribe<T> = (value: T) => any
+
+
+
+const db = new ImmortalStorage([IndexedDbStore])
+
+
 
 export class Value<T> {
   $: T
@@ -63,18 +71,21 @@ export class Value<T> {
   }
 
   save(where: string) {
-    // or desert you?
-    try {
-      const v = JSON.parse(localStorage.getItem(where))
+    (async () => {
+      try {
+        const v = JSON.parse(await db.get(where))
 
-      if (v !== undefined && v !== null) {
-        this.set(v)
-      }
-    } catch (ex) { }
+        if (v !== undefined && v !== null) {
+          this.set(v)
+        }
+      } catch (ex) { }
 
-    this.on((v) => {
-      localStorage.setItem(where, JSON.stringify(v))
-    })
+      this.on(async (v) => {
+        await db.set(where, JSON.stringify(v))
+      })
+    })()
+
+
     return this
   }
 }

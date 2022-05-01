@@ -8,6 +8,8 @@
 	import 'src/component/floaty'
 	import 'src/component/windy'
 	import 'src/component/alive'
+	import 'src/component/physics'
+
 	import { sfx_squeek } from 'src/sound/plush'
 	import { sfx_bump, sfx_near_miss, sfx_shthump } from 'src/sound/action'
 	import { sfx_wood } from 'src/sound/material'
@@ -16,7 +18,7 @@
 	import { sfx_flute } from 'src/sound/instrument'
 	import { sfx_bubbles } from 'src/sound/environmental'
 
-	const groundSize = 300
+	const groundSize = 400
 
 	const scatter = [-groundSize / 2, 0, -groundSize / 2, groundSize / 2, 0, groundSize / 2].join(' ')
 
@@ -84,37 +86,37 @@
 
 <a-mixin
 	id="rock"
-	shadow
+	shadow="cast: true; receive: true"
 	target="🪨"
 	tag__env
-	vary="property: scale; range: 0.5 0.25 0.5 2 1 2"
+	vary="property: scale; range:5 3 5 6 15 6"
 	{scatter}
 	sfxr__use={sfx_bump}
 	sfxr__bump={sfx_bump}
 	gltf-model="./glb/rockB.glb"
-	ammo-body="type: static; mass: 0"
+	vary__rot="property: rotation; range: 0 0 0 0 360 0"
+	physics-body="type: static; mass: 0;"
+	physics-shape="type: box; fit: manual; halfExtents: 6 10 6"
 	host
-	ammo-shape="type: sphere; fit: manual; sphereRadius: 1.5 "
 />
 
 <a-mixin
 	id="mountains"
-	shadow
-	host
 	gltf-model="./glb/rockC.glb"
 	ring="radius: {groundSize * 0.7}; count: 50"
 	ammo-body="type: static; mass: 0;"
-	vary="property: scale; range: 12 2 12 15 20 15"
+	vary="property: scale; range: 10 5 10 60 100 60"
 	ammo-shape="type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0"
 />
 <a-entity pool__mountains="mixin: mountains; size: 50" activate__mountains />
 
 <a-mixin
 	id="tree"
+	vary__rot="property: rotation; range: 0 0 0 0 360 0"
 	target="🌲"
 	class="climbable env"
 	tag__env
-	shadow="receive: false"
+	shadow="receive: true"
 	windy
 	sfxr__use={sfx_wood}
 	sfxr__bump={sfx_wood}
@@ -125,7 +127,7 @@
 	host
 />
 
-<a-entity pool__tree="mixin: tree; size: 50" activate__tree />
+<a-entity pool__tree="mixin: tree; size: 150" activate__tree />
 
 <a-entity pool__mushroom="mixin: mushroom; size: 20" activate__mushroom />
 
@@ -143,7 +145,7 @@
 />
 
 <a-entity pool__grass="mixin: grass; size: 50" activate__grass />
-<a-entity pool__rock="mixin: rock; size: 50" activate__rock />
+<a-entity pool__rock="mixin: rock; size: 150" activate__rock />
 <a-entity pool__flowers="mixin: flowers; size: 50" activate__flowers />
 <a-entity pool__flowersLow="mixin: flowersLow; size: 50" activate__flowersLow />
 
