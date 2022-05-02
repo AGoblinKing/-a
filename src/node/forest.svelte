@@ -13,7 +13,7 @@
 	import { sfx_squeek } from 'src/sound/plush'
 	import { sfx_bump, sfx_near_miss, sfx_shthump } from 'src/sound/action'
 	import { sfx_wood } from 'src/sound/material'
-	import { sfx_bird, sfx_cat } from 'src/sound/animals'
+	import { sfx_bird, sfx_cat, sfx_dino } from 'src/sound/animals'
 	import { sfx_creepy_laugh_tick, sfx_deep_robot, sfx_funky } from 'src/sound/weird'
 	import { sfx_flute } from 'src/sound/instrument'
 	import { sfx_bubbles } from 'src/sound/environmental'
@@ -24,11 +24,11 @@
 
 	const vary = 'property: scale; range: 1.5 1.25 1.5 3 2 3'
 
-	const trunkVary = 'property:scale; range: 2 1 2 5 2 5'
+	const trunkVary = 'property:scale; range: 5 5 5 25 25 25'
 
 	const boxBlocker = {
 		'ammo-body': 'type: static; mass: 0;',
-		'ammo-shape': 'type: box; fit: manual; halfExtents: 1 2.5 1; offset: 0 2.5 0'
+		'ammo-shape': 'type: box; fit: manual; halfExtents: 3 2.5 3; offset: 0 2.5 0'
 	}
 
 	const smolBoxBlocker = {
@@ -178,6 +178,9 @@
 	recolor__skin="blue"
 	gltf-model="./char/dino_Triceratops.glb"
 	material="shader: flat;"
+	ammo-shape=" halfExtents: 2 2 0.5; offset: 0 2 0"
+	sfxr__use={sfx_dino}
+	sfxr__bump={sfx_dino}
 	target="🦕"
 />
 
@@ -196,7 +199,7 @@
 
 <a-mixin
 	id="trunk"
-	{...smolBoxBlocker}
+	{...boxBlocker}
 	gltf-model="./glb/trunk.glb"
 	tag__env
 	vary={trunkVary}
@@ -209,7 +212,8 @@
 <a-mixin
 	id="trunkLong"
 	target="🪵"
-	{...smolBoxBlocker}
+	tag__env
+	{...boxBlocker}
 	sfxr__bump={sfx_creepy_laugh_tick}
 	gltf-model="./glb/trunkLong.glb"
 	vary={trunkVary}
@@ -220,7 +224,7 @@
 <a-mixin
 	id="pillarObelisk"
 	gltf-model="./glb/pillarObelisk.glb"
-	{...smolBoxBlocker}
+	{...boxBlocker}
 	vary={trunkVary}
 	{scatter}
 	tag__env

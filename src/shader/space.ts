@@ -50,7 +50,7 @@ void main() {
   v.r = v.b;
   v.b = r;
 
-  gl_FragColor = vec4(v*.01,1.);	
+  gl_FragColor = vec4(v*.001,1.);	
 }
 
 `

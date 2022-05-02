@@ -2,6 +2,8 @@
 	import { sfx_coin, sfx_item, sfx_sword } from 'src/sound/sfx-item'
 	import 'src/component/item'
 	import { sfx_charge_up, sfx_near_miss } from 'src/sound/action'
+	import Bow from './item/bow.svelte'
+	import Arrow from './item/arrow.svelte'
 </script>
 
 <a-mixin
@@ -39,34 +41,8 @@
 	ammo-body="type: dynamic;scaleAutoUpdate: false;mass: 5;"
 	ammo-shape="type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0.4 0"
 />
-<a-mixin
-	id="bow"
-	host="bow"
-	target="🏹"
-	sfxr__use={sfx_near_miss}
-	sfxr__bump={sfx_near_miss}
-	item="action: ~ shoot arrow $id"
-	shadow="cast: true; receive: false"
-	gltf-model="./glb/bow.glb"
-	scale="0.01 0.01 0.01"
-	ammo-body="type: dynamic;scaleAutoUpdate: false;mass: 0.1;"
-	ammo-shape="type:box; fit: manual; halfExtents: 0.5 1 0.15; offset: 0 0 0"
-/>
-
-<a-mixin
-	id="arrow"
-	target="↗️"
-	item
-	host="arrow"
-	sfxr__use={sfx_item}
-	sfxr__bump={sfx_coin}
-	shadow="cast: true; receive: false"
-	gltf-model="./glb/arrow.glb"
-	scale="0.01 0.01 0.01"
-	ammo-body="type: dynamic;scaleAutoUpdate: false;mass: 0.1;"
-	ammo-shape="type:box; fit: manual; halfExtents: 0.1 1 0.1; offset: 0 0 0"
-/>
-
+<Bow />
+<Arrow />
 <a-mixin
 	id="bag"
 	host="bag"

@@ -30,6 +30,37 @@ export const sfx_cat = stringify({
     "sample_size": 8
 })
 
+export const sfx_dino = stringify({
+    "oldParams": true,
+    "wave_type": 0,
+    "p_env_attack": 0.133,
+    "p_env_sustain": 0.368,
+    "p_env_punch": 0.309,
+    "p_env_decay": 0.172,
+    "p_base_freq": 0.188,
+    "p_freq_limit": 0,
+    "p_freq_ramp": 0.12899175352157,
+    "p_freq_dramp": -0.2047203643716314,
+    "p_vib_strength": 0.965,
+    "p_vib_speed": 0.15,
+    "p_arp_mod": 0.032,
+    "p_arp_speed": 0.141,
+    "p_duty": 0.255,
+    "p_duty_ramp": -0.094,
+    "p_repeat_speed": 0.08007409543733945,
+    "p_pha_offset": -0.116,
+    "p_pha_ramp": -0.05729119776895752,
+    "p_lpf_freq": 0.989,
+    "p_lpf_ramp": 0.027317809739609497,
+    "p_lpf_resonance": 0.556,
+    "p_hpf_freq": 0,
+    "p_hpf_ramp": -0.777,
+    "sound_vol": 0.05,
+    "sample_rate": 44100,
+    "sample_size": 8,
+    "p_vib_delay": null
+})
+
 export const sfx_bird = stringify({
     "oldParams": true,
     "wave_type": 2,

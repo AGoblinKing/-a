@@ -48,7 +48,7 @@
 <a-scene
 	keyboard-shortcuts="enterVR: false"
 	stats={$open_stats}
-	renderer="alpha: false; color;colorManagement: true;"
+	renderer="alpha: false; color;colorManagement: true;physicallyCorrectLights: true; "
 	shadow="type:basic;"
 	device-orientation-permission-ui="enabled: false"
 	physics="driver: ammo; debug: {$open_debug}; iterations: 1; fixedTimeStep: {1 /
@@ -58,10 +58,6 @@
 	net
 >
 	<a-assets>
-		<template id="forest">
-			<a-sphere color="blue" radius="5" />
-		</template>
-		<audio id="sound-bg" src="./sound/bg-ocean.mp3" />
 		<a-mixin id="shadow" shadow="cast: true; receive: false" />
 		<Items />
 	</a-assets>

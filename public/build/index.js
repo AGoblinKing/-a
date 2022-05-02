@@ -6033,7 +6033,7 @@
     }
     component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
   }
-  function init(component, options, instance19, create_fragment22, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance19, create_fragment24, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -6069,7 +6069,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment22 ? create_fragment22($$.ctx) : false;
+    $$.fragment = create_fragment24 ? create_fragment24($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -7160,7 +7160,7 @@ reset back to 1 for size
         const [slot, item] = entry;
         if (!item)
           continue;
-        if (item.id.indexOf(tag) === 0)
+        if (item.id.split("--").pop().indexOf(tag) === 0)
           return slot;
       }
     },
@@ -8836,15 +8836,15 @@ reset back to 1 for size
         set_custom_element_data(a_mixin, "animation", "property: rotation; to: 0 360 0; loop: true; dur: 1000; easing: linear");
         set_custom_element_data(a_mixin, "material", "wireframe: true; color: #00ff00; shader: flat;");
         set_custom_element_data(a_entity0, "geometry", "primitive: box; width: 0.4; height: 0.4; depth: 0.1");
-        set_custom_element_data(a_entity0, "material", "shader: flat; transparent: true; opacity: 0.5; color: #006ace");
+        set_custom_element_data(a_entity0, "material", "shader: flat; color: #006ace");
         set_custom_element_data(a_entity0, "position", "0 -0.2 -0.5");
         set_custom_element_data(a_entity0, "rotation", "-40 0 0");
         set_custom_element_data(a_entity0, "visible", a_entity0_visible_value = ctx[1] || ctx[2]);
         set_custom_element_data(a_camera, "active", "");
         set_custom_element_data(a_camera, "fov", "85");
         set_custom_element_data(a_camera, "id", "camera");
-        set_custom_element_data(a_camera, "camera-controller", "");
         set_custom_element_data(a_camera, "far", "50000");
+        set_custom_element_data(a_camera, "camera-controller", "");
         set_custom_element_data(a_camera, "position", "0 4 0");
         set_custom_element_data(a_camera, "wasd-controls", "enabled: false;");
         set_custom_element_data(a_camera, "look", "enabled: true;pointerLockEnabled: true;  reverseTouchDrag: true;");
@@ -9301,6 +9301,36 @@ gl_Position = mvPosition;
     "sample_rate": 44100,
     "sample_size": 8
   });
+  var sfx_dino = stringify({
+    "oldParams": true,
+    "wave_type": 0,
+    "p_env_attack": 0.133,
+    "p_env_sustain": 0.368,
+    "p_env_punch": 0.309,
+    "p_env_decay": 0.172,
+    "p_base_freq": 0.188,
+    "p_freq_limit": 0,
+    "p_freq_ramp": 0.12899175352157,
+    "p_freq_dramp": -0.2047203643716314,
+    "p_vib_strength": 0.965,
+    "p_vib_speed": 0.15,
+    "p_arp_mod": 0.032,
+    "p_arp_speed": 0.141,
+    "p_duty": 0.255,
+    "p_duty_ramp": -0.094,
+    "p_repeat_speed": 0.08007409543733945,
+    "p_pha_offset": -0.116,
+    "p_pha_ramp": -0.05729119776895752,
+    "p_lpf_freq": 0.989,
+    "p_lpf_ramp": 0.027317809739609497,
+    "p_lpf_resonance": 0.556,
+    "p_hpf_freq": 0,
+    "p_hpf_ramp": -0.777,
+    "sound_vol": 0.05,
+    "sample_rate": 44100,
+    "sample_size": 8,
+    "p_vib_delay": null
+  });
   var sfx_bird = stringify({
     "oldParams": true,
     "wave_type": 2,
@@ -9624,7 +9654,7 @@ gl_Position = mvPosition;
     }
     let a_mixin14_levels = [
       { id: "trunk" },
-      ctx[2],
+      ctx[1],
       { "gltf-model": "./glb/trunk.glb" },
       { tag__env: "" },
       { vary: trunkVary },
@@ -9639,7 +9669,8 @@ gl_Position = mvPosition;
     let a_mixin15_levels = [
       { id: "trunkLong" },
       { target: "\u{1FAB5}" },
-      ctx[2],
+      { tag__env: "" },
+      ctx[1],
       { sfxr__bump: sfx_creepy_laugh_tick },
       { "gltf-model": "./glb/trunkLong.glb" },
       { vary: trunkVary },
@@ -9652,7 +9683,7 @@ gl_Position = mvPosition;
     let a_mixin16_levels = [
       { id: "pillarObelisk" },
       { "gltf-model": "./glb/pillarObelisk.glb" },
-      ctx[2],
+      ctx[1],
       { vary: trunkVary },
       { scatter: ctx[0] },
       { tag__env: "" },
@@ -9838,6 +9869,9 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin13, "recolor__skin", "blue");
         set_custom_element_data(a_mixin13, "gltf-model", "./char/dino_Triceratops.glb");
         set_custom_element_data(a_mixin13, "material", "shader: flat;");
+        set_custom_element_data(a_mixin13, "ammo-shape", " halfExtents: 2 2 0.5; offset: 0 2 0");
+        set_custom_element_data(a_mixin13, "sfxr__use", sfx_dino);
+        set_custom_element_data(a_mixin13, "sfxr__bump", sfx_dino);
         set_custom_element_data(a_mixin13, "target", "\u{1F995}");
         set_custom_element_data(a_entity7, "pool__horse", "mixin: animal; size: 5;");
         set_custom_element_data(a_entity7, "activate__horse", "");
@@ -9939,7 +9973,7 @@ gl_Position = mvPosition;
         ]));
         set_attributes(a_mixin14, a_mixin14_data = get_spread_update(a_mixin14_levels, [
           { id: "trunk" },
-          ctx2[2],
+          ctx2[1],
           { "gltf-model": "./glb/trunk.glb" },
           { tag__env: "" },
           { vary: trunkVary },
@@ -9950,7 +9984,8 @@ gl_Position = mvPosition;
         set_attributes(a_mixin15, a_mixin15_data = get_spread_update(a_mixin15_levels, [
           { id: "trunkLong" },
           { target: "\u{1FAB5}" },
-          ctx2[2],
+          { tag__env: "" },
+          ctx2[1],
           { sfxr__bump: sfx_creepy_laugh_tick },
           { "gltf-model": "./glb/trunkLong.glb" },
           { vary: trunkVary },
@@ -9959,7 +9994,7 @@ gl_Position = mvPosition;
         set_attributes(a_mixin16, a_mixin16_data = get_spread_update(a_mixin16_levels, [
           { id: "pillarObelisk" },
           { "gltf-model": "./glb/pillarObelisk.glb" },
-          ctx2[2],
+          ctx2[1],
           { vary: trunkVary },
           { scatter: ctx2[0] },
           { tag__env: "" },
@@ -10085,18 +10120,18 @@ gl_Position = mvPosition;
   }
   var groundSize = 400;
   var vary = "property: scale; range: 1.5 1.25 1.5 3 2 3";
-  var trunkVary = "property:scale; range: 2 1 2 5 2 5";
+  var trunkVary = "property:scale; range: 5 5 5 25 25 25";
   function instance5($$self) {
     const scatter = [-groundSize / 2, 0, -groundSize / 2, groundSize / 2, 0, groundSize / 2].join(" ");
     const boxBlocker = {
       "ammo-body": "type: static; mass: 0;",
-      "ammo-shape": "type: box; fit: manual; halfExtents: 1 2.5 1; offset: 0 2.5 0"
+      "ammo-shape": "type: box; fit: manual; halfExtents: 3 2.5 3; offset: 0 2.5 0"
     };
     const smolBoxBlocker = {
       "ammo-body": "type: static; mass: 0;",
       "ammo-shape": "type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0"
     };
-    return [scatter, boxBlocker, smolBoxBlocker];
+    return [scatter, boxBlocker];
   }
   var Forest = class extends SvelteComponent {
     constructor(options) {
@@ -10632,7 +10667,7 @@ void main() {
   v.r = v.b;
   v.b = r;
 
-  gl_FragColor = vec4(v*.01,1.);	
+  gl_FragColor = vec4(v*.001,1.);	
 }
 
 `;
@@ -10675,18 +10710,16 @@ void main() {
     let a_entity3_animation_value;
     let a_entity3_animation__scale_value;
     let t5;
-    let a_entity4;
-    let t6;
     let a_mixin1;
     let a_mixin1_vary_value;
+    let t6;
+    let a_entity4;
     let t7;
-    let a_entity5;
-    let t8;
     let a_mixin2;
     let a_mixin2_vary_value;
+    let t8;
+    let a_entity5;
     let t9;
-    let a_entity6;
-    let t10;
     let a_sky;
     return {
       c() {
@@ -10702,16 +10735,14 @@ void main() {
         t4 = space();
         a_entity3 = element("a-entity");
         t5 = space();
-        a_entity4 = element("a-entity");
-        t6 = space();
         a_mixin1 = element("a-mixin");
+        t6 = space();
+        a_entity4 = element("a-entity");
         t7 = space();
-        a_entity5 = element("a-entity");
-        t8 = space();
         a_mixin2 = element("a-mixin");
+        t8 = space();
+        a_entity5 = element("a-entity");
         t9 = space();
-        a_entity6 = element("a-entity");
-        t10 = space();
         a_sky = element("a-sky");
         set_custom_element_data(a_plane, "shadow", "");
         set_custom_element_data(a_plane, "id", "ground");
@@ -10751,26 +10782,25 @@ void main() {
         set_custom_element_data(a_mixin0, "vary", "property: scale; range: 1 1 1 1.5 1.5 1.5");
         set_custom_element_data(a_entity3, "pool__cloud", "mixin: shadow cloud; size: 50");
         set_custom_element_data(a_entity3, "activate__cloud", "");
-        set_custom_element_data(a_entity3, "position", a_entity3_position_value = "0 125 " + ctx[0]);
+        set_custom_element_data(a_entity3, "position", a_entity3_position_value = "0 100 " + ctx[0]);
         set_custom_element_data(a_entity3, "animation", a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;");
         set_custom_element_data(a_entity3, "animation__scale", a_entity3_animation__scale_value = "property:object3D.scale; from: 0 0 0; to:1 1 1; dur: " + 400 * 300 / 2 + "; loop: true; dir: alternate");
-        set_custom_element_data(a_entity4, "sound", "autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false");
         set_custom_element_data(a_mixin1, "id", "floof");
         set_custom_element_data(a_mixin1, "geometry", "");
         set_custom_element_data(a_mixin1, "scale", "0.05 0.05 0.05");
         set_custom_element_data(a_mixin1, "material", "color: white; shader: flat;");
         set_custom_element_data(a_mixin1, "vary", a_mixin1_vary_value = "property: position; range: -" + ctx[0] * 0.75 + " 0 -" + ctx[0] * 0.75 + " " + ctx[0] * 0.75 + " 4 " + ctx[0] * 0.75);
         set_custom_element_data(a_mixin1, "floaty", "");
-        set_custom_element_data(a_entity5, "pool__floof", "mixin: floof; size: 100;");
-        set_custom_element_data(a_entity5, "activate__floof", "");
+        set_custom_element_data(a_entity4, "pool__floof", "mixin: floof; size: 100;");
+        set_custom_element_data(a_entity4, "activate__floof", "");
         set_custom_element_data(a_mixin2, "id", "birds");
         set_custom_element_data(a_mixin2, "geometry", "");
         set_custom_element_data(a_mixin2, "scale", "0.25 0.15 0.15");
         set_custom_element_data(a_mixin2, "material", "color: yellow; shader: flat;");
         set_custom_element_data(a_mixin2, "vary", a_mixin2_vary_value = "property: position; range: -" + ctx[0] * 0.75 + " 10.5 -" + ctx[0] * 0.75 + " " + ctx[0] * 0.75 + " 40 " + ctx[0] * 0.75);
         set_custom_element_data(a_mixin2, "floaty", "");
-        set_custom_element_data(a_entity6, "pool__birds", "mixin: birds; size: 50;");
-        set_custom_element_data(a_entity6, "activate__birds", "");
+        set_custom_element_data(a_entity5, "pool__birds", "mixin: birds; size: 50;");
+        set_custom_element_data(a_entity5, "activate__birds", "");
         set_custom_element_data(a_sky, "shader", "space");
         set_custom_element_data(a_sky, "rotation", "90 0 0");
         set_custom_element_data(a_sky, "scale", "50 50 50");
@@ -10789,16 +10819,14 @@ void main() {
         insert(target, t4, anchor);
         insert(target, a_entity3, anchor);
         insert(target, t5, anchor);
-        insert(target, a_entity4, anchor);
-        insert(target, t6, anchor);
         insert(target, a_mixin1, anchor);
+        insert(target, t6, anchor);
+        insert(target, a_entity4, anchor);
         insert(target, t7, anchor);
-        insert(target, a_entity5, anchor);
-        insert(target, t8, anchor);
         insert(target, a_mixin2, anchor);
+        insert(target, t8, anchor);
+        insert(target, a_entity5, anchor);
         insert(target, t9, anchor);
-        insert(target, a_entity6, anchor);
-        insert(target, t10, anchor);
         insert(target, a_sky, anchor);
       },
       p(ctx2, [dirty]) {
@@ -10831,7 +10859,7 @@ void main() {
         if (dirty & 1 && a_entity1_position_value !== (a_entity1_position_value = "-" + ctx2[0] / 3 + " " + ctx2[0] * 2 + " -" + ctx2[0] / 3)) {
           set_custom_element_data(a_entity1, "position", a_entity1_position_value);
         }
-        if (dirty & 1 && a_entity3_position_value !== (a_entity3_position_value = "0 125 " + ctx2[0])) {
+        if (dirty & 1 && a_entity3_position_value !== (a_entity3_position_value = "0 100 " + ctx2[0])) {
           set_custom_element_data(a_entity3, "position", a_entity3_position_value);
         }
         if (dirty & 1 && a_entity3_animation_value !== (a_entity3_animation_value = "property:object3D.position.z; to:-" + ctx2[0] + "; dur: " + 400 * 300 * 2 + "; loop: true;")) {
@@ -10872,25 +10900,21 @@ void main() {
         if (detaching)
           detach(t5);
         if (detaching)
-          detach(a_entity4);
+          detach(a_mixin1);
         if (detaching)
           detach(t6);
         if (detaching)
-          detach(a_mixin1);
+          detach(a_entity4);
         if (detaching)
           detach(t7);
         if (detaching)
-          detach(a_entity5);
+          detach(a_mixin2);
         if (detaching)
           detach(t8);
         if (detaching)
-          detach(a_mixin2);
+          detach(a_entity5);
         if (detaching)
           detach(t9);
-        if (detaching)
-          detach(a_entity6);
-        if (detaching)
-          detach(t10);
         if (detaching)
           detach(a_sky);
       }
@@ -12154,6 +12178,24 @@ void main() {
       this.el.addEventListener("use", this.use = this.use.bind(this));
       this.el.addEventListener("throw", this.throw = this.throw.bind(this));
       this.el.addEventListener("drop", this.drop = this.drop.bind(this));
+      this.el.addEventListener("shot", this.shot = this.shot.bind(this));
+      this.el.addEventListener("collidestart", this.collideStart = this.collideStart.bind(this));
+    },
+    remove() {
+      this.el.removeEventListener("use", this.use);
+      this.el.removeEventListener("throw", this.throw);
+      this.el.removeEventListener("drop", this.drop);
+      this.el.removeEventListener("shot", this.shot);
+      this.el.removeEventListener("collidestart", this.collideStart);
+    },
+    collideStart() {
+      if (this._shot) {
+        console.log(this.el.body);
+        this._shot = false;
+      }
+    },
+    shot(e) {
+      this._shot = true;
     },
     drop(e) {
       if (!this.data.holder)
@@ -12177,20 +12219,23 @@ void main() {
       Ammo.destroy(force);
     },
     doShoot(whatTag) {
-      console.log("do shoot", whatTag, this);
       if (!this.data.holder)
         return;
       const a = this.data.holder.components.avatar;
-      const slot = a.getTag(whatTag);
-      if (!slot)
+      const slot = this.data.slot === "hand_left" ? "hand_right" : "hand_left";
+      const p2 = this.el.object3D.parent;
+      if (!a.data[slot] || a.data[slot].id.split("--").pop().indexOf(whatTag) !== 0)
         return;
       const i = a.data[slot];
       a.doDrop(slot);
-      vec36.set(0, 0, -1e3).applyQuaternion(this.data.holder.object3D.getWorldQuaternion(quat5));
+      vec36.set(0, 3, -1e3).applyQuaternion(p2.getWorldQuaternion(quat5));
       i.object3D.lookAt(vec36);
+      i.object3D.rotation.y += 90;
+      i.emit("shot", { whom: this.el, slot }, false);
       const force = new Ammo.btVector3(vec36.x, vec36.y, vec36.z);
-      this.el.body.applyForce(force);
-      this.el.body.activate();
+      i.body.applyForce(force);
+      i.body.activate();
+      Ammo.destroy(force);
     },
     action(slot, whom) {
       if (slot.slice(0, 3) === "bag") {
@@ -12276,31 +12321,105 @@ void main() {
         return;
       }
       this.equip(e);
-    },
-    remove() {
-      this.el.removeEventListener("use", this.use);
-      this.el.removeEventListener("throw", this.throw);
-      this.el.removeEventListener("drop", this.drop);
     }
   });
 
-  // src/node/items.svelte
+  // src/node/item/bow.svelte
   function create_fragment13(ctx) {
+    let a_mixin;
+    return {
+      c() {
+        a_mixin = element("a-mixin");
+        set_custom_element_data(a_mixin, "id", "bow");
+        set_custom_element_data(a_mixin, "host", "bow");
+        set_custom_element_data(a_mixin, "target", "\u{1F3F9}");
+        set_custom_element_data(a_mixin, "sfxr__use", sfx_near_miss);
+        set_custom_element_data(a_mixin, "sfxr__bump", sfx_near_miss);
+        set_custom_element_data(a_mixin, "item", "action: ~ shoot arrow $id");
+        set_custom_element_data(a_mixin, "shadow", "cast: true; receive: false");
+        set_custom_element_data(a_mixin, "gltf-model", "./glb/bow.glb");
+        set_custom_element_data(a_mixin, "scale", "0.01 0.01 0.01");
+        set_custom_element_data(a_mixin, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.1;");
+        set_custom_element_data(a_mixin, "ammo-shape", "type:box; fit: manual; halfExtents: 0.5 1 0.15; offset: 0 0 0");
+      },
+      m(target, anchor) {
+        insert(target, a_mixin, anchor);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_mixin);
+      }
+    };
+  }
+  var Bow = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, create_fragment13, safe_not_equal, {});
+    }
+  };
+  var bow_default = Bow;
+
+  // src/node/item/arrow.svelte
+  function create_fragment14(ctx) {
+    let a_mixin;
+    return {
+      c() {
+        a_mixin = element("a-mixin");
+        set_custom_element_data(a_mixin, "id", "arrow");
+        set_custom_element_data(a_mixin, "target", "\u2197\uFE0F");
+        set_custom_element_data(a_mixin, "item", "");
+        set_custom_element_data(a_mixin, "host", "arrow");
+        set_custom_element_data(a_mixin, "sfxr__use", sfx_item);
+        set_custom_element_data(a_mixin, "sfxr__bump", sfx_coin);
+        set_custom_element_data(a_mixin, "shadow", "cast: true; receive: false");
+        set_custom_element_data(a_mixin, "gltf-model", "./glb/arrow.glb");
+        set_custom_element_data(a_mixin, "scale", "0.01 0.01 0.01");
+        set_custom_element_data(a_mixin, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.1; emitCollisionEvents:true");
+        set_custom_element_data(a_mixin, "ammo-shape", "type:box; fit: manual; halfExtents: 0.1 1 0.1; offset: 0 0 0");
+      },
+      m(target, anchor) {
+        insert(target, a_mixin, anchor);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(a_mixin);
+      }
+    };
+  }
+  var Arrow = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, null, create_fragment14, safe_not_equal, {});
+    }
+  };
+  var arrow_default = Arrow;
+
+  // src/node/items.svelte
+  function create_fragment15(ctx) {
     let a_mixin0;
     let t0;
     let a_mixin1;
     let t1;
     let a_mixin2;
     let t2;
-    let a_mixin3;
+    let bow;
     let t3;
-    let a_mixin4;
+    let arrow;
     let t4;
-    let a_mixin5;
+    let a_mixin3;
     let t5;
-    let a_mixin6;
+    let a_mixin4;
     let t6;
-    let a_mixin7;
+    let a_mixin5;
+    let current;
+    bow = new bow_default({});
+    arrow = new arrow_default({});
     return {
       c() {
         a_mixin0 = element("a-mixin");
@@ -12309,15 +12428,15 @@ void main() {
         t1 = space();
         a_mixin2 = element("a-mixin");
         t2 = space();
-        a_mixin3 = element("a-mixin");
+        create_component(bow.$$.fragment);
         t3 = space();
-        a_mixin4 = element("a-mixin");
+        create_component(arrow.$$.fragment);
         t4 = space();
-        a_mixin5 = element("a-mixin");
+        a_mixin3 = element("a-mixin");
         t5 = space();
-        a_mixin6 = element("a-mixin");
+        a_mixin4 = element("a-mixin");
         t6 = space();
-        a_mixin7 = element("a-mixin");
+        a_mixin5 = element("a-mixin");
         set_custom_element_data(a_mixin0, "id", "dagger");
         set_custom_element_data(a_mixin0, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_mixin0, "gltf-model", "./glb/dagger.glb");
@@ -12346,58 +12465,36 @@ void main() {
         set_custom_element_data(a_mixin2, "scale", "0.01 0.01 0.01");
         set_custom_element_data(a_mixin2, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 5;");
         set_custom_element_data(a_mixin2, "ammo-shape", "type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0.4 0");
-        set_custom_element_data(a_mixin3, "id", "bow");
-        set_custom_element_data(a_mixin3, "host", "bow");
-        set_custom_element_data(a_mixin3, "target", "\u{1F3F9}");
-        set_custom_element_data(a_mixin3, "sfxr__use", sfx_near_miss);
-        set_custom_element_data(a_mixin3, "sfxr__bump", sfx_near_miss);
-        set_custom_element_data(a_mixin3, "item", "action: ~ shoot arrow $id");
+        set_custom_element_data(a_mixin3, "id", "bag");
+        set_custom_element_data(a_mixin3, "host", "bag");
+        set_custom_element_data(a_mixin3, "target", "\u{1F45D}");
+        set_custom_element_data(a_mixin3, "sfxr__use", sfx_item);
+        set_custom_element_data(a_mixin3, "sfxr__bump", sfx_coin);
         set_custom_element_data(a_mixin3, "shadow", "cast: true; receive: false");
-        set_custom_element_data(a_mixin3, "gltf-model", "./glb/bow.glb");
+        set_custom_element_data(a_mixin3, "gltf-model", "./glb/bag.glb");
         set_custom_element_data(a_mixin3, "scale", "0.01 0.01 0.01");
-        set_custom_element_data(a_mixin3, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.1;");
-        set_custom_element_data(a_mixin3, "ammo-shape", "type:box; fit: manual; halfExtents: 0.5 1 0.15; offset: 0 0 0");
-        set_custom_element_data(a_mixin4, "id", "arrow");
-        set_custom_element_data(a_mixin4, "target", "\u2197\uFE0F");
-        set_custom_element_data(a_mixin4, "item", "");
-        set_custom_element_data(a_mixin4, "host", "arrow");
+        set_custom_element_data(a_mixin3, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.5;");
+        set_custom_element_data(a_mixin3, "ammo-shape", "type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0");
+        set_custom_element_data(a_mixin4, "id", "barrel");
+        set_custom_element_data(a_mixin4, "host", "barrel");
+        set_custom_element_data(a_mixin4, "target", "\u{1F6E2}\uFE0F");
         set_custom_element_data(a_mixin4, "sfxr__use", sfx_item);
         set_custom_element_data(a_mixin4, "sfxr__bump", sfx_coin);
         set_custom_element_data(a_mixin4, "shadow", "cast: true; receive: false");
-        set_custom_element_data(a_mixin4, "gltf-model", "./glb/arrow.glb");
-        set_custom_element_data(a_mixin4, "scale", "0.01 0.01 0.01");
-        set_custom_element_data(a_mixin4, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.1;");
-        set_custom_element_data(a_mixin4, "ammo-shape", "type:box; fit: manual; halfExtents: 0.1 1 0.1; offset: 0 0 0");
-        set_custom_element_data(a_mixin5, "id", "bag");
-        set_custom_element_data(a_mixin5, "host", "bag");
-        set_custom_element_data(a_mixin5, "target", "\u{1F45D}");
+        set_custom_element_data(a_mixin4, "gltf-model", "./glb/barrel.glb");
+        set_custom_element_data(a_mixin4, "scale", "2 2 2");
+        set_custom_element_data(a_mixin4, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 20;");
+        set_custom_element_data(a_mixin4, "ammo-shape", "type:box; fit: manual; halfExtents: 0.75 0.75 0.75; offset: 0 0.5 0");
+        set_custom_element_data(a_mixin5, "id", "crate");
+        set_custom_element_data(a_mixin5, "target", "\u{1F4E6}");
+        set_custom_element_data(a_mixin5, "host", "crate");
         set_custom_element_data(a_mixin5, "sfxr__use", sfx_item);
         set_custom_element_data(a_mixin5, "sfxr__bump", sfx_coin);
         set_custom_element_data(a_mixin5, "shadow", "cast: true; receive: false");
-        set_custom_element_data(a_mixin5, "gltf-model", "./glb/bag.glb");
-        set_custom_element_data(a_mixin5, "scale", "0.01 0.01 0.01");
-        set_custom_element_data(a_mixin5, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.5;");
-        set_custom_element_data(a_mixin5, "ammo-shape", "type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0");
-        set_custom_element_data(a_mixin6, "id", "barrel");
-        set_custom_element_data(a_mixin6, "host", "barrel");
-        set_custom_element_data(a_mixin6, "target", "\u{1F6E2}\uFE0F");
-        set_custom_element_data(a_mixin6, "sfxr__use", sfx_item);
-        set_custom_element_data(a_mixin6, "sfxr__bump", sfx_coin);
-        set_custom_element_data(a_mixin6, "shadow", "cast: true; receive: false");
-        set_custom_element_data(a_mixin6, "gltf-model", "./glb/barrel.glb");
-        set_custom_element_data(a_mixin6, "scale", "2 2 2");
-        set_custom_element_data(a_mixin6, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 20;");
-        set_custom_element_data(a_mixin6, "ammo-shape", "type:box; fit: manual; halfExtents: 0.75 0.75 0.75; offset: 0 0.5 0");
-        set_custom_element_data(a_mixin7, "id", "crate");
-        set_custom_element_data(a_mixin7, "target", "\u{1F4E6}");
-        set_custom_element_data(a_mixin7, "host", "crate");
-        set_custom_element_data(a_mixin7, "sfxr__use", sfx_item);
-        set_custom_element_data(a_mixin7, "sfxr__bump", sfx_coin);
-        set_custom_element_data(a_mixin7, "shadow", "cast: true; receive: false");
-        set_custom_element_data(a_mixin7, "gltf-model", "./glb/crate.glb");
-        set_custom_element_data(a_mixin7, "scale", "2 2 2");
-        set_custom_element_data(a_mixin7, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 10;");
-        set_custom_element_data(a_mixin7, "ammo-shape", "type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: -2 0.5 1");
+        set_custom_element_data(a_mixin5, "gltf-model", "./glb/crate.glb");
+        set_custom_element_data(a_mixin5, "scale", "2 2 2");
+        set_custom_element_data(a_mixin5, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 10;");
+        set_custom_element_data(a_mixin5, "ammo-shape", "type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: -2 0.5 1");
       },
       m(target, anchor) {
         insert(target, a_mixin0, anchor);
@@ -12406,19 +12503,30 @@ void main() {
         insert(target, t1, anchor);
         insert(target, a_mixin2, anchor);
         insert(target, t2, anchor);
-        insert(target, a_mixin3, anchor);
+        mount_component(bow, target, anchor);
         insert(target, t3, anchor);
-        insert(target, a_mixin4, anchor);
+        mount_component(arrow, target, anchor);
         insert(target, t4, anchor);
-        insert(target, a_mixin5, anchor);
+        insert(target, a_mixin3, anchor);
         insert(target, t5, anchor);
-        insert(target, a_mixin6, anchor);
+        insert(target, a_mixin4, anchor);
         insert(target, t6, anchor);
-        insert(target, a_mixin7, anchor);
+        insert(target, a_mixin5, anchor);
+        current = true;
       },
       p: noop,
-      i: noop,
-      o: noop,
+      i(local) {
+        if (current)
+          return;
+        transition_in(bow.$$.fragment, local);
+        transition_in(arrow.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(bow.$$.fragment, local);
+        transition_out(arrow.$$.fragment, local);
+        current = false;
+      },
       d(detaching) {
         if (detaching)
           detach(a_mixin0);
@@ -12432,31 +12540,29 @@ void main() {
           detach(a_mixin2);
         if (detaching)
           detach(t2);
-        if (detaching)
-          detach(a_mixin3);
+        destroy_component(bow, detaching);
         if (detaching)
           detach(t3);
-        if (detaching)
-          detach(a_mixin4);
+        destroy_component(arrow, detaching);
         if (detaching)
           detach(t4);
         if (detaching)
-          detach(a_mixin5);
+          detach(a_mixin3);
         if (detaching)
           detach(t5);
         if (detaching)
-          detach(a_mixin6);
+          detach(a_mixin4);
         if (detaching)
           detach(t6);
         if (detaching)
-          detach(a_mixin7);
+          detach(a_mixin5);
       }
     };
   }
   var Items = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment13, safe_not_equal, {});
+      init(this, options, null, create_fragment15, safe_not_equal, {});
     }
   };
   var items_default = Items;
@@ -12513,7 +12619,7 @@ void main() {
       }
     };
   }
-  function create_fragment14(ctx) {
+  function create_fragment16(ctx) {
     let netdata;
     let t0;
     let webcam;
@@ -12521,27 +12627,22 @@ void main() {
     let t2;
     let a_scene;
     let a_assets;
-    let a_sphere;
-    let t3;
-    let audio;
-    let audio_src_value;
-    let t4;
     let a_mixin;
-    let t5;
+    let t3;
     let items;
-    let t6;
+    let t4;
     let a_entity;
-    let t7;
+    let t5;
     let camera2;
-    let t8;
+    let t6;
     let characters;
-    let t9;
+    let t7;
     let forest;
-    let t10;
+    let t8;
     let house;
-    let t11;
+    let t9;
     let debug_1;
-    let t12;
+    let t10;
     let environmental;
     let a_scene_physics_value;
     let current;
@@ -12566,38 +12667,29 @@ void main() {
         t2 = space();
         a_scene = element("a-scene");
         a_assets = element("a-assets");
-        a_sphere = element("a-sphere");
-        t3 = space();
-        audio = element("audio");
-        t4 = space();
         a_mixin = element("a-mixin");
-        t5 = space();
+        t3 = space();
         create_component(items.$$.fragment);
-        t6 = space();
+        t4 = space();
         a_entity = element("a-entity");
-        t7 = space();
+        t5 = space();
         create_component(camera2.$$.fragment);
-        t8 = space();
+        t6 = space();
         create_component(characters.$$.fragment);
-        t9 = space();
+        t7 = space();
         create_component(forest.$$.fragment);
-        t10 = space();
+        t8 = space();
         create_component(house.$$.fragment);
-        t11 = space();
+        t9 = space();
         create_component(debug_1.$$.fragment);
-        t12 = space();
+        t10 = space();
         create_component(environmental.$$.fragment);
-        set_custom_element_data(a_sphere, "color", "blue");
-        set_custom_element_data(a_sphere, "radius", "5");
-        attr(audio, "id", "sound-bg");
-        if (!src_url_equal(audio.src, audio_src_value = "./sound/bg-ocean.mp3"))
-          attr(audio, "src", audio_src_value);
         set_custom_element_data(a_mixin, "id", "shadow");
         set_custom_element_data(a_mixin, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_entity, "id", "spawned");
         set_custom_element_data(a_scene, "keyboard-shortcuts", "enterVR: false");
         set_custom_element_data(a_scene, "stats", ctx[2]);
-        set_custom_element_data(a_scene, "renderer", "alpha: false; color;colorManagement: true;");
+        set_custom_element_data(a_scene, "renderer", "alpha: false; color;colorManagement: true;physicallyCorrectLights: true; ");
         set_custom_element_data(a_scene, "shadow", "type:basic;");
         set_custom_element_data(a_scene, "device-orientation-permission-ui", "enabled: false");
         set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[0] + "; iterations: 1; fixedTimeStep: " + 1 / 60 + "; maxSubSteps: 1;");
@@ -12615,26 +12707,22 @@ void main() {
         insert(target, t2, anchor);
         insert(target, a_scene, anchor);
         append(a_scene, a_assets);
-        append(a_assets, a_sphere);
-        append(a_assets, t3);
-        append(a_assets, audio);
-        append(a_assets, t4);
         append(a_assets, a_mixin);
-        append(a_assets, t5);
+        append(a_assets, t3);
         mount_component(items, a_assets, null);
-        append(a_scene, t6);
+        append(a_scene, t4);
         append(a_scene, a_entity);
-        append(a_scene, t7);
+        append(a_scene, t5);
         mount_component(camera2, a_scene, null);
-        append(a_scene, t8);
+        append(a_scene, t6);
         mount_component(characters, a_scene, null);
-        append(a_scene, t9);
+        append(a_scene, t7);
         mount_component(forest, a_scene, null);
-        append(a_scene, t10);
+        append(a_scene, t8);
         mount_component(house, a_scene, null);
-        append(a_scene, t11);
+        append(a_scene, t9);
         mount_component(debug_1, a_scene, null);
-        append(a_scene, t12);
+        append(a_scene, t10);
         mount_component(environmental, a_scene, null);
         current = true;
       },
@@ -12739,13 +12827,13 @@ void main() {
   var Game = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance12, create_fragment14, safe_not_equal, {});
+      init(this, options, instance12, create_fragment16, safe_not_equal, {});
     }
   };
   var game_default = Game;
 
   // src/ui/title.svelte
-  function create_fragment15(ctx) {
+  function create_fragment17(ctx) {
     let div3;
     let t8;
     let div7;
@@ -12785,13 +12873,13 @@ void main() {
   var Title = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, null, create_fragment15, safe_not_equal, {});
+      init(this, options, null, create_fragment17, safe_not_equal, {});
     }
   };
   var title_default = Title;
 
   // src/ui/video.svelte
-  function create_fragment16(ctx) {
+  function create_fragment18(ctx) {
     let iframe;
     let iframe_width_value;
     let iframe_src_value;
@@ -12839,7 +12927,7 @@ void main() {
   var Video = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance13, create_fragment16, safe_not_equal, { src: 0 });
+      init(this, options, instance13, create_fragment18, safe_not_equal, { src: 0 });
     }
   };
   var video_default = Video;
@@ -12883,7 +12971,7 @@ void main() {
       }
     };
   }
-  function create_fragment17(ctx) {
+  function create_fragment19(ctx) {
     let div10;
     let div0;
     let t0;
@@ -13078,7 +13166,7 @@ void main() {
   var Home = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance14, create_fragment17, safe_not_equal, {});
+      init(this, options, instance14, create_fragment19, safe_not_equal, {});
     }
   };
   var home_default = Home;
@@ -13132,7 +13220,7 @@ void main() {
       }
     };
   }
-  function create_fragment18(ctx) {
+  function create_fragment20(ctx) {
     let if_block_anchor;
     let if_block = ctx[1] !== void 0 && create_if_block5(ctx);
     return {
@@ -13235,13 +13323,13 @@ void main() {
   var Text = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance15, create_fragment18, safe_not_equal, {});
+      init(this, options, instance15, create_fragment20, safe_not_equal, {});
     }
   };
   var text_default = Text;
 
   // src/ui/loading.svelte
-  function create_fragment19(ctx) {
+  function create_fragment21(ctx) {
     let div4;
     let div0;
     let t0;
@@ -13323,13 +13411,13 @@ void main() {
   var Loading = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance16, create_fragment19, safe_not_equal, {});
+      init(this, options, instance16, create_fragment21, safe_not_equal, {});
     }
   };
   var loading_default = Loading;
 
   // src/ui/help.svelte
-  function create_fragment20(ctx) {
+  function create_fragment22(ctx) {
     let div5;
     let div0;
     let t0;
@@ -13411,7 +13499,7 @@ void main() {
   var Help = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance17, create_fragment20, safe_not_equal, {});
+      init(this, options, instance17, create_fragment22, safe_not_equal, {});
     }
   };
   var help_default = Help;
@@ -13525,7 +13613,7 @@ void main() {
       }
     };
   }
-  function create_fragment21(ctx) {
+  function create_fragment23(ctx) {
     let text_1;
     let t0;
     let t1;
@@ -13701,7 +13789,7 @@ void main() {
   var Main = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance18, create_fragment21, safe_not_equal, {});
+      init(this, options, instance18, create_fragment23, safe_not_equal, {});
     }
   };
   var main_default = Main;

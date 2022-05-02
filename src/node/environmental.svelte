@@ -77,13 +77,11 @@
 <a-entity
 	pool__cloud="mixin: shadow cloud; size: 50"
 	activate__cloud
-	position="0 125 {groundSize}"
+	position="0 100 {groundSize}"
 	animation="property:object3D.position.z; to:-{groundSize}; dur: {400 * 300 * 2}; loop: true;"
 	animation__scale="property:object3D.scale; from: 0 0 0; to:1 1 1; dur: {(400 * 300) /
 		2}; loop: true; dir: alternate"
 />
-
-<a-entity sound="autoplay: true; loop: true; volume: 0.05; src:#sound-bg;positional:false" />
 
 <a-mixin
 	id="floof"

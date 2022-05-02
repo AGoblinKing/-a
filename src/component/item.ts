@@ -18,8 +18,33 @@ AFRAME.registerComponent("item", {
         this.el.addEventListener("use", this.use = this.use.bind(this))
         this.el.addEventListener("throw", this.throw = this.throw.bind(this))
         this.el.addEventListener("drop", this.drop = this.drop.bind(this))
+        this.el.addEventListener("shot", this.shot = this.shot.bind(this))
+        this.el.addEventListener("collidestart", this.collideStart = this.collideStart.bind(this))
+    },
+
+
+
+    remove() {
+        this.el.removeEventListener("use", this.use)
+        this.el.removeEventListener("throw", this.throw)
+        this.el.removeEventListener("drop", this.drop)
+        this.el.removeEventListener("shot", this.shot)
+        this.el.removeEventListener("collidestart", this.collideStart)
 
     },
+
+    collideStart() {
+        if (this._shot) {
+            console.log(this.el.body)
+            // 0 out velocity
+            this._shot = false
+        }
+    },
+
+    shot(e) {
+        this._shot = true
+    },
+
     drop(e) {
         if (!this.data.holder) return
 
@@ -56,29 +81,36 @@ AFRAME.registerComponent("item", {
 
     },
     doShoot(whatTag: string) {
-        console.log("do shoot", whatTag, this)
+
         // no holder, no shoot
         if (!this.data.holder) return
         // do I have whatTag in my inventory?
 
         const a = this.data.holder.components.avatar
-        const slot = a.getTag(whatTag)
+        const slot = this.data.slot === "hand_left" ? "hand_right" : "hand_left"
+        const p = this.el.object3D.parent
 
         // no whatevers
-        if (!slot) return
+        if (!a.data[slot] || a.data[slot].id.split("--").pop().indexOf(whatTag) !== 0) return
 
         const i = a.data[slot]
+
         a.doDrop(slot)
 
-        vec3.set(0, 0, -1000).applyQuaternion(this.data.holder.object3D.getWorldQuaternion(quat))
+        vec3.set(0, 3, -1000).applyQuaternion(p.getWorldQuaternion(quat))
+
         i.object3D.lookAt(vec3)
+        i.object3D.rotation.y += 90
+
+        i.emit("shot", { whom: this.el, slot }, false)
 
         // apply force to item based on thrower
         const force = new Ammo.btVector3(vec3.x, vec3.y, vec3.z)
 
-        this.el.body.applyForce(force)
+        i.body.applyForce(force)
 
-        this.el.body.activate()
+        i.body.activate()
+        Ammo.destroy(force)
         // its in the world now, lets point it away from the camera
         // then fire it like a rocket
 
@@ -203,9 +235,4 @@ AFRAME.registerComponent("item", {
         // equip item to slot
         this.equip(e)
     },
-    remove() {
-        this.el.removeEventListener("use", this.use)
-        this.el.removeEventListener("throw", this.throw)
-        this.el.removeEventListener("drop", this.drop)
-    }
 })

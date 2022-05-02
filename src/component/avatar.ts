@@ -157,7 +157,8 @@ AFRAME.registerComponent("avatar", {
         for (let entry of Object.entries(this.data)) {
             const [slot, item] = entry as [string, HTMLElement]
             if (!item) continue
-            if (item.id.indexOf(tag) === 0) return slot
+
+            if (item.id.split("--").pop().indexOf(tag) === 0) return slot
         }
 
     },

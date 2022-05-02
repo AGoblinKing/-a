@@ -66,8 +66,8 @@
 	active
 	fov="85"
 	id="camera"
-	camera-controller
 	far="50000"
+	camera-controller
 	position="0 4 0"
 	wasd-controls="enabled: false;"
 	look="enabled: true;pointerLockEnabled: true;  reverseTouchDrag: true;"
@@ -75,7 +75,7 @@
 >
 	<a-entity
 		geometry="primitive: box; width: 0.4; height: 0.4; depth: 0.1"
-		material="shader: flat; transparent: true; opacity: 0.5; color: #006ace"
+		material="shader: flat; color: #006ace"
 		position="0 -0.2 -0.5"
 		rotation="-40 0 0"
 		visible={$open_loading || $open_help}
