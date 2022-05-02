@@ -6551,6 +6551,7 @@
     }
     save(where) {
       (async () => {
+        window[`_${where}`] = this;
         try {
           const v = JSON.parse(await db.get(where));
           if (v !== void 0 && v !== null) {
@@ -9582,25 +9583,21 @@ gl_Position = mvPosition;
     let t18;
     let a_mixin12;
     let t19;
-    let a_entity7;
-    let t20;
-    let a_entity8;
-    let t21;
-    let a_entity9;
-    let t22;
-    let a_entity10;
-    let t23;
     let a_mixin13;
-    let t24;
-    let a_entity11;
-    let t25;
+    let t20;
+    let a_entity7;
+    let t21;
     let a_mixin14;
-    let t26;
-    let a_entity12;
-    let t27;
+    let t22;
+    let a_entity8;
+    let t23;
     let a_mixin15;
-    let t28;
-    let a_entity13;
+    let t24;
+    let a_entity9;
+    let t25;
+    let a_mixin16;
+    let t26;
+    let a_entity10;
     let a_mixin7_levels = [
       { id: "tree" },
       {
@@ -9625,7 +9622,7 @@ gl_Position = mvPosition;
     for (let i = 0; i < a_mixin7_levels.length; i += 1) {
       a_mixin7_data = assign(a_mixin7_data, a_mixin7_levels[i]);
     }
-    let a_mixin13_levels = [
+    let a_mixin14_levels = [
       { id: "trunk" },
       ctx[2],
       { "gltf-model": "./glb/trunk.glb" },
@@ -9635,11 +9632,11 @@ gl_Position = mvPosition;
       { target: "\u{1FAB5}" },
       { scatter: ctx[0] }
     ];
-    let a_mixin13_data = {};
-    for (let i = 0; i < a_mixin13_levels.length; i += 1) {
-      a_mixin13_data = assign(a_mixin13_data, a_mixin13_levels[i]);
+    let a_mixin14_data = {};
+    for (let i = 0; i < a_mixin14_levels.length; i += 1) {
+      a_mixin14_data = assign(a_mixin14_data, a_mixin14_levels[i]);
     }
-    let a_mixin14_levels = [
+    let a_mixin15_levels = [
       { id: "trunkLong" },
       { target: "\u{1FAB5}" },
       ctx[2],
@@ -9648,11 +9645,11 @@ gl_Position = mvPosition;
       { vary: trunkVary },
       { scatter: ctx[0] }
     ];
-    let a_mixin14_data = {};
-    for (let i = 0; i < a_mixin14_levels.length; i += 1) {
-      a_mixin14_data = assign(a_mixin14_data, a_mixin14_levels[i]);
+    let a_mixin15_data = {};
+    for (let i = 0; i < a_mixin15_levels.length; i += 1) {
+      a_mixin15_data = assign(a_mixin15_data, a_mixin15_levels[i]);
     }
-    let a_mixin15_levels = [
+    let a_mixin16_levels = [
       { id: "pillarObelisk" },
       { "gltf-model": "./glb/pillarObelisk.glb" },
       ctx[2],
@@ -9662,9 +9659,9 @@ gl_Position = mvPosition;
       { target: "\u26E9\uFE0F" },
       { sfxr__bump: sfx_cat }
     ];
-    let a_mixin15_data = {};
-    for (let i = 0; i < a_mixin15_levels.length; i += 1) {
-      a_mixin15_data = assign(a_mixin15_data, a_mixin15_levels[i]);
+    let a_mixin16_data = {};
+    for (let i = 0; i < a_mixin16_levels.length; i += 1) {
+      a_mixin16_data = assign(a_mixin16_data, a_mixin16_levels[i]);
     }
     return {
       c() {
@@ -9708,25 +9705,21 @@ gl_Position = mvPosition;
         t18 = space();
         a_mixin12 = element("a-mixin");
         t19 = space();
-        a_entity7 = element("a-entity");
-        t20 = space();
-        a_entity8 = element("a-entity");
-        t21 = space();
-        a_entity9 = element("a-entity");
-        t22 = space();
-        a_entity10 = element("a-entity");
-        t23 = space();
         a_mixin13 = element("a-mixin");
-        t24 = space();
-        a_entity11 = element("a-entity");
-        t25 = space();
+        t20 = space();
+        a_entity7 = element("a-entity");
+        t21 = space();
         a_mixin14 = element("a-mixin");
-        t26 = space();
-        a_entity12 = element("a-entity");
-        t27 = space();
+        t22 = space();
+        a_entity8 = element("a-entity");
+        t23 = space();
         a_mixin15 = element("a-mixin");
-        t28 = space();
-        a_entity13 = element("a-entity");
+        t24 = space();
+        a_entity9 = element("a-entity");
+        t25 = space();
+        a_mixin16 = element("a-mixin");
+        t26 = space();
+        a_entity10 = element("a-entity");
         set_custom_element_data(a_mixin0, "id", "smolitem");
         set_custom_element_data(a_mixin0, "tag__env", "");
         set_custom_element_data(a_mixin0, "sfxr__bump", sfx_shthump);
@@ -9838,24 +9831,33 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin12, "mixin", "animal");
         set_custom_element_data(a_mixin12, "gltf-model", "./char/easy_Frog.glb");
         set_custom_element_data(a_mixin12, "target", "\u{1F438}");
-        set_custom_element_data(a_mixin12, "color", "white");
+        set_custom_element_data(a_mixin13, "id", "dino");
+        set_custom_element_data(a_mixin13, "host", "dino");
+        set_custom_element_data(a_mixin13, "mixin", "animal");
+        set_custom_element_data(a_mixin13, "scale", "0.5 0.5 0.5");
+        set_custom_element_data(a_mixin13, "recolor__skin", "blue");
+        set_custom_element_data(a_mixin13, "gltf-model", "./char/dino_Triceratops.glb");
+        set_custom_element_data(a_mixin13, "material", "shader: flat;");
+        set_custom_element_data(a_mixin13, "target", "\u{1F995}");
         set_custom_element_data(a_entity7, "pool__horse", "mixin: animal; size: 5;");
         set_custom_element_data(a_entity7, "activate__horse", "");
-        set_custom_element_data(a_entity8, "pool__sheep", "mixin: animal sheep; size: 5;");
-        set_custom_element_data(a_entity8, "activate__sheep", "");
-        set_custom_element_data(a_entity9, "pool__animal", "mixin: animal cow; size: 5;");
-        set_custom_element_data(a_entity9, "activate__animal", "");
-        set_custom_element_data(a_entity10, "pool__animal", "mixin: animal frog; size: 5;");
-        set_custom_element_data(a_entity10, "activate__animal", "");
-        set_attributes(a_mixin13, a_mixin13_data);
-        set_custom_element_data(a_entity11, "pool__trunk", "mixin: trunk; size: 20");
-        set_custom_element_data(a_entity11, "activate__trunk", "");
+        set_custom_element_data(a_entity7, "pool__sheep", "mixin: animal sheep; size: 5;");
+        set_custom_element_data(a_entity7, "activate__sheep", "");
+        set_custom_element_data(a_entity7, "pool__animal", "mixin: animal cow; size: 5;");
+        set_custom_element_data(a_entity7, "activate__animal", "");
+        set_custom_element_data(a_entity7, "pool__frog", "mixin: animal frog; size: 5;");
+        set_custom_element_data(a_entity7, "activate__frog", "");
+        set_custom_element_data(a_entity7, "pool__dino", "mixin:dino; size: 15;");
+        set_custom_element_data(a_entity7, "activate__dino", "");
         set_attributes(a_mixin14, a_mixin14_data);
-        set_custom_element_data(a_entity12, "pool__trunklong", "mixin: trunkLong; size: 20");
-        set_custom_element_data(a_entity12, "activate__trunklong", "");
+        set_custom_element_data(a_entity8, "pool__trunk", "mixin: trunk; size: 20");
+        set_custom_element_data(a_entity8, "activate__trunk", "");
         set_attributes(a_mixin15, a_mixin15_data);
-        set_custom_element_data(a_entity13, "pool__pillarobelisk", "mixin: pillarObelisk; size: 10");
-        set_custom_element_data(a_entity13, "activate__pillarobelisk", "");
+        set_custom_element_data(a_entity9, "pool__trunklong", "mixin: trunkLong; size: 20");
+        set_custom_element_data(a_entity9, "activate__trunklong", "");
+        set_attributes(a_mixin16, a_mixin16_data);
+        set_custom_element_data(a_entity10, "pool__pillarobelisk", "mixin: pillarObelisk; size: 10");
+        set_custom_element_data(a_entity10, "activate__pillarobelisk", "");
       },
       m(target, anchor) {
         insert(target, a_mixin0, anchor);
@@ -9898,25 +9900,21 @@ gl_Position = mvPosition;
         insert(target, t18, anchor);
         insert(target, a_mixin12, anchor);
         insert(target, t19, anchor);
-        insert(target, a_entity7, anchor);
-        insert(target, t20, anchor);
-        insert(target, a_entity8, anchor);
-        insert(target, t21, anchor);
-        insert(target, a_entity9, anchor);
-        insert(target, t22, anchor);
-        insert(target, a_entity10, anchor);
-        insert(target, t23, anchor);
         insert(target, a_mixin13, anchor);
-        insert(target, t24, anchor);
-        insert(target, a_entity11, anchor);
-        insert(target, t25, anchor);
+        insert(target, t20, anchor);
+        insert(target, a_entity7, anchor);
+        insert(target, t21, anchor);
         insert(target, a_mixin14, anchor);
-        insert(target, t26, anchor);
-        insert(target, a_entity12, anchor);
-        insert(target, t27, anchor);
+        insert(target, t22, anchor);
+        insert(target, a_entity8, anchor);
+        insert(target, t23, anchor);
         insert(target, a_mixin15, anchor);
-        insert(target, t28, anchor);
-        insert(target, a_entity13, anchor);
+        insert(target, t24, anchor);
+        insert(target, a_entity9, anchor);
+        insert(target, t25, anchor);
+        insert(target, a_mixin16, anchor);
+        insert(target, t26, anchor);
+        insert(target, a_entity10, anchor);
       },
       p(ctx2, [dirty]) {
         set_attributes(a_mixin7, a_mixin7_data = get_spread_update(a_mixin7_levels, [
@@ -9939,7 +9937,7 @@ gl_Position = mvPosition;
           ctx2[1],
           { host: "" }
         ]));
-        set_attributes(a_mixin13, a_mixin13_data = get_spread_update(a_mixin13_levels, [
+        set_attributes(a_mixin14, a_mixin14_data = get_spread_update(a_mixin14_levels, [
           { id: "trunk" },
           ctx2[2],
           { "gltf-model": "./glb/trunk.glb" },
@@ -9949,7 +9947,7 @@ gl_Position = mvPosition;
           { target: "\u{1FAB5}" },
           { scatter: ctx2[0] }
         ]));
-        set_attributes(a_mixin14, a_mixin14_data = get_spread_update(a_mixin14_levels, [
+        set_attributes(a_mixin15, a_mixin15_data = get_spread_update(a_mixin15_levels, [
           { id: "trunkLong" },
           { target: "\u{1FAB5}" },
           ctx2[2],
@@ -9958,7 +9956,7 @@ gl_Position = mvPosition;
           { vary: trunkVary },
           { scatter: ctx2[0] }
         ]));
-        set_attributes(a_mixin15, a_mixin15_data = get_spread_update(a_mixin15_levels, [
+        set_attributes(a_mixin16, a_mixin16_data = get_spread_update(a_mixin16_levels, [
           { id: "pillarObelisk" },
           { "gltf-model": "./glb/pillarObelisk.glb" },
           ctx2[2],
@@ -10053,43 +10051,35 @@ gl_Position = mvPosition;
         if (detaching)
           detach(t19);
         if (detaching)
-          detach(a_entity7);
+          detach(a_mixin13);
         if (detaching)
           detach(t20);
         if (detaching)
-          detach(a_entity8);
+          detach(a_entity7);
         if (detaching)
           detach(t21);
         if (detaching)
-          detach(a_entity9);
+          detach(a_mixin14);
         if (detaching)
           detach(t22);
         if (detaching)
-          detach(a_entity10);
+          detach(a_entity8);
         if (detaching)
           detach(t23);
         if (detaching)
-          detach(a_mixin13);
+          detach(a_mixin15);
         if (detaching)
           detach(t24);
         if (detaching)
-          detach(a_entity11);
+          detach(a_entity9);
         if (detaching)
           detach(t25);
         if (detaching)
-          detach(a_mixin14);
+          detach(a_mixin16);
         if (detaching)
           detach(t26);
         if (detaching)
-          detach(a_entity12);
-        if (detaching)
-          detach(t27);
-        if (detaching)
-          detach(a_mixin15);
-        if (detaching)
-          detach(t28);
-        if (detaching)
-          detach(a_entity13);
+          detach(a_entity10);
       }
     };
   }
@@ -12557,7 +12547,7 @@ void main() {
     let current;
     netdata = new netdata_default({});
     webcam = new webcam_default({});
-    let if_block = ctx[0] && create_if_block4(ctx);
+    let if_block = ctx[1] && create_if_block4(ctx);
     items = new items_default({});
     camera2 = new camera_default({});
     characters = new characters_default({});
@@ -12606,12 +12596,13 @@ void main() {
         set_custom_element_data(a_mixin, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_entity, "id", "spawned");
         set_custom_element_data(a_scene, "keyboard-shortcuts", "enterVR: false");
-        set_custom_element_data(a_scene, "stats", ctx[1]);
+        set_custom_element_data(a_scene, "stats", ctx[2]);
         set_custom_element_data(a_scene, "renderer", "alpha: false; color;colorManagement: true;");
         set_custom_element_data(a_scene, "shadow", "type:basic;");
         set_custom_element_data(a_scene, "device-orientation-permission-ui", "enabled: false");
-        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[2] + "; iterations: 1; fixedTimeStep: " + 1 / 60 + "; maxSubSteps: 1;");
+        set_custom_element_data(a_scene, "physics", a_scene_physics_value = "driver: ammo; debug: " + ctx[0] + "; iterations: 1; fixedTimeStep: " + 1 / 60 + "; maxSubSteps: 1;");
         set_custom_element_data(a_scene, "uniforms", "");
+        set_custom_element_data(a_scene, "id", "scene");
         set_custom_element_data(a_scene, "net", "");
       },
       m(target, anchor) {
@@ -12648,9 +12639,9 @@ void main() {
         current = true;
       },
       p(ctx2, [dirty]) {
-        if (ctx2[0]) {
+        if (ctx2[1]) {
           if (if_block) {
-            if (dirty & 1) {
+            if (dirty & 2) {
               transition_in(if_block, 1);
             }
           } else {
@@ -12666,10 +12657,10 @@ void main() {
           });
           check_outros();
         }
-        if (!current || dirty & 2) {
-          set_custom_element_data(a_scene, "stats", ctx2[1]);
+        if (!current || dirty & 4) {
+          set_custom_element_data(a_scene, "stats", ctx2[2]);
         }
-        if (!current || dirty & 4 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[2] + "; iterations: 1; fixedTimeStep: " + 1 / 60 + "; maxSubSteps: 1;")) {
+        if (!current || dirty & 1 && a_scene_physics_value !== (a_scene_physics_value = "driver: ammo; debug: " + ctx2[0] + "; iterations: 1; fixedTimeStep: " + 1 / 60 + "; maxSubSteps: 1;")) {
           set_custom_element_data(a_scene, "physics", a_scene_physics_value);
         }
       },
@@ -12725,13 +12716,25 @@ void main() {
     };
   }
   function instance12($$self, $$props, $$invalidate) {
+    let $open_debug;
     let $open_ui;
     let $open_stats;
-    let $open_debug;
-    component_subscribe($$self, open_ui, ($$value) => $$invalidate(0, $open_ui = $$value));
-    component_subscribe($$self, open_stats, ($$value) => $$invalidate(1, $open_stats = $$value));
-    component_subscribe($$self, open_debug, ($$value) => $$invalidate(2, $open_debug = $$value));
-    return [$open_ui, $open_stats, $open_debug];
+    component_subscribe($$self, open_debug, ($$value) => $$invalidate(0, $open_debug = $$value));
+    component_subscribe($$self, open_ui, ($$value) => $$invalidate(1, $open_ui = $$value));
+    component_subscribe($$self, open_stats, ($$value) => $$invalidate(2, $open_stats = $$value));
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 1) {
+        $: {
+          const phys = document.getElementById("scene")?.systems.physics;
+          if ($open_debug) {
+            phys?.setDebug(true);
+          } else {
+            phys?.setDebug(false);
+          }
+        }
+      }
+    };
+    return [$open_debug, $open_ui, $open_stats];
   }
   var Game = class extends SvelteComponent {
     constructor(options) {
@@ -12749,17 +12752,17 @@ void main() {
     return {
       c() {
         div3 = element("div");
-        div3.innerHTML = `<div class="favicon svelte-1u5pxqu"></div> 
-	<div class="full svelte-1u5pxqu"><div class="title svelte-1u5pxqu"><offset class="svelte-1u5pxqu"><b class="svelte-1u5pxqu">a</b>  <br/></offset> 
-			<b class="svelte-1u5pxqu">G</b>oblin
-			<offset class="svelte-1u5pxqu"><b class="svelte-1u5pxqu">L</b>ife</offset></div></div>`;
+        div3.innerHTML = `<div class="favicon svelte-13jrtaw"></div> 
+	<div class="full svelte-13jrtaw"><div class="title svelte-13jrtaw"><offset class="svelte-13jrtaw"><b class="svelte-13jrtaw">a</b>  <br/></offset> 
+			<b class="svelte-13jrtaw">G</b>oblin
+			<offset class="svelte-13jrtaw"><b class="svelte-13jrtaw">L</b>ife</offset></div></div>`;
         t8 = space();
         div7 = element("div");
-        div7.innerHTML = `<div class="button kofi svelte-1u5pxqu"><a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-1u5pxqu">\u{1FA99}</a></div> 
+        div7.innerHTML = `<div class="button kofi svelte-13jrtaw"><a href="https://ko-fi.com/Z8Z1C37O3" target="_blank" class="svelte-13jrtaw">\u{1FA99}</a></div> 
 	<div style="width: 40vh;"></div> 
-	<div class="button discord svelte-1u5pxqu"><a href="https://twitter.com/agoblinlife" target="_blank" class="svelte-1u5pxqu">\u{1F426}</a></div>`;
-        attr(div3, "class", "intro svelte-1u5pxqu");
-        attr(div7, "class", "ads svelte-1u5pxqu");
+	<div class="button discord svelte-13jrtaw"><a href="https://twitter.com/agoblinlife" target="_blank" class="svelte-13jrtaw">\u{1F426}</a></div>`;
+        attr(div3, "class", "intro svelte-13jrtaw");
+        attr(div7, "class", "ads svelte-13jrtaw");
       },
       m(target, anchor) {
         insert(target, div3, anchor);
@@ -12941,24 +12944,24 @@ void main() {
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
-        attr(div0, "class", "sprites sprite svelte-wh29xi");
-        attr(div1, "class", "flex svelte-wh29xi");
+        attr(div0, "class", "sprites sprite svelte-1b3pqp0");
+        attr(div1, "class", "flex svelte-1b3pqp0");
         attr(textarea, "type", "text");
-        attr(textarea, "class", "text button svelte-wh29xi");
+        attr(textarea, "class", "text button svelte-1b3pqp0");
         attr(textarea, "maxlength", "200");
         textarea.value = ctx[0];
         textarea.readOnly = true;
-        attr(div2, "class", "flex svelte-wh29xi");
-        attr(div3, "class", "span2 full svelte-wh29xi");
-        attr(div4, "class", "flex svelte-wh29xi");
+        attr(div2, "class", "flex svelte-1b3pqp0");
+        attr(div3, "class", "span2 full svelte-1b3pqp0");
+        attr(div4, "class", "flex svelte-1b3pqp0");
         attr(div5, "type", "button");
-        attr(div5, "class", "button icon svelte-wh29xi");
+        attr(div5, "class", "button icon svelte-1b3pqp0");
         attr(div5, "value", "GO");
-        attr(div6, "class", "flex svelte-wh29xi");
-        attr(div7, "class", "span2 full svelte-wh29xi");
-        attr(div8, "class", "vbox svelte-wh29xi");
-        attr(div9, "class", "flex span2 case svelte-wh29xi");
-        attr(div10, "class", "menu svelte-wh29xi");
+        attr(div6, "class", "flex svelte-1b3pqp0");
+        attr(div7, "class", "span2 full svelte-1b3pqp0");
+        attr(div8, "class", "vbox svelte-1b3pqp0");
+        attr(div9, "class", "flex span2 case svelte-1b3pqp0");
+        attr(div10, "class", "menu svelte-1b3pqp0");
       },
       m(target, anchor) {
         insert(target, div10, anchor);

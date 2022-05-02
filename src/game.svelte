@@ -24,6 +24,16 @@
 	import Environmental from 'src/node/environmental.svelte'
 	import OnscreenUi from './ui/onscreen-ui.svelte'
 	import Items from './node/items.svelte'
+
+	$: {
+		const phys = document.getElementById('scene')?.systems.physics
+		if ($open_debug) {
+			phys?.setDebug(true)
+			// phys.driver.debugDrawMode =
+		} else {
+			phys?.setDebug(false)
+		}
+	}
 </script>
 
 <Netdata />
@@ -44,6 +54,7 @@
 	physics="driver: ammo; debug: {$open_debug}; iterations: 1; fixedTimeStep: {1 /
 		60}; maxSubSteps: 1;"
 	uniforms
+	id="scene"
 	net
 >
 	<a-assets>

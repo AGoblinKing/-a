@@ -33,6 +33,8 @@ AFRAME.registerSystem("net", {
 
             this.connect()
         })
+
+        // persist into localDB
         setInterval(() => {
             // write to pathState
             pathState.set(Object.fromEntries(Object.entries(paths).map(([key, value]) => {

@@ -72,6 +72,7 @@ export class Value<T> {
 
   save(where: string) {
     (async () => {
+      window[`_${where}`] = this
       try {
         const v = JSON.parse(await db.get(where))
 

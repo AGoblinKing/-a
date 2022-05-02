@@ -169,18 +169,30 @@
 
 <a-mixin id="sheep" host="sheep" mixin="animal" gltf-model="./char/Sheep.glb" target="🐑" />
 <a-mixin id="cow" host="cow" mixin="animal" gltf-model="./char/Cow.glb" target="🐄" />
+<a-mixin id="frog" host="frog" mixin="animal" gltf-model="./char/easy_Frog.glb" target="🐸" />
 <a-mixin
-	id="frog"
-	host="frog"
+	id="dino"
+	host="dino"
 	mixin="animal"
-	gltf-model="./char/easy_Frog.glb"
-	target="🐸"
-	color="white"
+	scale="0.5 0.5 0.5"
+	recolor__skin="blue"
+	gltf-model="./char/dino_Triceratops.glb"
+	material="shader: flat;"
+	target="🦕"
 />
-<a-entity pool__horse="mixin: animal; size: 5;" activate__horse />
-<a-entity pool__sheep="mixin: animal sheep; size: 5;" activate__sheep />
-<a-entity pool__animal="mixin: animal cow; size: 5;" activate__animal />
-<a-entity pool__animal="mixin: animal frog; size: 5;" activate__animal />
+
+<a-entity
+	pool__horse="mixin: animal; size: 5;"
+	activate__horse
+	pool__sheep="mixin: animal sheep; size: 5;"
+	activate__sheep
+	pool__animal="mixin: animal cow; size: 5;"
+	activate__animal
+	pool__frog="mixin: animal frog; size: 5;"
+	activate__frog
+	pool__dino="mixin:dino; size: 15;"
+	activate__dino
+/>
 
 <a-mixin
 	id="trunk"

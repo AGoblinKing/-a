@@ -31,9 +31,17 @@
 		display: block;
 		transform: perspective(400px) rotateX(-10deg) rotateY(20deg);
 	}
+	.kofi,
+	.discord {
+		transition: all cubic-bezier(0.6, -0.28, 0.735, 0.045) 0.5s;
+	}
 	.discord {
 		display: block;
 		transform: perspective(400px) rotateX(-10deg) rotateY(-20deg);
+	}
+	.kofi:hover,
+	.discord:hover {
+		transform: none;
 	}
 	a {
 		font-size: 5vh;

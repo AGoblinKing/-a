@@ -131,6 +131,10 @@
 			0.15rem 0.15rem 0 #000;
 		transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 	}
+
+	.case:hover {
+		transform: none;
+	}
 	.button {
 		border: 0.5vh solid rgb(0, 106, 206);
 		border-radius: 1vh;
@@ -157,7 +161,7 @@
 		background-color: rgb(0, 106, 206) !important;
 		color: rgb(0, 225, 255);
 		cursor: pointer;
-
+		transform: none;
 		animation: beep 250ms alternate infinite;
 	}
 	@keyframes beep {

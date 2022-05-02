@@ -308,26 +308,34 @@
 }
 
 /* fakecss:/workspaces/-a/src/ui/title.esbuild-svelte-fake-css */
-.ads.svelte-1u5pxqu {
+.ads.svelte-13jrtaw {
   margin-top: -13vh;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 }
-.kofi.svelte-1u5pxqu {
+.kofi.svelte-13jrtaw {
   display: block;
   transform: perspective(400px) rotateX(-10deg) rotateY(20deg);
 }
-.discord.svelte-1u5pxqu {
+.kofi.svelte-13jrtaw,
+.discord.svelte-13jrtaw {
+  transition: all cubic-bezier(0.6, -0.28, 0.735, 0.045) 0.5s;
+}
+.discord.svelte-13jrtaw {
   display: block;
   transform: perspective(400px) rotateX(-10deg) rotateY(-20deg);
 }
-a.svelte-1u5pxqu {
+.kofi.svelte-13jrtaw:hover,
+.discord.svelte-13jrtaw:hover {
+  transform: none;
+}
+a.svelte-13jrtaw {
   font-size: 5vh;
   text-decoration: none;
 }
-.title.svelte-1u5pxqu {
+.title.svelte-13jrtaw {
   text-shadow:
     -0.5vh -0.5vh 0 #000,
     0.5vh -0.5vh 0 #000,
@@ -339,20 +347,20 @@ a.svelte-1u5pxqu {
   opacity: 0.8;
   font-family: cartoon;
 }
-offset.svelte-1u5pxqu {
+offset.svelte-13jrtaw {
   position: relative;
   display: block;
   margin-top: -10vh;
   margin-bottom: -10vh;
 }
-.full.svelte-1u5pxqu {
+.full.svelte-13jrtaw {
   margin-top: 10vh;
   left: 50%;
   transform: translate(-50%, 0);
   position: absolute;
   color: white;
 }
-@keyframes svelte-1u5pxqu-color {
+@keyframes svelte-13jrtaw-color {
   0% {
     color: rgb(17, 168, 62);
   }
@@ -360,12 +368,12 @@ offset.svelte-1u5pxqu {
     color: rgb(0, 158, 47);
   }
 }
-b.svelte-1u5pxqu {
+b.svelte-13jrtaw {
   position: relative;
   font-size: 15vh;
   margin-top: -10vh;
 }
-.favicon.svelte-1u5pxqu {
+.favicon.svelte-13jrtaw {
   position: absolute;
   left: 50%;
   margin-top: 0vh;
@@ -376,16 +384,16 @@ b.svelte-1u5pxqu {
   width: 40vh;
   background-size: 100% 100%;
 }
-.intro.svelte-1u5pxqu {
+.intro.svelte-13jrtaw {
   transform: perspective(400px) rotateX(-20deg);
   height: 47vh;
   background: radial-gradient(circle at center, rgb(38, 0, 255) 0, rgb(0, 110, 255) 20vh, transparent 23vh);
-  animation: svelte-1u5pxqu-breathe ease-in-out alternate 10s infinite;
+  animation: svelte-13jrtaw-breathe ease-in-out alternate 10s infinite;
 }
-.intro.svelte-1u5pxqu:hover {
-  animation: svelte-1u5pxqu-breathe ease-in-out alternate 1s infinite;
+.intro.svelte-13jrtaw:hover {
+  animation: svelte-13jrtaw-breathe ease-in-out alternate 1s infinite;
 }
-@keyframes svelte-1u5pxqu-breathe {
+@keyframes svelte-13jrtaw-breathe {
   0% {
     opacity: 1;
   }
@@ -393,7 +401,7 @@ b.svelte-1u5pxqu {
     opacity: 0.9;
   }
 }
-.button.svelte-1u5pxqu {
+.button.svelte-13jrtaw {
   border: 0.5vh solid rgb(0, 106, 206);
   border-radius: 1vh;
   color: white;
@@ -414,10 +422,10 @@ b.svelte-1u5pxqu {
     0.15rem 0.15rem 0 #000;
   transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 }
-.button.svelte-1u5pxqu:active {
+.button.svelte-13jrtaw:active {
   background-color: rgb(0, 32, 53) !important;
 }
-@keyframes svelte-1u5pxqu-beep {
+@keyframes svelte-13jrtaw-beep {
   0% {
     opacity: 95%;
   }
@@ -425,31 +433,31 @@ b.svelte-1u5pxqu {
     opacity: 100%;
   }
 }
-.button.svelte-1u5pxqu:hover {
+.button.svelte-13jrtaw:hover {
   background-color: #006ace !important;
   color: rgb(0, 225, 255);
   cursor: pointer;
-  animation: svelte-1u5pxqu-beep 250ms alternate infinite;
+  animation: svelte-13jrtaw-beep 250ms alternate infinite;
 }
 
 /* fakecss:/workspaces/-a/src/ui/home.esbuild-svelte-fake-css */
-.case.svelte-wh29xi {
+.case.svelte-1b3pqp0 {
   transform: perspective(400px) rotateX(20deg);
 }
-.full.svelte-wh29xi {
+.full.svelte-1b3pqp0 {
   width: 90vw;
 }
-.icon.svelte-wh29xi {
+.icon.svelte-1b3pqp0 {
   display: flex;
   width: 3.5vh;
   height: 5vh;
   font-size: 3vh;
   transform: perspective(400px) rotateX(20deg);
 }
-.icon.svelte-wh29xi:hover {
+.icon.svelte-1b3pqp0:hover {
   padding: 0.5vh 7.5vh;
 }
-.menu.svelte-wh29xi {
+.menu.svelte-1b3pqp0 {
   cursor: auto;
   display: flex;
   opacity: 0.9;
@@ -470,13 +478,13 @@ b.svelte-1u5pxqu {
     inset 40vw 0 5rem rgba(0, 140, 255, 0.2),
     inset -40vw 0 5rem rgba(0, 140, 255, 0.2) !important;
 }
-.button.text.svelte-wh29xi {
+.button.text.svelte-1b3pqp0 {
   background-color: rgb(0, 58, 130);
   padding: 0.5vh 2.5vh;
   width: 100%;
   max-width: 60vh;
 }
-.case.svelte-wh29xi {
+.case.svelte-1b3pqp0 {
   border: 0.5vh solid rgb(0, 106, 206);
   color: white;
   font-size: 3vh;
@@ -495,7 +503,10 @@ b.svelte-1u5pxqu {
     0.15rem 0.15rem 0 #000;
   transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 }
-.button.svelte-wh29xi {
+.case.svelte-1b3pqp0:hover {
+  transform: none;
+}
+.button.svelte-1b3pqp0 {
   border: 0.5vh solid rgb(0, 106, 206);
   border-radius: 1vh;
   color: white;
@@ -515,16 +526,17 @@ b.svelte-1u5pxqu {
     0.15rem 0.15rem 0 #000;
   transition: all cubic-bezier(0.36, -1.2, 0.59, 1.67) 250ms;
 }
-.button.svelte-wh29xi:active {
+.button.svelte-1b3pqp0:active {
   background-color: rgb(0, 32, 53) !important;
 }
-.button.svelte-wh29xi:hover {
+.button.svelte-1b3pqp0:hover {
   background-color: rgb(0, 106, 206) !important;
   color: rgb(0, 225, 255);
   cursor: pointer;
-  animation: svelte-wh29xi-beep 250ms alternate infinite;
+  transform: none;
+  animation: svelte-1b3pqp0-beep 250ms alternate infinite;
 }
-@keyframes svelte-wh29xi-beep {
+@keyframes svelte-1b3pqp0-beep {
   0% {
     opacity: 95%;
   }
@@ -532,7 +544,7 @@ b.svelte-1u5pxqu {
     opacity: 100%;
   }
 }
-@keyframes svelte-wh29xi-scroll {
+@keyframes svelte-1b3pqp0-scroll {
   0% {
     background-position: 0% 0%;
     opacity: 20%;
@@ -547,11 +559,11 @@ b.svelte-1u5pxqu {
     transform: scale(0.25, 5);
   }
 }
-.span2.svelte-wh29xi {
+.span2.svelte-1b3pqp0 {
   display: flex;
   align-self: center;
 }
-.sprites.svelte-wh29xi {
+.sprites.svelte-1b3pqp0 {
   position: absolute;
   background-size: 100% auto;
   image-rendering: pixelated;
@@ -562,17 +574,17 @@ b.svelte-1u5pxqu {
   pointer-events: none;
   width: 100%;
   height: 100%;
-  animation: svelte-wh29xi-scroll 15s infinite linear;
+  animation: svelte-1b3pqp0-scroll 15s infinite linear;
 }
-.vbox.svelte-wh29xi {
+.vbox.svelte-1b3pqp0 {
   display: flex;
   flex: 1;
   flex-direction: column;
 }
-.flex.svelte-wh29xi {
+.flex.svelte-1b3pqp0 {
   flex: 1;
 }
-textarea.svelte-wh29xi {
+textarea.svelte-1b3pqp0 {
   -webkit-appearance: none;
   outline: none !important;
   font-family: monospace;
