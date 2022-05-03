@@ -9,7 +9,7 @@ export const passcode = new Value("").save("passcode")
 
 export const paths = {}
 export const state = new Value({})
-export const pathState = new Value({}).save("pathstate")
+export const pathState = new Value({}).save("pathstate6")
 
 let update = {}
 
@@ -38,7 +38,7 @@ AFRAME.registerSystem("net", {
         setInterval(() => {
             // write to pathState
             pathState.set(Object.fromEntries(Object.entries(paths).map(([key, value]) => {
-                return [key, { q: value.object3D.quaternion, p: value.object3D.position, s: value.object3D.scale }]
+                return [key, { q: value.object3D.quaternion.toArray(), p: value.object3D.position.toArray(), s: value.object3D.scale.toArray() }]
             })))
         }, 1000)
     },
@@ -180,7 +180,7 @@ AFRAME.registerComponent("host", {
     schema: {
         type: "string"
     },
-    init() {
+    async init() {
 
         this.slowtick = AFRAME.utils.throttleTick(this.slowtick, 200, this)
         // add unique id to hosts
@@ -200,8 +200,18 @@ AFRAME.registerComponent("host", {
             if (!$h) return
 
             this.markUpdate()
+            // on host change mark state with your update
             state[this.netpath] = update[this.netpath]
         })
+
+        await pathState.dbUpdated
+
+        pathState.$[this.netpath] && requestAnimationFrame(() => {
+
+            this.hardUpdate(pathState.$[this.netpath])
+        })
+
+        this.el.emit("db-ready", {}, false)
     },
 
     markUpdate() {
@@ -245,6 +255,23 @@ AFRAME.registerComponent("host", {
         }
     },
 
+    hardUpdate(update: IUpdate) {
+        this.lastUpdate = interop + 250
+        const o3d = this.el.object3D
+
+        if (update.v !== undefined) {
+            o3d.visible = update.v
+        }
+        if (update.p !== undefined) {
+            o3d.position.fromArray(update.p)
+        }
+        if (update.q !== undefined) {
+            o3d.quaternion.fromArray(update.q)
+        }
+        if (update.s !== undefined) {
+            o3d.scale.fromArray(update.s)
+        }
+    },
     // got a net update
     netUpdate(update: IUpdate) {
         this.lastUpdate = interop + 250

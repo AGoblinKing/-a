@@ -6550,19 +6550,26 @@
       return this;
     }
     save(where) {
-      (async () => {
+      let first = true;
+      this.dbUpdated = new Promise(async (resolve, reject) => {
         window[`_${where}`] = this;
         try {
           const v = JSON.parse(await db.get(where));
           if (v !== void 0 && v !== null) {
             this.set(v);
+            if (first) {
+              first = false;
+              resolve(v);
+            }
           }
         } catch (ex) {
+          reject(false);
+          throw ex;
         }
         this.on(async (v) => {
           await db.set(where, JSON.stringify(v));
         });
-      })();
+      });
       return this;
     }
   };
@@ -6851,7 +6858,7 @@ reset back to 1 for size
   var passcode = new Value("").save("passcode");
   var paths = {};
   var state = new Value({});
-  var pathState = new Value({}).save("pathstate");
+  var pathState = new Value({}).save("pathstate6");
   var update2 = {};
   var interop = 0;
   AFRAME.registerSystem("net", {
@@ -6869,7 +6876,7 @@ reset back to 1 for size
       });
       setInterval(() => {
         pathState.set(Object.fromEntries(Object.entries(paths).map(([key, value]) => {
-          return [key, { q: value.object3D.quaternion, p: value.object3D.position, s: value.object3D.scale }];
+          return [key, { q: value.object3D.quaternion.toArray(), p: value.object3D.position.toArray(), s: value.object3D.scale.toArray() }];
         })));
       }, 1e3);
     },
@@ -6980,7 +6987,7 @@ reset back to 1 for size
     schema: {
       type: "string"
     },
-    init() {
+    async init() {
       this.slowtick = AFRAME.utils.throttleTick(this.slowtick, 200, this);
       this.netpath = MakePath(this.el);
       let i = 2;
@@ -6998,6 +7005,11 @@ reset back to 1 for size
         this.markUpdate();
         state[this.netpath] = update2[this.netpath];
       });
+      await pathState.dbUpdated;
+      pathState.$[this.netpath] && requestAnimationFrame(() => {
+        this.hardUpdate(pathState.$[this.netpath]);
+      });
+      this.el.emit("db-ready", {}, false);
     },
     markUpdate() {
       const u = update2[this.netpath] = update2[this.netpath] || {};
@@ -7031,6 +7043,22 @@ reset back to 1 for size
         s.fromArray(state[this.netpath].s);
         if (o3d.scale.distanceTo(s) > 1e-3)
           o3d.scale.lerp(s, i);
+      }
+    },
+    hardUpdate(update3) {
+      this.lastUpdate = interop + 250;
+      const o3d = this.el.object3D;
+      if (update3.v !== void 0) {
+        o3d.visible = update3.v;
+      }
+      if (update3.p !== void 0) {
+        o3d.position.fromArray(update3.p);
+      }
+      if (update3.q !== void 0) {
+        o3d.quaternion.fromArray(update3.q);
+      }
+      if (update3.s !== void 0) {
+        o3d.scale.fromArray(update3.s);
       }
     },
     netUpdate(update3) {
@@ -7396,6 +7424,10 @@ reset back to 1 for size
     ["shoot" /* Shoot */]: (items) => {
       const [, , whatTag, withItem] = items;
       document.getElementById(withItem)?.components.item.doShoot(whatTag);
+    },
+    ["reset" /* Reset */]: (items) => {
+      pathState.set({});
+      location.reload();
     }
   };
 
@@ -7909,9 +7941,6 @@ reset back to 1 for size
       this.jump = AFRAME.utils.throttleTick(this.jump, 2e3, this);
       this.next = 0;
     },
-    remove() {
-      this.cancel();
-    },
     jump() {
       this.el.emit("jump");
     },
@@ -8353,28 +8382,25 @@ reset back to 1 for size
         t1 = space();
         a_entity2 = element("a-entity");
         set_custom_element_data(a_mixin, "id", "character");
-        set_custom_element_data(a_mixin, "ammo-body", "gravity: 0 -20 0; type: dynamic; mass: 1; linearDamping: 0.95; angularDamping: 1;angularFactor: 0 1 0;");
-        set_custom_element_data(a_mixin, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.35 0.6 0.35; offset: 0 0.75 0");
+        set_custom_element_data(a_mixin, "physics-body", "gravity: 0 -20 0; type: dynamic; mass: 1; linearDamping: 0.95; angularDamping: 1;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin, "physics-shape", "type: capsule; fit: manual; halfExtents: 0.35 0.6 0.35; offset: 0 0.75 0");
         set_custom_element_data(a_entity0, "class", "vrm-interaction");
         set_custom_element_data(a_entity0, "avatar", "");
         set_custom_element_data(a_entity0, "ammo-body", "type: kinematic;  mass: 0; collisionFilterGroup: 3; disableCollision: true; emitCollisionEvents: true; collisionFilterMask:1;scaleAutoUpdate:false");
         set_custom_element_data(a_entity0, "ammo-shape", "type: sphere; sphereRadius: 2.5; fit:manual;");
         set_custom_element_data(a_entity1, "mixin", "shadow character");
         set_custom_element_data(a_entity1, "position", "0 1 0");
+        set_custom_element_data(a_entity1, "host", "avatar");
         set_custom_element_data(a_entity1, "vrm", a_entity1_vrm_value = "src: " + ctx[0] + "; current: true");
         set_custom_element_data(a_entity1, "look-controls", "");
         set_custom_element_data(a_entity1, "scale", a_entity1_scale_value = ctx[1].x + " " + ctx[1].y + " " + ctx[1].z);
-        set_custom_element_data(a_entity1, "host", "current");
         set_custom_element_data(a_entity1, "wasd-controller", "");
-        set_custom_element_data(a_entity1, "net-avatar", "");
         set_custom_element_data(a_entity1, "sfxr__jump", sfx_jump);
         set_custom_element_data(a_entity2, "mixin", "shadow character");
         set_custom_element_data(a_entity2, "position", "0 1 -1");
         set_custom_element_data(a_entity2, "rotation", "0 180 0");
-        set_custom_element_data(a_entity2, "host", "doer");
         set_custom_element_data(a_entity2, "sfxr__bump", sfx_doer1);
         set_custom_element_data(a_entity2, "target", "\u{1F9D9}\u200D\u2640\uFE0F");
-        set_custom_element_data(a_entity2, "net-avatar", "");
         set_custom_element_data(a_entity2, "vrm", a_entity2_vrm_value = "src: " + ctx[2] + "; mirror: true");
       },
       m(target, anchor) {
@@ -8457,7 +8483,6 @@ reset back to 1 for size
       if (currentVRM.$) {
         currentVRM.$?.firstPerson.firstPersonBone.remove(this.el.object3D);
       }
-      this.cancel();
     },
     tick(_, dt) {
       if (!currentVRM.$)
@@ -9165,48 +9190,42 @@ gl_Position = mvPosition;
   });
 
   // src/component/physics.ts
-  AFRAME.registerComponent("physics-body", {
+  var phys = {
     schema: {
       type: "string"
     },
     init() {
       this.loaded = this.loaded.bind(this);
       this.el.addEventListener("model-loaded", this.loaded);
+      this.el.addEventListener("db-ready", this.loaded);
+    },
+    remove() {
+      this.el.removeEventListener("model-loaded", this.loaded);
+      this.el.removeEventListener("db-ready", this.loaded);
     },
     loaded() {
-      this.ready = true;
-      this.update();
-    },
+      if (this.ready)
+        return;
+      requestAnimationFrame(() => {
+        this.ready = true;
+        this.update();
+      });
+    }
+  };
+  AFRAME.registerComponent("physics-body", Object.assign({
     update() {
       if (!this.ready)
         return;
       this.el.setAttribute("ammo-body", this.data);
-    },
-    remove() {
-      this.el.removeEventListener("model-loaded", this.loaded);
     }
-  });
-  AFRAME.registerComponent("physics-shape", {
-    schema: {
-      type: "string"
-    },
-    init() {
-      this.loaded = this.loaded.bind(this);
-      this.el.addEventListener("model-loaded", this.loaded);
-    },
-    loaded() {
-      this.ready = true;
-      this.update();
-    },
+  }, phys));
+  AFRAME.registerComponent("physics-shape", Object.assign({
     update() {
       if (!this.ready)
         return;
       this.el.setAttribute("ammo-shape", this.data);
-    },
-    remove() {
-      this.el.removeEventListener("model-loaded", this.loaded);
     }
-  });
+  }, phys));
 
   // src/sound/plush.ts
   var sfx_squeek = stringify({
@@ -9660,6 +9679,7 @@ gl_Position = mvPosition;
       { vary: trunkVary },
       { sfxr__bump: sfx_bubbles },
       { target: "\u{1FAB5}" },
+      { host: "trunk" },
       { scatter: ctx[0] }
     ];
     let a_mixin14_data = {};
@@ -9670,6 +9690,7 @@ gl_Position = mvPosition;
       { id: "trunkLong" },
       { target: "\u{1FAB5}" },
       { tag__env: "" },
+      { host: "trunkLong" },
       ctx[1],
       { sfxr__bump: sfx_creepy_laugh_tick },
       { "gltf-model": "./glb/trunkLong.glb" },
@@ -9687,6 +9708,7 @@ gl_Position = mvPosition;
       { vary: trunkVary },
       { scatter: ctx[0] },
       { tag__env: "" },
+      { host: "pillar" },
       { target: "\u26E9\uFE0F" },
       { sfxr__bump: sfx_cat }
     ];
@@ -9754,10 +9776,10 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin0, "id", "smolitem");
         set_custom_element_data(a_mixin0, "tag__env", "");
         set_custom_element_data(a_mixin0, "sfxr__bump", sfx_shthump);
-        set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin0, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
+        set_custom_element_data(a_mixin0, "physics-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin0, "physics-shape", "type: sphere; fit: manual; sphereRadius: 1;");
         set_custom_element_data(a_mixin1, "id", "smolfix");
-        set_custom_element_data(a_mixin1, "ammo-shape", "offset: -1.85 0 0.85;");
+        set_custom_element_data(a_mixin1, "physics-shape", "offset: -1.85 0 0.85;");
         set_custom_element_data(a_mixin2, "id", "flowers");
         set_custom_element_data(a_mixin2, "mixin", "smolitem smolfix");
         set_custom_element_data(a_mixin2, "shadow", "");
@@ -9804,9 +9826,9 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin6, "id", "mountains");
         set_custom_element_data(a_mixin6, "gltf-model", "./glb/rockC.glb");
         set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value = "radius: " + groundSize * 0.7 + "; count: 50");
-        set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin6, "physics-body", "type: static; mass: 0;");
         set_custom_element_data(a_mixin6, "vary", "property: scale; range: 10 5 10 60 100 60");
-        set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
+        set_custom_element_data(a_mixin6, "physics-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
         set_custom_element_data(a_entity0, "pool__mountains", "mixin: mountains; size: 50");
         set_custom_element_data(a_entity0, "activate__mountains", "");
         set_attributes(a_mixin7, a_mixin7_data);
@@ -9834,9 +9856,9 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity6, "activate__flowerslow", "");
         set_custom_element_data(a_mixin9, "id", "animal");
         set_custom_element_data(a_mixin9, "gltf-model", "./char/Horse.glb");
-        set_custom_element_data(a_mixin9, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin9, "physics-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
         set_custom_element_data(a_mixin9, "scale", "0.35 0.35 0.35");
-        set_custom_element_data(a_mixin9, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 1 0.2; cylinderAxis: z; offset: 0 1 0");
+        set_custom_element_data(a_mixin9, "physics-shape", "type: capsule; fit: manual; halfExtents: 0.6 1 0.2; cylinderAxis: z; offset: 0 1 0");
         set_custom_element_data(a_mixin9, "shadow", "cast: true; receive: false;");
         set_custom_element_data(a_mixin9, "alive", "type: random;");
         set_custom_element_data(a_mixin9, "motion-events", "");
@@ -9869,7 +9891,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin13, "recolor__skin", "blue");
         set_custom_element_data(a_mixin13, "gltf-model", "./char/dino_Triceratops.glb");
         set_custom_element_data(a_mixin13, "material", "shader: flat;");
-        set_custom_element_data(a_mixin13, "ammo-shape", " halfExtents: 2 2 0.5; offset: 0 2 0");
+        set_custom_element_data(a_mixin13, "physics-shape", " halfExtents: 2 2 0.5; offset: 0 2 0");
         set_custom_element_data(a_mixin13, "sfxr__use", sfx_dino);
         set_custom_element_data(a_mixin13, "sfxr__bump", sfx_dino);
         set_custom_element_data(a_mixin13, "target", "\u{1F995}");
@@ -9979,12 +10001,14 @@ gl_Position = mvPosition;
           { vary: trunkVary },
           { sfxr__bump: sfx_bubbles },
           { target: "\u{1FAB5}" },
+          { host: "trunk" },
           { scatter: ctx2[0] }
         ]));
         set_attributes(a_mixin15, a_mixin15_data = get_spread_update(a_mixin15_levels, [
           { id: "trunkLong" },
           { target: "\u{1FAB5}" },
           { tag__env: "" },
+          { host: "trunkLong" },
           ctx2[1],
           { sfxr__bump: sfx_creepy_laugh_tick },
           { "gltf-model": "./glb/trunkLong.glb" },
@@ -9998,6 +10022,7 @@ gl_Position = mvPosition;
           { vary: trunkVary },
           { scatter: ctx2[0] },
           { tag__env: "" },
+          { host: "pillar" },
           { target: "\u26E9\uFE0F" },
           { sfxr__bump: sfx_cat }
         ]));
@@ -10124,12 +10149,12 @@ gl_Position = mvPosition;
   function instance5($$self) {
     const scatter = [-groundSize / 2, 0, -groundSize / 2, groundSize / 2, 0, groundSize / 2].join(" ");
     const boxBlocker = {
-      "ammo-body": "type: static; mass: 0;",
-      "ammo-shape": "type: box; fit: manual; halfExtents: 3 2.5 3; offset: 0 2.5 0"
+      "physics-body": "type: static; mass: 0;",
+      "physics-shape": "type: box; fit: manual; halfExtents: 3 2.5 3; offset: 0 2.5 0"
     };
     const smolBoxBlocker = {
-      "ammo-body": "type: static; mass: 0;",
-      "ammo-shape": "type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0"
+      "physics-body": "type: static; mass: 0;",
+      "physics-shape": "type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0"
     };
     return [scatter, boxBlocker];
   }
@@ -10192,15 +10217,6 @@ gl_Position = mvPosition;
   };
   var live_default = Live;
 
-  // src/node/debug.svelte
-  var Debug = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, null, null, safe_not_equal, {});
-    }
-  };
-  var debug_default = Debug;
-
   // src/component/grid.ts
   AFRAME.registerComponent("grid", {
     schema: {
@@ -10254,6 +10270,78 @@ gl_Position = mvPosition;
     }
   });
 
+  // src/shader/water.ts
+  var waterFrag = `
+// Made by k-mouse (2016-11-23)
+// Modified from David Hoskins (2013-07-07) and joltz0r (2013-07-04)
+uniform float timeMsec;
+varying vec2 vUv;
+
+#define TAU 6.28318530718
+
+#define TILING_FACTOR 1.0
+#define MAX_ITER 6
+
+
+float waterHighlight(vec2 p, float time, float foaminess)
+{
+    vec2 i = vec2(p);
+	float c = 0.0;
+    float foaminess_factor = mix(1.0, 6.0, foaminess);
+	float inten = .005 * foaminess_factor;
+
+	for (int n = 0; n < MAX_ITER; n++) 
+	{
+		float t = time * (1.0 - (3.5 / float(n+1)));
+		i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));
+		c += 1.0/length(vec2(p.x / (sin(i.x+t)),p.y / (cos(i.y+t))));
+	}
+	c = 0.2 + c / (inten * float(MAX_ITER));
+	c = 1.17-pow(c, 1.4);
+    c = pow(abs(c), 8.0);
+	return c / sqrt(foaminess_factor);
+}
+
+
+void main()
+{
+    float iTime = timeMsec;
+	float time = iTime * 0.0001+23.0;
+	vec2 uv = vUv;
+	vec2 uv_square = vec2(uv.x, uv.y);
+    float dist_center = pow(2.0*length(uv - 0.5), 2.0);
+    
+    float foaminess = smoothstep(0.4, 1.8, dist_center);
+    float clearness = 0.1 + 0.9*smoothstep(0.1, 0.5, dist_center);
+    
+	vec2 p = mod(uv_square*TAU*TILING_FACTOR, TAU)-250.0;
+    
+    float c = waterHighlight(p, time, foaminess);
+    
+    vec3 water_color = vec3(0.0, 0.35, 0.5);
+	vec3 color = vec3(c);
+    color = clamp(color + water_color, 0.0, 1.0);
+    
+    color = mix(water_color, color, clearness);
+
+	gl_FragColor = vec4(color, 1.0);
+}`;
+  var waterVert = `
+varying vec2 vUv;
+
+void main() {
+  vUv = uv;
+  
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}`;
+  AFRAME.registerShader("water", {
+    schema: {
+      timeMsec: { type: "time", is: "uniform" }
+    },
+    fragmentShader: waterFrag,
+    vertexShader: waterVert
+  });
+
   // src/node/house.svelte
   function create_fragment7(ctx) {
     let a_entity0;
@@ -10271,21 +10359,27 @@ gl_Position = mvPosition;
     let t5;
     let a_entity5;
     let t6;
-    let a_entity6;
-    let t7;
-    let a_entity7;
-    let t8;
-    let a_entity8;
-    let t9;
-    let a_entity9;
-    let t10;
-    let a_entity10;
-    let t11;
     let a_mixin1;
+    let t7;
+    let a_entity6;
+    let t8;
+    let a_entity7;
+    let t9;
+    let a_entity8;
+    let t10;
+    let a_entity9;
+    let t11;
+    let a_entity10;
     let t12;
     let a_entity11;
     let t13;
     let a_entity12;
+    let t14;
+    let a_mixin2;
+    let t15;
+    let a_entity13;
+    let t16;
+    let a_entity14;
     let mounted;
     let dispose;
     return {
@@ -10304,21 +10398,27 @@ gl_Position = mvPosition;
         t5 = space();
         a_entity5 = element("a-entity");
         t6 = space();
-        a_entity6 = element("a-entity");
-        t7 = space();
-        a_entity7 = element("a-entity");
-        t8 = space();
-        a_entity8 = element("a-entity");
-        t9 = space();
-        a_entity9 = element("a-entity");
-        t10 = space();
-        a_entity10 = element("a-entity");
-        t11 = space();
         a_mixin1 = element("a-mixin");
+        t7 = space();
+        a_entity6 = element("a-entity");
+        t8 = space();
+        a_entity7 = element("a-entity");
+        t9 = space();
+        a_entity8 = element("a-entity");
+        t10 = space();
+        a_entity9 = element("a-entity");
+        t11 = space();
+        a_entity10 = element("a-entity");
         t12 = space();
         a_entity11 = element("a-entity");
         t13 = space();
         a_entity12 = element("a-entity");
+        t14 = space();
+        a_mixin2 = element("a-mixin");
+        t15 = space();
+        a_entity13 = element("a-entity");
+        t16 = space();
+        a_entity14 = element("a-entity");
         set_custom_element_data(a_entity0, "class", "loot drop");
         set_custom_element_data(a_entity0, "pool__dagger", "mixin: dagger; size: 5;");
         set_custom_element_data(a_entity0, "activate__dagger", "");
@@ -10332,16 +10432,16 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity0, "activate__barrel", "");
         set_custom_element_data(a_entity0, "position", "0 4 0");
         set_custom_element_data(a_mixin0, "id", "wall");
-        set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0; ");
-        set_custom_element_data(a_mixin0, "ammo-shape", "type: box; fit: manual; half-extents: 5 4 1.5; offset: 0 0.5 0.5;");
+        set_custom_element_data(a_mixin0, "physics-body", "type: static; mass: 0; ");
+        set_custom_element_data(a_mixin0, "physics-shape", "type: box; fit: manual; half-extents: 5 4 1.5; offset: 0 0.5 0.5;");
         set_custom_element_data(a_mixin0, "geometry", "");
         set_custom_element_data(a_mixin0, "scale", "10 4 10");
         set_custom_element_data(a_mixin0, "shadow", "receive: false");
         set_custom_element_data(a_entity1, "id", "ground");
         set_custom_element_data(a_entity1, "geometry", "");
         set_custom_element_data(a_entity1, "material", "color: #281b0d;");
-        set_custom_element_data(a_entity1, "ammo-body", "type: kinematic; collisionFilterGroup: 1;  collisionFilterMask:1; disableCollision: true; mass: 0; emitCollisionEvents: true; scaleAutoUpdate: false");
-        set_custom_element_data(a_entity1, "ammo-shape", "type: box; fit: manual; half-extents: 10 0.2 10; ");
+        set_custom_element_data(a_entity1, "physics-body", "type: kinematic; collisionFilterGroup: 1;  collisionFilterMask:1; disableCollision: true; mass: 0; emitCollisionEvents: true; scaleAutoUpdate: false");
+        set_custom_element_data(a_entity1, "physics-shape", "type: box; fit: manual; half-extents: 10 0.2 10; ");
         set_custom_element_data(a_entity1, "shadow", "");
         set_custom_element_data(a_entity1, "scale", "20 0.1 20");
         set_custom_element_data(a_entity1, "position", "0 0 0");
@@ -10356,58 +10456,70 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity4, "gltf-model", "./glb/cabinDoor.glb");
         set_custom_element_data(a_entity4, "rotation", "0 90 0");
         set_custom_element_data(a_entity4, "position", "-5 0 0");
-        set_custom_element_data(a_entity4, "ammo-shape", "type: box; fit: manual; half-extents: 2 4 1; offset: -4 0.5 0.5;");
-        set_custom_element_data(a_entity5, "mixin", "wall");
-        set_custom_element_data(a_entity5, "rotation", "0 90 0");
-        set_custom_element_data(a_entity5, "position", "-5 0 0");
-        set_custom_element_data(a_entity5, "material", "visible: false;");
-        set_custom_element_data(a_entity5, "ammo-shape", "type: box; fit: manual; half-extents: 2 4 1; offset: 4 0.5 0.5;");
-        set_custom_element_data(a_entity6, "mixin", "wall");
-        set_custom_element_data(a_entity6, "gltf-model", "./glb/cabinWindow.glb");
-        set_custom_element_data(a_entity6, "rotation", "0 90 0");
-        set_custom_element_data(a_entity6, "position", "5 0 0");
-        set_custom_element_data(a_entity7, "shadow", "");
-        set_custom_element_data(a_entity7, "gltf-model", "./glb/cabinWindow.glb");
-        set_custom_element_data(a_entity7, "scale", "10 2 10");
+        set_custom_element_data(a_entity4, "physics-shape", "type: box; fit: manual; half-extents: 2 4 1; offset: -4 0.5 0.5;");
+        set_custom_element_data(a_entity5, "scale", "50 0.2 50");
+        set_custom_element_data(a_entity5, "animation", "property: object3D.scale.y; from: 0.3; to: 0.5; dur: 5000; loop: true; dir: alternate;");
+        set_custom_element_data(a_entity5, "geometry", "");
+        set_custom_element_data(a_entity5, "material", "shader: water;");
+        set_custom_element_data(a_entity5, "position", "-50 0 0");
+        set_custom_element_data(a_mixin1, "id", "pool-rock");
+        set_custom_element_data(a_mixin1, "gltf-model", "./glb/rockC.glb");
+        set_custom_element_data(a_mixin1, "vary", "property: scale; range: 4 0.25 4 6 0.5 6");
+        set_custom_element_data(a_mixin1, "ring", "radius: 28; count: 30");
+        set_custom_element_data(a_entity6, "pool__rocks", "mixin: pool-rock; size: 30");
+        set_custom_element_data(a_entity6, "activate__rocks", "");
+        set_custom_element_data(a_entity6, "position", "-50 0 0");
+        set_custom_element_data(a_entity7, "mixin", "wall");
         set_custom_element_data(a_entity7, "rotation", "0 90 0");
-        set_custom_element_data(a_entity7, "position", "-5 4 0");
-        set_custom_element_data(a_entity8, "shadow", "");
+        set_custom_element_data(a_entity7, "position", "-5 0 0");
+        set_custom_element_data(a_entity7, "material", "visible: false;");
+        set_custom_element_data(a_entity7, "physics-shape", "type: box; fit: manual; half-extents: 2 4 1; offset: 4 0.5 0.5;");
+        set_custom_element_data(a_entity8, "mixin", "wall");
         set_custom_element_data(a_entity8, "gltf-model", "./glb/cabinWindow.glb");
-        set_custom_element_data(a_entity8, "scale", "10 2 10");
         set_custom_element_data(a_entity8, "rotation", "0 90 0");
-        set_custom_element_data(a_entity8, "position", "5 4 0");
-        set_custom_element_data(a_entity9, "shadow", "receive: false");
-        set_custom_element_data(a_entity9, "gltf-model", "./glb/cabinRoofCenter.glb");
-        set_custom_element_data(a_entity9, "scale", "10 4 10");
+        set_custom_element_data(a_entity8, "position", "5 0 0");
+        set_custom_element_data(a_entity9, "shadow", "");
+        set_custom_element_data(a_entity9, "gltf-model", "./glb/cabinWindow.glb");
+        set_custom_element_data(a_entity9, "scale", "10 2 10");
         set_custom_element_data(a_entity9, "rotation", "0 90 0");
-        set_custom_element_data(a_entity9, "position", "0 3.5 0");
+        set_custom_element_data(a_entity9, "position", "-5 4 0");
         set_custom_element_data(a_entity10, "shadow", "");
-        set_custom_element_data(a_entity10, "gltf-model", "./glb/cabinFloor.glb");
-        set_custom_element_data(a_entity10, "scale", "10 4 10");
-        set_custom_element_data(a_entity10, "rotation", "0 0 0");
-        set_custom_element_data(a_entity10, "position", "0 -0.1 0");
-        set_custom_element_data(a_mixin1, "id", "elf");
-        set_custom_element_data(a_mixin1, "gltf-model", "./char/Elf.glb");
-        set_custom_element_data(a_mixin1, "recolor__skin", "#212F00");
-        set_custom_element_data(a_mixin1, "recolor__hat", "black");
-        set_custom_element_data(a_mixin1, "recolor__clothes", "black");
-        set_custom_element_data(a_mixin1, "recolor__face", "#F0F");
-        set_custom_element_data(a_mixin1, "scale", "0.35 0.5 0.35");
-        set_custom_element_data(a_mixin1, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
-        set_custom_element_data(a_mixin1, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.6 0");
-        set_custom_element_data(a_mixin1, "shadow", "cast: true; receive: false;");
-        set_custom_element_data(a_mixin1, "alive", "type: random;");
-        set_custom_element_data(a_mixin1, "target", "\u{1F9DD}");
-        set_custom_element_data(a_mixin1, "host", "elf");
-        set_custom_element_data(a_mixin1, "avatar", "");
-        set_custom_element_data(a_mixin1, "sfxr__use", sfx_squeek);
-        set_custom_element_data(a_mixin1, "sfxr__bump", sfx_squeek);
-        set_custom_element_data(a_mixin1, "scatter", "-5 1 -5 5 5 5");
-        set_custom_element_data(a_entity11, "pool__elf", "mixin: elf; size: 5;");
-        set_custom_element_data(a_entity11, "activate__elf", "");
-        set_custom_element_data(a_entity12, "mixin", "elf");
-        set_custom_element_data(a_entity12, "host", "viking");
-        set_custom_element_data(a_entity12, "gltf-model", "./char/Viking_Female.glb");
+        set_custom_element_data(a_entity10, "gltf-model", "./glb/cabinWindow.glb");
+        set_custom_element_data(a_entity10, "scale", "10 2 10");
+        set_custom_element_data(a_entity10, "rotation", "0 90 0");
+        set_custom_element_data(a_entity10, "position", "5 4 0");
+        set_custom_element_data(a_entity11, "shadow", "receive: false");
+        set_custom_element_data(a_entity11, "gltf-model", "./glb/cabinRoofCenter.glb");
+        set_custom_element_data(a_entity11, "scale", "10 4 10");
+        set_custom_element_data(a_entity11, "rotation", "0 90 0");
+        set_custom_element_data(a_entity11, "position", "0 3.5 0");
+        set_custom_element_data(a_entity12, "shadow", "");
+        set_custom_element_data(a_entity12, "gltf-model", "./glb/cabinFloor.glb");
+        set_custom_element_data(a_entity12, "scale", "10 4 10");
+        set_custom_element_data(a_entity12, "rotation", "0 0 0");
+        set_custom_element_data(a_entity12, "position", "0 -0.1 0");
+        set_custom_element_data(a_mixin2, "id", "elf");
+        set_custom_element_data(a_mixin2, "gltf-model", "./char/Elf.glb");
+        set_custom_element_data(a_mixin2, "recolor__skin", "#212F00");
+        set_custom_element_data(a_mixin2, "recolor__hat", "black");
+        set_custom_element_data(a_mixin2, "recolor__clothes", "black");
+        set_custom_element_data(a_mixin2, "recolor__face", "#F0F");
+        set_custom_element_data(a_mixin2, "scale", "0.35 0.5 0.35");
+        set_custom_element_data(a_mixin2, "physics-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin2, "physics-shape", "type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.6 0");
+        set_custom_element_data(a_mixin2, "shadow", "cast: true; receive: false;");
+        set_custom_element_data(a_mixin2, "alive", "type: random;");
+        set_custom_element_data(a_mixin2, "target", "\u{1F9DD}");
+        set_custom_element_data(a_mixin2, "host", "elf");
+        set_custom_element_data(a_mixin2, "avatar", "");
+        set_custom_element_data(a_mixin2, "sfxr__use", sfx_squeek);
+        set_custom_element_data(a_mixin2, "sfxr__bump", sfx_squeek);
+        set_custom_element_data(a_mixin2, "scatter", "-5 1 -5 5 5 5");
+        set_custom_element_data(a_entity13, "pool__elf", "mixin: elf; size: 5;");
+        set_custom_element_data(a_entity13, "activate__elf", "");
+        set_custom_element_data(a_entity14, "mixin", "elf");
+        set_custom_element_data(a_entity14, "host", "viking");
+        set_custom_element_data(a_entity14, "gltf-model", "./char/Viking_Female.glb");
       },
       m(target, anchor) {
         insert(target, a_entity0, anchor);
@@ -10424,21 +10536,27 @@ gl_Position = mvPosition;
         insert(target, t5, anchor);
         insert(target, a_entity5, anchor);
         insert(target, t6, anchor);
-        insert(target, a_entity6, anchor);
-        insert(target, t7, anchor);
-        insert(target, a_entity7, anchor);
-        insert(target, t8, anchor);
-        insert(target, a_entity8, anchor);
-        insert(target, t9, anchor);
-        insert(target, a_entity9, anchor);
-        insert(target, t10, anchor);
-        insert(target, a_entity10, anchor);
-        insert(target, t11, anchor);
         insert(target, a_mixin1, anchor);
+        insert(target, t7, anchor);
+        insert(target, a_entity6, anchor);
+        insert(target, t8, anchor);
+        insert(target, a_entity7, anchor);
+        insert(target, t9, anchor);
+        insert(target, a_entity8, anchor);
+        insert(target, t10, anchor);
+        insert(target, a_entity9, anchor);
+        insert(target, t11, anchor);
+        insert(target, a_entity10, anchor);
         insert(target, t12, anchor);
         insert(target, a_entity11, anchor);
         insert(target, t13, anchor);
         insert(target, a_entity12, anchor);
+        insert(target, t14, anchor);
+        insert(target, a_mixin2, anchor);
+        insert(target, t15, anchor);
+        insert(target, a_entity13, anchor);
+        insert(target, t16, anchor);
+        insert(target, a_entity14, anchor);
         if (!mounted) {
           dispose = listen(a_entity1, "collidestart", collidestart_handler);
           mounted = true;
@@ -10477,27 +10595,27 @@ gl_Position = mvPosition;
         if (detaching)
           detach(t6);
         if (detaching)
-          detach(a_entity6);
+          detach(a_mixin1);
         if (detaching)
           detach(t7);
         if (detaching)
-          detach(a_entity7);
+          detach(a_entity6);
         if (detaching)
           detach(t8);
         if (detaching)
-          detach(a_entity8);
+          detach(a_entity7);
         if (detaching)
           detach(t9);
         if (detaching)
-          detach(a_entity9);
+          detach(a_entity8);
         if (detaching)
           detach(t10);
         if (detaching)
-          detach(a_entity10);
+          detach(a_entity9);
         if (detaching)
           detach(t11);
         if (detaching)
-          detach(a_mixin1);
+          detach(a_entity10);
         if (detaching)
           detach(t12);
         if (detaching)
@@ -10506,6 +10624,18 @@ gl_Position = mvPosition;
           detach(t13);
         if (detaching)
           detach(a_entity12);
+        if (detaching)
+          detach(t14);
+        if (detaching)
+          detach(a_mixin2);
+        if (detaching)
+          detach(t15);
+        if (detaching)
+          detach(a_entity13);
+        if (detaching)
+          detach(t16);
+        if (detaching)
+          detach(a_entity14);
         mounted = false;
         dispose();
       }
@@ -10667,7 +10797,7 @@ void main() {
   v.r = v.b;
   v.b = r;
 
-  gl_FragColor = vec4(v*.001,1.);	
+  gl_FragColor = vec4(v*.005,1.);	
 }
 
 `;
@@ -10680,7 +10810,9 @@ void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 }`;
   AFRAME.registerShader("space", {
-    schema: {},
+    schema: {
+      timeMsec: { type: "time", is: "uniform" }
+    },
     fragmentShader: spacefrag,
     vertexShader: spaceVert
   });
@@ -11447,7 +11579,8 @@ void main() {
   AFRAME.registerComponent("location", {
     schema: {
       name: { type: "string" },
-      box: { type: "string", default: "-1 -1 -1 1 1 1" }
+      box: { type: "string", default: "-1 -1 -1 1 1 1" },
+      zone: { type: "boolean", default: false }
     },
     init() {
       locations[this.data.name] = this;
@@ -12339,8 +12472,8 @@ void main() {
         set_custom_element_data(a_mixin, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_mixin, "gltf-model", "./glb/bow.glb");
         set_custom_element_data(a_mixin, "scale", "0.01 0.01 0.01");
-        set_custom_element_data(a_mixin, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.1;");
-        set_custom_element_data(a_mixin, "ammo-shape", "type:box; fit: manual; halfExtents: 0.5 1 0.15; offset: 0 0 0");
+        set_custom_element_data(a_mixin, "physics-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.1;");
+        set_custom_element_data(a_mixin, "physics-shape", "type:box; fit: manual; halfExtents: 0.5 1 0.15; offset: 0 0 0");
       },
       m(target, anchor) {
         insert(target, a_mixin, anchor);
@@ -12377,8 +12510,8 @@ void main() {
         set_custom_element_data(a_mixin, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_mixin, "gltf-model", "./glb/arrow.glb");
         set_custom_element_data(a_mixin, "scale", "0.01 0.01 0.01");
-        set_custom_element_data(a_mixin, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.1; emitCollisionEvents:true");
-        set_custom_element_data(a_mixin, "ammo-shape", "type:box; fit: manual; halfExtents: 0.1 1 0.1; offset: 0 0 0");
+        set_custom_element_data(a_mixin, "physics-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.1; emitCollisionEvents:true");
+        set_custom_element_data(a_mixin, "physics-shape", "type:box; fit: manual; halfExtents: 0.1 1 0.1; offset: 0 0 0");
       },
       m(target, anchor) {
         insert(target, a_mixin, anchor);
@@ -12446,15 +12579,15 @@ void main() {
         set_custom_element_data(a_mixin0, "item", "");
         set_custom_element_data(a_mixin0, "sfxr__use", sfx_sword);
         set_custom_element_data(a_mixin0, "sfxr__bump", sfx_sword);
-        set_custom_element_data(a_mixin0, "ammo-body", "type: dynamic;scaleAutoUpdate: false; mass: 0.1;");
-        set_custom_element_data(a_mixin0, "ammo-shape", "type:box; fit: manual; halfExtents: 0.2 0.75 0.2; offset: 0 0.45 0");
+        set_custom_element_data(a_mixin0, "physics-body", "type: dynamic;scaleAutoUpdate: false; mass: 0.1;");
+        set_custom_element_data(a_mixin0, "physics-shape", "type:box; fit: manual; halfExtents: 0.2 0.75 0.2; offset: 0 0.45 0");
         set_custom_element_data(a_mixin1, "id", "armor_black");
         set_custom_element_data(a_mixin1, "host", "armor_black");
         set_custom_element_data(a_mixin1, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_mixin1, "gltf-model", "./glb/armor_black.glb");
         set_custom_element_data(a_mixin1, "scale", "0.01 0.01 0.01");
-        set_custom_element_data(a_mixin1, "ammo-body", "type: dynamic;scaleAutoUpdate: false;");
-        set_custom_element_data(a_mixin1, "ammo-shape", "type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0");
+        set_custom_element_data(a_mixin1, "physics-body", "type: dynamic;scaleAutoUpdate: false;");
+        set_custom_element_data(a_mixin1, "physics-shape", "type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0");
         set_custom_element_data(a_mixin2, "id", "chest");
         set_custom_element_data(a_mixin2, "host", "chest");
         set_custom_element_data(a_mixin2, "target", "\u{1F9F0}");
@@ -12463,8 +12596,8 @@ void main() {
         set_custom_element_data(a_mixin2, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_mixin2, "gltf-model", "./glb/chest.glb");
         set_custom_element_data(a_mixin2, "scale", "0.01 0.01 0.01");
-        set_custom_element_data(a_mixin2, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 5;");
-        set_custom_element_data(a_mixin2, "ammo-shape", "type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0.4 0");
+        set_custom_element_data(a_mixin2, "physics-body", "type: dynamic;scaleAutoUpdate: false;mass: 5;");
+        set_custom_element_data(a_mixin2, "physics-shape", "type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0.4 0");
         set_custom_element_data(a_mixin3, "id", "bag");
         set_custom_element_data(a_mixin3, "host", "bag");
         set_custom_element_data(a_mixin3, "target", "\u{1F45D}");
@@ -12473,8 +12606,8 @@ void main() {
         set_custom_element_data(a_mixin3, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_mixin3, "gltf-model", "./glb/bag.glb");
         set_custom_element_data(a_mixin3, "scale", "0.01 0.01 0.01");
-        set_custom_element_data(a_mixin3, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.5;");
-        set_custom_element_data(a_mixin3, "ammo-shape", "type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0");
+        set_custom_element_data(a_mixin3, "physics-body", "type: dynamic;scaleAutoUpdate: false;mass: 0.5;");
+        set_custom_element_data(a_mixin3, "physics-shape", "type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0");
         set_custom_element_data(a_mixin4, "id", "barrel");
         set_custom_element_data(a_mixin4, "host", "barrel");
         set_custom_element_data(a_mixin4, "target", "\u{1F6E2}\uFE0F");
@@ -12483,8 +12616,8 @@ void main() {
         set_custom_element_data(a_mixin4, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_mixin4, "gltf-model", "./glb/barrel.glb");
         set_custom_element_data(a_mixin4, "scale", "2 2 2");
-        set_custom_element_data(a_mixin4, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 20;");
-        set_custom_element_data(a_mixin4, "ammo-shape", "type:box; fit: manual; halfExtents: 0.75 0.75 0.75; offset: 0 0.5 0");
+        set_custom_element_data(a_mixin4, "physics-body", "type: dynamic;scaleAutoUpdate: false;mass: 20;");
+        set_custom_element_data(a_mixin4, "physics-shape", "type:box; fit: manual; halfExtents: 0.75 0.75 0.75; offset: 0 0.5 0");
         set_custom_element_data(a_mixin5, "id", "crate");
         set_custom_element_data(a_mixin5, "target", "\u{1F4E6}");
         set_custom_element_data(a_mixin5, "host", "crate");
@@ -12493,8 +12626,8 @@ void main() {
         set_custom_element_data(a_mixin5, "shadow", "cast: true; receive: false");
         set_custom_element_data(a_mixin5, "gltf-model", "./glb/crate.glb");
         set_custom_element_data(a_mixin5, "scale", "2 2 2");
-        set_custom_element_data(a_mixin5, "ammo-body", "type: dynamic;scaleAutoUpdate: false;mass: 10;");
-        set_custom_element_data(a_mixin5, "ammo-shape", "type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: -2 0.5 1");
+        set_custom_element_data(a_mixin5, "physics-body", "type: dynamic;scaleAutoUpdate: false;mass: 10;");
+        set_custom_element_data(a_mixin5, "physics-shape", "type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: -2 0.5 1");
       },
       m(target, anchor) {
         insert(target, a_mixin0, anchor);
@@ -12641,8 +12774,6 @@ void main() {
     let t8;
     let house;
     let t9;
-    let debug_1;
-    let t10;
     let environmental;
     let a_scene_physics_value;
     let current;
@@ -12654,7 +12785,6 @@ void main() {
     characters = new characters_default({});
     forest = new forest_default({});
     house = new house_default({});
-    debug_1 = new debug_default({});
     environmental = new environmental_default({ props: { groundSize: 200 } });
     return {
       c() {
@@ -12681,8 +12811,6 @@ void main() {
         t8 = space();
         create_component(house.$$.fragment);
         t9 = space();
-        create_component(debug_1.$$.fragment);
-        t10 = space();
         create_component(environmental.$$.fragment);
         set_custom_element_data(a_mixin, "id", "shadow");
         set_custom_element_data(a_mixin, "shadow", "cast: true; receive: false");
@@ -12721,8 +12849,6 @@ void main() {
         append(a_scene, t8);
         mount_component(house, a_scene, null);
         append(a_scene, t9);
-        mount_component(debug_1, a_scene, null);
-        append(a_scene, t10);
         mount_component(environmental, a_scene, null);
         current = true;
       },
@@ -12763,7 +12889,6 @@ void main() {
         transition_in(characters.$$.fragment, local);
         transition_in(forest.$$.fragment, local);
         transition_in(house.$$.fragment, local);
-        transition_in(debug_1.$$.fragment, local);
         transition_in(environmental.$$.fragment, local);
         current = true;
       },
@@ -12776,7 +12901,6 @@ void main() {
         transition_out(characters.$$.fragment, local);
         transition_out(forest.$$.fragment, local);
         transition_out(house.$$.fragment, local);
-        transition_out(debug_1.$$.fragment, local);
         transition_out(environmental.$$.fragment, local);
         current = false;
       },
@@ -12798,7 +12922,6 @@ void main() {
         destroy_component(characters);
         destroy_component(forest);
         destroy_component(house);
-        destroy_component(debug_1);
         destroy_component(environmental);
       }
     };
@@ -12813,11 +12936,11 @@ void main() {
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 1) {
         $: {
-          const phys = document.getElementById("scene")?.systems.physics;
+          const phys2 = document.getElementById("scene")?.systems.physics;
           if ($open_debug) {
-            phys?.setDebug(true);
+            phys2?.setDebug(true);
           } else {
-            phys?.setDebug(false);
+            phys2?.setDebug(false);
           }
         }
       }

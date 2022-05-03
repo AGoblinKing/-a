@@ -18,12 +18,13 @@
 	import { open_debug, open_stats, open_ui } from 'src/timing'
 	import Forest from 'src/node/forest.svelte'
 	import Live from 'src/ui/live.svelte'
-	import Debug from 'src/node/debug.svelte'
+
 	import House from 'src/node/house.svelte'
 	import Netdata from 'src/ui/netdata.svelte'
 	import Environmental from 'src/node/environmental.svelte'
 	import OnscreenUi from './ui/onscreen-ui.svelte'
 	import Items from './node/items.svelte'
+	import { pathState } from './component/net'
 
 	$: {
 		const phys = document.getElementById('scene')?.systems.physics
@@ -65,8 +66,9 @@
 	<a-entity id="spawned" />
 	<Camera />
 	<Characters />
+
 	<Forest />
 	<House />
-	<Debug />
+
 	<Environmental groundSize={200} />
 </a-scene>

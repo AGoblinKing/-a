@@ -2,6 +2,7 @@
 	import 'src/component/grid'
 	import 'src/component/tag'
 	import 'src/component/recolor'
+	import 'src/shader/water'
 	import { sfx_squeek } from 'src/sound/plush'
 </script>
 
@@ -24,8 +25,8 @@
 
 <a-mixin
 	id="wall"
-	ammo-body="type: static; mass: 0; "
-	ammo-shape="type: box; fit: manual; half-extents: 5 4 1.5; offset: 0 0.5 0.5;"
+	physics-body="type: static; mass: 0; "
+	physics-shape="type: box; fit: manual; half-extents: 5 4 1.5; offset: 0 0.5 0.5;"
 	geometry
 	scale="10 4 10"
 	shadow="receive: false"
@@ -42,8 +43,8 @@
 			el.remove()
 		}
 	}}
-	ammo-body="type: kinematic; collisionFilterGroup: 1;  collisionFilterMask:1; disableCollision: true; mass: 0; emitCollisionEvents: true; scaleAutoUpdate: false"
-	ammo-shape="type: box; fit: manual; half-extents: 10 0.2 10; "
+	physics-body="type: kinematic; collisionFilterGroup: 1;  collisionFilterMask:1; disableCollision: true; mass: 0; emitCollisionEvents: true; scaleAutoUpdate: false"
+	physics-shape="type: box; fit: manual; half-extents: 10 0.2 10; "
 	shadow
 	scale="20 0.1 20"
 	position="0 0 0"
@@ -58,15 +59,32 @@
 	gltf-model="./glb/cabinDoor.glb"
 	rotation="0 90 0"
 	position="-5 0 0"
-	ammo-shape="type: box; fit: manual; half-extents: 2 4 1; offset: -4 0.5 0.5;"
+	physics-shape="type: box; fit: manual; half-extents: 2 4 1; offset: -4 0.5 0.5;"
 />
+
+<!-- pool -->
+<a-entity
+	scale="50 0.2 50"
+	animation="property: object3D.scale.y; from: 0.3; to: 0.5; dur: 5000; loop: true; dir: alternate;"
+	geometry
+	material="shader: water;"
+	position="-50 0 0"
+/>
+
+<a-mixin
+	id="pool-rock"
+	gltf-model="./glb/rockC.glb"
+	vary="property: scale; range: 4 0.25 4 6 0.5 6"
+	ring="radius: 28; count: 30"
+/>
+<a-entity pool__rocks="mixin: pool-rock; size: 30" activate__rocks position="-50 0 0" />
 
 <a-entity
 	mixin="wall"
 	rotation="0 90 0"
 	position="-5 0 0"
 	material="visible: false;"
-	ammo-shape="type: box; fit: manual; half-extents: 2 4 1; offset: 4 0.5 0.5;"
+	physics-shape="type: box; fit: manual; half-extents: 2 4 1; offset: 4 0.5 0.5;"
 />
 
 <a-entity mixin="wall" gltf-model="./glb/cabinWindow.glb" rotation="0 90 0" position="5 0 0" />
@@ -113,8 +131,8 @@
 	recolor__clothes="black"
 	recolor__face="#F0F"
 	scale="0.35 0.5 0.35"
-	ammo-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;"
-	ammo-shape="type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.6 0"
+	physics-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;"
+	physics-shape="type: capsule; fit: manual; halfExtents: 0.6 0.4 0.2; cylinderAxis: z; offset: 0 0.6 0"
 	shadow="cast: true; receive: false;"
 	alive="type: random;"
 	target="🧝"

@@ -27,13 +27,13 @@
 	const trunkVary = 'property:scale; range: 5 5 5 25 25 25'
 
 	const boxBlocker = {
-		'ammo-body': 'type: static; mass: 0;',
-		'ammo-shape': 'type: box; fit: manual; halfExtents: 3 2.5 3; offset: 0 2.5 0'
+		'physics-body': 'type: static; mass: 0;',
+		'physics-shape': 'type: box; fit: manual; halfExtents: 3 2.5 3; offset: 0 2.5 0'
 	}
 
 	const smolBoxBlocker = {
-		'ammo-body': 'type: static; mass: 0;',
-		'ammo-shape': 'type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0'
+		'physics-body': 'type: static; mass: 0;',
+		'physics-shape': 'type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0'
 	}
 	// look-controls="enabled: false;" wasd-controls="enabled;false;"
 </script>
@@ -42,11 +42,11 @@
 	id="smolitem"
 	tag__env
 	sfxr__bump={sfx_shthump}
-	ammo-body="type: static; mass: 0;"
-	ammo-shape="type: sphere; fit: manual; sphereRadius: 1;"
+	physics-body="type: static; mass: 0;"
+	physics-shape="type: sphere; fit: manual; sphereRadius: 1;"
 />
 
-<a-mixin id="smolfix" ammo-shape="offset: -1.85 0 0.85;" />
+<a-mixin id="smolfix" physics-shape="offset: -1.85 0 0.85;" />
 <a-mixin
 	id="flowers"
 	mixin="smolitem smolfix"
@@ -104,9 +104,9 @@
 	id="mountains"
 	gltf-model="./glb/rockC.glb"
 	ring="radius: {groundSize * 0.7}; count: 50"
-	ammo-body="type: static; mass: 0;"
+	physics-body="type: static; mass: 0;"
 	vary="property: scale; range: 10 5 10 60 100 60"
-	ammo-shape="type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0"
+	physics-shape="type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0"
 />
 <a-entity pool__mountains="mixin: mountains; size: 50" activate__mountains />
 
@@ -152,9 +152,9 @@
 <a-mixin
 	id="animal"
 	gltf-model="./char/Horse.glb"
-	ammo-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;"
+	physics-body="type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;"
 	scale="0.35 0.35 0.35"
-	ammo-shape="type: capsule; fit: manual; halfExtents: 0.6 1 0.2; cylinderAxis: z; offset: 0 1 0"
+	physics-shape="type: capsule; fit: manual; halfExtents: 0.6 1 0.2; cylinderAxis: z; offset: 0 1 0"
 	shadow="cast: true; receive: false;"
 	alive="type: random;"
 	motion-events
@@ -178,7 +178,7 @@
 	recolor__skin="blue"
 	gltf-model="./char/dino_Triceratops.glb"
 	material="shader: flat;"
-	ammo-shape=" halfExtents: 2 2 0.5; offset: 0 2 0"
+	physics-shape=" halfExtents: 2 2 0.5; offset: 0 2 0"
 	sfxr__use={sfx_dino}
 	sfxr__bump={sfx_dino}
 	target="🦕"
@@ -205,6 +205,7 @@
 	vary={trunkVary}
 	sfxr__bump={sfx_bubbles}
 	target="🪵"
+	host="trunk"
 	{scatter}
 />
 <a-entity pool__trunk="mixin: trunk; size: 20" activate__trunk />
@@ -213,6 +214,7 @@
 	id="trunkLong"
 	target="🪵"
 	tag__env
+	host="trunkLong"
 	{...boxBlocker}
 	sfxr__bump={sfx_creepy_laugh_tick}
 	gltf-model="./glb/trunkLong.glb"
@@ -228,6 +230,7 @@
 	vary={trunkVary}
 	{scatter}
 	tag__env
+	host="pillar"
 	target="⛩️"
 	sfxr__bump={sfx_cat}
 />

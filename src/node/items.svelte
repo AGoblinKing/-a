@@ -16,8 +16,8 @@
 	item
 	sfxr__use={sfx_sword}
 	sfxr__bump={sfx_sword}
-	ammo-body="type: dynamic;scaleAutoUpdate: false; mass: 0.1;"
-	ammo-shape="type:box; fit: manual; halfExtents: 0.2 0.75 0.2; offset: 0 0.45 0"
+	physics-body="type: dynamic;scaleAutoUpdate: false; mass: 0.1;"
+	physics-shape="type:box; fit: manual; halfExtents: 0.2 0.75 0.2; offset: 0 0.45 0"
 />
 
 <a-mixin
@@ -26,8 +26,8 @@
 	shadow="cast: true; receive: false"
 	gltf-model="./glb/armor_black.glb"
 	scale="0.01 0.01 0.01"
-	ammo-body="type: dynamic;scaleAutoUpdate: false;"
-	ammo-shape="type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0"
+	physics-body="type: dynamic;scaleAutoUpdate: false;"
+	physics-shape="type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0"
 />
 <a-mixin
 	id="chest"
@@ -38,8 +38,8 @@
 	shadow="cast: true; receive: false"
 	gltf-model="./glb/chest.glb"
 	scale="0.01 0.01 0.01"
-	ammo-body="type: dynamic;scaleAutoUpdate: false;mass: 5;"
-	ammo-shape="type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0.4 0"
+	physics-body="type: dynamic;scaleAutoUpdate: false;mass: 5;"
+	physics-shape="type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0.4 0"
 />
 <Bow />
 <Arrow />
@@ -52,8 +52,8 @@
 	shadow="cast: true; receive: false"
 	gltf-model="./glb/bag.glb"
 	scale="0.01 0.01 0.01"
-	ammo-body="type: dynamic;scaleAutoUpdate: false;mass: 0.5;"
-	ammo-shape="type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0"
+	physics-body="type: dynamic;scaleAutoUpdate: false;mass: 0.5;"
+	physics-shape="type:box; fit: manual; halfExtents: 0.4 0.4 0.4; offset: 0 0 0"
 />
 <a-mixin
 	id="barrel"
@@ -64,8 +64,8 @@
 	shadow="cast: true; receive: false"
 	gltf-model="./glb/barrel.glb"
 	scale="2 2 2"
-	ammo-body="type: dynamic;scaleAutoUpdate: false;mass: 20;"
-	ammo-shape="type:box; fit: manual; halfExtents: 0.75 0.75 0.75; offset: 0 0.5 0"
+	physics-body="type: dynamic;scaleAutoUpdate: false;mass: 20;"
+	physics-shape="type:box; fit: manual; halfExtents: 0.75 0.75 0.75; offset: 0 0.5 0"
 />
 
 <a-mixin
@@ -77,6 +77,6 @@
 	shadow="cast: true; receive: false"
 	gltf-model="./glb/crate.glb"
 	scale="2 2 2"
-	ammo-body="type: dynamic;scaleAutoUpdate: false;mass: 10;"
-	ammo-shape="type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: -2 0.5 1"
+	physics-body="type: dynamic;scaleAutoUpdate: false;mass: 10;"
+	physics-shape="type:box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: -2 0.5 1"
 />

@@ -35,7 +35,6 @@ AFRAME.registerComponent("camera-controller", {
         if (currentVRM.$) {
             currentVRM.$?.firstPerson.firstPersonBone.remove(this.el.object3D)
         }
-        this.cancel()
     },
     tick(_, dt) {
         if (!currentVRM.$) return

@@ -1,4 +1,4 @@
-import { guest, host, room } from "./component/net"
+import { guest, host, pathState, room } from "./component/net"
 import { AVATAR } from "src/component/avatar"
 
 import state from "src/state"
@@ -119,6 +119,7 @@ export enum EControl {
 
     Spawn = "spawn",
     Shoot = "shoot",
+    Reset = "reset"
 }
 
 
@@ -342,6 +343,12 @@ export const controls = {
 
         // do shoot
         document.getElementById(withItem)?.components.item.doShoot(whatTag)
+    },
+    [EControl.Reset]: (items: string[]) => {
+        pathState.set({})
+
+        location.reload()
+
     }
 }
 

@@ -26,9 +26,7 @@ AFRAME.registerComponent("wasd-controller", {
 
         this.next = 0
     },
-    remove() {
-        this.cancel()
-    },
+
     jump() {
         this.el.emit("jump")
     },

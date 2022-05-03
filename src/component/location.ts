@@ -49,7 +49,8 @@ interface ILocation {
 AFRAME.registerComponent("location", {
     schema: {
         name: { type: "string" },
-        box: { type: "string", default: "-1 -1 -1 1 1 1" }
+        box: { type: "string", default: "-1 -1 -1 1 1 1" },
+        zone: { type: "boolean", default: false },
     },
 
     init() {

@@ -11,6 +11,8 @@ const db = new ImmortalStorage([IndexedDbStore])
 
 export class Value<T> {
   $: T
+  dbUpdated: Promise<boolean>
+
   protected reactions: Set<FSubscribe<T>>
 
   constructor(value: T = undefined as any) {
@@ -70,21 +72,31 @@ export class Value<T> {
     return this
   }
 
+  // leaky
   save(where: string) {
-    (async () => {
+    let first = true;
+
+    this.dbUpdated = new Promise(async (resolve, reject) => {
       window[`_${where}`] = this
       try {
         const v = JSON.parse(await db.get(where))
 
         if (v !== undefined && v !== null) {
           this.set(v)
+          if (first) {
+            first = false
+            resolve(v)
+          }
         }
-      } catch (ex) { }
+      } catch (ex) {
+        reject(false)
+        throw ex
+      }
 
       this.on(async (v) => {
         await db.set(where, JSON.stringify(v))
       })
-    })()
+    })
 
 
     return this

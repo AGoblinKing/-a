@@ -12,6 +12,6 @@
 	shadow="cast: true; receive: false"
 	gltf-model="./glb/arrow.glb"
 	scale="0.01 0.01 0.01"
-	ammo-body="type: dynamic;scaleAutoUpdate: false;mass: 0.1; emitCollisionEvents:true"
-	ammo-shape="type:box; fit: manual; halfExtents: 0.1 1 0.1; offset: 0 0 0"
+	physics-body="type: dynamic;scaleAutoUpdate: false;mass: 0.1; emitCollisionEvents:true"
+	physics-shape="type:box; fit: manual; halfExtents: 0.1 1 0.1; offset: 0 0 0"
 />

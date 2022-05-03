@@ -50,7 +50,7 @@ void main() {
   v.r = v.b;
   v.b = r;
 
-  gl_FragColor = vec4(v*.001,1.);	
+  gl_FragColor = vec4(v*.005,1.);	
 }
 
 `
@@ -66,7 +66,7 @@ void main() {
 
 AFRAME.registerShader("space", {
   schema: {
-
+    timeMsec: { type: 'time', is: 'uniform' }
   },
   fragmentShader: spacefrag,
   vertexShader: spaceVert
