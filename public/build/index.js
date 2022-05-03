@@ -9776,10 +9776,10 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin0, "id", "smolitem");
         set_custom_element_data(a_mixin0, "tag__env", "");
         set_custom_element_data(a_mixin0, "sfxr__bump", sfx_shthump);
-        set_custom_element_data(a_mixin0, "physics-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin0, "physics-shape", "type: sphere; fit: manual; sphereRadius: 1;");
+        set_custom_element_data(a_mixin0, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin0, "ammo-shape", "type: sphere; fit: manual; sphereRadius: 1;");
         set_custom_element_data(a_mixin1, "id", "smolfix");
-        set_custom_element_data(a_mixin1, "physics-shape", "offset: -1.85 0 0.85;");
+        set_custom_element_data(a_mixin1, "ammo-shape", "offset: -1.85 0 0.85;");
         set_custom_element_data(a_mixin2, "id", "flowers");
         set_custom_element_data(a_mixin2, "mixin", "smolitem smolfix");
         set_custom_element_data(a_mixin2, "shadow", "");
@@ -9820,15 +9820,15 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin5, "sfxr__bump", sfx_bump);
         set_custom_element_data(a_mixin5, "gltf-model", "./glb/rockB.glb");
         set_custom_element_data(a_mixin5, "vary__rot", "property: rotation; range: 0 0 0 0 360 0");
-        set_custom_element_data(a_mixin5, "physics-body", "type: static; mass: 0;");
-        set_custom_element_data(a_mixin5, "physics-shape", "type: box; fit: manual; halfExtents: 6 10 6");
+        set_custom_element_data(a_mixin5, "ammo-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin5, "ammo-shape", "type: box; fit: manual; halfExtents: 6 10 6");
         set_custom_element_data(a_mixin5, "host", "");
         set_custom_element_data(a_mixin6, "id", "mountains");
         set_custom_element_data(a_mixin6, "gltf-model", "./glb/rockC.glb");
         set_custom_element_data(a_mixin6, "ring", a_mixin6_ring_value = "radius: " + groundSize * 0.7 + "; count: 50");
-        set_custom_element_data(a_mixin6, "physics-body", "type: static; mass: 0;");
+        set_custom_element_data(a_mixin6, "ammo-body", "type: static; mass: 0;");
         set_custom_element_data(a_mixin6, "vary", "property: scale; range: 10 5 10 60 100 60");
-        set_custom_element_data(a_mixin6, "physics-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
+        set_custom_element_data(a_mixin6, "ammo-shape", "type: box;fit: manual; halfExtents:15 7.5 15; offset: 0 7.5 0");
         set_custom_element_data(a_entity0, "pool__mountains", "mixin: mountains; size: 50");
         set_custom_element_data(a_entity0, "activate__mountains", "");
         set_attributes(a_mixin7, a_mixin7_data);
@@ -9856,9 +9856,9 @@ gl_Position = mvPosition;
         set_custom_element_data(a_entity6, "activate__flowerslow", "");
         set_custom_element_data(a_mixin9, "id", "animal");
         set_custom_element_data(a_mixin9, "gltf-model", "./char/Horse.glb");
-        set_custom_element_data(a_mixin9, "physics-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
+        set_custom_element_data(a_mixin9, "ammo-body", "type: dynamic; mass: 1; linearDamping: 0.5; angularDamping: 0.98;angularFactor: 0 1 0;");
         set_custom_element_data(a_mixin9, "scale", "0.35 0.35 0.35");
-        set_custom_element_data(a_mixin9, "physics-shape", "type: capsule; fit: manual; halfExtents: 0.6 1 0.2; cylinderAxis: z; offset: 0 1 0");
+        set_custom_element_data(a_mixin9, "ammo-shape", "type: capsule; fit: manual; halfExtents: 0.6 1 0.2; cylinderAxis: z; offset: 0 1 0");
         set_custom_element_data(a_mixin9, "shadow", "cast: true; receive: false;");
         set_custom_element_data(a_mixin9, "alive", "type: random;");
         set_custom_element_data(a_mixin9, "motion-events", "");
@@ -9891,7 +9891,7 @@ gl_Position = mvPosition;
         set_custom_element_data(a_mixin13, "recolor__skin", "blue");
         set_custom_element_data(a_mixin13, "gltf-model", "./char/dino_Triceratops.glb");
         set_custom_element_data(a_mixin13, "material", "shader: flat;");
-        set_custom_element_data(a_mixin13, "physics-shape", " halfExtents: 2 2 0.5; offset: 0 2 0");
+        set_custom_element_data(a_mixin13, "ammo-shape", " halfExtents: 2 2 0.5; offset: 0 2 0");
         set_custom_element_data(a_mixin13, "sfxr__use", sfx_dino);
         set_custom_element_data(a_mixin13, "sfxr__bump", sfx_dino);
         set_custom_element_data(a_mixin13, "target", "\u{1F995}");
@@ -10149,12 +10149,12 @@ gl_Position = mvPosition;
   function instance5($$self) {
     const scatter = [-groundSize / 2, 0, -groundSize / 2, groundSize / 2, 0, groundSize / 2].join(" ");
     const boxBlocker = {
-      "physics-body": "type: static; mass: 0;",
-      "physics-shape": "type: box; fit: manual; halfExtents: 3 2.5 3; offset: 0 2.5 0"
+      "ammo-body": "type: static; mass: 0;",
+      "ammo-shape": "type: box; fit: manual; halfExtents: 3 2.5 3; offset: 0 2.5 0"
     };
     const smolBoxBlocker = {
-      "physics-body": "type: static; mass: 0;",
-      "physics-shape": "type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0"
+      "ammo-body": "type: static; mass: 0;",
+      "ammo-shape": "type: box; fit: manual; halfExtents: 0.5 0.5 0.5; offset: 0 0 0"
     };
     return [scatter, boxBlocker];
   }
@@ -10440,8 +10440,8 @@ void main() {
         set_custom_element_data(a_entity1, "id", "ground");
         set_custom_element_data(a_entity1, "geometry", "");
         set_custom_element_data(a_entity1, "material", "color: #281b0d;");
-        set_custom_element_data(a_entity1, "physics-body", "type: kinematic; collisionFilterGroup: 1;  collisionFilterMask:1; disableCollision: true; mass: 0; emitCollisionEvents: true; scaleAutoUpdate: false");
-        set_custom_element_data(a_entity1, "physics-shape", "type: box; fit: manual; half-extents: 10 0.2 10; ");
+        set_custom_element_data(a_entity1, "ammo-body", "type: kinematic; collisionFilterGroup: 1;  collisionFilterMask:1; disableCollision: true; mass: 0; emitCollisionEvents: true; scaleAutoUpdate: false");
+        set_custom_element_data(a_entity1, "ammo-shape", "type: box; fit: manual; half-extents: 10 0.2 10; ");
         set_custom_element_data(a_entity1, "shadow", "");
         set_custom_element_data(a_entity1, "scale", "20 0.1 20");
         set_custom_element_data(a_entity1, "position", "0 0 0");

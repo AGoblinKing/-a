@@ -43,8 +43,8 @@
 			el.remove()
 		}
 	}}
-	physics-body="type: kinematic; collisionFilterGroup: 1;  collisionFilterMask:1; disableCollision: true; mass: 0; emitCollisionEvents: true; scaleAutoUpdate: false"
-	physics-shape="type: box; fit: manual; half-extents: 10 0.2 10; "
+	ammo-body="type: kinematic; collisionFilterGroup: 1;  collisionFilterMask:1; disableCollision: true; mass: 0; emitCollisionEvents: true; scaleAutoUpdate: false"
+	ammo-shape="type: box; fit: manual; half-extents: 10 0.2 10; "
 	shadow
 	scale="20 0.1 20"
 	position="0 0 0"
